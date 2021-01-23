@@ -1,9 +1,10 @@
+import { Typography } from '@material-ui/core';
 
 
 export default function Home() {
   return (
-    <div>
-      <p>Test</p>
-    </div>
+    <>
+      <Typography variant="h2">Sample text</Typography>
+    </>
   )
 }

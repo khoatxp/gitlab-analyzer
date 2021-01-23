@@ -9,3 +9,12 @@ services:
     volumes:
       - ./frontend:/frontend
       - /frontend/node_modules/
+  db:
+    image: "postgres"
+    container_name: db
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=database
+    volumes:
+#      - database-data:/var/lib/postgresql/data/ # Persist data even when container shuts off
