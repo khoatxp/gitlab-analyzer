@@ -5,13 +5,14 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from "../styles/theme";
 import "../styles/globals.css";
 import NavBar  from '../components/NavBar';
+import type { AppProps } from 'next/app'
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps } : AppProps) {
   // Remove the server-side injected CSS.
   // This is done for Material UI
   useEffect(() => {
     const jssStyles = document.querySelector("#jss-server-side");
-    if (jssStyles) {
+    if (jssStyles && jssStyles.parentElement) {
       jssStyles.parentElement.removeChild(jssStyles);
     }
   }, []);
