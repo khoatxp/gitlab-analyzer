@@ -1,17 +1,17 @@
-import React from 'react'
-import Document, { Html, Head, Main, NextScript } from 'next/document'
-import { ServerStyleSheets as MaterialUiServerStyleSheets } from '@material-ui/core/styles'
-import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
+import React from "react";
+import Document, { Html, Head, Main, NextScript } from "next/document";
+import { ServerStyleSheets as MaterialUiServerStyleSheets } from "@material-ui/core/styles";
+import { createMuiTheme, responsiveFontSizes } from "@material-ui/core/styles";
 
-const theme = responsiveFontSizes(createMuiTheme())
+const theme = responsiveFontSizes(createMuiTheme());
 
 class MyDocument extends Document {
   render() {
     return (
       <Html>
         <meta
-        name="viewport"
-        content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
         />
         <Head>
           <meta charSet="utf-8" />
@@ -26,21 +26,22 @@ class MyDocument extends Document {
           <NextScript />
         </body>
       </Html>
-    )
+    );
   }
 }
 
-MyDocument.getInitialProps = async ctx => {
+MyDocument.getInitialProps = async (ctx) => {
   // Render app and page and get the context of the page with collected side effects.
-  const materialUiSheets = new MaterialUiServerStyleSheets()
-  const originalRenderPage = ctx.renderPage
+  const materialUiSheets = new MaterialUiServerStyleSheets();
+  const originalRenderPage = ctx.renderPage;
 
   ctx.renderPage = () =>
     originalRenderPage({
-      enhanceApp: App => props => materialUiSheets.collect(<App {...props} />)
-    })
+      enhanceApp: (App) => (props) =>
+        materialUiSheets.collect(<App {...props} />),
+    });
 
-  const initialProps = await Document.getInitialProps(ctx)
+  const initialProps = await Document.getInitialProps(ctx);
 
   return {
     ...initialProps,
@@ -49,9 +50,9 @@ MyDocument.getInitialProps = async ctx => {
       <React.Fragment key="styles">
         {initialProps.styles}
         {materialUiSheets.getStyleElement()}
-      </React.Fragment>
-    ]
-  }
-}
+      </React.Fragment>,
+    ],
+  };
+};
 
-export default MyDocument
+export default MyDocument;

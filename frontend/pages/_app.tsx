@@ -1,13 +1,12 @@
-import Head from 'next/head'
+import Head from "next/head";
 import { ThemeProvider } from "@material-ui/core/styles";
-import CssBaseline from '@material-ui/core/CssBaseline';
+import CssBaseline from "@material-ui/core/CssBaseline";
 import theme from "../styles/theme";
 import "../styles/globals.css";
-import NavBar  from '../components/NavBar';
-import type { AppProps } from 'next/app'
+import NavBar from "../components/NavBar";
+import type { AppProps } from "next/app";
 
-function MyApp({ Component, pageProps } : AppProps) {
-
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
