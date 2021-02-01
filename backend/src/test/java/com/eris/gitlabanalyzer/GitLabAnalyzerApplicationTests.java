@@ -1,4 +1,4 @@
-package eris.gitlabanalyzer;
+package com.eris.gitlabanalyzer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
