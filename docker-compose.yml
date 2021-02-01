@@ -1,37 +1,27 @@
 version: "3.8"
 services:
-  # frontend:
-  #   build: ./frontend
-  #   ports:
-  #     - 3000:3000
-  #   environment:
-  #     CHOKIDAR_USEPOLLING: "true"
-  #   volumes:
-  #     - ./frontend:/frontend
-  #     - /frontend/node_modules/
-  # backend:
-  #   image: 'docker-spring-boot-postgres:latest'
-  #   build: ./backend
-  #   ports:
-  #   - "5000:5000"
-  #   depends_on:
-  #     - db
-  #   environment:
-  #     - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
-  #     - SPRING_DATASOURCE_USERNAME=postgres
-  #     - SPRING_DATASOURCE_PASSWORD=postgres
-  #     - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-  #   volumes:
-  #     - ./backend:/backend
+  frontend:
+    build: ./frontend
+    ports:
+      - 3000:3000
+    environment:
+      CHOKIDAR_USEPOLLING: "true" # Enables hot reload within docker
+    volumes:
+      - ./frontend:/frontend
+      - /frontend/node_modules/ # Excludes local node modules
+
   db:
     image: "postgres"
     container_name: db
     ports:
-      - 5432:5432
+      - 9000:5432
     environment:
-      - POSTGRES_ROOT_PASSWORD=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=postgres
-#    volumes:
-#      - database-data:/var/lib/postgresql/data/ # Persist data even when container shuts off
+      - POSTGRES_PASSWORD=gitlab-analyzer
+      - POSTGRES_USER=gitlab-analyzer
+
+# Code below will persist data even when container shuts off
+# Commented out for now because the db will be constantly changing as we figure out how to structure our app
+#     volumes:
+#       - database-data:/var/lib/postgresql/data/ 
+# volumes:
+#   database-data:
