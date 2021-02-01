@@ -37,7 +37,7 @@ const index = () => {
 				padding="25px"
       >
 					<Image
-						src="/gitlab.png"
+						src="/gitlab.svg"
         		alt="The Gitlab Logo"
         		width={100}
         		height={100}

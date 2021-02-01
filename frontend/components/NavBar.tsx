@@ -4,6 +4,10 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import Image from 'next/image'
+import SvgIcon from '@material-ui/core/SvgIcon';
+import { Icon } from "@material-ui/core";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -13,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
   },
   title: {
+    paddingLeft: "0.75em",
     flexGrow: 1,
   },
 }));
@@ -22,8 +27,11 @@ const NavBar = () => {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
+      <AppBar position="static" color="default">
         <Toolbar>
+          <Icon>
+            <Image src="/gitlab.svg" alt="The Gitlab Logo" width={100} height={100}/>
+          </Icon>
           <Typography variant="h6" className={classes.title}>
             Gitlab Analyzer
           </Typography>
