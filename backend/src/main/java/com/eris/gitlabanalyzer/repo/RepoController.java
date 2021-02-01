@@ -1,8 +1,7 @@
 package com.eris.gitlabanalyzer.repo;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -11,12 +10,18 @@ import java.util.List;
 public class RepoController {
     private RepoService repoService;
 
+    @Autowired
     public RepoController(RepoService repoService) {
         this.repoService = repoService;
     }
 
     @GetMapping
-    public List<Repo> getUsers() {
+    public List<Repo> getRepos() {
         return repoService.getRepos();
+    }
+
+    @PostMapping
+    public void addNewRepo(@RequestBody  Repo repo) {
+        repoService.addNewRepo(repo);
     }
 }

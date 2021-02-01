@@ -17,20 +17,19 @@ public class Repo {
     )
     private Long id;
     private String namespace;
-    private String lastName;
+    @Transient
+    private String name;
 
     public Repo() {
     }
 
-    public Repo(Long id, String firstName, String lastName) {
+    public Repo(Long id, String nameSpace) {
         this.id = id;
-        this.namespace = firstName;
-        this.lastName = lastName;
+        this.namespace = nameSpace;
     }
 
-    public Repo(String firstName, String lastName) {
-        this.namespace = firstName;
-        this.lastName = lastName;
+    public Repo(String nameSpace) {
+        this.namespace = nameSpace;
     }
 
     public Long getId() {
@@ -49,20 +48,20 @@ public class Repo {
         this.namespace = firstName;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getName() {
+        return namespace + " REPO!";
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setName(String lastName) {
+        this.name = lastName;
     }
-
 
     @Override
     public String toString() {
-        return "User{" +
-                "firstName='" + namespace + '\'' +
-                ", lastName='" + lastName + '\'' +
+        return "Repo{" +
+                "id=" + id +
+                ", namespace='" + namespace + '\'' +
+                ", name='" + name + '\'' +
                 '}';
     }
 }
