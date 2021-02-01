@@ -22,12 +22,14 @@ const index = () => {
       display="flex"
       justifyContent="center"
       alignItems="center"
-    >
+      >
       <Box
         className={classes.card}
         boxShadow={20}
         width="20vw"
         height="60vh"
+        minWidth="250px"
+        minHeight="400px"
         display="flex"
         flexDirection="column"
         justifyContent="center"
