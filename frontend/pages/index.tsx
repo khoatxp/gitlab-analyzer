@@ -6,9 +6,9 @@ import NavBar from "../components/NavBar";
 export default function Home() {
   return (
     <>
-      <NavBar/>
+      <NavBar />
       <Typography variant="h2">Welcome to GitLab Analyzer</Typography>
-      <BackendTest/>
+      <BackendTest />
     </>
   );
 }

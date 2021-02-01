@@ -1,8 +1,7 @@
 import { Box, Button, Input, TextField, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React from "react";
-import Image from 'next/image'
-
+import Image from "next/image";
 
 const useStyles = makeStyles({
   backgroundGradient: {
@@ -23,31 +22,37 @@ const index = () => {
       display="flex"
       justifyContent="center"
       alignItems="center"
-			>
+    >
       <Box
         className={classes.card}
         boxShadow={20}
         width="20vw"
         height="60vh"
-				display="flex"
-				flexDirection="column"
+        display="flex"
+        flexDirection="column"
         justifyContent="center"
-				alignItems="center"
+        alignItems="center"
         borderRadius={16}
-				padding="25px"
+        padding="25px"
       >
-					<Image
-						src="/gitlab.svg"
-        		alt="The Gitlab Logo"
-        		width={100}
-        		height={100}
-      		/>
-					<Typography variant="h6" align="center">GitLab<br/>Analyzer</Typography>
-					<TextField fullWidth placeholder="Username" variant="filled" />
-					<TextField fullWidth placeholder="Password" variant="filled" />
-					<TextField fullWidth placeholder="GitLab Token" variant="filled" />
-          <Button variant="contained" color="primary" disableElevation>Login</Button>
-        </Box>
+        <Image
+          src="/gitlab.svg"
+          alt="The Gitlab Logo"
+          width={100}
+          height={100}
+        />
+        <Typography variant="h6" align="center">
+          GitLab
+          <br />
+          Analyzer
+        </Typography>
+        <TextField fullWidth placeholder="Username" variant="filled" />
+        <TextField fullWidth placeholder="Password" variant="filled" />
+        <TextField fullWidth placeholder="GitLab Token" variant="filled" />
+        <Button variant="contained" color="primary" disableElevation>
+          Login
+        </Button>
+      </Box>
     </Box>
   );
 };
