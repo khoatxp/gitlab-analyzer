@@ -17,7 +17,6 @@ function MyApp({ Component, pageProps } : AppProps) {
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        <NavBar/>
         <Component {...pageProps} />
       </ThemeProvider>
     </>
