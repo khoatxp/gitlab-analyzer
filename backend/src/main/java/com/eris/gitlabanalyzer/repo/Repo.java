@@ -23,13 +23,13 @@ public class Repo {
     public Repo() {
     }
 
-    public Repo(Long id, String nameSpace) {
+    public Repo(Long id, String namespace) {
         this.id = id;
-        this.namespace = nameSpace;
+        this.namespace = namespace;
     }
 
-    public Repo(String nameSpace) {
-        this.namespace = nameSpace;
+    public Repo(String namespace) {
+        this.namespace = namespace;
     }
 
     public Long getId() {
@@ -44,16 +44,16 @@ public class Repo {
         return namespace;
     }
 
-    public void setNamespace(String firstName) {
-        this.namespace = firstName;
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     public String getName() {
         return namespace + " REPO!";
     }
 
-    public void setName(String lastName) {
-        this.name = lastName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
