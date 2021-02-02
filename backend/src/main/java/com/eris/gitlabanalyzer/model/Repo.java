@@ -1,4 +1,4 @@
-package com.eris.gitlabanalyzer.repo;
+package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
 

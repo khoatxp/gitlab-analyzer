@@ -1,5 +1,7 @@
-package com.eris.gitlabanalyzer.repo;
+package com.eris.gitlabanalyzer.controller;
 
+import com.eris.gitlabanalyzer.model.Repo;
+import com.eris.gitlabanalyzer.service.RepoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

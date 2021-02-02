@@ -1,5 +1,7 @@
-package com.eris.gitlabanalyzer.repo;
+package com.eris.gitlabanalyzer.service;
 
+import com.eris.gitlabanalyzer.model.Repo;
+import com.eris.gitlabanalyzer.repository.RepoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
