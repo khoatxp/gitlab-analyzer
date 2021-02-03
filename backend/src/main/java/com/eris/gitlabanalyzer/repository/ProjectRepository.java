@@ -1,5 +1,4 @@
 package com.eris.gitlabanalyzer.repository;
-
 import com.eris.gitlabanalyzer.model.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
