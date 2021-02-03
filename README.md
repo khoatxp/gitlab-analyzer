@@ -19,7 +19,7 @@ docker-compose up
 - For the backend, travel to intellij and hit the green ▶️ button at the top right to start the Spring Boot Application. (When you first open the application in IntelliJ, you should get a notification saying Maven build scripts have been found. Make sure to import them.)
 - Travel to [http://localhost:8080](http://localhost:8080) within your browser to view the back end.
 
-##TESTING
+## TESTING
 
 All test need to be placed into test folders for frontend test file format will
 follow file naming *.test.ts. Front end Test data can be found in the frontend/coverage good
