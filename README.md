@@ -22,14 +22,14 @@ docker-compose up
 ## TESTING
 
 All test need to be placed into test folders for frontend test file format will
-follow file naming *.test.ts. Front end Test data can be found in the frontend/coverage good
-way to find missing coverage. Back End test data can be found in backend/target/surefire-reports.
+follow file naming *.test.ts. Frontend Test data can be found in the `frontend/coverage`. 
+Back End test data can be found in `backend/target/surefire-reports`.
 
-To run tests can use `tests.bat` in root directory to run tests for back and front ends docker must
+To run tests can use `tests.bat` in root directory to run tests for back and front ends, docker must
 be running to use back end tests i.e (http://localhost:8080) should be available.
 
-To run just frontend tests ensure current directory is ./frontend then run the command `npm test`
+To run just frontend tests ensure the current directory is `./frontend` then run the command `npm test`
 
 To run just backend tests again ensure (http://localhost:8080) is available then change directory to 
-./backend and run `mvnw clean test`
+`./backend` and run `mvnw clean test`
 

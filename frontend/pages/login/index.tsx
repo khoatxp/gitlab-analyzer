@@ -1,9 +1,9 @@
-import { Box, Button, TextField, Typography } from "@material-ui/core";
+import {Box, Button, TextField, Typography} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React from "react";
 import Image from "next/image";
 
-const useStyles = makeStyles({
+const useStyles  = makeStyles({
   backgroundGradient: {
     background: "radial-gradient(90% 180% at 50% 50%, #FFFFFF 0%, #FCA326 65%)",
   },
@@ -12,7 +12,7 @@ const useStyles = makeStyles({
   },
 });
 
-const index = () => {
+const index: React.FC = () => {
   const classes = useStyles();
   return (
     <Box
