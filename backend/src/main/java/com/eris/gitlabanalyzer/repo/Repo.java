@@ -7,13 +7,13 @@ import javax.persistence.*;
 public class Repo {
     @Id
     @SequenceGenerator(
-            name="user_sequence",
-            sequenceName = "user_sequence",
+            name="repo_sequence",
+            sequenceName = "repo_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "user_sequence"
+            generator = "repo_sequence"
     )
     private Long id;
     private String namespace;
