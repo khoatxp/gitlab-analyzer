@@ -1,8 +1,9 @@
-import {Box, Button, Typography} from "@material-ui/core";
+import {Box, Typography} from "@material-ui/core";
 import Image from "next/image";
 import React from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import AppTextField from "./AppTextField";
+import AppButton from "./AppButton";
 
 const useStyles = makeStyles({
     card: {
@@ -43,9 +44,7 @@ const LoginCard = () => {
             </Typography>
             <AppTextField placeholder="Username" value={userName} setValue={setUserName}/>
             <AppTextField placeholder="Password" value={password} setValue={setPassword}/>
-            <Button variant="contained" color="primary" disableElevation>
-                Login
-            </Button>
+            <AppButton color="primary">Login</AppButton>
         </Box>
 
     )
