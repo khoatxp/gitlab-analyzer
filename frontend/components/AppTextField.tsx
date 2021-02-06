@@ -8,6 +8,8 @@ const useStyles = makeStyles({
     },
     input: {
         padding: "20px 17px 20px",
+        fontWeight: "bold",
+        fontSize: "0.85em",
     },
     underline: {
         "&&&:before": {

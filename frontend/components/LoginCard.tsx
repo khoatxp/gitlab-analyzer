@@ -37,11 +37,7 @@ const LoginCard = () => {
                 width={100}
                 height={100}
             />
-            <Typography variant="h6" align="center">
-                GitLab
-                <br/>
-                Analyzer
-            </Typography>
+            <Typography variant="h6" align="center">GitLab<br/>Analyzer</Typography>
             <AppTextField placeholder="Username" value={userName} setValue={setUserName}/>
             <AppTextField placeholder="Password" value={password} setValue={setPassword}/>
             <AppButton color="primary">Login</AppButton>
