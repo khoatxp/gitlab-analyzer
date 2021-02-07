@@ -7,9 +7,12 @@ import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Flux;
 
 import java.net.URI;
 import java.util.List;
@@ -18,10 +21,24 @@ import java.util.List;
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
+    private final WebClient webClient;
 
     public ProjectService(ProjectRepository projectRepository, MemberRepository memberRepository) {
         this.projectRepository = projectRepository;
         this.memberRepository = memberRepository;
+        this.webClient = WebClient.create();
+    }
+
+    public Flux<Project> getProjects(String serverUrl, String accessToken){
+        URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path("/api/v4/projects/")
+                .build()
+                .encode()
+                .toUri();
+        WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
+                .uri(gitlabUrl)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+        return headersSpec.retrieve().bodyToFlux(Project.class);
     }
 
     public Project getProjectInfo(Long projectId, String serverUrl, String accessToken){

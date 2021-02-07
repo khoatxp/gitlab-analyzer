@@ -8,23 +8,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping(path = "/api/v1/project")
 public class ProjectController {
     private final ProjectService projectService;
     @Autowired
     public ProjectController(ProjectService projectService){
         this.projectService = projectService;
     }
-    @PostMapping("/api/v1/projects/analytics")
-    public void analyzeProjects(
+    @PostMapping(path = "/analyze")
+    public void analyzeProject(
             @RequestBody List<Long> projectIdList,
             @RequestParam(required = true) String serverUrl,
             @RequestParam(required = true) String accessToken){
         projectService.analyzeProjects(projectIdList, serverUrl, accessToken);
     }
-    @GetMapping("/api/v1/projects")
+
+    @GetMapping
     public List<Project> getProjects(){
         return projectService.getProjects();
     }
-
-
 }
