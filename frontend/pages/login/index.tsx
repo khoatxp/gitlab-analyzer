@@ -5,7 +5,7 @@ import LoginCard from "../../components/LoginCard";
 
 const useStyles = makeStyles({
   backgroundGradient: {
-    background: "radial-gradient(90% 180% at 50% 50%, #FFFFFF 0%, #FCA326 65%)",
+    background: "radial-gradient(113% 113% at 50% 45%, #FFFFFF 0%, #FCA326 65%)",
   },
   card: {
     background: "white",
