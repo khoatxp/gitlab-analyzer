@@ -1,5 +1,9 @@
 package com.eris.gitlabanalyzer.model;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,13 +13,22 @@ public class Project {
     @Id
     @Column(name = "id")
     private Long id;
+
     private String name;
+
+    @JsonProperty("name_with_namespace")
     private String nameWithNamespace;
+
+    @JsonProperty("web_url")
     private String webUrl;
+
+    @Transient
     private String serverUrl;
+
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
     private Set<Member> members = new HashSet<>();
+
     public Project(){}
 
     public Project(Long id, String name, String nameWithNamespace, String webUrl, String serverUrl) {
@@ -43,7 +56,13 @@ public class Project {
     }
 
     public String getServerUrl() {
-        return serverUrl;
+        try {
+            URL webUrl = new URL(this.webUrl);
+            return webUrl.getProtocol() + "://" + webUrl.getHost();
+        } catch (MalformedURLException e) {
+            return "";
+        }
+
     }
 
     @Override

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/api/v1/project")
+@RequestMapping(path = "/api/v1/projects")
 public class ProjectController {
     private final ProjectService projectService;
     @Autowired
@@ -20,7 +20,7 @@ public class ProjectController {
             @RequestBody List<Long> projectIdList,
             @RequestParam(required = true) String serverUrl,
             @RequestParam(required = true) String accessToken){
-        projectService.analyzeProjects(projectIdList, serverUrl, accessToken);
+        projectService.analyzeProjects(projectIdList);
     }
 
     @GetMapping

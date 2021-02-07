@@ -1,5 +1,6 @@
 package com.eris.gitlabanalyzer.service;
 
+import com.eris.gitlabanalyzer.model.Member;
 import com.eris.gitlabanalyzer.model.Project;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.net.URI;
 
@@ -25,16 +27,43 @@ public class GitLabService {
     }
 
     public Flux<Project> getProjects(){
-
         URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path("/api/v4/projects/")
                 .build()
                 .encode()
                 .toUri();
+
         WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
                 .uri(gitlabUrl)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
         return headersSpec.retrieve().bodyToFlux(Project.class);
+    }
+
+    public Mono<Project> getProject(Long projectId) {
+        URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path("/api/v4/projects/" + projectId)
+                .build()
+                .encode()
+                .toUri();
+
+        WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
+                .uri(gitlabUrl)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+
+        return headersSpec.retrieve().bodyToMono(Project.class);
+    }
+
+    public Flux<Member> getMembers(Long projectId) {
+        URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path("/api/v4/projects/"+projectId+"/members")
+                .build()
+                .encode()
+                .toUri();
+
+        WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
+                .uri(gitlabUrl)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+        return headersSpec.retrieve().bodyToFlux(Member.class);
     }
 
 }
