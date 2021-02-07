@@ -22,7 +22,12 @@ const LoginCard = () => {
     const handleLogin = () => {
         enqueueSnackbar("Attempting login.", {variant: 'default',});
         axios
-            .get(`${process.env.NEXT_PUBLIC_API_URL}/login`)
+            .post(`http://localhost:8080/login`,{},{
+                auth: {
+                    username: userName,
+                    password: password,
+                }
+            })
             .then((resp: AxiosResponse) => {
                 console.log(resp.data);
                 setUserName("");
