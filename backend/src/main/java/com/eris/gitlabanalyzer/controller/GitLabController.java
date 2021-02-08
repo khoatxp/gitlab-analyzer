@@ -3,6 +3,7 @@ package com.eris.gitlabanalyzer.controller;
 import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.service.GitLabService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,6 +11,7 @@ import reactor.core.publisher.Flux;
 
 @RestController
 @RequestMapping(path = "/api/v1/gitlab")
+@CrossOrigin() // TODO configure CORS so front end is globally allowed to access routes
 public class GitLabController {
 
     private final GitLabService gitLabService;
