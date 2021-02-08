@@ -22,7 +22,7 @@ docker-compose up
 ## TESTING
 
 All test need to be placed into test folders for frontend test file format will
-follow file naming *.test.ts. Frontend Test data can be found in the `frontend/coverage`. 
+follow file naming *.test.tsx. Frontend Test data can be found in the `frontend/coverage`. 
 Back End test data can be found in `backend/target/surefire-reports`.
 
 To run tests can use `tests.bat` in root directory to run tests for back and front ends, docker must
