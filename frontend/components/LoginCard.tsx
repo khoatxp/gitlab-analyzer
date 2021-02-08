@@ -60,8 +60,8 @@ const LoginCard = () => {
                 height={100}
             />
             <Typography variant="h6" align="center">GitLab<br/>Analyzer</Typography>
-            <AppTextField placeholder="Username" value={userName} setValue={setUserName}/>
-            <AppTextField placeholder="Password" value={password} setValue={setPassword}/>
+            <AppTextField placeholder="Username" value={userName} onChange={(e) => setUserName(e.target.value)}/>
+            <AppTextField placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
             <AppButton color="primary" onClick={handleLogin}>Login</AppButton>
         </Box>
 

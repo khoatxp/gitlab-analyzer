@@ -1,5 +1,5 @@
-import {Button, PropTypes} from "@material-ui/core";
-import React, {MouseEventHandler} from "react";
+import {Button, ButtonProps} from "@material-ui/core";
+import React from "react";
 import {makeStyles} from "@material-ui/styles";
 
 const useStyles = makeStyles({
@@ -10,25 +10,16 @@ const useStyles = makeStyles({
     }
 })
 
-type AppButtonProps = {
-    color?: PropTypes.Color,
-    onClick: MouseEventHandler,
-    children: React.ReactNode
-}
-
-const AppButton = ({color, onClick, children}: AppButtonProps) => {
+const AppButton = (props: ButtonProps) => {
     const classes = useStyles();
 
     return (
         <Button
+            {...props}
             className={classes.button}
             variant="contained"
-            color={color}
-            onClick={onClick}
             disableElevation
-        >
-            {children}
-        </Button>
+        />
     )
 }
 

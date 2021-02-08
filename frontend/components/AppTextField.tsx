@@ -1,4 +1,4 @@
-import {TextField} from "@material-ui/core";
+import {TextField, TextFieldProps} from "@material-ui/core";
 import React from "react";
 import {makeStyles} from "@material-ui/styles";
 
@@ -21,24 +21,16 @@ const useStyles = makeStyles({
     }
 });
 
-type TextFieldProps = {
-    placeholder: string,
-    value: string,
-    setValue: Function
-}
-
-const AppTextField = ({placeholder, value, setValue}: TextFieldProps) => {
+const AppTextField = (props: TextFieldProps) => {
     const classes = useStyles();
 
     return (
         <TextField
+            {...props }
             fullWidth
-            placeholder={placeholder.toUpperCase()}
             variant="filled"
             margin="normal"
-            value={value}
             InputProps={{classes}}
-            onChange={(e) => setValue(e.target.value)}
         />
     )
 }
