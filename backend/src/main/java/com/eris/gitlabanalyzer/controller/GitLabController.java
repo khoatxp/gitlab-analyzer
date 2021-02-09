@@ -1,6 +1,6 @@
 package com.eris.gitlabanalyzer.controller;
 
-import com.eris.gitlabanalyzer.model.Project;
+import com.eris.gitlabanalyzer.model.GitLabProject;
 import com.eris.gitlabanalyzer.service.GitLabService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,7 +26,7 @@ public class GitLabController {
     //@GetMapping(path ="{serverId}/projects")
     // public List<Project> getProjects(@PathVariable("serverId") Long id)
     @GetMapping(path ="/projects")
-    public Flux<Project> getProjects() {
+    public Flux<GitLabProject> getProjects() {
         return gitLabService.getProjects();
     }
 }

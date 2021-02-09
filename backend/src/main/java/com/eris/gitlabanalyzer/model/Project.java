@@ -16,10 +16,8 @@ public class Project {
 
     private String name;
 
-    @JsonProperty("name_with_namespace")
     private String nameWithNamespace;
 
-    @JsonProperty("web_url")
     private String webUrl;
 
     @Transient
@@ -31,12 +29,11 @@ public class Project {
 
     public Project(){}
 
-    public Project(Long id, String name, String nameWithNamespace, String webUrl, String serverUrl) {
+    public Project(Long id, String name, String nameWithNamespace, String webUrl) {
         this.id = id;
         this.name = name;
         this.nameWithNamespace = nameWithNamespace;
         this.webUrl = webUrl;
-        this.serverUrl = serverUrl;
     }
 
     public Long getId() {

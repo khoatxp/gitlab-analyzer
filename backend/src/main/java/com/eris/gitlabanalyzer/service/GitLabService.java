@@ -1,7 +1,7 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.model.Member;
-import com.eris.gitlabanalyzer.model.Project;
+import com.eris.gitlabanalyzer.model.GitLabMember;
+import com.eris.gitlabanalyzer.model.GitLabProject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class GitLabService {
         this.webClient = WebClient.create();
     }
 
-    public Flux<Project> getProjects(){
+    public Flux<GitLabProject> getProjects(){
         URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path("/api/v4/projects/")
                 .build()
@@ -36,10 +36,10 @@ public class GitLabService {
         WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
                 .uri(gitlabUrl)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-        return headersSpec.retrieve().bodyToFlux(Project.class);
+        return headersSpec.retrieve().bodyToFlux(GitLabProject.class);
     }
 
-    public Mono<Project> getProject(Long projectId) {
+    public Mono<GitLabProject> getProject(Long projectId) {
         URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path("/api/v4/projects/" + projectId)
                 .build()
@@ -50,10 +50,10 @@ public class GitLabService {
                 .uri(gitlabUrl)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
 
-        return headersSpec.retrieve().bodyToMono(Project.class);
+        return headersSpec.retrieve().bodyToMono(GitLabProject.class);
     }
 
-    public Flux<Member> getMembers(Long projectId) {
+    public Flux<GitLabMember> getMembers(Long projectId) {
         URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path("/api/v4/projects/"+projectId+"/members")
                 .build()
@@ -63,7 +63,7 @@ public class GitLabService {
         WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
                 .uri(gitlabUrl)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-        return headersSpec.retrieve().bodyToFlux(Member.class);
+        return headersSpec.retrieve().bodyToFlux(GitLabMember.class);
     }
 
 }

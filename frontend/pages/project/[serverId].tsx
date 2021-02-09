@@ -19,14 +19,16 @@ const index = () => {
   const { serverId } =  router.query;
 
   useEffect(() => {
-    // TODO need to pass serverId into this call to get the correct gitlab url and access code from db
-    // when that information is available in db
-    axios
-        .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects`)
-        .then((resp: AxiosResponse) => {
-          setProjects(resp.data);
-          setIsLoading(false);
-        });
+    if (router.isReady) {
+      // TODO need to pass serverId into this call to get the correct gitlab url and access code from db
+      // when that information is available in db
+      axios
+          .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects`)
+          .then((resp: AxiosResponse) => {
+            setProjects(resp.data);
+            setIsLoading(false);
+          });
+    }
   }, [serverId]);
 
   let loadingBar =  null;
