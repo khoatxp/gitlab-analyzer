@@ -2,7 +2,7 @@
 ## Project controller
 ### Start analyzing projects
 #### Request
-`/POST /api/v1/projects/analytics?serverUrl${serverUrl}&accessToken=${accessToken}`
+`/POST /api/v1/projects/analytics
  * Request body: expects a JSON array of project IDs
 #### Response
 

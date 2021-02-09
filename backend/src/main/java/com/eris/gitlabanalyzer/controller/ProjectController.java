@@ -16,12 +16,12 @@ public class ProjectController {
     public ProjectController(ProjectService projectService){
         this.projectService = projectService;
     }
-    @PostMapping(path = "/analyze")
+    @PostMapping(path = "/analytics")
     public void analyzeProject(
             @RequestBody List<Long> projectIdList,
             @RequestParam(required = true) String serverUrl,
             @RequestParam(required = true) String accessToken){
-        projectService.analyzeProjects(projectIdList);
+        projectService.getProjectAnalytics(projectIdList);
     }
 
     @GetMapping

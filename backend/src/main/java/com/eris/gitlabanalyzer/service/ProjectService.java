@@ -35,7 +35,7 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public void analyzeProjects(List<Long> projectIdList) {
+    public void getProjectAnalytics(List<Long> projectIdList) {
         for (Long projectId : projectIdList){
             Mono<GitLabProject> gitLabProject = gitLabService.getProject(projectId);
             System.out.println(gitLabProject);
