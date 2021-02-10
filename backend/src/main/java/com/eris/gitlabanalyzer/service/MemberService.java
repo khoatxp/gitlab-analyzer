@@ -26,7 +26,6 @@ public class MemberService {
                         gitLabMember.getId(),
                         gitLabMember.getUsername(),
                         gitLabMember.getName(),
-                        gitLabMember.getAccessLevel(),
                         project
                 );
                 memberRepository.save(member);

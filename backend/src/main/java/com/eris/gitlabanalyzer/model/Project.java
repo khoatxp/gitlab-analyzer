@@ -8,10 +8,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table (name = "project")
+@Table
 public class Project {
     @Id
-    @Column(name = "id")
     private Long id;
 
     private String name;

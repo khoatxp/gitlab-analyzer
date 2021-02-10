@@ -4,17 +4,20 @@ import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
 import CardLayout from "../../components/CardLayout";
+import {GitLabProjectType} from "../../interfaces/GitLab";
 
-interface GitLabProjectType {
-  id: number,
-  name: string,
-  name_with_namespace: string,
-  web_url: string,
+const LoadingBar = () => {
+  return <div>
+    <Typography variant={"body1"}>
+      Loading projects...
+    </Typography>
+    <LinearProgress />
+  </div>;
 }
 
 const index = () => {
-  const [projects, setProjects] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [projects, setProjects] = useState<GitLabProjectType[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
   const { serverId } =  router.query;
 
@@ -33,22 +36,14 @@ const index = () => {
 
   let loadingBar =  null;
   if (isLoading) {
-    loadingBar = <div>
-      <Typography variant={"body1"}>
-        Loading projects...
-      </Typography>
-      <LinearProgress />
-    </div>;
-  }
-  else {
-    loadingBar =  null;
+    loadingBar = <LoadingBar />;
   }
   return (
     <CardLayout>
       {loadingBar}
       {!isLoading && <Autocomplete
           id="project-select"
-          options={projects as GitLabProjectType[]}
+          options={projects}
           getOptionLabel={(proj) => proj.name_with_namespace}
           renderInput={(params) => <TextField {...params} label="Search Projects" variant="outlined" />}
       /> }

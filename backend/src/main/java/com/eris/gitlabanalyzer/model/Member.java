@@ -4,13 +4,12 @@ import javax.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 @Entity
-@Table(name = "member")
+@Table
 public class Member {
     @Id
     private Long id;
     private String username;
     private String name;
-    private int accessLevel;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "project_id", nullable = false)
@@ -29,17 +28,12 @@ public class Member {
         return name;
     }
 
-    public int getAccessLevel() {
-        return accessLevel;
-    }
-
 
     public Member(){}
-    public Member(Long id, String username, String name, int accessLevel, Project project) {
+    public Member(Long id, String username, String name, Project project) {
         this.id = id;
         this.username = username;
         this.name = name;
-        this.accessLevel = accessLevel;
         this.project = project;
     }
 
@@ -49,7 +43,6 @@ public class Member {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
-                ", accessLevel=" + accessLevel +
 
                 '}';
     }

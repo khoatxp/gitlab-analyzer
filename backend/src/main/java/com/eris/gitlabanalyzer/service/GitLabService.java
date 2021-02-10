@@ -15,6 +15,7 @@ import java.net.URI;
 @Service
 public class GitLabService {
     private final WebClient webClient;
+    private final String projectPath = "api/v4/projects/";
 
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
@@ -28,7 +29,7 @@ public class GitLabService {
 
     public Flux<GitLabProject> getProjects(){
         URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
-                .path("/api/v4/projects/")
+                .path(projectPath)
                 .build()
                 .encode()
                 .toUri();
@@ -41,7 +42,7 @@ public class GitLabService {
 
     public Mono<GitLabProject> getProject(Long projectId) {
         URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
-                .path("/api/v4/projects/" + projectId)
+                .path(projectPath + projectId)
                 .build()
                 .encode()
                 .toUri();
@@ -55,7 +56,7 @@ public class GitLabService {
 
     public Flux<GitLabMember> getMembers(Long projectId) {
         URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
-                .path("/api/v4/projects/"+projectId+"/members")
+                .path(projectPath + projectId + "/members")
                 .build()
                 .encode()
                 .toUri();

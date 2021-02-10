@@ -2,9 +2,7 @@ package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.GitLabMember;
 import com.eris.gitlabanalyzer.model.GitLabProject;
-import com.eris.gitlabanalyzer.model.Member;
 import com.eris.gitlabanalyzer.model.Project;
-import com.eris.gitlabanalyzer.repository.MemberRepository;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
