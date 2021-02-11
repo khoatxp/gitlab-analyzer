@@ -7,7 +7,7 @@ const BackendTest = () => {
   // Load repo data
   useEffect(() => {
     axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/repo`)
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/projects`)
       .then((resp: AxiosResponse) => {
         setRepos(resp.data);
       });
