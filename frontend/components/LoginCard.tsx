@@ -2,19 +2,11 @@ import React from "react";
 import Image from "next/image";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import {Box, Typography} from "@material-ui/core";
-import {makeStyles} from "@material-ui/core/styles";
 import AppTextField from "./AppTextField";
 import AppButton from "./AppButton";
 import { useSnackbar } from 'notistack';
 
-const useStyles = makeStyles({
-    card: {
-        background: "white",
-    },
-});
-
 const LoginCard = () => {
-    const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
     const [userName, setUserName] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
@@ -40,7 +32,7 @@ const LoginCard = () => {
 
     return (
         <Box
-            className={classes.card}
+            bgcolor="primary.contrastText"
             boxShadow={20}
             width="20vw"
             height="65vh"
