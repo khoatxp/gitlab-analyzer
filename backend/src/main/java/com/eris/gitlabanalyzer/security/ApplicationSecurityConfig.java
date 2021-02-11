@@ -17,15 +17,16 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // Configures app to require authentication for every request
-        http.cors().and()
-                .authorizeRequests()
-                .antMatchers("/api/v1/repo") // TODO: Remove once done testing
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .httpBasic();
+    // TODO: Uncomment once security is fully set up. Don't want to require authentication while we're still testing routes
+    // Configures app to require authentication for every request
+//        http.cors().and()
+//                .authorizeRequests()
+//                .antMatchers("/api/v1/repo") // TODO: Remove once done testing
+//                .permitAll()
+//                .anyRequest()
+//                .authenticated()
+//                .and()
+//                .httpBasic();
     }
 
     @Bean
