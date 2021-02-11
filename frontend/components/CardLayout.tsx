@@ -18,22 +18,24 @@ const CardLayout = ({children, size}: CardLayoutProps) => {
                 bgcolor="primary.contrastText"
                 boxShadow={20}
                 width={width}
-                height="65vh"
+                height="60vh"
                 minWidth="250px"
-                minHeight="400px"
+                minHeight="450px"
                 borderRadius={45}
                 padding="20px"
                 display="flex"
                 flexDirection="column"
                 justifyContent="center"
             >
-                <Image
-                    src="/gitlab.svg"
-                    alt="The Gitlab Logo"
-                    width={100}
-                    height={100}
-                />
-                <Typography variant="h6" align="center" gutterBottom>GitLab<br/>Analyzer</Typography>
+                <Box id="card-header" margin="10px" textAlign="center">
+                    <Image
+                        src="/gitlab.svg"
+                        alt="The Gitlab Logo"
+                        width="125px"
+                        height="125px"
+                    />
+                    <Typography variant="h6" gutterBottom>GitLab<br/>Analyzer</Typography>
+                </Box>
                 {children}
             </Box>
         </AppGradientBackground>
