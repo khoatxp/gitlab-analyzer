@@ -1,10 +1,9 @@
 import React from "react";
-import Image from "next/image";
 import axios, { AxiosResponse, AxiosError } from "axios";
-import {Box, Typography} from "@material-ui/core";
 import AppTextField from "./AppTextField";
 import AppButton from "./AppButton";
 import { useSnackbar } from 'notistack';
+import CardLayout from "./CardLayout";
 
 const LoginCard = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -31,31 +30,11 @@ const LoginCard = () => {
     }
 
     return (
-        <Box
-            bgcolor="primary.contrastText"
-            boxShadow={20}
-            width="20vw"
-            height="65vh"
-            minWidth="250px"
-            minHeight="400px"
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-            alignItems="center"
-            borderRadius={45}
-            padding="20px"
-        >
-            <Image
-                src="/gitlab.svg"
-                alt="The Gitlab Logo"
-                width={100}
-                height={100}
-            />
-            <Typography variant="h6" align="center">GitLab<br/>Analyzer</Typography>
+        <CardLayout size="sm">
             <AppTextField placeholder="Username" value={userName} onChange={(e) => setUserName(e.target.value)}/>
             <AppTextField placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
             <AppButton color="primary" onClick={handleLogin}>Login</AppButton>
-        </Box>
+        </CardLayout>
 
     )
 }
