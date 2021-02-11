@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
 import CardLayout from "../../components/CardLayout";
-import {GitLabProjectType} from "../../interfaces/GitLab";
+import {GitLabProject} from "../../interfaces/GitLabProject";
 
 const LoadingBar = () => {
   return <div>
@@ -16,7 +16,7 @@ const LoadingBar = () => {
 }
 
 const index = () => {
-  const [projects, setProjects] = useState<GitLabProjectType[]>([]);
+  const [projects, setProjects] = useState<GitLabProject[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
   const { serverId } =  router.query;

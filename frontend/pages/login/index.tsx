@@ -1,30 +1,13 @@
 import { Box } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
 import React from "react";
 import LoginCard from "../../components/LoginCard";
-
-const useStyles = makeStyles({
-  backgroundGradient: {
-    background: "radial-gradient(113% 113% at 50% 45%, #FFFFFF 0%, #FCA326 65%)",
-  },
-  card: {
-    background: "white",
-  },
-});
+import AppGradientBackground from "../../components/AppGradientBackground";
 
 const index = () => {
-  const classes = useStyles();
   return (
-    <Box
-      className={classes.backgroundGradient}
-      height="100vh"
-      width="100vw"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      >
+    <AppGradientBackground>
       <LoginCard/>
-    </Box>
+    </AppGradientBackground>
   );
 };
 
