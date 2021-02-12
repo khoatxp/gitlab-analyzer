@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Pages Root Render Index 1`] = `
+<Fragment>
+  <NavBar />
+  <WithStyles(ForwardRef(Typography))
+    variant="h2"
+  >
+    Welcome to GitLab Analyzer
+  </WithStyles(ForwardRef(Typography))>
+  <BackendTest />
+</Fragment>
+`;

@@ -1,8 +1,8 @@
 import {createShallow} from "@material-ui/core/test-utils";
 import React from 'react';
-import Index from '../pages/login/index';
+import Index from '../../pages/login';
 
-describe("login", () =>{
+describe("Login Folder", () =>{
     // @ts-ignore
     let shallow;
 
@@ -10,7 +10,7 @@ describe("login", () =>{
         shallow = createShallow();
     })
 
-    it("Render Login", () => {
+    it("Render Index", () => {
         // @ts-ignore
         const wrapper = shallow(<Index />)
         expect(wrapper).toMatchSnapshot();

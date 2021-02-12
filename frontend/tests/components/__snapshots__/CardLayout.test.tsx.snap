@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Cardlayout Render CardLayout 1`] = `
+<Styled(MuiBox)
+  className="makeStyles-backgroundGradient-1"
+>
+  <Styled(MuiBox)
+    boxShadow={20}
+    className="makeStyles-card-2"
+  >
+    <Styled(MuiBox)
+      className="makeStyles-logo-3"
+    >
+      <Image
+        alt="The Gitlab Logo"
+        height={100}
+        src="/gitlab.svg"
+        width={100}
+      />
+      <WithStyles(ForwardRef(Typography))
+        align="center"
+        gutterBottom={true}
+        variant="h6"
+      >
+        GitLab
+        <br />
+        Analyzer
+      </WithStyles(ForwardRef(Typography))>
+    </Styled(MuiBox)>
+  </Styled(MuiBox)>
+</Styled(MuiBox)>
+`;

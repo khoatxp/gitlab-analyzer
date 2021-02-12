@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`login Render Login 1`] = `
+exports[`Login Folder Render Index 1`] = `
 <Styled(MuiBox)
   alignItems="center"
   className="makeStyles-backgroundGradient-1"
