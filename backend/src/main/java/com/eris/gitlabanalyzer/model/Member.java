@@ -3,22 +3,50 @@ package com.eris.gitlabanalyzer.model;
 import javax.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-@Entity
-@Table
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+@Entity(name = "Member")
+@Table(name = "member")
 public class Member {
+
     @Id
-    private Long id;
+    @Column(
+            name = "user_name",
+            nullable = false
+
+    )
     private String username;
+
+    @Column(
+            name = "name",
+            nullable = false
+
+    )
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "project_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne
+    @JoinColumn(
+            name = "project_id",
+            nullable = false,
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(
+                    name = "member_project_id_fk"
+            )
+    )
     private Project project;
 
-    public Long getId() {
-        return id;
-    }
+    @OneToMany(
+            mappedBy = "member",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<Commit> commits = new ArrayList<>();
+
 
     public String getUsername() {
         return username;
@@ -28,10 +56,17 @@ public class Member {
         return name;
     }
 
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
 
     public Member(){}
-    public Member(Long id, String username, String name, Project project) {
-        this.id = id;
+
+    public Member(String username, String name, Project project) {
         this.username = username;
         this.name = name;
         this.project = project;
@@ -40,10 +75,9 @@ public class Member {
     @Override
     public String toString() {
         return "Member{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
+                "username='" + username + '\'' +
                 ", name='" + name + '\'' +
-
+                ", project=" + project +
                 '}';
     }
 }
