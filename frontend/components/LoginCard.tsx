@@ -21,7 +21,6 @@ const LoginCard = () => {
                 }
             })
             .then((resp: AxiosResponse) => {
-                console.log(resp.data);
                 setUserName("");
                 setPassword("");
             })
