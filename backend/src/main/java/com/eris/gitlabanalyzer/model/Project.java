@@ -1,4 +1,5 @@
 package com.eris.gitlabanalyzer.model;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -66,7 +67,24 @@ public class Project {
     )
     private List<Commit> commits = new ArrayList<>();
 
-    public Project(){}
+    @OneToMany(
+            mappedBy = "project",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<Issue> issues = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "project",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<MergeRequest> mergeRequests = new ArrayList<>();
+
+    public Project() {
+    }
 
     public Project(Long id, String name, String nameWithNamespace, String webUrl, Server server) {
         this.id = id;
@@ -111,6 +129,34 @@ public class Project {
         if (this.members.contains(member)) {
             this.members.remove(member);
             member.setProject(null);
+        }
+    }
+
+    public void addCommit(Commit commit) {
+        if (!this.commits.contains(commit)) {
+            this.commits.add(commit);
+            commit.setProject(this);
+        }
+    }
+
+    public void removeCommit(Commit commit) {
+        if (this.commits.contains(commit)) {
+            this.commits.remove(commit);
+            commit.setProject(null);
+        }
+    }
+
+    public void addMergeRequest(MergeRequest mergeRequest) {
+        if (!this.mergeRequests.contains(mergeRequest)) {
+            this.mergeRequests.add(mergeRequest);
+            mergeRequest.setProject(this);
+        }
+    }
+
+    public void removeMergeRequest(MergeRequest mergeRequest) {
+        if (this.mergeRequests.contains(mergeRequest)) {
+            this.mergeRequests.remove(mergeRequest);
+            mergeRequest.setProject(null);
         }
     }
 
