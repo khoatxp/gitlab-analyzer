@@ -17,28 +17,24 @@ public class MergeRequest {
     @Column(
             name = "author_name",
             nullable = false
-
     )
     private String authorName;
 
     @Column(
             name = "title",
             nullable = false
-
     )
     private String title;
 
     @Column(
             name = "description",
             nullable = false
-
     )
     private String description;
 
     @Column(
             name = "created_at",
             nullable = false
-
     )
     private String created_at;
 
@@ -70,6 +66,14 @@ public class MergeRequest {
             )
     )
     private Member member;
+
+    @OneToMany(
+            mappedBy = "mergeRequest",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<MergeRequstCommit> mergeRequstCommits = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -112,6 +116,20 @@ public class MergeRequest {
     }
 
     public MergeRequest() {
+    }
+
+    public void addMergeRequestCommit(MergeRequstCommit mergeRequestCommit) {
+        if (!this.mergeRequstCommits.contains(mergeRequestCommit)) {
+            this.mergeRequstCommits.add(mergeRequestCommit);
+            mergeRequestCommit.setMergeRequest(this);
+        }
+    }
+
+    public void removeMergeRequestCommit(MergeRequstCommit mergeRequestCommit) {
+        if (this.mergeRequstCommits.contains(mergeRequestCommit)) {
+            this.mergeRequstCommits.remove(mergeRequestCommit);
+            mergeRequestCommit.setMergeRequest(null);
+        }
     }
 
     public MergeRequest(Long id, String authorName, String title, String description, String created_at, String webUrl, Project project, Member member) {
