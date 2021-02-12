@@ -1,9 +1,7 @@
-// files should be written in PascalCase
 import React from "react";
-
 import Image from "next/image";
+import Gif from "../../public/importing.gif"
 
-// material ui
 import { Box, Button, TextField, Typography } from "@material-ui/core";
 import { makeStyles,  createStyles, withStyles, Theme } from "@material-ui/core/styles";
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -12,13 +10,13 @@ const BorderLinearProgress = withStyles((theme: Theme) =>
   createStyles({
     root: {
       height: 50,
-      borderRadius: 20,
+      borderRadius: 50,
     },
     colorPrimary: {
       backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? 200 : 700],
     },
     bar: {
-      borderRadius: 10,
+      borderRadius: 25,
       backgroundColor: '#FCA326',
     },
   }),
@@ -45,9 +43,9 @@ const index = () => {
               if (oldProgress === 100) {
                 return 100;
               }
-              return Math.min(oldProgress + 15, 100);
+              return Math.min(oldProgress + 2, 100);
             });
-        }, 500);
+        }, 400);
     return () => {
         clearInterval(timer);
         };
@@ -91,14 +89,14 @@ const index = () => {
         </Typography>
 
         <div className={classes.root}>
-            Progress
             <BorderLinearProgress variant="determinate" value={progress} />
-                <div align='left'>
-                    Importing Commits...
-                    <br />
-                    Importing Merge Requests...
-                    <br />
-                    Importing Comments...
+                <div className={`loading__container ${progress === 100 && "loading__disappeared"}`}>
+                    <p className= "loading_dots">Importing commits</p>
+                    <p className= "loading_dots">Importing merge requests</p>
+                    <p className= "loading_dots">Importing comments</p>
+                </div>
+                <div className={`loading__container--done ${progress === 100 && "loading__appeared"}`}>
+                    <p className= "loading__done">Importing done!</p>
                 </div>
         </div>
 
@@ -111,4 +109,3 @@ const index = () => {
 };
 
 export default index;
-
