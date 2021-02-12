@@ -1,6 +1,5 @@
 import React from "react";
 import Image from "next/image";
-import Gif from "../../public/importing.gif"
 
 import { Box, Button, TextField, Typography } from "@material-ui/core";
 import { makeStyles,  createStyles, withStyles, Theme } from "@material-ui/core/styles";
@@ -89,16 +88,14 @@ const index = () => {
         </Typography>
 
         <div className={classes.root}>
-            <BorderLinearProgress variant="determinate" value={progress} />
-                <div className={`loading__container ${progress === 100 && "loading__disappeared"}`}>
-                    <p className= "loading_dots">Importing commits</p>
-                    <p className= "loading_dots">Importing merge requests</p>
-                    <p className= "loading_dots">Importing comments</p>
-                </div>
-                <div className={`loading__container--done ${progress === 100 && "loading__appeared"}`}>
-                    <p className= "loading__done">Importing done!</p>
-                </div>
-        </div>
+           <BorderLinearProgress variant="determinate" value={progress} />
+               <div className="loading__container">
+                   <p className={`loading__done ${progress === 100 && "loading__appeared"}`}>Importing done!</p>
+                   <p className={`loading_dots ${progress === 100 && "loading__disappeared"}`}>Importing commits</p>
+                   <p className={`loading_dots ${progress === 100 && "loading__disappeared"}`}>Importing merge requests</p>
+                   <p className={`loading_dots ${progress === 100 && "loading__disappeared"}`}>Importing comments</p>
+               </div>
+       </div>
 
         <Button variant="contained" color="primary" disableElevation>
           Cancel
