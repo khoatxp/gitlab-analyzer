@@ -20,6 +20,13 @@ body {
      display: none;
 }
 
+.loading__done {
+    margin: 0px;
+    font-size: 10px;
+    color: black;
+    display: none;
+}
+
 .loading__appeared {
     display: unset;
 }

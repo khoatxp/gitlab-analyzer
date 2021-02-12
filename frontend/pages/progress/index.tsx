@@ -43,7 +43,7 @@ const index = () => {
               if (oldProgress === 100) {
                 return 100;
               }
-              return Math.min(oldProgress + 2, 100);
+              return Math.min(oldProgress + 5, 100);
             });
         }, 400);
     return () => {
