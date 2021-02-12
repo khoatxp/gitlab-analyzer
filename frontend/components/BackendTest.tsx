@@ -12,10 +12,10 @@ const BackendTest = () => {
             .get(`${process.env.NEXT_PUBLIC_API_URL}/projects`)
             .then((resp: AxiosResponse) => {
                 setRepos(resp.data);
-                enqueueSnackbar(`Successfully connected to backend`, {variant: 'success',});
+                enqueueSnackbar(`Successfully connected`, {variant: 'success',});
             })
             .catch((err: AxiosError) => {
-                enqueueSnackbar(`Failed to connect to backend: ${err.message}`, {variant: 'error',});
+                enqueueSnackbar(`Failed to connect: ${err.message}`, {variant: 'error',});
             });
     }, []);
 
