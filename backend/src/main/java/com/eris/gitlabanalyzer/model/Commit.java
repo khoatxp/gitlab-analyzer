@@ -33,7 +33,7 @@ public class Commit {
     private String committerName;
 
     @Column(
-            name = "comomitted_date",
+            name = "committed_date",
             nullable = false
 
     )
@@ -57,10 +57,12 @@ public class Commit {
     @JoinColumn(
             name = "project_id",
             nullable = false,
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(
-                    name = "commit_project_fk"
-            )
+            referencedColumnName = "id"
+    )
+    @JoinColumn(
+            name = "server_url",
+            nullable = false,
+            referencedColumnName = "server_url"
     )
     private Project project;
 

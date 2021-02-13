@@ -3,7 +3,6 @@ package com.eris.gitlabanalyzer.service;
 import com.eris.gitlabanalyzer.model.GitLabMember;
 import com.eris.gitlabanalyzer.model.GitLabProject;
 import com.eris.gitlabanalyzer.model.Project;
-import com.eris.gitlabanalyzer.model.Server;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,9 +30,9 @@ public class ProjectService {
         Project project = new Project(
                 projectId,
                 gitLabProject.getName(),
+                serverUrl,
                 gitLabProject.getNameWithNamespace(),
-                gitLabProject.getWebUrl(),
-                new Server(serverUrl)
+                gitLabProject.getWebUrl()
         );
 
         return projectRepository.save(project);

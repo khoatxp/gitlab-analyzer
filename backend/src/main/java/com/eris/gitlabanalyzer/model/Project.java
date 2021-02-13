@@ -11,13 +11,16 @@ import java.util.List;
 import java.util.Set;
 
 @Entity(name = "Project")
+@IdClass(ProjectId.class)
 @Table(name = "project")
 public class Project {
     @Id
-    @Column(
-            name = "id"
-    )
+    @Column(name="id")
     private Long id;
+
+    @Id
+    @Column(name="server_url")
+    private String serverUrl;
 
     @Column(
             name = "name",
@@ -40,16 +43,6 @@ public class Project {
     )
     private String webUrl;
 
-    @ManyToOne
-    @JoinColumn(
-            name = "server_url",
-            nullable = false,
-            referencedColumnName = "url",
-            foreignKey = @ForeignKey(
-                    name = "student_book_fk"
-            )
-    )
-    private Server server;
 
     @OneToMany(
             mappedBy = "project",
@@ -86,12 +79,12 @@ public class Project {
     public Project() {
     }
 
-    public Project(Long id, String name, String nameWithNamespace, String webUrl, Server server) {
+    public Project(Long id, String name, String serverUrl,String nameWithNamespace, String webUrl) {
         this.id = id;
+        this.serverUrl = serverUrl;
         this.name = name;
         this.nameWithNamespace = nameWithNamespace;
         this.webUrl = webUrl;
-        this.server = server;
     }
 
     public Long getId() {
@@ -110,13 +103,6 @@ public class Project {
         return webUrl;
     }
 
-    public Server getServer() {
-        return server;
-    }
-
-    public void setServer(Server server) {
-        this.server = server;
-    }
 
     public void addMember(Member member) {
         if (!this.members.contains(member)) {

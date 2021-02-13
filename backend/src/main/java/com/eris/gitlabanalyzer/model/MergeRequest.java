@@ -49,10 +49,12 @@ public class MergeRequest {
     @JoinColumn(
             name = "project_id",
             nullable = false,
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(
-                    name = "mr_project_id_fk"
-            )
+            referencedColumnName = "id"
+    )
+    @JoinColumn(
+            name = "server_url",
+            nullable = false,
+            referencedColumnName = "server_url"
     )
     private Project project;
 

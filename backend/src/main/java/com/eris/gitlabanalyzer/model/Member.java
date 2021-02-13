@@ -33,10 +33,12 @@ public class Member {
     @JoinColumn(
             name = "project_id",
             nullable = false,
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(
-                    name = "member_project_id_fk"
-            )
+            referencedColumnName = "id"
+    )
+    @JoinColumn(
+            name = "server_url",
+            nullable = false,
+            referencedColumnName = "server_url"
     )
     private Project project;
 

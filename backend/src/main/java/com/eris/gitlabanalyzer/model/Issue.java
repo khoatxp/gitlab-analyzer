@@ -43,10 +43,12 @@ public class Issue {
     @JoinColumn(
             name = "project_id",
             nullable = false,
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(
-                    name = "issue_project_fk"
-            )
+            referencedColumnName = "id"
+    )
+    @JoinColumn(
+            name = "server_url",
+            nullable = false,
+            referencedColumnName = "server_url"
     )
     private Project project;
 
