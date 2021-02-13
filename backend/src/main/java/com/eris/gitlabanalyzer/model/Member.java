@@ -1,18 +1,12 @@
 package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity(name = "Member")
 @Table(name = "member")
 public class Member {
-    private Long id;
 
     @Id
     @Column(
@@ -30,16 +24,19 @@ public class Member {
     private String name;
 
     @ManyToOne
-    @JoinColumn(
-            name = "project_id",
-            nullable = false,
-            referencedColumnName = "id"
-    )
-    @JoinColumn(
-            name = "server_url",
-            nullable = false,
-            referencedColumnName = "server_url"
-    )
+    @JoinColumns(
+            value = {
+                    @JoinColumn(
+                            name = "project_id",
+                            nullable = false,
+                            referencedColumnName = "project_id"
+                    ),
+                    @JoinColumn(
+                            name = "server_url",
+                            nullable = false,
+                            referencedColumnName = "server_url"
+                    )
+            })
     private Project project;
 
     @OneToMany(
@@ -92,8 +89,8 @@ public class Member {
 
     public Member(){}
 
-    public Member(Long id, String username, String name, Project project) {
-        this.id = id;
+    public Member(String username, String name, Project project) {
+
         this.username = username;
         this.name = name;
         this.project = project;

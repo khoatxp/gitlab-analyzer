@@ -3,13 +3,16 @@ package com.eris.gitlabanalyzer.model;
 import javax.persistence.*;
 
 @Entity(name = "Commit")
+@IdClass(UniqueId.class)
 @Table(name = "commit")
 public class Commit {
     @Id
-    @Column(
-            name = "id"
-    )
-    private String id;
+    @Column(name="id")
+    private Long id;
+
+    @Id
+    @Column(name="server_url")
+    private String serverUrl;
 
     @Column(
             name = "title",
@@ -54,30 +57,33 @@ public class Commit {
     private String webUrl;
 
     @ManyToOne
-    @JoinColumn(
-            name = "project_id",
-            nullable = false,
-            referencedColumnName = "id"
-    )
-    @JoinColumn(
-            name = "server_url",
-            nullable = false,
-            referencedColumnName = "server_url"
-    )
+    @JoinColumns(
+            value = {
+                    @JoinColumn(
+                            name = "project_id",
+                            nullable = false,
+                            referencedColumnName = "project_id",
+                            insertable = false,
+                            updatable = false
+                    ),
+                    @JoinColumn(
+                            name = "server_url",
+                            nullable = false,
+                            referencedColumnName = "server_url",
+                            insertable = false,
+                            updatable = false
+                    )
+            })
     private Project project;
 
     @ManyToOne
     @JoinColumn(
             name = "username",
             nullable = false,
-            referencedColumnName = "username",
-            foreignKey = @ForeignKey(
-                    name = "commit_member_fk"
-            )
-    )
+            referencedColumnName = "username")
     private Member member;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
@@ -124,7 +130,7 @@ public class Commit {
     public Commit() {
     }
 
-    public Commit(String id, String title, String authorName, String committerName, String committedDate, String createdAt, String webUrl, Project project, Member member) {
+    public Commit(Long id, String title, String authorName, String committerName, String committedDate, String createdAt, String webUrl, Project project, Member member) {
         this.id = id;
         this.title = title;
         this.authorName = authorName;

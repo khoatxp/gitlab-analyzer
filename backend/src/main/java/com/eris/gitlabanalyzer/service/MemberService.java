@@ -23,7 +23,6 @@ public class MemberService {
         if (gitLabMemberList != null && !gitLabMemberList.isEmpty()) {
             gitLabMemberList.forEach(gitLabMember -> {
                 Member member = new Member(
-                        gitLabMember.getId(),
                         gitLabMember.getUsername(),
                         gitLabMember.getName(),
                         project

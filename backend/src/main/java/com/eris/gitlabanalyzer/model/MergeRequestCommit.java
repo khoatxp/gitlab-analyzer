@@ -3,13 +3,16 @@ package com.eris.gitlabanalyzer.model;
 import javax.persistence.*;
 
 @Entity(name = "MergeRequestCommit")
+@IdClass(UniqueId.class)
 @Table(name = "merge_request_commit")
 public class MergeRequestCommit {
     @Id
-    @Column(
-            name = "id"
-    )
-    private String id;
+    @Column(name="id")
+    private Long id;
+
+    @Id
+    @Column(name="server_url", insertable = false, updatable = false)
+    private String serverUrl;
 
     @Column(
             name = "title",
@@ -52,17 +55,22 @@ public class MergeRequestCommit {
     private String webUrl;
 
     @ManyToOne
-    @JoinColumn(
-            name = "project_id",
-            nullable = false,
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(
-                    name = "mr_commit_mr_id_fk"
-            )
-    )
+    @JoinColumns(
+            value = {
+                    @JoinColumn(
+                            name = "merge_request_id",
+                            nullable = false,
+                            referencedColumnName = "id"
+                    ),
+                    @JoinColumn(
+                            name = "server_url",
+                            nullable = false,
+                            referencedColumnName = "server_url"
+                    )
+            })
     private MergeRequest mergeRequest;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
@@ -100,7 +108,7 @@ public class MergeRequestCommit {
 
     @Override
     public String toString() {
-        return "MergeRequstCommit{" +
+        return "MergeRequestCommit{" +
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
                 ", authorName='" + authorName + '\'' +

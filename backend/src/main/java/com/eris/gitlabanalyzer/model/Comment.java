@@ -3,14 +3,17 @@ package com.eris.gitlabanalyzer.model;
 import javax.persistence.*;
 
 @Entity(name = "Comment")
+@IdClass(UniqueId.class)
 @Table(name = "comment")
 public class Comment {
 
     @Id
-    @Column(
-            name = "id"
-    )
-    private String id;
+    @Column(name="id")
+    private Long id;
+
+    @Id
+    @Column(name="server_url")
+    private String serverUrl;
 
     @Column(
             name = "author_name",
@@ -23,11 +26,7 @@ public class Comment {
     @JoinColumn(
             name = "username",
             nullable = false,
-            referencedColumnName = "username",
-            foreignKey = @ForeignKey(
-                    name = "comment_member_fk"
-            )
-    )
+            referencedColumnName = "username")
     private Member member;
 
     @Column(
@@ -51,7 +50,7 @@ public class Comment {
     )
     private String createdAt;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
@@ -82,7 +81,7 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(String id, String authorName, Member member, String body, String webUrl, String createdAt) {
+    public Comment(Long id, String authorName, Member member, String body, String webUrl, String createdAt) {
         this.id = id;
         this.authorName = authorName;
         this.member = member;

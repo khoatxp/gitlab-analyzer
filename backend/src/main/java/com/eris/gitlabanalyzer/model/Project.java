@@ -1,31 +1,25 @@
 package com.eris.gitlabanalyzer.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.persistence.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 @Entity(name = "Project")
-@IdClass(ProjectId.class)
+@IdClass(UniqueId.class)
 @Table(name = "project")
 public class Project {
     @Id
-    @Column(name="id")
+    @Column(name="project_id")
     private Long id;
 
     @Id
-    @Column(name="server_url")
+    @Column(name="server_url", insertable = false, updatable = false)
     private String serverUrl;
 
     @Column(
             name = "name",
             nullable = false
-
     )
     private String name;
 

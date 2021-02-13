@@ -33,7 +33,7 @@
 ## Member controller
 ### Get members by project ID
 #### Request
-`/GET /api/v1/members?projectId=${projectId}`
+`/GET /api/v1/members?uniqueId=${uniqueId}`
 #### Response
         [
             {

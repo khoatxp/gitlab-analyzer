@@ -3,13 +3,16 @@ package com.eris.gitlabanalyzer.model;
 import javax.persistence. *;
 
 @Entity(name = "Issue")
+@IdClass(UniqueId.class)
 @Table(name = "issue")
 public class Issue {
     @Id
-    @Column(
-            name = "id"
-    )
+    @Column(name="id")
     private Long id;
+
+    @Id
+    @Column(name="server_url")
+    private String serverUrl;
 
     @Column(
             name = "title",
@@ -40,27 +43,30 @@ public class Issue {
     private String webUrl;
 
     @ManyToOne
-    @JoinColumn(
-            name = "project_id",
-            nullable = false,
-            referencedColumnName = "id"
-    )
-    @JoinColumn(
-            name = "server_url",
-            nullable = false,
-            referencedColumnName = "server_url"
-    )
+    @JoinColumns(
+            value = {
+                    @JoinColumn(
+                            name = "project_id",
+                            nullable = false,
+                            referencedColumnName = "project_id",
+                            insertable = false,
+                            updatable = false
+                    ),
+                    @JoinColumn(
+                            name = "server_url",
+                            nullable = false,
+                            referencedColumnName = "server_url",
+                            insertable = false,
+                            updatable = false
+                    )
+            })
     private Project project;
 
     @ManyToOne
     @JoinColumn(
             name = "username",
             nullable = false,
-            referencedColumnName = "username",
-            foreignKey = @ForeignKey(
-                    name = "issue_member_fk"
-            )
-    )
+            referencedColumnName = "username")
     private Member member;
 
     public Issue() {
