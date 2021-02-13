@@ -58,9 +58,9 @@ public class MergeRequest {
 
     @ManyToOne
     @JoinColumn(
-            name = "user_name",
+            name = "username",
             nullable = false,
-            referencedColumnName = "user_name",
+            referencedColumnName = "username",
             foreignKey = @ForeignKey(
                     name = "mr_member_user_name_fk"
             )
@@ -73,7 +73,7 @@ public class MergeRequest {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
-    private List<MergeRequstCommit> mergeRequstCommits = new ArrayList<>();
+    private List<MergeRequestCommit> mergeRequestCommits = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -118,16 +118,16 @@ public class MergeRequest {
     public MergeRequest() {
     }
 
-    public void addMergeRequestCommit(MergeRequstCommit mergeRequestCommit) {
-        if (!this.mergeRequstCommits.contains(mergeRequestCommit)) {
-            this.mergeRequstCommits.add(mergeRequestCommit);
+    public void addMergeRequestCommit(MergeRequestCommit mergeRequestCommit) {
+        if (!this.mergeRequestCommits.contains(mergeRequestCommit)) {
+            this.mergeRequestCommits.add(mergeRequestCommit);
             mergeRequestCommit.setMergeRequest(this);
         }
     }
 
-    public void removeMergeRequestCommit(MergeRequstCommit mergeRequestCommit) {
-        if (this.mergeRequstCommits.contains(mergeRequestCommit)) {
-            this.mergeRequstCommits.remove(mergeRequestCommit);
+    public void removeMergeRequestCommit(MergeRequestCommit mergeRequestCommit) {
+        if (this.mergeRequestCommits.contains(mergeRequestCommit)) {
+            this.mergeRequestCommits.remove(mergeRequestCommit);
             mergeRequestCommit.setMergeRequest(null);
         }
     }

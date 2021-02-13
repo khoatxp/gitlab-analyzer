@@ -1,6 +1,5 @@
 package com.eris.gitlabanalyzer.model;
 
-
 import javax.persistence.*;
 
 @Entity(name = "Commit")
@@ -67,9 +66,9 @@ public class Commit {
 
     @ManyToOne
     @JoinColumn(
-            name = "user_name",
+            name = "username",
             nullable = false,
-            referencedColumnName = "user_name",
+            referencedColumnName = "username",
             foreignKey = @ForeignKey(
                     name = "commit_member_fk"
             )

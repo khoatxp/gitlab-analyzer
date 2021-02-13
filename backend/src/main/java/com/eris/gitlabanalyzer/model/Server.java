@@ -31,6 +31,9 @@ public class Server {
     public Server() {
     }
 
+    public Server(String url) {
+        this.url = url;
+    }
     public Server(String url, String accessToken) {
         this.url = url;
         this.accessToken = accessToken;

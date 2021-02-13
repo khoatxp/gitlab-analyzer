@@ -21,9 +21,9 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(
-            name = "user_name",
+            name = "username",
             nullable = false,
-            referencedColumnName = "user_name",
+            referencedColumnName = "username",
             foreignKey = @ForeignKey(
                     name = "comment_member_fk"
             )

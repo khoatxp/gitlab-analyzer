@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity(name = "MergeRequestCommit")
 @Table(name = "merge_request_commit")
-public class MergeRequstCommit {
+public class MergeRequestCommit {
     @Id
     @Column(
             name = "id"
@@ -31,7 +31,7 @@ public class MergeRequstCommit {
     private String committerName;
 
     @Column(
-            name = "comomitted_date",
+            name = "committed_date",
             nullable = false
 
     )

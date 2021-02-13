@@ -52,9 +52,9 @@ public class Issue {
 
     @ManyToOne
     @JoinColumn(
-            name = "user_name",
+            name = "username",
             nullable = false,
-            referencedColumnName = "user_name",
+            referencedColumnName = "username",
             foreignKey = @ForeignKey(
                     name = "issue_member_fk"
             )

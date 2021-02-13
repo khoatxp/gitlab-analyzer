@@ -12,10 +12,11 @@ import java.util.Objects;
 @Entity(name = "Member")
 @Table(name = "member")
 public class Member {
+    private Long id;
 
     @Id
     @Column(
-            name = "user_name",
+            name = "username",
             nullable = false
 
     )
@@ -89,7 +90,8 @@ public class Member {
 
     public Member(){}
 
-    public Member(String username, String name, Project project) {
+    public Member(Long id, String username, String name, Project project) {
+        this.id = id;
         this.username = username;
         this.name = name;
         this.project = project;
