@@ -1,23 +1,19 @@
-import {createShallow} from "@material-ui/core/test-utils";
 import React from 'react';
 import {render} from '@testing-library/react';
 import Index from '../../pages/project/[serverId]';
-import {RouterContext} from "next/dist/next-server/lib/router-context";
 
 describe("Project Folder", () =>{
     const useRouter = jest.spyOn(require('next/router'), 'useRouter');
     const mockUseEffect = jest.spyOn(React, 'useEffect')
-    //@ts-ignore
-    let router;
+    const mockAxios = jest.spyOn(require('axios'), 'get');
 
-    beforeAll(() => {
-      router =  useRouter.mockImplementation(() => ({
-            query: { serverId: 'TestId' },
-        }))
-    })
 
-    it("Render serverId", () => {
+
+    it("Snapshot serverId", () => {
         // Wrap Index with mock router to run snapshot tests
+        useRouter.mockImplementationOnce(() => ({
+            query: { serverId: 'TestId' },
+        }));
         // @ts-ignore
         const { container } = render(
             <Index />
@@ -26,9 +22,27 @@ describe("Project Folder", () =>{
 
     })
     it("Test useEffect", ()=>{
-        //@ts-ignore
+        useRouter.mockImplementationOnce(() => ({
+            query: { serverId: 'TestId' },
+        }));
         render(<Index />);
         expect(mockUseEffect).toBeCalled();
+
+    })
+
+    it('Test axios',()=>{
+        useRouter.mockImplementationOnce(() => ({
+            query: { serverId: 'TestId' },
+            isReady: true,
+        }));
+        render(<Index />);
+        expect(mockAxios).toHaveBeenCalledTimes(1);
+        useRouter.mockImplementationOnce(() => ({
+            query: { serverId: 'TestId' },
+            isReady: false,
+        }));
+        render(<Index />);
+        expect(mockAxios).toHaveBeenCalledTimes(1);
     })
 
 })
