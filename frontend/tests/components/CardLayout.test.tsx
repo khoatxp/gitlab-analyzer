@@ -16,7 +16,7 @@ describe("Cardlayout", () =>{
     it("Render CardLayout", () => {
         // @ts-ignore
 
-        const wrapper = shallow(<CardLayout children={} />)
+        const wrapper = shallow(<CardLayout children />)
         expect(wrapper).toMatchSnapshot();
 
     })

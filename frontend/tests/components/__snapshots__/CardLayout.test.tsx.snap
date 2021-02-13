@@ -27,6 +27,7 @@ exports[`Cardlayout Render CardLayout 1`] = `
         Analyzer
       </WithStyles(ForwardRef(Typography))>
     </Styled(MuiBox)>
+    <Component />
   </Styled(MuiBox)>
 </Styled(MuiBox)>
 `;
