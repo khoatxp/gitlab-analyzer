@@ -18,3 +18,17 @@ docker-compose up
 - Travel to [http://localhost:3000](http://localhost:3000) within your browser to view the front end.
 - For the backend, travel to intellij and hit the green ▶️ button at the top right to start the Spring Boot Application. (When you first open the application in IntelliJ, you should get a notification saying Maven build scripts have been found. Make sure to import them.)
 - Travel to [http://localhost:8080](http://localhost:8080) within your browser to view the back end.
+
+## TESTING
+
+All test need to be placed into test folders for frontend test file format will
+follow file naming *.test.tsx. Frontend Test data can be found in the `frontend/coverage`. 
+Back End test data can be found in `backend/target/surefire-reports`.
+
+To run both frontend and backend tests, use `tests.bat` within the root directory by typing 
+`tests`. 
+
+To run just frontend tests ensure the current directory is `./frontend` then run the command `npm test`
+
+To run just backend tests  change directory to `./backend` and run `mvnw clean test`
+
