@@ -1,25 +1,51 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="210px" height="194px" viewBox="0 0 210 194" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-    <!-- Generator: Sketch 3.3.2 (12043) - http://www.bohemiancoding.com/sketch -->
-    <title>Group</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="Fill-1-+-Group-24" sketch:type="MSLayerGroup">
-            <g id="Group-24" sketch:type="MSShapeGroup">
-                <g id="Group">
-                    <path d="M105.0614,193.655 L105.0614,193.655 L143.7014,74.734 L66.4214,74.734 L105.0614,193.655 L105.0614,193.655 Z" id="Fill-4" fill="#E24329"></path>
-                    <path id="Fill-6" fill="#FC6D26"></path>
-                    <path d="M105.0614,193.6548 L66.4214,74.7338 L12.2684,74.7338 L105.0614,193.6548 Z" id="Fill-8" fill="#FC6D26"></path>
-                    <path id="Fill-10" fill="#FC6D26"></path>
-                    <path d="M12.2685,74.7341 L12.2685,74.7341 L0.5265,110.8731 C-0.5445,114.1691 0.6285,117.7801 3.4325,119.8171 L105.0615,193.6551 L12.2685,74.7341 Z" id="Fill-12" fill="#FCA326"></path>
-                    <path id="Fill-14" fill="#FC6D26"></path>
-                    <path d="M12.2685,74.7342 L66.4215,74.7342 L43.1485,3.1092 C41.9515,-0.5768 36.7375,-0.5758 35.5405,3.1092 L12.2685,74.7342 Z" id="Fill-16" fill="#E24329"></path>
-                    <path d="M105.0614,193.6548 L143.7014,74.7338 L197.8544,74.7338 L105.0614,193.6548 Z" id="Fill-18" fill="#FC6D26"></path>
-                    <path d="M197.8544,74.7341 L197.8544,74.7341 L209.5964,110.8731 C210.6674,114.1691 209.4944,117.7801 206.6904,119.8171 L105.0614,193.6551 L197.8544,74.7341 Z" id="Fill-20" fill="#FCA326"></path>
-                    <path d="M197.8544,74.7342 L143.7014,74.7342 L166.9744,3.1092 C168.1714,-0.5768 173.3854,-0.5758 174.5824,3.1092 L197.8544,74.7342 Z" id="Fill-22" fill="#E24329"></path>
-                </g>
-            </g>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 209.85418 193.31003">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #1167b1;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5, .cls-6 {
+        fill-rule: evenodd;
+      }
+
+      .cls-2 {
+        fill: #e24329;
+      }
+
+      .cls-3 {
+        fill: #187bcd;
+      }
+
+      .cls-4 {
+        fill: #fc6d26;
+      }
+
+      .cls-5 {
+        fill: #2a9df4;
+      }
+
+      .cls-6 {
+        fill: #fca326;
+      }
+    </style>
+  </defs>
+  <g id="Page-1">
+    <g id="Fill-1-_-Group-24" >
+      <g id="Group-24">
+        <g id="Group">
+          <path id="Fill-4" class="cls-1" d="M105.0614,193.655h0l38.64-118.921h-77.28l38.64,118.921Z" transform="translate(-0.13436 -0.34507)"/>
+          <path id="Fill-6" class="cls-2" d="M0,0" transform="translate(-0.13436 -0.34507)"/>
+          <path id="Fill-8" class="cls-3" d="M105.0614,193.6548l-38.64-118.921H12.2684Z" transform="translate(-0.13436 -0.34507)"/>
+          <path id="Fill-10" class="cls-4" d="M0,0" transform="translate(-0.13436 -0.34507)"/>
+          <path id="Fill-12" class="cls-5" d="M12.2685,74.7341h0L.5265,110.8731a7.99937,7.99937,0,0,0,2.906,8.944l101.629,73.838Z" transform="translate(-0.13436 -0.34507)"/>
+          <path id="Fill-14" class="cls-6" d="M0,0" transform="translate(-0.13436 -0.34507)"/>
+          <path id="Fill-16" class="cls-1" d="M12.2685,74.7342h54.153L43.1485,3.1092a3.9996,3.9996,0,0,0-7.608,0Z" transform="translate(-0.13436 -0.34507)"/>
+          <path id="Fill-18" class="cls-3" d="M105.0614,193.6548l38.64-118.921h54.153Z" transform="translate(-0.13436 -0.34507)"/>
+          <path id="Fill-20" class="cls-5" d="M197.8544,74.7341h0l11.742,36.139a7.99939,7.99939,0,0,1-2.906,8.944l-101.629,73.838Z" transform="translate(-0.13436 -0.34507)"/>
+          <path id="Fill-22" class="cls-1" d="M197.8544,74.7342h-54.153l23.273-71.625a3.9996,3.9996,0,0,1,7.608,0Z" transform="translate(-0.13436 -0.34507)"/>
         </g>
+      </g>
     </g>
+  </g>
 </svg>
