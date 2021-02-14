@@ -33,6 +33,7 @@ public class Comment {
 
     @Column(
             name = "body",
+            columnDefinition="TEXT",
             nullable = false
 
     )

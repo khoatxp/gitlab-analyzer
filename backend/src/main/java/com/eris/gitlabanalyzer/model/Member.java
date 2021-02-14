@@ -36,9 +36,9 @@ public class Member {
 
     @ManyToOne
     @JoinColumn(
-            name = "server_url",
+            name = "server_id",
             nullable = false,
-            referencedColumnName = "url")
+            referencedColumnName = "server_id")
     private Server server;
 
     @OneToMany(

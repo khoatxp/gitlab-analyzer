@@ -9,6 +9,12 @@ import java.util.List;
 @Table(name = "server")
 public class Server {
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(
+            name = "server_id"
+    )
+    private Long id;
+
     @Column(
             name = "url"
     )
@@ -44,6 +50,10 @@ public class Server {
         this.accessToken = accessToken;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getUrl() {
         return url;
     }
@@ -69,7 +79,8 @@ public class Server {
     @Override
     public String toString() {
         return "Server{" +
-                "url='" + url + '\'' +
+                "id='" + id + '\'' +
+                ", url='" + url + '\'' +
                 ", accessToken='" + accessToken + '\'' +
                 '}';
     }

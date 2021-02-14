@@ -41,9 +41,9 @@ public class Project {
 
     @ManyToOne
     @JoinColumn(
-            name = "server_url",
+            name = "server_id",
             nullable = false,
-            referencedColumnName = "url"
+            referencedColumnName = "server_id"
     )
     private Server server;
 
@@ -80,11 +80,12 @@ public class Project {
     public Project() {
     }
 
-    public Project(Long gitLabProjectId, String name,String nameWithNamespace, String webUrl) {
+    public Project(Long gitLabProjectId, String name,String nameWithNamespace, String webUrl, Server server) {
         this.gitLabProjectId = gitLabProjectId;
         this.name = name;
         this.nameWithNamespace = nameWithNamespace;
         this.webUrl = webUrl;
+        this.server = server;
     }
 
     public List<Member> getMembers() {
