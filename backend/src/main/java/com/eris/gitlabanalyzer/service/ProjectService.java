@@ -1,6 +1,10 @@
 package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.*;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMember;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequestIid;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabProject;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,7 +32,6 @@ public class ProjectService {
         Project project = new Project(
                 projectId,
                 gitLabProject.getName(),
-                serverUrl,
                 gitLabProject.getNameWithNamespace(),
                 gitLabProject.getWebUrl()
         );

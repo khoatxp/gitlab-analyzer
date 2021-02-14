@@ -1,4 +1,4 @@
-package com.eris.gitlabanalyzer.model;
+package com.eris.gitlabanalyzer.model.gitlabresponse;
 
 public class GitLabMergeRequestIid {
     private Long iid;

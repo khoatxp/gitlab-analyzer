@@ -3,17 +3,19 @@ package com.eris.gitlabanalyzer.model;
 import javax.persistence.*;
 
 @Entity(name = "Comment")
-@IdClass(UniqueId.class)
 @Table(name = "comment")
 public class Comment {
 
     @Id
-    @Column(name="id")
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(name="comment_id")
     private Long id;
 
-    @Id
-    @Column(name="server_url")
-    private String serverUrl;
+    @Column(
+            name = "gitlab_comment_id",
+            nullable = false
+    )
+    private Long gitLabCommentId;
 
     @Column(
             name = "author_name",
@@ -24,9 +26,9 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(
-            name = "username",
+            name = "member_id",
             nullable = false,
-            referencedColumnName = "username")
+            referencedColumnName = "member_id")
     private Member member;
 
     @Column(

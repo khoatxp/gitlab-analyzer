@@ -9,6 +9,10 @@ import java.util.List;
 public class Member {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(name="member_id")
+    private Long id;
+
     @Column(
             name = "username",
             nullable = false
@@ -23,21 +27,19 @@ public class Member {
     )
     private String name;
 
+    @ManyToMany
+    @JoinTable(
+            name = "participate_in",
+            joinColumns = @JoinColumn(name = "member_id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id"))
+    private List<Project> projects = new ArrayList<>();
+
     @ManyToOne
-    @JoinColumns(
-            value = {
-                    @JoinColumn(
-                            name = "project_id",
-                            nullable = false,
-                            referencedColumnName = "project_id"
-                    ),
-                    @JoinColumn(
-                            name = "server_url",
-                            nullable = false,
-                            referencedColumnName = "server_url"
-                    )
-            })
-    private Project project;
+    @JoinColumn(
+            name = "server_url",
+            nullable = false,
+            referencedColumnName = "url")
+    private Server server;
 
     @OneToMany(
             mappedBy = "member",
@@ -79,23 +81,24 @@ public class Member {
         return name;
     }
 
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
+    public List<Project> getProjects() {
+        return projects;
     }
 
     public Member(){}
 
-    public Member(String username, String name, Project project) {
+    public Member(String username, String name) {
 
         this.username = username;
         this.name = name;
-        this.project = project;
-    }
 
+    }
+    public void addProject(Project project) {
+        if (!this.projects.contains(project)) {
+            this.projects.add(project);
+            project.getMembers().add(this);
+        }
+    }
     public void addCommit(Commit commit) {
         if (!this.commits.contains(commit)) {
             this.commits.add(commit);
@@ -143,7 +146,6 @@ public class Member {
         return "Member{" +
                 "username='" + username + '\'' +
                 ", name='" + name + '\'' +
-                ", project=" + project +
                 '}';
     }
 }

@@ -5,17 +5,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "MergeRequest")
-@IdClass(UniqueId.class)
 @Table(name = "merge_request")
 public class MergeRequest {
 
     @Id
-    @Column(name="id")
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(name="merge_request_id")
     private Long id;
 
-    @Id
-    @Column(name="server_url")
-    private String serverUrl;
+    @Column(
+            name = "gitlab_merge_request_iid",
+            nullable = false
+    )
+    private Long gitLabMergeRequestIid;
 
     @Column(
             name = "author_name",
@@ -49,30 +51,17 @@ public class MergeRequest {
     private String webUrl;
 
     @ManyToOne
-    @JoinColumns(
-            value = {
-                @JoinColumn(
-                        name = "project_id",
-                        nullable = false,
-                        referencedColumnName = "project_id",
-                        insertable = false,
-                        updatable = false
-                ),
-                @JoinColumn(
-                        name = "server_url",
-                        nullable = false,
-                        referencedColumnName = "server_url",
-                        insertable = false,
-                        updatable = false
-                )
-            })
+    @JoinColumn(
+            name = "project_id",
+            nullable = false,
+            referencedColumnName = "project_id")
     private Project project;
 
     @ManyToOne
     @JoinColumn(
-            name = "username",
+            name = "member_id",
             nullable = false,
-            referencedColumnName = "username")
+            referencedColumnName = "member_id")
     private Member member;
 
     @OneToMany(

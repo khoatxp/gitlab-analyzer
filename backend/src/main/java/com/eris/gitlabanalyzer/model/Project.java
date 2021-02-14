@@ -6,16 +6,18 @@ import java.util.List;
 
 
 @Entity(name = "Project")
-@IdClass(UniqueId.class)
 @Table(name = "project")
 public class Project {
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name="project_id")
     private Long id;
 
-    @Id
-    @Column(name="server_url", insertable = false, updatable = false)
-    private String serverUrl;
+    @Column(
+            name = "gitlab_project_id",
+            nullable = false
+    )
+    private Long gitLabProjectId;
 
     @Column(
             name = "name",
@@ -37,14 +39,19 @@ public class Project {
     )
     private String webUrl;
 
-
-    @OneToMany(
-            mappedBy = "project",
-            orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            fetch = FetchType.LAZY
+    @ManyToOne
+    @JoinColumn(
+            name = "server_url",
+            nullable = false,
+            referencedColumnName = "url"
     )
+    private Server server;
+
+    @ManyToMany(mappedBy = "projects",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY)
     private List<Member> members = new ArrayList<>();
+
 
     @OneToMany(
             mappedBy = "project",
@@ -73,12 +80,15 @@ public class Project {
     public Project() {
     }
 
-    public Project(Long id, String name, String serverUrl,String nameWithNamespace, String webUrl) {
-        this.id = id;
-        this.serverUrl = serverUrl;
+    public Project(Long gitLabProjectId, String name,String nameWithNamespace, String webUrl) {
+        this.gitLabProjectId = gitLabProjectId;
         this.name = name;
         this.nameWithNamespace = nameWithNamespace;
         this.webUrl = webUrl;
+    }
+
+    public List<Member> getMembers() {
+        return members;
     }
 
     public Long getId() {
@@ -87,6 +97,10 @@ public class Project {
 
     public String getName() {
         return name;
+    }
+
+    public void setServer(Server server) {
+        this.server = server;
     }
 
     public String getNameWithNamespace() {
@@ -101,14 +115,14 @@ public class Project {
     public void addMember(Member member) {
         if (!this.members.contains(member)) {
             this.members.add(member);
-            member.setProject(this);
+            member.getProjects().add(this);
         }
     }
 
     public void removeMember(Member member) {
         if (this.members.contains(member)) {
             this.members.remove(member);
-            member.setProject(null);
+            member.getProjects().remove(this);
         }
     }
 

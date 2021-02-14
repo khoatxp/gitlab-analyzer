@@ -24,8 +24,7 @@ public class MemberService {
             gitLabMemberList.forEach(gitLabMember -> {
                 Member member = new Member(
                         gitLabMember.getUsername(),
-                        gitLabMember.getName(),
-                        project
+                        gitLabMember.getName()
                 );
                 memberRepository.save(member);
             });

@@ -1,9 +1,9 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.model.GitLabMember;
-import com.eris.gitlabanalyzer.model.GitLabMergeRequest;
-import com.eris.gitlabanalyzer.model.GitLabMergeRequestIid;
-import com.eris.gitlabanalyzer.model.GitLabProject;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMember;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequestIid;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabProject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;

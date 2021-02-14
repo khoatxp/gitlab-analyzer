@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long>{
-    @Query("select m from Member m where m.project.id = ?1")
+    @Query("select m from Member m inner join m.projects project where project.id = ?1")
     List<Member> findByProjectId(Long projectId);
 }

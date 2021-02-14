@@ -3,16 +3,18 @@ package com.eris.gitlabanalyzer.model;
 import javax.persistence.*;
 
 @Entity(name = "Commit")
-@IdClass(UniqueId.class)
 @Table(name = "commit")
 public class Commit {
     @Id
-    @Column(name="id")
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(name="commit_id")
     private Long id;
 
-    @Id
-    @Column(name="server_url")
-    private String serverUrl;
+    @Column(
+            name = "gitlab_commit_id",
+            nullable = false
+    )
+    private Long gitLabCommitId;
 
     @Column(
             name = "title",
@@ -57,30 +59,17 @@ public class Commit {
     private String webUrl;
 
     @ManyToOne
-    @JoinColumns(
-            value = {
-                    @JoinColumn(
-                            name = "project_id",
-                            nullable = false,
-                            referencedColumnName = "project_id",
-                            insertable = false,
-                            updatable = false
-                    ),
-                    @JoinColumn(
-                            name = "server_url",
-                            nullable = false,
-                            referencedColumnName = "server_url",
-                            insertable = false,
-                            updatable = false
-                    )
-            })
+    @JoinColumn(
+            name = "project_id",
+            nullable = false,
+            referencedColumnName = "project_id")
     private Project project;
 
     @ManyToOne
     @JoinColumn(
-            name = "username",
+            name = "member_id",
             nullable = false,
-            referencedColumnName = "username")
+            referencedColumnName = "member_id")
     private Member member;
 
     public Long getId() {
