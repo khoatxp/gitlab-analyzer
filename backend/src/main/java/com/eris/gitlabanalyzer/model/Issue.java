@@ -2,19 +2,31 @@ package com.eris.gitlabanalyzer.model;
 
 import javax.persistence. *;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 @Entity(name = "Issue")
 @Table(name = "issue")
 public class Issue {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    @Column(name="issue_id")
+    @SequenceGenerator(
+            name = "issue_sequence",
+            sequenceName = "issue_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = SEQUENCE,
+            generator = "issue_sequence"
+    )
+    @Column(
+            name = "issue_id"
+    )
     private Long id;
 
     @Column(
             name = "gitlab_issue_id",
             nullable = false
     )
-    private Long gitLabIssueId;
+    private Long iid;
 
     @Column(
             name = "title",

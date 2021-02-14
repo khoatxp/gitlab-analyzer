@@ -2,19 +2,34 @@ package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.GenerationType.SEQUENCE;
+
 @Entity(name = "Commit")
 @Table(name = "commit")
 public class Commit {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    @Column(name="commit_id")
+    @SequenceGenerator(
+            name = "commit_sequence",
+            sequenceName = "commit_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = SEQUENCE,
+            generator = "commit_sequence"
+    )
+    @Column(
+            name = "commit_id"
+    )
     private Long id;
 
     @Column(
-            name = "gitlab_commit_id",
+            name = "sha",
             nullable = false
     )
-    private Long gitLabCommitId;
+    private String sha;
 
     @Column(
             name = "title",
@@ -58,6 +73,25 @@ public class Commit {
     )
     private String webUrl;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(
+            name = "commit_id",
+            nullable = true,
+            referencedColumnName = "commit_id",
+            foreignKey = @ForeignKey(
+                    name = "commit_mapping_commit_id_fk"
+            )
+    )
+    private CommitMapping commitMapping;
+
+    @OneToMany(
+            mappedBy = "commit",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<CommitComment> commitComments = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(
             name = "project_id",
@@ -72,8 +106,46 @@ public class Commit {
             referencedColumnName = "member_id")
     private Member member;
 
+    @ManyToOne
+    @JoinColumn(
+            name = "merge_request_id",
+            nullable = true,
+            referencedColumnName = "merge_request_id")
+    private MergeRequest mergeRequest;
+
+    public Commit() {
+    }
+
+    public Commit(Long id, String sha, String title, String authorName, String committerName, String committedDate, String createdAt, String webUrl,
+                  CommitMapping commitMapping, Project project, Member member, MergeRequest mergeRequest) {
+        this.id = id;
+        this.sha = sha;
+        this.title = title;
+        this.authorName = authorName;
+        this.committerName = committerName;
+        this.committedDate = committedDate;
+        this.createdAt = createdAt;
+        this.webUrl = webUrl;
+        this.commitMapping = commitMapping;
+        this.project = project;
+        this.member = member;
+        this.mergeRequest = mergeRequest;
+    }
+
+    public CommitMapping getCommitMapping() {
+        return commitMapping;
+    }
+
+    public void setCommitMapping(CommitMapping commitMapping) {
+        this.commitMapping = commitMapping;
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public String getSha() {
+        return sha;
     }
 
     public String getTitle() {
@@ -100,14 +172,6 @@ public class Commit {
         return webUrl;
     }
 
-    public Project getProject() {
-        return project;
-    }
-
-    public Member getMember() {
-        return member;
-    }
-
     public void setProject(Project project) {
         this.project = project;
     }
@@ -116,25 +180,15 @@ public class Commit {
         this.member = member;
     }
 
-    public Commit() {
-    }
-
-    public Commit(Long id, String title, String authorName, String committerName, String committedDate, String createdAt, String webUrl, Project project, Member member) {
-        this.id = id;
-        this.title = title;
-        this.authorName = authorName;
-        this.committerName = committerName;
-        this.committedDate = committedDate;
-        this.createdAt = createdAt;
-        this.webUrl = webUrl;
-        this.project = project;
-        this.member = member;
+    public void setMergeRequest(MergeRequest mergeRequest) {
+        this.mergeRequest = mergeRequest;
     }
 
     @Override
     public String toString() {
         return "Commit{" +
-                "id='" + id + '\'' +
+                "id=" + id +
+                ", sha='" + sha + '\'' +
                 ", title='" + title + '\'' +
                 ", authorName='" + authorName + '\'' +
                 ", committerName='" + committerName + '\'' +

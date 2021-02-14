@@ -5,26 +5,45 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 @Entity(name = "Server")
-@Table(name = "server")
+@Table(
+        name = "server",
+        uniqueConstraints={@UniqueConstraint(columnNames={"server_url", "access_token"})}
+)
 public class Server {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @SequenceGenerator(
+            name = "server_sequence",
+            sequenceName = "server_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = SEQUENCE,
+            generator = "server_sequence"
+    )
     @Column(
             name = "server_id"
     )
     private Long id;
 
     @Column(
-            name = "url"
+            name = "server_url"
     )
-    private String url;
+    private String serverUrl;
 
     @Column(
             name = "access_token",
             nullable = false
     )
     private String accessToken;
+
+    @Column(
+            name = "token_owner",
+            nullable = false
+    )
+    private String token_owner;
 
     @OneToMany(
             mappedBy = "server",
@@ -45,21 +64,26 @@ public class Server {
     public Server() {
     }
 
-    public Server(String url, String accessToken) {
-        this.url = url;
+    public Server(String serverUrl, String accessToken, String token_owner) {
+        this.serverUrl = serverUrl;
         this.accessToken = accessToken;
+        this.token_owner = token_owner;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getUrl() {
-        return url;
+    public String getServerUrl() {
+        return serverUrl;
     }
 
     public String getAccessToken() {
         return accessToken;
+    }
+
+    public String getToken_owner() {
+        return token_owner;
     }
 
     public void addProject(Project project) {
@@ -76,12 +100,27 @@ public class Server {
         }
     }
 
+    public void addMember(Member member) {
+        if (!this.members.contains(member)) {
+            this.members.add(member);
+            member.setServer(this);
+        }
+    }
+
+    public void removeMember(Member member) {
+        if (this.members.contains(member)) {
+            this.members.remove(member);
+            member.setServer(null);
+        }
+    }
+
     @Override
     public String toString() {
         return "Server{" +
-                "id='" + id + '\'' +
-                ", url='" + url + '\'' +
+                "id=" + id +
+                ", serverUrl='" + serverUrl + '\'' +
                 ", accessToken='" + accessToken + '\'' +
+                ", token_owner='" + token_owner + '\'' +
                 '}';
     }
 }

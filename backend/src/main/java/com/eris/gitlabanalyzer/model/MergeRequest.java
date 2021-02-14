@@ -4,20 +4,26 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 @Entity(name = "MergeRequest")
 @Table(name = "merge_request")
 public class MergeRequest {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    @Column(name="merge_request_id")
-    private Long id;
-
-    @Column(
-            name = "gitlab_merge_request_iid",
-            nullable = false
+    @SequenceGenerator(
+            name = "merge_request_sequence",
+            sequenceName = "merge_request_sequence",
+            allocationSize = 1
     )
-    private Long gitLabMergeRequestIid;
+    @GeneratedValue(
+            strategy = SEQUENCE,
+            generator = "merge_request_sequence"
+    )
+    @Column(
+            name = "merge_request_id"
+    )
+    private Long id;
 
     @Column(
             name = "author_name",
@@ -66,11 +72,19 @@ public class MergeRequest {
 
     @OneToMany(
             mappedBy = "mergeRequest",
-            orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            orphanRemoval = false,
+            cascade = {CascadeType.PERSIST},
             fetch = FetchType.LAZY
     )
-    private List<MergeRequestCommit> mergeRequestCommits = new ArrayList<>();
+    private List<Commit> commits = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "mergeRequest",
+            orphanRemoval = false,
+            cascade = {CascadeType.PERSIST},
+            fetch = FetchType.LAZY
+    )
+    private List<MergeRequestComment> mergeRequestComments = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -115,20 +129,6 @@ public class MergeRequest {
     public MergeRequest() {
     }
 
-    public void addMergeRequestCommit(MergeRequestCommit mergeRequestCommit) {
-        if (!this.mergeRequestCommits.contains(mergeRequestCommit)) {
-            this.mergeRequestCommits.add(mergeRequestCommit);
-            mergeRequestCommit.setMergeRequest(this);
-        }
-    }
-
-    public void removeMergeRequestCommit(MergeRequestCommit mergeRequestCommit) {
-        if (this.mergeRequestCommits.contains(mergeRequestCommit)) {
-            this.mergeRequestCommits.remove(mergeRequestCommit);
-            mergeRequestCommit.setMergeRequest(null);
-        }
-    }
-
     public MergeRequest(Long id, String authorName, String title, String description, String created_at, String webUrl, Project project, Member member) {
         this.id = id;
         this.authorName = authorName;
@@ -138,6 +138,20 @@ public class MergeRequest {
         this.webUrl = webUrl;
         this.project = project;
         this.member = member;
+    }
+
+    public void addCommit(Commit commit) {
+        if (!this.commits.contains(commit)) {
+            this.commits.add(commit);
+            commit.setMergeRequest(this);
+        }
+    }
+
+    public void removeCommit(Commit commit) {
+        if (this.commits.contains(commit)) {
+            this.commits.remove(commit);
+            commit.setMergeRequest(null);
+        }
     }
 
     @Override

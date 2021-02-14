@@ -2,20 +2,31 @@ package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
 
-@Entity(name = "Comment")
-@Table(name = "comment")
-public class Comment {
+import static javax.persistence.GenerationType.SEQUENCE;
 
+@Entity(name = "IssueComment")
+@Table(name = "issue_comment")
+public class IssueComment {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    @Column(name="comment_id")
+    @SequenceGenerator(
+            name = "issue_comment_sequence",
+            sequenceName = "issue_comment_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = SEQUENCE,
+            generator = "issue_comment_sequence"
+    )
+    @Column(
+            name = "issue_comment_id"
+    )
     private Long id;
 
     @Column(
-            name = "gitlab_comment_id",
+            name = "gitlab_iid",
             nullable = false
     )
-    private Long gitLabCommentId;
+    private Long iid;
 
     @Column(
             name = "author_name",
@@ -30,6 +41,13 @@ public class Comment {
             nullable = false,
             referencedColumnName = "member_id")
     private Member member;
+
+    @ManyToOne
+    @JoinColumn(
+            name = "project_id",
+            nullable = false,
+            referencedColumnName = "project_id")
+    private Project project;
 
     @Column(
             name = "body",
@@ -49,45 +67,18 @@ public class Comment {
     @Column(
             name = "created_at",
             nullable = false
-
     )
     private String createdAt;
 
-    public Long getId() {
-        return id;
+    public IssueComment() {
     }
 
-    public String getAuthorName() {
-        return authorName;
-    }
-
-    public Member getMember() {
-        return member;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public String getWebUrl() {
-        return webUrl;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setMember(Member member) {
-        this.member = member;
-    }
-
-    public Comment() {
-    }
-
-    public Comment(Long id, String authorName, Member member, String body, String webUrl, String createdAt) {
-        this.id = id;
+    public IssueComment(Long iid, String authorName, Member member, Project project,
+                        String body, String webUrl, String createdAt) {
+        this.iid = iid;
         this.authorName = authorName;
         this.member = member;
+        this.project = project;
         this.body = body;
         this.webUrl = webUrl;
         this.createdAt = createdAt;
@@ -95,10 +86,12 @@ public class Comment {
 
     @Override
     public String toString() {
-        return "Comment{" +
-                "id='" + id + '\'' +
+        return "IssueComment{" +
+                "id=" + id +
+                ", iid=" + iid +
                 ", authorName='" + authorName + '\'' +
                 ", member=" + member +
+                ", project=" + project +
                 ", body='" + body + '\'' +
                 ", webUrl='" + webUrl + '\'' +
                 ", createdAt='" + createdAt + '\'' +

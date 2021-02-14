@@ -4,13 +4,24 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 @Entity(name = "Member")
 @Table(name = "member")
 public class Member {
-
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    @Column(name="member_id")
+    @SequenceGenerator(
+            name = "member_sequence",
+            sequenceName = "member_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = SEQUENCE,
+            generator = "member_sequence"
+    )
+    @Column(
+            name = "member_id"
+    )
     private Long id;
 
     @Column(
@@ -47,23 +58,7 @@ public class Member {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
-    private List<Commit> commits = new ArrayList<>();
-
-    @OneToMany(
-            mappedBy = "member",
-            orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            fetch = FetchType.LAZY
-    )
-    private List<Comment> comments = new ArrayList<>();
-
-    @OneToMany(
-            mappedBy = "member",
-            orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            fetch = FetchType.LAZY
-    )
-    private List<Issue> issues = new ArrayList<>();
+    private List<CommitMapping> commitMappings = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "member",
@@ -72,6 +67,18 @@ public class Member {
             fetch = FetchType.LAZY
     )
     private List<MergeRequest> mergeRequests = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "commit",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<CommitComment> commitComments = new ArrayList<>();
+
+    public Long getId() {
+        return id;
+    }
 
     public String getUsername() {
         return username;
@@ -85,6 +92,22 @@ public class Member {
         return projects;
     }
 
+    public Server getServer() {
+        return server;
+    }
+
+    public List<CommitMapping> getCommitMappings() {
+        return commitMappings;
+    }
+
+    public List<MergeRequest> getMergeRequests() {
+        return mergeRequests;
+    }
+
+    public void setServer(Server server) {
+        this.server = server;
+    }
+
     public Member(){}
 
     public Member(String username, String name) {
@@ -93,51 +116,46 @@ public class Member {
         this.name = name;
 
     }
+
     public void addProject(Project project) {
         if (!this.projects.contains(project)) {
             this.projects.add(project);
-            project.getMembers().add(this);
-        }
-    }
-    public void addCommit(Commit commit) {
-        if (!this.commits.contains(commit)) {
-            this.commits.add(commit);
-            commit.setMember(this);
+            project.addMember(this);
         }
     }
 
-    public void removeCommit(Commit commit) {
-        if (this.commits.contains(commit)) {
-            this.commits.remove(commit);
-            commit.setMember(null);
+    public void removeProject(Project project) {
+        if (this.projects.contains(project)) {
+            this.projects.remove(project);
+            project.removeMember(this);
         }
     }
 
-    public void addComment(Comment comment) {
-        if (!this.comments.contains(comment)) {
-            this.comments.add(comment);
-            comment.setMember(this);
+    public void addCommitMapping(CommitMapping commitMapping) {
+        if (!this.commitMappings.contains(commitMapping)) {
+            this.commitMappings.add(commitMapping);
+            commitMapping.setMember(this);
         }
     }
 
-    public void removeComment(Comment comment) {
-        if (this.comments.contains(comment)) {
-            this.comments.remove(comment);
-            comment.setMember(null);
+    public void removeCommitMapping(CommitMapping commitMapping) {
+        if (this.commitMappings.contains(commitMapping)) {
+            this.commitMappings.remove(commitMapping);
+            commitMapping.setMember(null);
         }
     }
 
-    public void addIssue(Issue issue) {
-        if (!this.issues.contains(issue)) {
-            this.issues.add(issue);
-            issue.setMember(this);
+    public void addMergeRequest(MergeRequest mergeRequest) {
+        if (!this.mergeRequests.contains(mergeRequest)) {
+            this.mergeRequests.add(mergeRequest);
+            mergeRequest.setMember(this);
         }
     }
 
-    public void removeIssue(Issue issue) {
-        if (this.issues.contains(issue)) {
-            this.issues.remove(issue);
-            issue.setMember(null);
+    public void removeMergeRequest(MergeRequest mergeRequest) {
+        if (this.mergeRequests.contains(mergeRequest)) {
+            this.mergeRequests.remove(mergeRequest);
+            mergeRequest.setMember(null);
         }
     }
 

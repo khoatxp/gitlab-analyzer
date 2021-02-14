@@ -4,13 +4,28 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 
 @Entity(name = "Project")
-@Table(name = "project")
+@Table(
+        name = "project",
+        uniqueConstraints={@UniqueConstraint(columnNames={"server_id", "project_id"})}
+)
 public class Project {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    @Column(name="project_id")
+    @SequenceGenerator(
+            name = "project_sequence",
+            sequenceName = "project_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = SEQUENCE,
+            generator = "project_sequence"
+    )
+    @Column(
+            name = "project_id"
+    )
     private Long id;
 
     @Column(
@@ -39,6 +54,12 @@ public class Project {
     )
     private String webUrl;
 
+    @ManyToMany(mappedBy = "projects",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY)
+    private List<Member> members = new ArrayList<>();
+
+
     @ManyToOne
     @JoinColumn(
             name = "server_id",
@@ -46,12 +67,6 @@ public class Project {
             referencedColumnName = "server_id"
     )
     private Server server;
-
-    @ManyToMany(mappedBy = "projects",
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            fetch = FetchType.LAZY)
-    private List<Member> members = new ArrayList<>();
-
 
     @OneToMany(
             mappedBy = "project",
@@ -61,13 +76,6 @@ public class Project {
     )
     private List<Commit> commits = new ArrayList<>();
 
-    @OneToMany(
-            mappedBy = "project",
-            orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            fetch = FetchType.LAZY
-    )
-    private List<Issue> issues = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "project",
@@ -80,7 +88,7 @@ public class Project {
     public Project() {
     }
 
-    public Project(Long gitLabProjectId, String name,String nameWithNamespace, String webUrl, Server server) {
+    public Project(Long gitLabProjectId, String name, String nameWithNamespace, String webUrl, Server server) {
         this.gitLabProjectId = gitLabProjectId;
         this.name = name;
         this.nameWithNamespace = nameWithNamespace;
@@ -155,5 +163,15 @@ public class Project {
         }
     }
 
-
+    @Override
+    public String toString() {
+        return "Project{" +
+                "id=" + id +
+                ", gitLabProjectId=" + gitLabProjectId +
+                ", name='" + name + '\'' +
+                ", nameWithNamespace='" + nameWithNamespace + '\'' +
+                ", webUrl='" + webUrl + '\'' +
+                ", server=" + server +
+                '}';
+    }
 }
