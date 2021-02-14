@@ -1,9 +1,5 @@
 package com.eris.gitlabanalyzer.model;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinColumnsOrFormulas;
-import org.hibernate.annotations.JoinFormula;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;

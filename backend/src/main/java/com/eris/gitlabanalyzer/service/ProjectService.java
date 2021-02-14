@@ -1,8 +1,6 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.model.GitLabMember;
-import com.eris.gitlabanalyzer.model.GitLabProject;
-import com.eris.gitlabanalyzer.model.Project;
+import com.eris.gitlabanalyzer.model.*;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -42,8 +40,16 @@ public class ProjectService {
         for (Long projectId : projectIdList){
             Mono<GitLabProject> gitLabProject = gitLabService.getProject(projectId);
             System.out.println(gitLabProject);
+
             Flux<GitLabMember> gitLabMembers = gitLabService.getMembers(projectId);
             System.out.println(gitLabMembers);
+
+            Flux<GitLabMergeRequestIid> gitLabMergeRequestIids = gitLabService.getMergedMergeRequestIids(projectId);
+
+            for(GitLabMergeRequestIid mergeRequestIid : gitLabMergeRequestIids.collectList().block()){
+                Mono<GitLabMergeRequest> gitLabMergeRequest = gitLabService.getMergeRequest(projectId,mergeRequestIid.getIid());
+                System.out.println(gitLabMergeRequest.block());
+            }
         }
     }
 

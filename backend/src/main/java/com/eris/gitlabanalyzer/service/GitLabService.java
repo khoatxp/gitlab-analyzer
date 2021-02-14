@@ -1,6 +1,8 @@
 package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.GitLabMember;
+import com.eris.gitlabanalyzer.model.GitLabMergeRequest;
+import com.eris.gitlabanalyzer.model.GitLabMergeRequestIid;
 import com.eris.gitlabanalyzer.model.GitLabProject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -65,6 +67,33 @@ public class GitLabService {
                 .uri(gitlabUrl)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
         return headersSpec.retrieve().bodyToFlux(GitLabMember.class);
+    }
+
+    public Flux<GitLabMergeRequestIid> getMergedMergeRequestIids(Long projectId){
+        URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/merge_requests")
+                .queryParam("state","merged")
+                .build()
+                .encode()
+                .toUri();
+
+        WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
+                .uri(gitlabUrl)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+        return headersSpec.retrieve().bodyToFlux(GitLabMergeRequestIid.class);
+    }
+
+    public Mono<GitLabMergeRequest> getMergeRequest(Long projectId, Long mergeRequestIid){
+        URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid)
+                .build()
+                .encode()
+                .toUri();
+
+        WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
+                .uri(gitlabUrl)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+        return headersSpec.retrieve().bodyToMono(GitLabMergeRequest.class);
     }
 
 }
