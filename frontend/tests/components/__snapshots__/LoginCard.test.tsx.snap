@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Project Folder Snapshot serverId 1`] = `
+exports[`LoginCard Snapshot LoginCard 1`] = `
 <div>
   <div
     class="MuiBox-root MuiBox-root-3 makeStyles-backgroundGradient-1"
@@ -41,23 +41,53 @@ exports[`Project Folder Snapshot serverId 1`] = `
           Analyzer
         </h6>
       </div>
-      <div>
-        <p
-          class="MuiTypography-root MuiTypography-body1"
-        >
-          Loading projects...
-        </p>
+      <div
+        class="MuiFormControl-root MuiTextField-root MuiFormControl-marginNormal MuiFormControl-fullWidth"
+      >
         <div
-          class="MuiLinearProgress-root MuiLinearProgress-colorPrimary MuiLinearProgress-indeterminate"
-          role="progressbar"
+          class="MuiInputBase-root MuiFilledInput-root makeStyles-root-6 MuiFilledInput-underline makeStyles-underline-8 MuiInputBase-fullWidth MuiInputBase-formControl"
         >
-          <div
-            class="MuiLinearProgress-bar MuiLinearProgress-barColorPrimary MuiLinearProgress-bar1Indeterminate"
-          />
-          <div
-            class="MuiLinearProgress-bar MuiLinearProgress-bar2Indeterminate MuiLinearProgress-barColorPrimary"
+          <input
+            aria-invalid="false"
+            class="MuiInputBase-input MuiFilledInput-input makeStyles-input-7"
+            placeholder="Username"
+            type="text"
+            value=""
           />
         </div>
+      </div>
+      <div
+        class="MuiFormControl-root MuiTextField-root MuiFormControl-marginNormal MuiFormControl-fullWidth"
+      >
+        <div
+          class="MuiInputBase-root MuiFilledInput-root makeStyles-root-6 MuiFilledInput-underline makeStyles-underline-8 MuiInputBase-fullWidth MuiInputBase-formControl"
+        >
+          <input
+            aria-invalid="false"
+            class="MuiInputBase-input MuiFilledInput-input makeStyles-input-7"
+            placeholder="Password"
+            type="text"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        class="MuiBox-root MuiBox-root-9"
+      >
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-button-10 MuiButton-containedPrimary MuiButton-disableElevation"
+          tabindex="0"
+          type="button"
+        >
+          <span
+            class="MuiButton-label"
+          >
+            Login
+          </span>
+          <span
+            class="MuiTouchRipple-root"
+          />
+        </button>
       </div>
     </div>
   </div>

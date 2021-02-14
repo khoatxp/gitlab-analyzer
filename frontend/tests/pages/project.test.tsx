@@ -7,14 +7,10 @@ describe("Project Folder", () =>{
     const mockUseEffect = jest.spyOn(React, 'useEffect')
     const mockAxios = jest.spyOn(require('axios'), 'get');
 
-
-
     it("Snapshot serverId", () => {
-        // Wrap Index with mock router to run snapshot tests
         useRouter.mockImplementationOnce(() => ({
             query: { serverId: 'TestId' },
         }));
-        // @ts-ignore
         const { container } = render(
             <Index />
         )
@@ -44,5 +40,6 @@ describe("Project Folder", () =>{
         render(<Index />);
         expect(mockAxios).toHaveBeenCalledTimes(1);
     })
+
 
 })

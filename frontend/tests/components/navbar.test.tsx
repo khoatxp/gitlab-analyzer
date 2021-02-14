@@ -1,20 +1,14 @@
-import {createShallow} from "@material-ui/core/test-utils";
 import React from 'react';
 import NavbBar from '../../components/NavBar';
+import {render} from "@testing-library/react";
 
 describe("NavBar", () =>{
-    // @ts-ignore
-    let shallow;
 
-    beforeAll(() => {
-        shallow = createShallow();
-    })
-
-    it("Render NavBar", () => {
-        // @ts-ignore
-        const wrapper = shallow(<NavbBar />)
-        expect(wrapper).toMatchSnapshot();
-
+    it("Snapshot NavBar", () => {
+        const { container } = render(
+            <NavbBar />
+        )
+        expect(container).toMatchSnapshot();
     })
 
 })

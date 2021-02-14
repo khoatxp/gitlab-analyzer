@@ -1,19 +1,19 @@
-
 import React from 'react';
-import Index from '../../pages/login';
+import LoginCard from '../../components/LoginCard';
 import {render} from "@testing-library/react";
 
-describe("Login Folder", () =>{
+describe("LoginCard", () =>{
     const mockEnqueue = jest.spyOn(require('notistack'), "useSnackbar");
     let enqueueSnackbar = jest.fn();
+
 
     beforeAll(() =>{
         mockEnqueue.mockImplementation(() => {return {enqueueSnackbar}});
     })
 
-    it("Snapshot Index", () => {
+    it("Snapshot LoginCard", () => {
         const { container } = render(
-            <Index />
+            <LoginCard />
         )
         expect(container).toMatchSnapshot();
     })

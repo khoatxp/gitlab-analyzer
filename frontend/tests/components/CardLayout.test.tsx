@@ -1,24 +1,19 @@
-import {createShallow} from "@material-ui/core/test-utils";
-import React from 'react';
+
+import React, {ReactNode} from 'react';
 import CardLayout from '../../components/CardLayout';
+import {render} from "@testing-library/react";
 
 
 
 describe("Cardlayout", () =>{
-    // @ts-ignore
-    let shallow;
+    // Dummy child to render CardLayout
+    const children: ReactNode = <div/>
 
-
-    beforeAll(() => {
-        shallow = createShallow();
-    })
-
-    it("Render CardLayout", () => {
-        // @ts-ignore
-
-        const wrapper = shallow(<CardLayout children />)
-        expect(wrapper).toMatchSnapshot();
-
+    it("Snapshot CardLayout", () => {
+        const { container } = render(
+            <CardLayout children={children}/>
+        )
+        expect(container).toMatchSnapshot();
     })
 
 })

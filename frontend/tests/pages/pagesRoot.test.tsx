@@ -1,20 +1,21 @@
-import {createShallow} from "@material-ui/core/test-utils";
 import React from 'react';
 
 import Index from '../../pages';
+import {render} from "@testing-library/react";
 
 describe("Pages Root", () =>{
-    // @ts-ignore
-    let shallow;
+    const mockEnqueue = jest.spyOn(require('notistack'), "useSnackbar");
+    let enqueueSnackbar = jest.fn();
 
-    beforeAll(() => {
-        shallow = createShallow();
+    beforeAll(() =>{
+        mockEnqueue.mockImplementation(() => {return {enqueueSnackbar}});
     })
 
-    it("Render Index", () => {
-        // @ts-ignore
-        const wrapper = shallow(<Index />)
-        expect(wrapper).toMatchSnapshot();
+    it("Snapshot Index", () => {
+        const { container } = render(
+            <Index />
+        )
+        expect(container).toMatchSnapshot();
 
     })
 
