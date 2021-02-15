@@ -11,11 +11,15 @@ const DatePicker = () => {
     const [endDate, setEndDate] =  React.useState<Date | null>(new Date('01-05-2021'));
 
     const handleStartChange = (date: Date | null) => {
-        setStartDate(date);
+        if(date) {
+            setStartDate(date);
+        }
     };
 
     const handleEndChange = (date: Date | null) => {
-        setEndDate(date);
+        if(date) {
+            setEndDate(date);
+        }
     };
 
     return(
