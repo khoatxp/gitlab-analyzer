@@ -32,6 +32,12 @@ public class MergeRequest {
     private String authorName;
 
     @Column(
+            name = "author_username",
+            nullable = false
+    )
+    private String authorUsername;
+
+    @Column(
             name = "title",
             nullable = false
     )
@@ -39,6 +45,7 @@ public class MergeRequest {
 
     @Column(
             name = "description",
+            columnDefinition="TEXT",
             nullable = false
     )
     private String description;
@@ -47,7 +54,7 @@ public class MergeRequest {
             name = "created_at",
             nullable = false
     )
-    private String created_at;
+    private String createdAt;
 
     @Column(
             name = "web_url",
@@ -94,6 +101,10 @@ public class MergeRequest {
         return authorName;
     }
 
+    public String getAuthorUsername() {
+        return authorUsername;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -102,8 +113,8 @@ public class MergeRequest {
         return description;
     }
 
-    public String getCreated_at() {
-        return created_at;
+    public String getCreatedAt() {
+        return createdAt;
     }
 
     public String getWebUrl() {
@@ -129,12 +140,12 @@ public class MergeRequest {
     public MergeRequest() {
     }
 
-    public MergeRequest(Long id, String authorName, String title, String description, String created_at, String webUrl, Project project, Member member) {
-        this.id = id;
+    public MergeRequest(String authorName, String authorUsername, String title, String description, String createdAt, String webUrl, Project project, Member member) {
         this.authorName = authorName;
+        this.authorUsername = authorUsername;
         this.title = title;
         this.description = description;
-        this.created_at = created_at;
+        this.createdAt = createdAt;
         this.webUrl = webUrl;
         this.project = project;
         this.member = member;
@@ -173,12 +184,11 @@ public class MergeRequest {
         return "MergeRequest{" +
                 "id=" + id +
                 ", authorName='" + authorName + '\'' +
+                ", authorUsername='" + authorUsername + '\'' +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", created_at='" + created_at + '\'' +
+                ", createdAt='" + createdAt + '\'' +
                 ", webUrl='" + webUrl + '\'' +
-                ", project=" + project +
-                ", member=" + member +
                 '}';
     }
 }

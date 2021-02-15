@@ -32,7 +32,7 @@ public class ProjectService {
         this.gitLabService = gitLabService;
     }
 
-    public Project saveProjectInfo(Long projectId) {
+    public void saveProjectInfo(Long projectId) {
         var gitLabProject = gitLabService.getProject(projectId).block();
         // TODO Check if project already exists
         Project project = new Project(
@@ -42,8 +42,7 @@ public class ProjectService {
                 gitLabProject.getWebUrl(),
                 serverRepository.find(serverUrl,accessToken)
         );
-
-        return projectRepository.save(project);
+        projectRepository.save(project);
     }
 
     public void getProjectAnalytics(List<Long> projectIdList) {
@@ -53,13 +52,6 @@ public class ProjectService {
 
             Flux<GitLabMember> gitLabMembers = gitLabService.getMembers(projectId);
             System.out.println(gitLabMembers);
-
-            Flux<GitLabMergeRequestIid> gitLabMergeRequestIids = gitLabService.getMergedMergeRequestIids(projectId);
-
-            for(GitLabMergeRequestIid mergeRequestIid : gitLabMergeRequestIids.collectList().block()){
-                Mono<GitLabMergeRequest> gitLabMergeRequest = gitLabService.getMergeRequest(projectId,mergeRequestIid.getIid());
-                System.out.println(gitLabMergeRequest.block());
-            }
         }
     }
 

@@ -10,4 +10,7 @@ import java.util.List;
 public interface MemberRepository extends JpaRepository<Member, Long>{
     @Query("select m from Member m inner join m.projects project where project.id = ?1")
     List<Member> findByProjectId(Long projectId);
+
+    @Query("select m from Member m where m.username = ?1")
+    Member findByUserName(String username);
 }

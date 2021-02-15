@@ -70,7 +70,7 @@ public class GitLabService {
         return headersSpec.retrieve().bodyToFlux(GitLabMember.class);
     }
 
-    public Flux<GitLabMergeRequestIid> getMergedMergeRequestIids(Long projectId){
+    public Flux<GitLabMergeRequest> getMergeRequests(Long projectId){
         URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests")
                 .queryParam("state","merged")
@@ -81,20 +81,7 @@ public class GitLabService {
         WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
                 .uri(gitlabUrl)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-        return headersSpec.retrieve().bodyToFlux(GitLabMergeRequestIid.class);
-    }
-
-    public Mono<GitLabMergeRequest> getMergeRequest(Long projectId, Long mergeRequestIid){
-        URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
-                .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid)
-                .build()
-                .encode()
-                .toUri();
-
-        WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
-                .uri(gitlabUrl)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-        return headersSpec.retrieve().bodyToMono(GitLabMergeRequest.class);
+        return headersSpec.retrieve().bodyToFlux(GitLabMergeRequest.class);
     }
 
 }
