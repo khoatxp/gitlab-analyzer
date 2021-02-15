@@ -174,14 +174,14 @@ public class Member {
     public void addProject(Project project) {
         if (!this.projects.contains(project)) {
             this.projects.add(project);
-            project.addMember(this);
+            project.getMembers().add(this);
         }
     }
 
     public void removeProject(Project project) {
         if (this.projects.contains(project)) {
             this.projects.remove(project);
-            project.removeMember(this);
+            project.getMembers().remove(this);
         }
     }
 
