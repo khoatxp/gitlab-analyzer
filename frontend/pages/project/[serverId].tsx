@@ -26,7 +26,7 @@ const LoadingBar = () => {
 
 const index = () => {
 
-    const classes = useStyles();
+  const classes = useStyles();
   const [projects, setProjects] = useState<GitLabProject[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
