@@ -32,7 +32,6 @@ const index = () => {
   const router = useRouter();
   const { serverId } =  router.query;
 
-
   useEffect(() => {
     if (router.isReady) {
       // TODO need to pass serverId into this call to get the correct gitlab url and access code from db
