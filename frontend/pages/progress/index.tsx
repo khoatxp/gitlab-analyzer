@@ -4,6 +4,10 @@ import Image from "next/image";
 import { Box, Button, TextField, Typography } from "@material-ui/core";
 import { makeStyles,  createStyles, withStyles, Theme } from "@material-ui/core/styles";
 import LinearProgress from '@material-ui/core/LinearProgress';
+import AppGradientBackground from "../../components/AppGradientBackground";
+import CardLayout from "../../components/CardLayout";
+import AppButton from "../../components/AppButton";
+import styles from "../../components/Progress.module.css";
 
 const BorderLinearProgress = withStyles((theme: Theme) =>
   createStyles({
@@ -16,7 +20,7 @@ const BorderLinearProgress = withStyles((theme: Theme) =>
     },
     bar: {
       borderRadius: 25,
-      backgroundColor: '#FCA326',
+      backgroundColor: 'secondary',
     },
   }),
 )(LinearProgress);
@@ -51,57 +55,20 @@ const index = () => {
     }, []);
 
   return (
-    <Box
-      className={classes.backgroundGradient}
-      height="100vh"
-      width="100vw"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      >
-      <Box
-        className={classes.card}
-        boxShadow={20}
-        width="60vw"
-        height="45vh"
-        minWidth="250px"
-        minHeight="400px"
-        display="flex"
-        flexDirection="column"
-        justifyContent="space-around"
-        alignItems="center"
-        borderRadius={16}
-        padding="25px"
-      >
-
-        <Typography variant="h7" align="center">
-            <Image
-                src="/gitlab.svg"
-                alt="The Gitlab Logo"
-                width={75}
-                height={75}
-            />
-            <br />
-            GitLab
-            <br />
-            Analyzer
-        </Typography>
-
+    <AppGradientBackground>
+      <CardLayout>
         <div className={classes.root}>
            <BorderLinearProgress variant="determinate" value={progress} />
-               <div className="loading__container">
-                   <p className={`loading__done ${progress === 100 && "loading__appeared"}`}>Importing done!</p>
-                   <p className={`loading_dots ${progress === 100 && "loading__disappeared"}`}>Importing commits</p>
-                   <p className={`loading_dots ${progress === 100 && "loading__disappeared"}`}>Importing merge requests</p>
-                   <p className={`loading_dots ${progress === 100 && "loading__disappeared"}`}>Importing comments</p>
-               </div>
-       </div>
-
-        <Button variant="contained" color="primary" disableElevation>
-          Cancel
-        </Button>
-      </Box>
-    </Box>
+           <div className={styles.loading__container}>
+               <p className={`${styles.loading__done} ${progress === 100 && styles.loading__appeared}`}>Importing done!</p>
+               <p className={`${styles.loading__dots} ${progress === 100 && styles.loading__disappeared}`}>Importing commits</p>
+               <p className={`${styles.loading__dots} ${progress === 100 && styles.loading__disappeared}`}>Importing merge requests</p>
+               <p className={`${styles.loading__dots} ${progress === 100 && styles.loading__disappeared}`}>Importing comments</p>
+           </div>
+        </div>
+        <AppButton color='primary'> Cancel </AppButton>
+      </CardLayout>
+    </AppGradientBackground>
   );
 };
 
