@@ -116,9 +116,7 @@ public class Commit {
     public Commit() {
     }
 
-    public Commit(Long id, String sha, String title, String authorName, String committerName, String committedDate, String createdAt, String webUrl,
-                  CommitMapping commitMapping, Project project, Member member, MergeRequest mergeRequest) {
-        this.id = id;
+    public Commit(String sha, String title, String authorName, String committerName, String committedDate, String createdAt, String webUrl, Project project) {
         this.sha = sha;
         this.title = title;
         this.authorName = authorName;
@@ -126,10 +124,7 @@ public class Commit {
         this.committedDate = committedDate;
         this.createdAt = createdAt;
         this.webUrl = webUrl;
-        this.commitMapping = commitMapping;
         this.project = project;
-        this.member = member;
-        this.mergeRequest = mergeRequest;
     }
 
     public CommitMapping getCommitMapping() {
@@ -182,6 +177,20 @@ public class Commit {
 
     public void setMergeRequest(MergeRequest mergeRequest) {
         this.mergeRequest = mergeRequest;
+    }
+
+    public void addCommitComment(CommitComment commitComment) {
+        if (!this.commitComments.contains(commitComment)) {
+            this.commitComments.add(commitComment);
+            commitComment.setCommit(this);
+        }
+    }
+
+    public void removeCommitComment(CommitComment commitComment) {
+        if (this.commitComments.contains(commitComment)) {
+            this.commitComments.remove(commitComment);
+            commitComment.setCommit(null);
+        }
     }
 
     @Override

@@ -154,6 +154,20 @@ public class MergeRequest {
         }
     }
 
+    public void addMergeRequestComment(MergeRequestComment mergeRequestComment) {
+        if (!this.mergeRequestComments.contains(mergeRequestComment)) {
+            this.mergeRequestComments.add(mergeRequestComment);
+            mergeRequestComment.setMergeRequest(this);
+        }
+    }
+
+    public void removeMergeRequestComment(MergeRequestComment mergeRequestComment) {
+        if (this.mergeRequestComments.contains(mergeRequestComment)) {
+            this.mergeRequestComments.remove(mergeRequestComment);
+            mergeRequestComment.setMergeRequest(null);
+        }
+    }
+
     @Override
     public String toString() {
         return "MergeRequest{" +

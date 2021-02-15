@@ -69,4 +69,72 @@ public class MergeRequestComment {
             nullable = false
     )
     private String createdAt;
+
+    public MergeRequestComment() {
+    }
+
+    public MergeRequestComment(Long iid, String authorName, Member member, MergeRequest mergeRequest, String body,
+                               String webUrl, String createdAt) {
+        this.iid = iid;
+        this.authorName = authorName;
+        this.member = member;
+        this.mergeRequest = mergeRequest;
+        this.body = body;
+        this.webUrl = webUrl;
+        this.createdAt = createdAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getIid() {
+        return iid;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public Member getMember() {
+        return member;
+    }
+
+    public MergeRequest getMergeRequest() {
+        return mergeRequest;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public String getWebUrl() {
+        return webUrl;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    public void setMergeRequest(MergeRequest mergeRequest) {
+        this.mergeRequest = mergeRequest;
+    }
+
+    @Override
+    public String toString() {
+        return "MergeRequestComment{" +
+                "id=" + id +
+                ", iid=" + iid +
+                ", authorName='" + authorName + '\'' +
+                ", member=" + member +
+                ", mergeRequest=" + mergeRequest +
+                ", body='" + body + '\'' +
+                ", webUrl='" + webUrl + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                '}';
+    }
 }

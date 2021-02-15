@@ -44,10 +44,10 @@ public class IssueComment {
 
     @ManyToOne
     @JoinColumn(
-            name = "project_id",
+            name = "issue_id",
             nullable = false,
-            referencedColumnName = "project_id")
-    private Project project;
+            referencedColumnName = "issue_id")
+    private Issue issue;
 
     @Column(
             name = "body",
@@ -73,15 +73,54 @@ public class IssueComment {
     public IssueComment() {
     }
 
-    public IssueComment(Long iid, String authorName, Member member, Project project,
-                        String body, String webUrl, String createdAt) {
+    public IssueComment(Long iid, String authorName, Member member, Issue issue, String body, String webUrl, String createdAt) {
         this.iid = iid;
         this.authorName = authorName;
         this.member = member;
-        this.project = project;
+        this.issue = issue;
         this.body = body;
         this.webUrl = webUrl;
         this.createdAt = createdAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getIid() {
+        return iid;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public Member getMember() {
+        return member;
+    }
+
+    public Issue getIssue() {
+        return issue;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public String getWebUrl() {
+        return webUrl;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    public void setIssue(Issue issue) {
+        this.issue = issue;
     }
 
     @Override
@@ -91,7 +130,7 @@ public class IssueComment {
                 ", iid=" + iid +
                 ", authorName='" + authorName + '\'' +
                 ", member=" + member +
-                ", project=" + project +
+                ", issue=" + issue +
                 ", body='" + body + '\'' +
                 ", webUrl='" + webUrl + '\'' +
                 ", createdAt='" + createdAt + '\'' +

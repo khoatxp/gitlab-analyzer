@@ -2,6 +2,9 @@ package com.eris.gitlabanalyzer.model;
 
 import javax.persistence. *;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "Issue")
@@ -55,6 +58,14 @@ public class Issue {
 
     )
     private String webUrl;
+
+    @OneToMany(
+            mappedBy = "issue",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<IssueComment> issueComments = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(
@@ -117,6 +128,20 @@ public class Issue {
 
     public void setMember(Member member) {
         this.member = member;
+    }
+
+    public void addIssueComment(IssueComment issueComment) {
+        if (!this.issueComments.contains(issueComment)) {
+            this.issueComments.add(issueComment);
+            issueComment.setIssue(this);
+        }
+    }
+
+    public void removeIssueComment(IssueComment issueComment) {
+        if (this.issueComments.contains(issueComment)) {
+            this.issueComments.remove(issueComment);
+            issueComment.setIssue(null);
+        }
     }
 
     @Override

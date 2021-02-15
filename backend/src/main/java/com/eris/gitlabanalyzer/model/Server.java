@@ -86,6 +86,10 @@ public class Server {
         return token_owner;
     }
 
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
     public void addProject(Project project) {
         if (!this.projects.contains(project)) {
             this.projects.add(project);

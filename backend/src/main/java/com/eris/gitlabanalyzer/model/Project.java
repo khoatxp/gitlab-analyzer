@@ -54,20 +54,6 @@ public class Project {
     )
     private String webUrl;
 
-    @ManyToMany(mappedBy = "projects",
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            fetch = FetchType.LAZY)
-    private List<Member> members = new ArrayList<>();
-
-
-    @ManyToOne
-    @JoinColumn(
-            name = "server_id",
-            nullable = false,
-            referencedColumnName = "server_id"
-    )
-    private Server server;
-
     @OneToMany(
             mappedBy = "project",
             orphanRemoval = true,
@@ -85,6 +71,27 @@ public class Project {
     )
     private List<MergeRequest> mergeRequests = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "project",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<Issue> issues = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(
+            name = "server_id",
+            nullable = false,
+            referencedColumnName = "server_id"
+    )
+    private Server server;
+
+    @ManyToMany(mappedBy = "projects",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY)
+    private List<Member> members = new ArrayList<>();
+
     public Project() {
     }
 
@@ -96,20 +103,16 @@ public class Project {
         this.server = server;
     }
 
-    public List<Member> getMembers() {
-        return members;
-    }
-
     public Long getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public Long getGitLabProjectId() {
+        return gitLabProjectId;
     }
 
-    public void setServer(Server server) {
-        this.server = server;
+    public String getName() {
+        return name;
     }
 
     public String getNameWithNamespace() {
@@ -120,6 +123,29 @@ public class Project {
         return webUrl;
     }
 
+    public List<Commit> getCommits() {
+        return commits;
+    }
+
+    public List<MergeRequest> getMergeRequests() {
+        return mergeRequests;
+    }
+
+    public List<Issue> getIssues() {
+        return issues;
+    }
+
+    public Server getServer() {
+        return server;
+    }
+
+    public List<Member> getMembers() {
+        return members;
+    }
+
+    public void setServer(Server server) {
+        this.server = server;
+    }
 
     public void addMember(Member member) {
         if (!this.members.contains(member)) {
@@ -162,6 +188,21 @@ public class Project {
             mergeRequest.setProject(null);
         }
     }
+
+    public void addIssue(Issue issue) {
+        if (!this.issues.contains(issue)) {
+            this.issues.add(issue);
+            issue.setProject(this);
+        }
+    }
+
+    public void removeIssue(Issue issue) {
+        if (this.issues.contains(issue)) {
+            this.issues.remove(issue);
+            issue.setProject(null);
+        }
+    }
+
 
     @Override
     public String toString() {
