@@ -7,7 +7,7 @@ import java.util.List;
 
 public class RawCommitData {
     private GitLabCommit gitLabCommit;
-    private Flux<GitLabDiff> gitLabDiff;
+    private Flux<GitLabFileChange> gitLabDiff;
 
     public RawCommitData() {
     }
@@ -25,11 +25,11 @@ public class RawCommitData {
         this.gitLabCommit = gitLabCommit;
     }
 
-    public List<GitLabDiff> getGitLabDiff() {
+    public List<GitLabFileChange> getGitLabDiff() {
         return gitLabDiff.collectList().block();
     }
 
-    public void setGitLabDiff(Flux<GitLabDiff> gitLabDiff) {
+    public void setGitLabDiff(Flux<GitLabFileChange> gitLabDiff) {
         this.gitLabDiff = gitLabDiff;
     }
 }

@@ -2,7 +2,7 @@ package com.eris.gitlabanalyzer.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class GitLabDiff {
+public class GitLabFileChange {
 
     private String diff;
 
@@ -21,7 +21,7 @@ public class GitLabDiff {
     @JsonProperty("deleted_file")
     private Boolean deletedFile;
 
-    public GitLabDiff() {
+    public GitLabFileChange() {
     }
 
     public String getDiff() {

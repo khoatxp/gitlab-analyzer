@@ -126,7 +126,7 @@ public class GitLabService {
         return headersSpec.retrieve().bodyToMono(GitLabCommit.class);
     }
 
-    public Flux<GitLabDiff> getCommitDiff(Long projectId, String sha) {
+    public Flux<GitLabFileChange> getCommitDiff(Long projectId, String sha) {
         URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/repository/commits/" + sha + "/diff")
                 .build()
@@ -136,10 +136,10 @@ public class GitLabService {
         WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
                 .uri(gitlabUrl)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-        return headersSpec.retrieve().bodyToFlux(GitLabDiff.class);
+        return headersSpec.retrieve().bodyToFlux(GitLabFileChange.class);
     }
 
-    public Flux<GitLabDiff> getMergeRequestDiff(Long projectId, long mergeRequestIid) {
+    public Flux<GitLabFileChange> getMergeRequestDiff(Long projectId, long mergeRequestIid) {
         URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/changes")
                 .queryParam("access_raw_diffs", true)
@@ -150,6 +150,6 @@ public class GitLabService {
         WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
                 .uri(gitlabUrl)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-        return headersSpec.retrieve().bodyToMono(GitLabChange.class).flatMapIterable(GitLabChange::getChanges);
+        return headersSpec.retrieve().bodyToMono(GitLabMergeRequestChange.class).flatMapIterable(GitLabMergeRequestChange::getChanges);
     }
 }

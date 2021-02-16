@@ -57,14 +57,14 @@ public class GitLabController {
     }
 
     @GetMapping(path ="/projects/{projectId}/commit/{sha}/diff")
-    public Flux<GitLabDiff> getCommitDiff(
+    public Flux<GitLabFileChange> getCommitDiff(
             @PathVariable("projectId") Long projectId,
             @PathVariable("sha") String sha) {
         return gitLabService.getCommitDiff(projectId, sha);
     }
 
     @GetMapping(path ="/projects/{projectId}/merge_request/{merge_request_iid}/diff")
-    public Flux<GitLabDiff> getMergeDiff(
+    public Flux<GitLabFileChange> getMergeDiff(
             @PathVariable("projectId") Long projectId,
             @PathVariable("merge_request_iid") Long merge_request_iid) {
         return gitLabService.getMergeRequestDiff(projectId, merge_request_iid);

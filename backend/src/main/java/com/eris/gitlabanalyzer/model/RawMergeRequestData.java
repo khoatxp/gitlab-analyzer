@@ -7,7 +7,7 @@ import java.util.List;
 
 public class RawMergeRequestData {
     private Flux<RawCommitData> rawCommitData;
-    private Flux<GitLabDiff> gitLabDiff;
+    private Flux<GitLabFileChange> gitLabDiff;
     private GitLabMergeRequest gitLabMergeRequest;
 
     public RawMergeRequestData() {
@@ -26,11 +26,11 @@ public class RawMergeRequestData {
         this.rawCommitData = rawCommitData;
     }
 
-    public List<GitLabDiff> getGitLabDiff() {
+    public List<GitLabFileChange> getGitLabDiff() {
         return gitLabDiff.collectList().block();
     }
 
-    public void setGitLabDiff(Flux<GitLabDiff> gitLabDiff) {
+    public void setGitLabDiff(Flux<GitLabFileChange> gitLabDiff) {
         this.gitLabDiff = gitLabDiff;
     }
 
