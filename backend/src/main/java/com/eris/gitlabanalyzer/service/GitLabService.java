@@ -10,10 +10,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Service
 public class GitLabService {
@@ -84,7 +81,6 @@ public class GitLabService {
         WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
                 .uri(gitlabUrl)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-        System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")) + " getMergeRequests");
         return headersSpec.retrieve().bodyToFlux(GitLabMergeRequest.class);
     }
 
@@ -98,7 +94,6 @@ public class GitLabService {
         WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
                 .uri(gitlabUrl)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-        System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")) + " getMergeRequestCommits");
         return headersSpec.retrieve().bodyToFlux(GitLabCommit.class);
     }
 
@@ -115,7 +110,6 @@ public class GitLabService {
         WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
                 .uri(gitlabUrl)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-        System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")) + " getCommits");
         return headersSpec.retrieve().bodyToFlux(GitLabCommit.class);
     }
 
@@ -129,8 +123,6 @@ public class GitLabService {
         WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
                 .uri(gitlabUrl)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-
-        System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")) + " getCommit");
         return headersSpec.retrieve().bodyToMono(GitLabCommit.class);
     }
 
@@ -144,8 +136,6 @@ public class GitLabService {
         WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
                 .uri(gitlabUrl)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-
-        System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")) + " getCommitDiff" + " " + sha);
         return headersSpec.retrieve().bodyToFlux(GitLabDiff.class);
     }
 
@@ -160,8 +150,6 @@ public class GitLabService {
         WebClient.RequestHeadersSpec<?> headersSpec = webClient.get()
                 .uri(gitlabUrl)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-
-        System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")) + " getMergeRequestDiff");
         return headersSpec.retrieve().bodyToMono(GitLabChange.class).flatMapIterable(GitLabChange::getChanges);
     }
 }
