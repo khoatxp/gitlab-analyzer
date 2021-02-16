@@ -17,9 +17,6 @@ public class GitLabCommit {
     @JsonProperty("created_at")
     private ZonedDateTime createdAt;
 
-    @JsonProperty("project_id")
-    private Long projectId;
-
     private String title;
 
     @JsonProperty("web_url")
@@ -41,10 +38,6 @@ public class GitLabCommit {
 
     public ZonedDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public Long getProjectId() {
-        return projectId;
     }
 
     public String getTitle() {

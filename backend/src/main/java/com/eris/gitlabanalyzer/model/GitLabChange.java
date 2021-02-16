@@ -1,4 +1,5 @@
 package com.eris.gitlabanalyzer.model;
+
 import java.util.List;
 
 public class GitLabChange {
