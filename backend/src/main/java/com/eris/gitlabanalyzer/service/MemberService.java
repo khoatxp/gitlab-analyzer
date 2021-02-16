@@ -38,7 +38,7 @@ public class MemberService {
 
         if (gitLabMemberList != null && !gitLabMemberList.isEmpty()) {
             gitLabMemberList.forEach(gitLabMember -> {
-                Member member = memberRepository.findByUserName(gitLabMember.getUsername());
+                Member member = memberRepository.findByUserNameAndServerUrl(gitLabMember.getUsername(),serverUrl);
                 if (member == null){
                     member = new Member(
                             gitLabMember.getUsername(),

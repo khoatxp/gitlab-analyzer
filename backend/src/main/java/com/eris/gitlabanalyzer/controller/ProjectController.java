@@ -20,10 +20,7 @@ public class ProjectController {
         this.analyticsService = analyticsService;
     }
     @PostMapping(path = "/analytics")
-    public void analyzeProject(
-            @RequestBody List<Long> projectIdList,
-            @RequestParam(required = true) String serverUrl,
-            @RequestParam(required = true) String accessToken){
+    public void analyzeProject(@RequestBody List<Long> projectIdList){
         analyticsService.saveAllFromGitlab(projectIdList);
     }
 

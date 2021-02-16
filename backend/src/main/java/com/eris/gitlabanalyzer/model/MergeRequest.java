@@ -26,6 +26,11 @@ public class MergeRequest {
     private Long id;
 
     @Column(
+            name = "merge_request_iid"
+    )
+    private Long iid;
+
+    @Column(
             name = "author_name",
             nullable = false
     )
@@ -97,6 +102,10 @@ public class MergeRequest {
         return id;
     }
 
+    public Long getIid() {
+        return iid;
+    }
+
     public String getAuthorName() {
         return authorName;
     }
@@ -140,7 +149,8 @@ public class MergeRequest {
     public MergeRequest() {
     }
 
-    public MergeRequest(String authorName, String authorUsername, String title, String description, String createdAt, String webUrl, Project project, Member member) {
+    public MergeRequest(Long iid, String authorName, String authorUsername, String title, String description, String createdAt, String webUrl, Project project, Member member) {
+        this.iid = iid;
         this.authorName = authorName;
         this.authorUsername = authorUsername;
         this.title = title;
@@ -183,6 +193,7 @@ public class MergeRequest {
     public String toString() {
         return "MergeRequest{" +
                 "id=" + id +
+                ", iid=" + iid +
                 ", authorName='" + authorName + '\'' +
                 ", authorUsername='" + authorUsername + '\'' +
                 ", title='" + title + '\'' +

@@ -1,14 +1,11 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.repository.ProjectRepository;
-import com.eris.gitlabanalyzer.repository.ServerRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
 public class AnalyticsService {
-
     private final ProjectService projectService;
     private final MemberService memberService;
     private final MergeRequestService mergeRequestService;
@@ -25,11 +22,11 @@ public class AnalyticsService {
         this.mergeRequestService = mergeRequestService;
     }
 
-    public void saveAllFromGitlab(List<Long> projectIdList) {
-        for (Long projectId : projectIdList) {
-            projectService.saveProjectInfo(projectId);
-            memberService.saveMemberInfo(projectId);
-            mergeRequestService.saveMergeRequestInfo(projectId);
+    public void saveAllFromGitlab(List<Long> gitLabProjectIdList) {
+        for (Long gitLabProjectId : gitLabProjectIdList) {
+            projectService.saveProjectInfo(gitLabProjectId);
+            memberService.saveMemberInfo(gitLabProjectId);
+            mergeRequestService.saveMergeRequestInfo(gitLabProjectId);
         }
     }
 }

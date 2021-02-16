@@ -12,5 +12,5 @@ public interface MemberRepository extends JpaRepository<Member, Long>{
     List<Member> findByProjectId(Long projectId);
 
     @Query("select m from Member m where m.username = ?1")
-    Member findByUserName(String username);
+    Member findByUserNameAndServerUrl(String username, String serverUrl);
 }

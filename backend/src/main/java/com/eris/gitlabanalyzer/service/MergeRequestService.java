@@ -37,8 +37,9 @@ public class MergeRequestService {
 
         if (gitLabMergeRequestList != null && !gitLabMergeRequestList.isEmpty()){
             gitLabMergeRequestList.forEach(gitLabMergeRequest -> {
-                    Member member = memberRepository.findByUserName(gitLabMergeRequest.getUsername());
+                    Member member = memberRepository.findByUserNameAndServerUrl(gitLabMergeRequest.getUsername(),serverUrl);
                     MergeRequest mergeRequest = new MergeRequest(
+                            gitLabMergeRequest.getIid(),
                             gitLabMergeRequest.getName(),
                             gitLabMergeRequest.getUsername(),
                             gitLabMergeRequest.getTitle(),
