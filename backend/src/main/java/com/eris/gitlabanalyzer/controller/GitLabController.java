@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/gitlab")
@@ -42,7 +40,7 @@ public class GitLabController {
     }
 
     @GetMapping(path ="/projects/{projectId}/merge_request/{merge_request_iid}/commits")
-    public Flux<GitLabCommit> getMergeRequests(
+    public Flux<GitLabCommit> getMergeRequestCommits(
             @PathVariable("projectId") Long projectId,
             @PathVariable("merge_request_iid") Long merge_request_iid)  {
         return gitLabService.getMergeRequestCommits(projectId, merge_request_iid);
@@ -66,7 +64,7 @@ public class GitLabController {
     }
 
     @GetMapping(path ="/projects/{projectId}/merge_request/{merge_request_iid}/diff")
-    public Mono<List<GitLabDiff>> getMergeDiff(
+    public Flux<GitLabDiff> getMergeDiff(
             @PathVariable("projectId") Long projectId,
             @PathVariable("merge_request_iid") Long merge_request_iid) {
         return gitLabService.getMergeRequestDiff(projectId, merge_request_iid);
