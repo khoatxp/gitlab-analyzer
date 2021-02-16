@@ -5,8 +5,10 @@ import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,14 +42,22 @@ public class ProjectService {
         // for all items in mergeRequests call get commits
             // for all items in commits call get diff
             // for all items in merge request get diff
-        var rawMergeRequestData = mergeRequests.map((mergeRequest) -> getRawMergeRequestData(mergeRequest, projectId));
+        var rawMergeRequestData = mergeRequests
+                .parallel()
+                .runOn(Schedulers.boundedElastic())
+                .map((mergeRequest) -> getRawMergeRequestData(mergeRequest, projectId))
+                .sorted((mr1, mr2) -> (int)(mr1.getGitLabMergeRequest().getIid() - mr2.getGitLabMergeRequest().getIid()));
 
 
         // for all commits NOT in merge commits get diff
         var mergeRequestCommitIds = getMergeRequestCommitIds(rawMergeRequestData);
         var commits = gitLabService.getCommits(projectId, startDateTime, endDateTime);
         var orphanCommits = getOrphanCommits(commits, mergeRequestCommitIds);
-        var rawOrphanCommitData = orphanCommits.map((commit) -> getRawCommitData(commit, projectId));
+        var rawOrphanCommitData = orphanCommits
+                .parallel()
+                .runOn(Schedulers.boundedElastic())
+                .map((commit) -> getRawCommitData(commit, projectId))
+                .sorted(Comparator.comparing(c -> c.getGitLabCommit().getCreatedAt()));
 
         var rawProjectData = new RawTimeLineProjectData();
         rawProjectData.setProjectId(projectId);
@@ -62,7 +72,11 @@ public class ProjectService {
 
     private RawMergeRequestData getRawMergeRequestData(GitLabMergeRequest mergeRequest, Long projectId) {
         var gitLabCommits = gitLabService.getMergeRequestCommits(projectId, mergeRequest.getIid());
-        var rawCommitData = gitLabCommits.map((commit) -> getRawCommitData(commit, projectId));
+        var rawCommitData = gitLabCommits
+                .parallel()
+                .runOn(Schedulers.boundedElastic())
+                .map((commit) -> getRawCommitData(commit, projectId))
+                .sorted(Comparator.comparing(c -> c.getGitLabCommit().getCreatedAt()));
 
         var gitLabDiff = gitLabService.getMergeRequestDiff(projectId, mergeRequest.getIid());
 
