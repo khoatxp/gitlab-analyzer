@@ -54,7 +54,7 @@ public class Server {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
-    private List<UserServer> users = new ArrayList<>();
+    private List<UserServer> userServers = new ArrayList<>();
 
     public Server() {
     }
@@ -72,7 +72,7 @@ public class Server {
     }
 
     public List<UserServer> getUsers() {
-        return users;
+        return userServers;
     }
 
     public void addProject(Project project) {
@@ -100,6 +100,20 @@ public class Server {
         if (this.gitLabUsers.contains(gitLabUser)) {
             this.gitLabUsers.remove(gitLabUser);
             gitLabUser.setServer(null);
+        }
+    }
+
+    public void addUserServer(UserServer userServer) {
+        if (!this.userServers.contains(userServer)) {
+            this.userServers.add(userServer);
+            userServer.setServer(this);
+        }
+    }
+
+    public void removeUserServer(UserServer userServer) {
+        if (this.userServers.contains(userServer)) {
+            this.userServers.remove(userServer);
+            userServer.setUser(null);
         }
     }
 

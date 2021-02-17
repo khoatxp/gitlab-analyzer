@@ -42,6 +42,14 @@ public class UserServer {
         return accessToken;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setServer(Server server) {
+        this.server = server;
+    }
+
     public UserServer(User user, Server server, String accessToken) {
         this.user = user;
         this.server = server;

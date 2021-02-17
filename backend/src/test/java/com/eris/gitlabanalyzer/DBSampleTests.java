@@ -18,12 +18,10 @@ class DBSampleTests {
     @Test
     void checkRepo_Save() {
 
-        projectRepository.save(new Project(2L, "Test123", "TestingTheThing", "url"));
+        projectRepository.save(new Project(2L, "Test123", "TestingTheThing", "url", null));
         Project r = projectRepository.findById(2L).orElse(null);
         assertNotNull(r);
         assertEquals("TestingTheThing", r.getNameWithNamespace());
-
-
     }
 
 }

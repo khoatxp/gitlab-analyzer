@@ -33,7 +33,7 @@ public class User {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
-    private List<UserServer> servers = new ArrayList<>();
+    private List<UserServer> userServers = new ArrayList<>();
 
 
     public User(){}
@@ -49,13 +49,29 @@ public class User {
     public String getUsername() {return username;}
 
     public List<UserServer> getServers() {
-        return servers;
+        return userServers;
     }
 
+    // I think this code is highly coupled with Server model instead of UserServer
+    // We might want to handle this in bigger scope.
     public void addServer(Server server, String accessToken){
         UserServer userServer = new UserServer(this, server, accessToken);
-        this.servers.add(userServer);
-        server.getUsers().add(userServer);
+        this.addUserServer(userServer);
+        server.addUserServer(userServer);
+    }
+
+    public void addUserServer(UserServer userServer) {
+        if (!this.userServers.contains(userServer)) {
+            this.userServers.add(userServer);
+            userServer.setUser(this);
+        }
+    }
+
+    public void removeUserServer(UserServer userServer) {
+        if (this.userServers.contains(userServer)) {
+            this.userServers.remove(userServer);
+            userServer.setUser(null);
+        }
     }
 
     @Override
