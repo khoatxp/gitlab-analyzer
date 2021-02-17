@@ -61,10 +61,11 @@ const index = () => {
             renderInput={(params) => <TextField {...params} label="Search Projects" variant="outlined" />}
         /> }
 
-        <div className='menu' style={{ marginTop: `30px` }}>
+        <div className='menu' style={{ marginTop: `30px` }} align="center">
 
           <Box
-              //margin
+              marginleft="5px"
+              marginright="5px"
               color="white"
               boxShadow={0}
               width="56vw"
