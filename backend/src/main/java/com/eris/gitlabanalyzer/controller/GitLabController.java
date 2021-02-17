@@ -1,13 +1,13 @@
 package com.eris.gitlabanalyzer.controller;
 
-import com.eris.gitlabanalyzer.model.GitLabProject;
+import com.eris.gitlabanalyzer.model.*;
 import com.eris.gitlabanalyzer.service.GitLabService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+
+import java.time.ZonedDateTime;
 
 @RestController
 @RequestMapping(path = "/api/v1/gitlab")
@@ -28,4 +28,46 @@ public class GitLabController {
     public Flux<GitLabProject> getProjects() {
         return gitLabService.getProjects();
     }
+
+    @GetMapping(path ="/projects/{projectId}/merge_requests")
+    public Flux<GitLabMergeRequest> getMergeRequests(
+            @PathVariable("projectId") Long projectId,
+            @RequestParam("startDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDateTime,
+            @RequestParam("endDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endDateTime) {
+        return gitLabService.getMergeRequests(projectId, startDateTime, endDateTime);
+    }
+
+    @GetMapping(path ="/projects/{projectId}/merge_request/{merge_request_iid}/commits")
+    public Flux<GitLabCommit> getMergeRequestCommits(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("merge_request_iid") Long merge_request_iid)  {
+        return gitLabService.getMergeRequestCommits(projectId, merge_request_iid);
+    }
+
+    @GetMapping(path ="/projects/{projectId}/commits")
+    public Flux<GitLabCommit> getCommits(
+            @PathVariable("projectId") Long projectId,
+            @RequestParam("startDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDateTime,
+            @RequestParam("endDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endDateTime) {
+        return gitLabService.getCommits(projectId, startDateTime, endDateTime);
+    }
+
+    @GetMapping(path ="/projects/{projectId}/commit/{sha}/diff")
+    public Flux<GitLabFileChange> getCommitDiff(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("sha") String sha) {
+        return gitLabService.getCommitDiff(projectId, sha);
+    }
+
+    @GetMapping(path ="/projects/{projectId}/merge_request/{merge_request_iid}/diff")
+    public Flux<GitLabFileChange> getMergeDiff(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("merge_request_iid") Long merge_request_iid) {
+        return gitLabService.getMergeRequestDiff(projectId, merge_request_iid);
+    }
+
 }
