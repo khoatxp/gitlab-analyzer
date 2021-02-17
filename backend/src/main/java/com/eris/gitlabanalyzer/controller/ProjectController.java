@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/projects")
-@CrossOrigin() // TODO configure CORS so front end is globally allowed to access routes
 public class ProjectController {
     private final ProjectService projectService;
     private final AnalyticsService analyticsService;

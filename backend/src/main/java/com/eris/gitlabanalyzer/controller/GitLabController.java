@@ -11,7 +11,6 @@ import reactor.core.publisher.Flux;
 
 @RestController
 @RequestMapping(path = "/api/v1/gitlab")
-@CrossOrigin() // TODO configure CORS so front end is globally allowed to access routes
 public class GitLabController {
 
     private final GitLabService gitLabService;
