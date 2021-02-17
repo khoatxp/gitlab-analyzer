@@ -48,7 +48,7 @@ public class User {
 
     public String getUsername() {return username;}
 
-    public List<UserServer> getServers() {
+    public List<UserServer> getUserServers() {
         return userServers;
     }
 

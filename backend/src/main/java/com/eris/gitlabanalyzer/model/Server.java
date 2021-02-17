@@ -71,7 +71,7 @@ public class Server {
         return serverUrl;
     }
 
-    public List<UserServer> getUsers() {
+    public List<UserServer> getUserServers() {
         return userServers;
     }
 

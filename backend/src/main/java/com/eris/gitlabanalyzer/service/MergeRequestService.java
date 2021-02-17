@@ -42,7 +42,6 @@ public class MergeRequestService {
                             gitLabMergeRequest.getIid(),
                             gitLabMergeRequest.getUsername(),
                             gitLabMergeRequest.getTitle(),
-                            gitLabMergeRequest.getDescription(),
                             gitLabMergeRequest.getCreatedAt(),
                             gitLabMergeRequest.getWebUrl(),
                             project,

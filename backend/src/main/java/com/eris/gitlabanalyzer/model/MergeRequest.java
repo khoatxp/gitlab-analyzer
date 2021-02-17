@@ -43,13 +43,6 @@ public class MergeRequest {
     private String title;
 
     @Column(
-            name = "description",
-            columnDefinition="TEXT",
-            nullable = false
-    )
-    private String description;
-
-    @Column(
             name = "created_at",
             nullable = false
     )
@@ -108,10 +101,6 @@ public class MergeRequest {
         return title;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public String getCreatedAt() {
         return createdAt;
     }
@@ -139,11 +128,10 @@ public class MergeRequest {
     public MergeRequest() {
     }
 
-    public MergeRequest(Long iid, String authorUsername, String title, String description, String createdAt, String webUrl, Project project, GitLabUser gitLabUser) {
+    public MergeRequest(Long iid, String authorUsername, String title, String createdAt, String webUrl, Project project, GitLabUser gitLabUser) {
         this.iid = iid;
         this.authorUsername = authorUsername;
         this.title = title;
-        this.description = description;
         this.createdAt = createdAt;
         this.webUrl = webUrl;
         this.project = project;
@@ -185,9 +173,12 @@ public class MergeRequest {
                 ", iid=" + iid +
                 ", authorUsername='" + authorUsername + '\'' +
                 ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 ", webUrl='" + webUrl + '\'' +
+                ", project=" + project +
+                ", gitLabUser=" + gitLabUser +
+                ", commits=" + commits +
+                ", mergeRequestComments=" + mergeRequestComments +
                 '}';
     }
 }

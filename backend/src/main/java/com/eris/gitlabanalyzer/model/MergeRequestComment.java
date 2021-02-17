@@ -43,14 +43,6 @@ public class MergeRequestComment {
     private MergeRequest mergeRequest;
 
     @Column(
-            name = "body",
-            columnDefinition="TEXT",
-            nullable = false
-
-    )
-    private String body;
-
-    @Column(
             name = "web_url",
             nullable = false
 
@@ -66,12 +58,10 @@ public class MergeRequestComment {
     public MergeRequestComment() {
     }
 
-    public MergeRequestComment(Long iid,GitLabUser gitLabUser, MergeRequest mergeRequest, String body,
-                               String webUrl, String createdAt) {
+    public MergeRequestComment(Long iid, GitLabUser gitLabUser, MergeRequest mergeRequest, String webUrl, String createdAt) {
         this.iid = iid;
         this.gitLabUser = gitLabUser;
         this.mergeRequest = mergeRequest;
-        this.body = body;
         this.webUrl = webUrl;
         this.createdAt = createdAt;
     }
@@ -90,10 +80,6 @@ public class MergeRequestComment {
 
     public MergeRequest getMergeRequest() {
         return mergeRequest;
-    }
-
-    public String getBody() {
-        return body;
     }
 
     public String getWebUrl() {
@@ -117,7 +103,8 @@ public class MergeRequestComment {
         return "MergeRequestComment{" +
                 "id=" + id +
                 ", iid=" + iid +
-                ", body='" + body + '\'' +
+                ", gitLabUser=" + gitLabUser +
+                ", mergeRequest=" + mergeRequest +
                 ", webUrl='" + webUrl + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 '}';

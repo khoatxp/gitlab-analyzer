@@ -44,14 +44,6 @@ public class CommitComment {
     private Commit commit;
 
     @Column(
-            name = "body",
-            columnDefinition="TEXT",
-            nullable = false
-
-    )
-    private String body;
-
-    @Column(
             name = "web_Url",
             nullable = false
 
@@ -73,10 +65,6 @@ public class CommitComment {
         return gitLabUser;
     }
 
-    public String getBody() {
-        return body;
-    }
-
     public String getWebUrl() {
         return webUrl;
     }
@@ -96,10 +84,10 @@ public class CommitComment {
     public CommitComment() {
     }
 
-    public CommitComment(Long id, GitLabUser gitLabUser, String body, String webUrl, String createdAt) {
-        this.id = id;
+    public CommitComment(Long iid, GitLabUser gitLabUser, Commit commit, String webUrl, String createdAt) {
+        this.iid = iid;
         this.gitLabUser = gitLabUser;
-        this.body = body;
+        this.commit = commit;
         this.webUrl = webUrl;
         this.createdAt = createdAt;
     }
@@ -109,7 +97,8 @@ public class CommitComment {
         return "CommitComment{" +
                 "id=" + id +
                 ", iid=" + iid +
-                ", body='" + body + '\'' +
+                ", gitLabUser=" + gitLabUser +
+                ", commit=" + commit +
                 ", webUrl='" + webUrl + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 '}';

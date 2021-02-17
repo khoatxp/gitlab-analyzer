@@ -43,14 +43,6 @@ public class IssueComment {
     private Issue issue;
 
     @Column(
-            name = "body",
-            columnDefinition="TEXT",
-            nullable = false
-
-    )
-    private String body;
-
-    @Column(
             name = "web_Url",
             nullable = false
 
@@ -66,11 +58,10 @@ public class IssueComment {
     public IssueComment() {
     }
 
-    public IssueComment(Long iid, GitLabUser gitLabUser, Issue issue, String body, String webUrl, String createdAt) {
+    public IssueComment(Long iid, GitLabUser gitLabUser, Issue issue, String webUrl, String createdAt) {
         this.iid = iid;
         this.gitLabUser = gitLabUser;
         this.issue = issue;
-        this.body = body;
         this.webUrl = webUrl;
         this.createdAt = createdAt;
     }
@@ -89,10 +80,6 @@ public class IssueComment {
 
     public Issue getIssue() {
         return issue;
-    }
-
-    public String getBody() {
-        return body;
     }
 
     public String getWebUrl() {
@@ -116,8 +103,8 @@ public class IssueComment {
         return "IssueComment{" +
                 "id=" + id +
                 ", iid=" + iid +
+                ", gitLabUser=" + gitLabUser +
                 ", issue=" + issue +
-                ", body='" + body + '\'' +
                 ", webUrl='" + webUrl + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 '}';
