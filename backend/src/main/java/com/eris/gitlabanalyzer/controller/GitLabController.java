@@ -29,6 +29,7 @@ public class GitLabController {
         return gitLabService.getProjects();
     }
 
+    // TODO: currently there is no direct use for this endpoint, to be removed
     @GetMapping(path ="/projects/{projectId}/merge_requests")
     public Flux<GitLabMergeRequest> getMergeRequests(
             @PathVariable("projectId") Long projectId,
