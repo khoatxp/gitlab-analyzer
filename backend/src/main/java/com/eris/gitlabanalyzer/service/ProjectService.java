@@ -59,12 +59,7 @@ public class ProjectService {
                 .map((commit) -> getRawCommitData(commit, projectId))
                 .sorted(Comparator.comparing(c -> c.getGitLabCommit().getCreatedAt()));
 
-        var rawProjectData = new RawTimeLineProjectData();
-        rawProjectData.setProjectId(projectId);
-        rawProjectData.setStartDateTime(startDateTime);
-        rawProjectData.setEndDateTime(endDateTime);
-        rawProjectData.setMergeRequestData(rawMergeRequestData);
-        rawProjectData.setOrphanCommits(rawOrphanCommitData);
+        var rawProjectData = new RawTimeLineProjectData(projectId, startDateTime, endDateTime, rawMergeRequestData, rawOrphanCommitData);
 
         return rawProjectData;
     }
@@ -80,18 +75,13 @@ public class ProjectService {
 
         var gitLabDiff = gitLabService.getMergeRequestDiff(projectId, mergeRequest.getIid());
 
-        var rawMergeRequestData = new RawMergeRequestData();
-        rawMergeRequestData.setGitLabMergeRequest(mergeRequest);
-        rawMergeRequestData.setRawCommitData(rawCommitData);
-        rawMergeRequestData.setGitLabDiff(gitLabDiff);
+        var rawMergeRequestData = new RawMergeRequestData(rawCommitData, gitLabDiff, mergeRequest);
         return rawMergeRequestData;
     }
 
     private RawCommitData getRawCommitData(GitLabCommit commit, Long projectId) {
         var changes = gitLabService.getCommitDiff(projectId, commit.getSha());
-        var rawCommitData = new RawCommitData();
-        rawCommitData.setGitLabCommit(commit);
-        rawCommitData.setGitLabDiff(changes);
+        var rawCommitData = new RawCommitData(commit, changes);
         return rawCommitData;
     }
 

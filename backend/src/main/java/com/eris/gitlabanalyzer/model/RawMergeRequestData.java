@@ -13,6 +13,14 @@ public class RawMergeRequestData {
     public RawMergeRequestData() {
     }
 
+    public RawMergeRequestData(Flux<RawCommitData> rawCommitData,
+                               Flux<GitLabFileChange> gitLabDiff,
+                               GitLabMergeRequest gitLabMergeRequest) {
+        this.rawCommitData = rawCommitData;
+        this.gitLabDiff = gitLabDiff;
+        this.gitLabMergeRequest = gitLabMergeRequest;
+    }
+
     @JsonIgnore
     public Flux<RawCommitData> getFluxRawCommitData() {
         return rawCommitData;
@@ -22,23 +30,12 @@ public class RawMergeRequestData {
         return rawCommitData.collectList().block();
     }
 
-    public void setRawCommitData(Flux<RawCommitData> rawCommitData) {
-        this.rawCommitData = rawCommitData;
-    }
-
     public List<GitLabFileChange> getGitLabDiff() {
         return gitLabDiff.collectList().block();
-    }
-
-    public void setGitLabDiff(Flux<GitLabFileChange> gitLabDiff) {
-        this.gitLabDiff = gitLabDiff;
     }
 
     public GitLabMergeRequest getGitLabMergeRequest() {
         return gitLabMergeRequest;
     }
 
-    public void setGitLabMergeRequest(GitLabMergeRequest gitLabMergeRequest) {
-        this.gitLabMergeRequest = gitLabMergeRequest;
-    }
 }

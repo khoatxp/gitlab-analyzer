@@ -39,6 +39,7 @@ public class GitLabController {
         return gitLabService.getMergeRequests(projectId, startDateTime, endDateTime);
     }
 
+    // TODO: currently there is no direct use for this endpoint, to be removed
     @GetMapping(path ="/projects/{projectId}/merge_request/{merge_request_iid}/commits")
     public Flux<GitLabCommit> getMergeRequestCommits(
             @PathVariable("projectId") Long projectId,
@@ -46,6 +47,7 @@ public class GitLabController {
         return gitLabService.getMergeRequestCommits(projectId, merge_request_iid);
     }
 
+    // TODO: currently there is no direct use for this endpoint, to be removed
     @GetMapping(path ="/projects/{projectId}/commits")
     public Flux<GitLabCommit> getCommits(
             @PathVariable("projectId") Long projectId,
@@ -56,6 +58,7 @@ public class GitLabController {
         return gitLabService.getCommits(projectId, startDateTime, endDateTime);
     }
 
+    // TODO: currently there is no direct use for this endpoint, to be removed
     @GetMapping(path ="/projects/{projectId}/commit/{sha}/diff")
     public Flux<GitLabFileChange> getCommitDiff(
             @PathVariable("projectId") Long projectId,
@@ -63,6 +66,7 @@ public class GitLabController {
         return gitLabService.getCommitDiff(projectId, sha);
     }
 
+    // TODO: currently there is no direct use for this endpoint, to be removed
     @GetMapping(path ="/projects/{projectId}/merge_request/{merge_request_iid}/diff")
     public Flux<GitLabFileChange> getMergeDiff(
             @PathVariable("projectId") Long projectId,
