@@ -9,7 +9,7 @@ import {GitLabProject} from "../../interfaces/GitLabProject";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 
 const useStyles = makeStyles((theme) => ({
-    margin: {
+    AnalyzeButtonMargin: {
         margin: theme.spacing(1),
     },
 }));
@@ -64,7 +64,7 @@ const index = () => {
         <div className='menu' style={{ marginTop: `30px` }}>
 
           <Box
-              margin
+              //margin
               color="white"
               boxShadow={0}
               width="56vw"
@@ -83,7 +83,7 @@ const index = () => {
         </div>
 
           <div align="center">
-            <Button variant="contained" color="primary" size="medium" className={classes.margin} >
+            <Button variant="contained" color="primary" size="medium" className={classes.AnalyzeButtonMargin} >
               ANALYZE
             </Button>
           </div>

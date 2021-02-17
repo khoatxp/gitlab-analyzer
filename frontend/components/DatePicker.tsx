@@ -7,19 +7,16 @@ import { MuiPickersUtilsProvider, KeyboardDatePicker} from '@material-ui/pickers
 
 const DatePicker = () => {
 
-    const [startDate, setStartDate] = React.useState<Date | null>(new Date('01-02-2021'));
-    const [endDate, setEndDate] =  React.useState<Date | null>(new Date('01-05-2021'));
+    var now = new Date();
+    const [startDate, setStartDate] = React.useState<Date>(new Date(now.getFullYear(),now.getMonth()-1, now.getDay()));
+    const [endDate, setEndDate] =  React.useState<Date>(new Date());
 
-    const handleStartChange = (date: Date | null) => {
-        if(date) {
+    const handleStartChange = (date) => {
             setStartDate(date);
-        }
     };
 
-    const handleEndChange = (date: Date | null) => {
-        if(date) {
+    const handleEndChange = (date) => {
             setEndDate(date);
-        }
     };
 
     return(
