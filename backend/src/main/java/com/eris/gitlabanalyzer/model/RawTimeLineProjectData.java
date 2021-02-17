@@ -6,7 +6,7 @@ import java.util.List;
 
 public class RawTimeLineProjectData {
 
-    private Long projectId;
+    private Long gitLabProjectId;
     private ZonedDateTime startDateTime;
     private ZonedDateTime endDateTime;
     private Flux<RawMergeRequestData> mergeRequestData;
@@ -15,20 +15,20 @@ public class RawTimeLineProjectData {
     public RawTimeLineProjectData() {
     }
 
-    public RawTimeLineProjectData(Long projectId,
+    public RawTimeLineProjectData(Long gitLabProjectId,
                                   ZonedDateTime startDateTime,
                                   ZonedDateTime endDateTime,
                                   Flux<RawMergeRequestData> mergeRequestData,
                                   Flux<RawCommitData> orphanCommits) {
-        this.projectId = projectId;
+        this.gitLabProjectId = gitLabProjectId;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.mergeRequestData = mergeRequestData;
         this.orphanCommits = orphanCommits;
     }
 
-    public Long getProjectId() {
-        return projectId;
+    public Long getGitLabProjectId() {
+        return gitLabProjectId;
     }
 
     public ZonedDateTime getStartDateTime() {

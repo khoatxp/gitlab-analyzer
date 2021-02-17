@@ -36,8 +36,8 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public RawTimeLineProjectData getTimeLineProjectData(Long projectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
-        var mergeRequests = gitLabService.getMergeRequests(projectId, startDateTime, endDateTime);
+    public RawTimeLineProjectData getTimeLineProjectData(Long gitLabProjectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+        var mergeRequests = gitLabService.getMergeRequests(gitLabProjectId, startDateTime, endDateTime);
 
         // for all items in mergeRequests call get commits
             // for all items in commits call get diff
@@ -45,42 +45,42 @@ public class ProjectService {
         var rawMergeRequestData = mergeRequests
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
-                .map((mergeRequest) -> getRawMergeRequestData(mergeRequest, projectId))
+                .map((mergeRequest) -> getRawMergeRequestData(mergeRequest, gitLabProjectId))
                 .sorted((mr1, mr2) -> (int)(mr1.getGitLabMergeRequest().getIid() - mr2.getGitLabMergeRequest().getIid()));
 
 
         // for all commits NOT in merge commits get diff
         var mergeRequestCommitIds = getMergeRequestCommitIds(rawMergeRequestData);
-        var commits = gitLabService.getCommits(projectId, startDateTime, endDateTime);
+        var commits = gitLabService.getCommits(gitLabProjectId, startDateTime, endDateTime);
         var orphanCommits = getOrphanCommits(commits, mergeRequestCommitIds);
         var rawOrphanCommitData = orphanCommits
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
-                .map((commit) -> getRawCommitData(commit, projectId))
+                .map((commit) -> getRawCommitData(commit, gitLabProjectId))
                 .sorted(Comparator.comparing(c -> c.getGitLabCommit().getCreatedAt()));
 
-        var rawProjectData = new RawTimeLineProjectData(projectId, startDateTime, endDateTime, rawMergeRequestData, rawOrphanCommitData);
+        var rawProjectData = new RawTimeLineProjectData(gitLabProjectId, startDateTime, endDateTime, rawMergeRequestData, rawOrphanCommitData);
 
         return rawProjectData;
     }
 
 
-    private RawMergeRequestData getRawMergeRequestData(GitLabMergeRequest mergeRequest, Long projectId) {
-        var gitLabCommits = gitLabService.getMergeRequestCommits(projectId, mergeRequest.getIid());
+    private RawMergeRequestData getRawMergeRequestData(GitLabMergeRequest mergeRequest, Long gitLabProjectId) {
+        var gitLabCommits = gitLabService.getMergeRequestCommits(gitLabProjectId, mergeRequest.getIid());
         var rawCommitData = gitLabCommits
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
-                .map((commit) -> getRawCommitData(commit, projectId))
+                .map((commit) -> getRawCommitData(commit, gitLabProjectId))
                 .sorted(Comparator.comparing(c -> c.getGitLabCommit().getCreatedAt()));
 
-        var gitLabDiff = gitLabService.getMergeRequestDiff(projectId, mergeRequest.getIid());
+        var gitLabDiff = gitLabService.getMergeRequestDiff(gitLabProjectId, mergeRequest.getIid());
 
         var rawMergeRequestData = new RawMergeRequestData(rawCommitData, gitLabDiff, mergeRequest);
         return rawMergeRequestData;
     }
 
-    private RawCommitData getRawCommitData(GitLabCommit commit, Long projectId) {
-        var changes = gitLabService.getCommitDiff(projectId, commit.getSha());
+    private RawCommitData getRawCommitData(GitLabCommit commit, Long gitLabProjectId) {
+        var changes = gitLabService.getCommitDiff(gitLabProjectId, commit.getSha());
         var rawCommitData = new RawCommitData(commit, changes);
         return rawCommitData;
     }
