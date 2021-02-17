@@ -26,7 +26,7 @@ public class Issue {
     private Long id;
 
     @Column(
-            name = "gitlab_issue_id",
+            name = "issue_iid",
             nullable = false
     )
     private Long iid;
@@ -76,22 +76,22 @@ public class Issue {
 
     @ManyToOne
     @JoinColumn(
-            name = "member_id",
+            name = "gitlab_user_id",
             nullable = false,
-            referencedColumnName = "member_id")
-    private Member member;
+            referencedColumnName = "gitlab_user_id")
+    private GitLabUser gitLabUser;
 
     public Issue() {
     }
 
-    public Issue(Long id, String title, String authorName, String createdAt, String webUrl, Project project, Member member) {
+    public Issue(Long id, String title, String authorName, String createdAt, String webUrl, Project project, GitLabUser gitLabUser) {
         this.id = id;
         this.title = title;
         this.authorName = authorName;
         this.createdAt = createdAt;
         this.webUrl = webUrl;
         this.project = project;
-        this.member = member;
+        this.gitLabUser = gitLabUser;
     }
 
     public Long getId() {
@@ -118,16 +118,16 @@ public class Issue {
         return project;
     }
 
-    public Member getMember() {
-        return member;
+    public GitLabUser getMember() {
+        return gitLabUser;
     }
 
     public void setProject(Project project) {
         this.project = project;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
+    public void setMember(GitLabUser gitLabUser) {
+        this.gitLabUser = gitLabUser;
     }
 
     public void addIssueComment(IssueComment issueComment) {
@@ -153,7 +153,6 @@ public class Issue {
                 ", createdAt='" + createdAt + '\'' +
                 ", webUrl='" + webUrl + '\'' +
                 ", project=" + project +
-                ", member=" + member +
                 '}';
     }
 }

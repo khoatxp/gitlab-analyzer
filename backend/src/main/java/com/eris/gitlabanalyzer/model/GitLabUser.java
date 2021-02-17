@@ -6,21 +6,21 @@ import java.util.List;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
-@Entity(name = "Member")
-@Table(name = "member")
-public class Member {
+@Entity(name = "GitLabUser")
+@Table(name = "gitlab_user")
+public class GitLabUser {
     @Id
     @SequenceGenerator(
-            name = "member_sequence",
-            sequenceName = "member_sequence",
+            name = "gitlab_user_sequence",
+            sequenceName = "gitlab_user_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = SEQUENCE,
-            generator = "member_sequence"
+            generator = "gitlab_user_sequence"
     )
     @Column(
-            name = "member_id"
+            name = "gitlab_user_id"
     )
     private Long id;
 
@@ -46,7 +46,7 @@ public class Member {
     private float score;
 
     @OneToMany(
-            mappedBy = "member",
+            mappedBy = "gitLabUser",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
@@ -54,7 +54,7 @@ public class Member {
     private List<CommitMapping> commitMappings = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "member",
+            mappedBy ="gitLabUser",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
@@ -62,7 +62,7 @@ public class Member {
     private List<Commit> commits = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "member",
+            mappedBy = "gitLabUser",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
@@ -70,7 +70,7 @@ public class Member {
     private List<MergeRequest> mergeRequests = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "member",
+            mappedBy = "gitLabUser",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
@@ -78,7 +78,7 @@ public class Member {
     private List<CommitComment> commitComments = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "member",
+            mappedBy = "gitLabUser",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
@@ -86,7 +86,7 @@ public class Member {
     private List<IssueComment> issueComments = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "member",
+            mappedBy = "gitLabUser",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
@@ -95,8 +95,8 @@ public class Member {
 
     @ManyToMany
     @JoinTable(
-            name = "participate_in",
-            joinColumns = @JoinColumn(name = "member_id"),
+            name = "member",
+            joinColumns = @JoinColumn(name = "gitlab_user_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id"))
     private List<Project> projects = new ArrayList<>();
 
@@ -107,9 +107,9 @@ public class Member {
             referencedColumnName = "server_id")
     private Server server;
 
-    public Member(){}
+    public GitLabUser(){}
 
-    public Member(String username, String name, Server server) {
+    public GitLabUser(String username, String name, Server server) {
         this.username = username;
         this.name = name;
         this.server = server;
@@ -174,56 +174,56 @@ public class Member {
     public void addProject(Project project) {
         if (!this.projects.contains(project)) {
             this.projects.add(project);
-            project.getMembers().add(this);
+            project.getGitLabUsers().add(this);
         }
     }
 
     public void removeProject(Project project) {
         if (this.projects.contains(project)) {
             this.projects.remove(project);
-            project.getMembers().remove(this);
+            project.getGitLabUsers().remove(this);
         }
     }
 
     public void addCommitMapping(CommitMapping commitMapping) {
         if (!this.commitMappings.contains(commitMapping)) {
             this.commitMappings.add(commitMapping);
-            commitMapping.setMember(this);
+            commitMapping.setGitLabUser(this);
         }
     }
 
     public void removeCommitMapping(CommitMapping commitMapping) {
         if (this.commitMappings.contains(commitMapping)) {
             this.commitMappings.remove(commitMapping);
-            commitMapping.setMember(null);
+            commitMapping.setGitLabUser(null);
         }
     }
 
     public void addCommit(Commit commit) {
         if (!this.commits.contains(commit)) {
             this.commits.add(commit);
-            commit.setMember(this);
+            commit.setGitLabUser(this);
         }
     }
 
     public void removeCommit(Commit commit) {
         if (this.commits.contains(commit)) {
             this.commits.remove(commit);
-            commit.setMember(null);
+            commit.setGitLabUser(null);
         }
     }
 
     public void addMergeRequest(MergeRequest mergeRequest) {
         if (!this.mergeRequests.contains(mergeRequest)) {
             this.mergeRequests.add(mergeRequest);
-            mergeRequest.setMember(this);
+            mergeRequest.setGitLabUser(this);
         }
     }
 
     public void removeMergeRequest(MergeRequest mergeRequest) {
         if (this.mergeRequests.contains(mergeRequest)) {
             this.mergeRequests.remove(mergeRequest);
-            mergeRequest.setMember(null);
+            mergeRequest.setGitLabUser(null);
         }
     }
 
@@ -271,7 +271,7 @@ public class Member {
 
     @Override
     public String toString() {
-        return "Member{" +
+        return "GitLabUser{" +
                 "username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 '}';

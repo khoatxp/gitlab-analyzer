@@ -7,7 +7,7 @@ import java.util.List;
 @Service
 public class AnalyticsService {
     private final ProjectService projectService;
-    private final MemberService memberService;
+    private final GitLabUserService gitLabUserService;
     private final MergeRequestService mergeRequestService;
 
     @Value("${gitlab.SERVER_URL}")
@@ -16,16 +16,16 @@ public class AnalyticsService {
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public AnalyticsService(ProjectService projectService, MemberService memberService, MergeRequestService mergeRequestService) {
+    public AnalyticsService(ProjectService projectService, GitLabUserService gitLabUserService, MergeRequestService mergeRequestService) {
         this.projectService = projectService;
-        this.memberService = memberService;
+        this.gitLabUserService = gitLabUserService;
         this.mergeRequestService = mergeRequestService;
     }
 
     public void saveAllFromGitlab(List<Long> gitLabProjectIdList) {
         for (Long gitLabProjectId : gitLabProjectIdList) {
             projectService.saveProjectInfo(gitLabProjectId);
-            memberService.saveMemberInfo(gitLabProjectId);
+            gitLabUserService.saveGitlabUserInfo(gitLabProjectId);
             mergeRequestService.saveMergeRequestInfo(gitLabProjectId);
         }
     }

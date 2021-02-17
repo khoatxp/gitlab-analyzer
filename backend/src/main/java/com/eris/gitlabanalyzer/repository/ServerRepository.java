@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface ServerRepository extends JpaRepository<Server, Long> {
-    @Query("select s from Server s where s.serverUrl = ?1 and s.accessToken = ?2")
-    Server find(String serverUrl, String accessToken);
+    @Query("select s from Server s join s.users us where s.serverUrl=?1 and us.accessToken=?2")
+    Server findByServerUrlAndAccessToken(String serverUrl, String accessToken);
 }
 

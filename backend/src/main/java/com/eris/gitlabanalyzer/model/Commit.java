@@ -46,11 +46,25 @@ public class Commit {
     private String authorName;
 
     @Column(
+            name = "author_email",
+            nullable = false
+
+    )
+    private String authorEmail;
+
+    @Column(
             name = "committer_name",
             nullable = false
 
     )
     private String committerName;
+
+    @Column(
+            name = "committer_email",
+            nullable = false
+
+    )
+    private String committerEmail;
 
     @Column(
             name = "committed_date",
@@ -101,10 +115,10 @@ public class Commit {
 
     @ManyToOne
     @JoinColumn(
-            name = "member_id",
+            name = "gitlab_user_id",
             nullable = false,
-            referencedColumnName = "member_id")
-    private Member member;
+            referencedColumnName = "gitlab_user_id")
+    private GitLabUser gitLabUser;
 
     @ManyToOne
     @JoinColumn(
@@ -116,15 +130,19 @@ public class Commit {
     public Commit() {
     }
 
-    public Commit(String sha, String title, String authorName, String committerName, String committedDate, String createdAt, String webUrl, Project project) {
+    public Commit(String sha, String title, String authorName, String authorEmail, String committerName, String committerEmail, String committedDate, String createdAt, String webUrl, Project project, GitLabUser gitLabUser, MergeRequest mergeRequest) {
         this.sha = sha;
         this.title = title;
         this.authorName = authorName;
+        this.authorEmail = authorEmail;
         this.committerName = committerName;
+        this.committerEmail = committerEmail;
         this.committedDate = committedDate;
         this.createdAt = createdAt;
         this.webUrl = webUrl;
         this.project = project;
+        this.gitLabUser = gitLabUser;
+        this.mergeRequest = mergeRequest;
     }
 
     public CommitMapping getCommitMapping() {
@@ -151,8 +169,16 @@ public class Commit {
         return authorName;
     }
 
+    public String getAuthorEmail() {
+        return authorEmail;
+    }
+
     public String getCommitterName() {
         return committerName;
+    }
+
+    public String getCommitterEmail() {
+        return committerEmail;
     }
 
     public String getCommittedDate() {
@@ -171,8 +197,8 @@ public class Commit {
         this.project = project;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
+    public void setGitLabUser(GitLabUser gitLabUser) {
+        this.gitLabUser = gitLabUser;
     }
 
     public void setMergeRequest(MergeRequest mergeRequest) {
@@ -200,12 +226,12 @@ public class Commit {
                 ", sha='" + sha + '\'' +
                 ", title='" + title + '\'' +
                 ", authorName='" + authorName + '\'' +
+                ", authorEmail='" + authorEmail + '\'' +
                 ", committerName='" + committerName + '\'' +
+                ", committerEmail='" + committerEmail + '\'' +
                 ", committedDate='" + committedDate + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 ", webUrl='" + webUrl + '\'' +
-                ", project=" + project +
-                ", member=" + member +
                 '}';
     }
 }

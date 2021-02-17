@@ -31,12 +31,6 @@ public class MergeRequest {
     private Long iid;
 
     @Column(
-            name = "author_name",
-            nullable = false
-    )
-    private String authorName;
-
-    @Column(
             name = "author_username",
             nullable = false
     )
@@ -77,10 +71,10 @@ public class MergeRequest {
 
     @ManyToOne
     @JoinColumn(
-            name = "member_id",
+            name = "gitlab_user_id",
             nullable = false,
-            referencedColumnName = "member_id")
-    private Member member;
+            referencedColumnName = "gitlab_user_id")
+    private GitLabUser gitLabUser;
 
     @OneToMany(
             mappedBy = "mergeRequest",
@@ -104,10 +98,6 @@ public class MergeRequest {
 
     public Long getIid() {
         return iid;
-    }
-
-    public String getAuthorName() {
-        return authorName;
     }
 
     public String getAuthorUsername() {
@@ -134,31 +124,30 @@ public class MergeRequest {
         return project;
     }
 
-    public Member getMember() {
-        return member;
+    public GitLabUser getGitLabUser() {
+        return gitLabUser;
     }
 
     public void setProject(Project project) {
         this.project = project;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
+    public void setGitLabUser(GitLabUser gitLabUser) {
+        this.gitLabUser = gitLabUser;
     }
 
     public MergeRequest() {
     }
 
-    public MergeRequest(Long iid, String authorName, String authorUsername, String title, String description, String createdAt, String webUrl, Project project, Member member) {
+    public MergeRequest(Long iid, String authorUsername, String title, String description, String createdAt, String webUrl, Project project, GitLabUser gitLabUser) {
         this.iid = iid;
-        this.authorName = authorName;
         this.authorUsername = authorUsername;
         this.title = title;
         this.description = description;
         this.createdAt = createdAt;
         this.webUrl = webUrl;
         this.project = project;
-        this.member = member;
+        this.gitLabUser = gitLabUser;
     }
 
     public void addCommit(Commit commit) {
@@ -194,7 +183,6 @@ public class MergeRequest {
         return "MergeRequest{" +
                 "id=" + id +
                 ", iid=" + iid +
-                ", authorName='" + authorName + '\'' +
                 ", authorUsername='" + authorUsername + '\'' +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +

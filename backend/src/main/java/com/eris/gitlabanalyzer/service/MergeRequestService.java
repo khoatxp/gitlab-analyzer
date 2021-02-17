@@ -1,9 +1,9 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.model.Member;
+import com.eris.gitlabanalyzer.model.GitLabUser;
 import com.eris.gitlabanalyzer.model.MergeRequest;
 import com.eris.gitlabanalyzer.model.Project;
-import com.eris.gitlabanalyzer.repository.MemberRepository;
+import com.eris.gitlabanalyzer.repository.GitLabUserRepository;
 import com.eris.gitlabanalyzer.repository.MergeRequestRepository;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +14,7 @@ public class MergeRequestService {
     GitLabService gitLabService;
     MergeRequestRepository mergeRequestRepository;
     ProjectRepository projectRepository;
-    MemberRepository memberRepository;
+    GitLabUserRepository gitLabUserRepository;
 
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
@@ -22,11 +22,11 @@ public class MergeRequestService {
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public MergeRequestService(GitLabService gitLabService, MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, MemberRepository memberRepository) {
+    public MergeRequestService(GitLabService gitLabService, MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, GitLabUserRepository gitLabUserRepository) {
         this.gitLabService = gitLabService;
         this.mergeRequestRepository = mergeRequestRepository;
         this.projectRepository = projectRepository;
-        this.memberRepository = memberRepository;
+        this.gitLabUserRepository = gitLabUserRepository;
     }
 
     public void saveMergeRequestInfo(Long gitLabProjectId){
@@ -37,17 +37,16 @@ public class MergeRequestService {
 
         if (gitLabMergeRequestList != null && !gitLabMergeRequestList.isEmpty()){
             gitLabMergeRequestList.forEach(gitLabMergeRequest -> {
-                    Member member = memberRepository.findByUserNameAndServerUrl(gitLabMergeRequest.getUsername(),serverUrl);
+                    GitLabUser gitLabUser = gitLabUserRepository.findByUserNameAndServerUrl(gitLabMergeRequest.getUsername(),serverUrl);
                     MergeRequest mergeRequest = new MergeRequest(
                             gitLabMergeRequest.getIid(),
-                            gitLabMergeRequest.getName(),
                             gitLabMergeRequest.getUsername(),
                             gitLabMergeRequest.getTitle(),
                             gitLabMergeRequest.getDescription(),
                             gitLabMergeRequest.getCreatedAt(),
                             gitLabMergeRequest.getWebUrl(),
                             project,
-                            member
+                            gitLabUser
                     );
                     mergeRequestRepository.save(mergeRequest);
                 }

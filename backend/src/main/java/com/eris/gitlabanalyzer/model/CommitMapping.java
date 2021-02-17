@@ -25,12 +25,12 @@ public class CommitMapping {
 
     @ManyToOne
     @JoinColumn(
-            name = "member_id",
+            name = "gitlab_user_id",
             foreignKey = @ForeignKey(
                     name = "commit_mapping_member_id_fk"
             )
     )
-    private Member member;
+    private GitLabUser gitLabUser;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(
@@ -45,17 +45,17 @@ public class CommitMapping {
     public CommitMapping() {
     }
 
-    public CommitMapping(Member member, Commit commit) {
-        this.member = member;
+    public CommitMapping(GitLabUser gitLabUser, Commit commit) {
+        this.gitLabUser = gitLabUser;
         this.commit = commit;
     }
 
-    public Member getMember() {
-        return member;
+    public GitLabUser getMember() {
+        return gitLabUser;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
+    public void setGitLabUser(GitLabUser gitLabUser) {
+        this.gitLabUser = gitLabUser;
     }
 
     public Commit getCommit() {
@@ -66,12 +66,4 @@ public class CommitMapping {
         this.commit = commit;
     }
 
-    @Override
-    public String toString() {
-        return "CommitMapping{" +
-                "id=" + id +
-                ", member=" + member +
-                ", commit=" + commit +
-                '}';
-    }
 }

@@ -24,24 +24,17 @@ public class CommitComment {
     private Long id;
 
     @Column(
-            name = "gitlab_iid",
+            name = "commit_comment_iid",
             nullable = false
     )
     private Long iid;
 
-    @Column(
-            name = "author_name",
-            nullable = false
-
-    )
-    private String authorName;
-
     @ManyToOne
     @JoinColumn(
-            name = "member_id",
+            name = "gitlab_user_id",
             nullable = false,
-            referencedColumnName = "member_id")
-    private Member member;
+            referencedColumnName = "gitlab_user_id")
+    private GitLabUser gitLabUser;
 
     @ManyToOne
     @JoinColumn(
@@ -76,12 +69,8 @@ public class CommitComment {
         return id;
     }
 
-    public String getAuthorName() {
-        return authorName;
-    }
-
-    public Member getMember() {
-        return member;
+    public GitLabUser getMember() {
+        return gitLabUser;
     }
 
     public String getBody() {
@@ -96,8 +85,8 @@ public class CommitComment {
         return createdAt;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
+    public void setMember(GitLabUser gitLabUser) {
+        this.gitLabUser = gitLabUser;
     }
 
     public void setCommit(Commit commit) {
@@ -107,10 +96,9 @@ public class CommitComment {
     public CommitComment() {
     }
 
-    public CommitComment(Long id, String authorName, Member member, String body, String webUrl, String createdAt) {
+    public CommitComment(Long id, GitLabUser gitLabUser, String body, String webUrl, String createdAt) {
         this.id = id;
-        this.authorName = authorName;
-        this.member = member;
+        this.gitLabUser = gitLabUser;
         this.body = body;
         this.webUrl = webUrl;
         this.createdAt = createdAt;
@@ -118,10 +106,9 @@ public class CommitComment {
 
     @Override
     public String toString() {
-        return "Comment{" +
-                "id='" + id + '\'' +
-                ", authorName='" + authorName + '\'' +
-                ", member=" + member +
+        return "CommitComment{" +
+                "id=" + id +
+                ", iid=" + iid +
                 ", body='" + body + '\'' +
                 ", webUrl='" + webUrl + '\'' +
                 ", createdAt='" + createdAt + '\'' +

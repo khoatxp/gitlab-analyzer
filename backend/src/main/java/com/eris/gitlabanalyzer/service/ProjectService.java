@@ -1,16 +1,10 @@
 package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.*;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMember;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequestIid;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabProject;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -32,27 +26,20 @@ public class ProjectService {
         this.gitLabService = gitLabService;
     }
 
-    public void saveProjectInfo(Long projectId) {
-        var gitLabProject = gitLabService.getProject(projectId).block();
-        // TODO Check if project already exists
+    public void saveProjectInfo(Long gitLabProjectId) {
+        if(projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, serverUrl) != null){
+            return;
+        }
+
+        var gitLabProject = gitLabService.getProject(gitLabProjectId).block();
         Project project = new Project(
-                projectId,
+                gitLabProjectId,
                 gitLabProject.getName(),
                 gitLabProject.getNameWithNamespace(),
                 gitLabProject.getWebUrl(),
-                serverRepository.find(serverUrl,accessToken)
+                serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken)
         );
         projectRepository.save(project);
-    }
-
-    public void getProjectAnalytics(List<Long> projectIdList) {
-        for (Long projectId : projectIdList){
-            Mono<GitLabProject> gitLabProject = gitLabService.getProject(projectId);
-            System.out.println(gitLabProject);
-
-            Flux<GitLabMember> gitLabMembers = gitLabService.getMembers(projectId);
-            System.out.println(gitLabMembers);
-        }
     }
 
     public List<Project> getProjects() {

@@ -23,24 +23,17 @@ public class IssueComment {
     private Long id;
 
     @Column(
-            name = "gitlab_iid",
+            name = "issue_comment_iid",
             nullable = false
     )
     private Long iid;
 
-    @Column(
-            name = "author_name",
-            nullable = false
-
-    )
-    private String authorName;
-
     @ManyToOne
     @JoinColumn(
-            name = "member_id",
+            name = "gitlab_user_id",
             nullable = false,
-            referencedColumnName = "member_id")
-    private Member member;
+            referencedColumnName = "gitlab_user_id")
+    private GitLabUser gitLabUser;
 
     @ManyToOne
     @JoinColumn(
@@ -73,10 +66,9 @@ public class IssueComment {
     public IssueComment() {
     }
 
-    public IssueComment(Long iid, String authorName, Member member, Issue issue, String body, String webUrl, String createdAt) {
+    public IssueComment(Long iid, GitLabUser gitLabUser, Issue issue, String body, String webUrl, String createdAt) {
         this.iid = iid;
-        this.authorName = authorName;
-        this.member = member;
+        this.gitLabUser = gitLabUser;
         this.issue = issue;
         this.body = body;
         this.webUrl = webUrl;
@@ -91,12 +83,8 @@ public class IssueComment {
         return iid;
     }
 
-    public String getAuthorName() {
-        return authorName;
-    }
-
-    public Member getMember() {
-        return member;
+    public GitLabUser getGitLabUser() {
+        return gitLabUser;
     }
 
     public Issue getIssue() {
@@ -115,8 +103,8 @@ public class IssueComment {
         return createdAt;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
+    public void setMember(GitLabUser gitLabUser) {
+        this.gitLabUser = gitLabUser;
     }
 
     public void setIssue(Issue issue) {
@@ -128,8 +116,6 @@ public class IssueComment {
         return "IssueComment{" +
                 "id=" + id +
                 ", iid=" + iid +
-                ", authorName='" + authorName + '\'' +
-                ", member=" + member +
                 ", issue=" + issue +
                 ", body='" + body + '\'' +
                 ", webUrl='" + webUrl + '\'' +

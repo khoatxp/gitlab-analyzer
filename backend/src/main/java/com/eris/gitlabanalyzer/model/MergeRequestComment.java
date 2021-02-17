@@ -23,24 +23,17 @@ public class MergeRequestComment {
     private Long id;
 
     @Column(
-            name = "gitlab_iid",
+            name = "merge_request_comment_iid",
             nullable = false
     )
     private Long iid;
 
-    @Column(
-            name = "author_name",
-            nullable = false
-
-    )
-    private String authorName;
-
     @ManyToOne
     @JoinColumn(
-            name = "member_id",
+            name = "gitlab_user_id",
             nullable = false,
-            referencedColumnName = "member_id")
-    private Member member;
+            referencedColumnName = "gitlab_user_id")
+    private GitLabUser gitLabUser;
 
     @ManyToOne
     @JoinColumn(
@@ -58,7 +51,7 @@ public class MergeRequestComment {
     private String body;
 
     @Column(
-            name = "web_Url",
+            name = "web_url",
             nullable = false
 
     )
@@ -73,11 +66,10 @@ public class MergeRequestComment {
     public MergeRequestComment() {
     }
 
-    public MergeRequestComment(Long iid, String authorName, Member member, MergeRequest mergeRequest, String body,
+    public MergeRequestComment(Long iid,GitLabUser gitLabUser, MergeRequest mergeRequest, String body,
                                String webUrl, String createdAt) {
         this.iid = iid;
-        this.authorName = authorName;
-        this.member = member;
+        this.gitLabUser = gitLabUser;
         this.mergeRequest = mergeRequest;
         this.body = body;
         this.webUrl = webUrl;
@@ -92,12 +84,8 @@ public class MergeRequestComment {
         return iid;
     }
 
-    public String getAuthorName() {
-        return authorName;
-    }
-
-    public Member getMember() {
-        return member;
+    public GitLabUser getMember() {
+        return gitLabUser;
     }
 
     public MergeRequest getMergeRequest() {
@@ -116,8 +104,8 @@ public class MergeRequestComment {
         return createdAt;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
+    public void setMember(GitLabUser gitLabUser) {
+        this.gitLabUser = gitLabUser;
     }
 
     public void setMergeRequest(MergeRequest mergeRequest) {
@@ -129,9 +117,6 @@ public class MergeRequestComment {
         return "MergeRequestComment{" +
                 "id=" + id +
                 ", iid=" + iid +
-                ", authorName='" + authorName + '\'' +
-                ", member=" + member +
-                ", mergeRequest=" + mergeRequest +
                 ", body='" + body + '\'' +
                 ", webUrl='" + webUrl + '\'' +
                 ", createdAt='" + createdAt + '\'' +
