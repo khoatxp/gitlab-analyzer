@@ -20,24 +20,25 @@ class ModelTests {
     private MemberRepository memberRepository;
 
     private Project testProject = new Project(2L, "Test123", "TestingTheThing", "url");
+    private Member testmember = new Member(1L, "John123","John",testProject );
 
     @Test
     void projectModel() {
         projectRepository.save(testProject);
         Project r = projectRepository.findById(2L).orElse(null);
         assertNotNull(r);
-        assertEquals(2L, r.getId());
-        assertEquals("Test123", r.getName());
-        assertEquals("TestingTheThing", r.getNameWithNamespace());
-        assertEquals("url", r.getWebUrl());
-        assertEquals("", r.getServerUrl());
+        assertEquals(testProject.getId(), r.getId());
+        assertEquals(testProject.getName(), r.getName());
+        assertEquals(testProject.getNameWithNamespace(), r.getNameWithNamespace());
+        assertEquals(testProject.getWebUrl(), r.getWebUrl());
+        assertEquals(testProject.getServerUrl(), r.getServerUrl());
     }
     @Test
     void memberModel() {
-        memberRepository.save(new Member(1L, "John123","John",testProject ));
+        memberRepository.save(testmember);
         Member m = memberRepository.findById(1L).orElse(null);
-        assertEquals(1L, m.getId());
-        assertEquals("John123", m.getUsername());
-        assertEquals("John", m.getName());
+        assertEquals(testmember.getId(), m.getId());
+        assertEquals(testmember.getUsername(), m.getUsername());
+        assertEquals(testmember.getName(), m.getName());
     }
 }
