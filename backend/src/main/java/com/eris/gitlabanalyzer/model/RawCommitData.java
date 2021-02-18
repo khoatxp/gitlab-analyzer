@@ -12,6 +12,11 @@ public class RawCommitData {
     public RawCommitData() {
     }
 
+    public RawCommitData(GitLabCommit gitLabCommit, Flux<GitLabFileChange> gitLabDiff) {
+        this.gitLabCommit = gitLabCommit;
+        this.gitLabDiff = gitLabDiff;
+    }
+
     public GitLabCommit getGitLabCommit() {
         return gitLabCommit;
     }
@@ -21,15 +26,8 @@ public class RawCommitData {
         return gitLabCommit;
     }
 
-    public void setGitLabCommit(GitLabCommit gitLabCommit) {
-        this.gitLabCommit = gitLabCommit;
-    }
-
     public List<GitLabFileChange> getGitLabDiff() {
         return gitLabDiff.collectList().block();
     }
 
-    public void setGitLabDiff(Flux<GitLabFileChange> gitLabDiff) {
-        this.gitLabDiff = gitLabDiff;
-    }
 }

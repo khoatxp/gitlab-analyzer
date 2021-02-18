@@ -30,6 +30,7 @@ public class GitLabService {
     public Flux<GitLabProject> getProjects(){
         URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath)
+                .queryParam("per_page", 100)
                 .build()
                 .encode()
                 .toUri();
@@ -57,6 +58,7 @@ public class GitLabService {
     public Flux<GitLabMember> getMembers(Long projectId) {
         URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/members")
+                .queryParam("per_page", 100)
                 .build()
                 .encode()
                 .toUri();
@@ -74,6 +76,7 @@ public class GitLabService {
                 .queryParam("target_branch", "master")
                 .queryParam("created_after", startDateTime.toString())
                 .queryParam("updated_before", endDateTime.toString())
+                .queryParam("per_page", 100)
                 .build()
                 .encode()
                 .toUri();
@@ -84,9 +87,10 @@ public class GitLabService {
         return headersSpec.retrieve().bodyToFlux(GitLabMergeRequest.class);
     }
 
-    public Flux<GitLabCommit> getMergeRequestCommits(Long projectId, long mergeRequestIid) {
+    public Flux<GitLabCommit> getMergeRequestCommits(Long projectId, Long mergeRequestIid) {
         URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/commits")
+                .queryParam("per_page", 100)
                 .build()
                 .encode()
                 .toUri();
@@ -103,6 +107,7 @@ public class GitLabService {
                 .queryParam("ref_name", "master")
                 .queryParam("since", startDateTime.toString())
                 .queryParam("until", endDateTime.toString())
+                .queryParam("per_page", 100)
                 .build()
                 .encode()
                 .toUri();
@@ -129,6 +134,7 @@ public class GitLabService {
     public Flux<GitLabFileChange> getCommitDiff(Long projectId, String sha) {
         URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/repository/commits/" + sha + "/diff")
+                .queryParam("per_page", 100)
                 .build()
                 .encode()
                 .toUri();
@@ -139,10 +145,11 @@ public class GitLabService {
         return headersSpec.retrieve().bodyToFlux(GitLabFileChange.class);
     }
 
-    public Flux<GitLabFileChange> getMergeRequestDiff(Long projectId, long mergeRequestIid) {
+    public Flux<GitLabFileChange> getMergeRequestDiff(Long projectId, Long mergeRequestIid) {
         URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/changes")
                 .queryParam("access_raw_diffs", true)
+                .queryParam("per_page", 100)
                 .build()
                 .encode()
                 .toUri();
