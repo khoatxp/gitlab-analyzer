@@ -2,8 +2,8 @@ import React from "react";
 import Box from '@material-ui/core/Box';
 import CardLayout from "../../components/CardLayout";
 import AppButton from "../../components/AppButton";
-import styles from "../../components/Progress.module.css";
 import AppProgressBar from "../../components/AppProgressBar";
+import AnimatedProgressText from "../../components/AnimatedProgressText";
 
 const index = () => {
     const [progress, setProgress] = React.useState<number>(0);
@@ -22,16 +22,12 @@ const index = () => {
     return (
         <CardLayout>
             <AppProgressBar variant="determinate" value={progress}/>
-            <div className={styles.loading__container}>
-                <p className={`${styles.loading__done} ${progress === 100 && styles.loading__appeared}`}>Importing
-                    done!</p>
-                <p className={`${styles.loading__dots} ${progress === 100 && styles.loading__disappeared}`}>Importing
-                    commits</p>
-                <p className={`${styles.loading__dots} ${progress === 100 && styles.loading__disappeared}`}>Importing
-                    merge requests</p>
-                <p className={`${styles.loading__dots} ${progress === 100 && styles.loading__disappeared}`}>Importing
-                    comments</p>
-            </div>
+            <Box margin="8px">
+                <AnimatedProgressText progress={progress}>Importing commits</AnimatedProgressText>
+                <AnimatedProgressText progress={progress}>Importing merge requests</AnimatedProgressText>
+                <AnimatedProgressText progress={progress}>Importing comments</AnimatedProgressText>
+                { progress === 100 ? <p>Importing done!</p> : ''}
+            </Box>
             <Box textAlign="center">
                 <AppButton color='primary'> Cancel </AppButton>
             </Box>
