@@ -2,6 +2,8 @@ package com.eris.gitlabanalyzer.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -22,11 +24,11 @@ public class AnalyticsService {
         this.mergeRequestService = mergeRequestService;
     }
 
-    public void saveAllFromGitlab(List<Long> gitLabProjectIdList) {
+    public void saveAllFromGitlab(List<Long> gitLabProjectIdList, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
         for (Long gitLabProjectId : gitLabProjectIdList) {
             projectService.saveProjectInfo(gitLabProjectId);
             gitLabUserService.saveGitlabUserInfo(gitLabProjectId);
-            mergeRequestService.saveMergeRequestInfo(gitLabProjectId);
+            mergeRequestService.saveMergeRequestInfo(gitLabProjectId, startDateTime, endDateTime);
         }
     }
 }

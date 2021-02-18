@@ -1,4 +1,4 @@
-package com.eris.gitlabanalyzer.model;
+package com.eris.gitlabanalyzer.model.gitlabresponse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

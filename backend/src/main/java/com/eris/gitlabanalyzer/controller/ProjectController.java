@@ -2,6 +2,7 @@ package com.eris.gitlabanalyzer.controller;
 
 import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.RawTimeLineProjectData;
+import com.eris.gitlabanalyzer.service.AnalyticsService;
 import com.eris.gitlabanalyzer.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,10 +15,13 @@ import java.util.List;
 @RequestMapping(path = "/api/v1/projects")
 public class ProjectController {
     private final ProjectService projectService;
+    private final AnalyticsService analyticsService;
     @Autowired
-    public ProjectController(ProjectService projectService){
+    public ProjectController(ProjectService projectService, AnalyticsService analyticsService){
         this.projectService = projectService;
+        this.analyticsService = analyticsService;
     }
+
 
     @GetMapping(path = "/{projectId}/rawdata")
     public RawTimeLineProjectData analyzeProject(
@@ -33,4 +37,16 @@ public class ProjectController {
     public List<Project> getProjects(){
         return projectService.getProjects();
     }
+
+    //TODO This endpoint is to check if the data is saved correctly. To be removed later on
+    @PostMapping(path = "/analytics")
+    public void saveAllFromGitlab(
+            @RequestBody List<Long> projectIdList,
+            @RequestParam("startDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDateTime,
+            @RequestParam("endDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endDateTime){
+        analyticsService.saveAllFromGitlab(projectIdList, startDateTime, endDateTime);
+    }
+
 }

@@ -1,7 +1,11 @@
 package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.*;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
+import com.eris.gitlabanalyzer.repository.ServerRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -16,12 +20,21 @@ import java.util.stream.Collectors;
 @Service
 public class ProjectService {
     private final ProjectRepository projectRepository;
+    private final ServerRepository serverRepository;
     private final GitLabService gitLabService;
 
-    public ProjectService(ProjectRepository projectRepository, GitLabService gitLabService) {
+    @Value("${gitlab.SERVER_URL}")
+    String serverUrl;
+
+    @Value("${gitlab.ACCESS_TOKEN}")
+    String accessToken;
+
+    public ProjectService(ProjectRepository projectRepository, ServerRepository serverRepository, GitLabService gitLabService) {
         this.projectRepository = projectRepository;
+        this.serverRepository = serverRepository;
         this.gitLabService = gitLabService;
     }
+
 
     public Project saveProjectInfo(Long projectId) {
         var gitLabProject = gitLabService.getProject(projectId).block();
@@ -30,7 +43,8 @@ public class ProjectService {
                 projectId,
                 gitLabProject.getName(),
                 gitLabProject.getNameWithNamespace(),
-                gitLabProject.getWebUrl()
+                gitLabProject.getWebUrl(),
+                serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken)
         );
 
         return projectRepository.save(project);

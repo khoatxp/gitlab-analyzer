@@ -1,72 +1,62 @@
 package com.eris.gitlabanalyzer.model.gitlabresponse;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 public class GitLabMergeRequest {
-    private Long id;
     private Long iid;
+
+    @JsonProperty("project_id")
+    private Long projectId;
+
     private String title;
-    private String description;
-    private String name;
-    private String username;
 
     @JsonProperty("created_at")
-    private String createdAt;
+    private ZonedDateTime createdAt;
+
+    @JsonProperty("merged_at")
+    private ZonedDateTime mergedAt;
 
     @JsonProperty("web_url")
     private String webUrl;
 
+    private String username;
     @JsonProperty("author")
     @SuppressWarnings("unchecked")
     private void authorDeserializer(Map<String, Object> author) {
-        this.name = (String) author.get("name");
         this.username = (String) author.get("username");
     }
 
-    public GitLabMergeRequest(){}
 
-    public Long getId() {
-        return id;
-    }
+    public GitLabMergeRequest(){}
 
     public Long getIid() {
         return iid;
+    }
+
+    public Long getProjectId() {
+        return projectId;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public String getDescription() {
-        return description;
+    public ZonedDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public String getCreatedAt() {
-        return createdAt;
+    public ZonedDateTime getMergedAt() {
+        return mergedAt;
     }
 
     public String getWebUrl() {
         return webUrl;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public String getUsername() {
         return username;
-    }
-
-    @Override
-    public String toString() {
-        return "GitLabMergeRequest{" +
-                "id=" + id +
-                ", iid=" + iid +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", createdAt='" + createdAt + '\'' +
-                ", webUrl='" + webUrl + '\'' +
-                '}';
     }
 }

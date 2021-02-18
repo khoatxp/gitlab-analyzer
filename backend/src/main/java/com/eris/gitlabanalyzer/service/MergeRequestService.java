@@ -9,6 +9,8 @@ import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
+
 @Service
 public class MergeRequestService {
     GitLabService gitLabService;
@@ -29,10 +31,10 @@ public class MergeRequestService {
         this.gitLabUserRepository = gitLabUserRepository;
     }
 
-    public void saveMergeRequestInfo(Long gitLabProjectId){
+    public void saveMergeRequestInfo(Long gitLabProjectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime){
         Project project = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, serverUrl);
 
-        var gitLabMergeRequests = gitLabService.getMergeRequests(gitLabProjectId);
+        var gitLabMergeRequests = gitLabService.getMergeRequests(gitLabProjectId, startDateTime, endDateTime);
         var gitLabMergeRequestList = gitLabMergeRequests.collectList().block();
 
         if (gitLabMergeRequestList != null && !gitLabMergeRequestList.isEmpty()){
