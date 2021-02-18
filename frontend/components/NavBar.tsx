@@ -5,7 +5,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Image from "next/image";
-import SvgIcon from "@material-ui/core/SvgIcon";
 import { Icon } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
