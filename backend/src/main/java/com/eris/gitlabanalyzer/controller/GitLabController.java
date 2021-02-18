@@ -70,4 +70,10 @@ public class GitLabController {
         return gitLabService.getMergeRequestDiff(projectId, merge_request_iid);
     }
 
+    @GetMapping(path = "/projects/{projectId}/merge_request/{merge_request_iid}/notes")
+    public Flux<GitLabMergeRequestNote> getMergeRequestNotes(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("merge_request_iid") Long merge_request_iid) {
+        return gitLabService.getMergeRequestNotes(projectId, merge_request_iid);
+    }
 }
