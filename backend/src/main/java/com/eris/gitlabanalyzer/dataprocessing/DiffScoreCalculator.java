@@ -1,19 +1,28 @@
 package com.eris.gitlabanalyzer.dataprocessing;
 
 import com.eris.gitlabanalyzer.model.GitLabFileChange;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class CalculateDiffScore {
+@Service
+public class DiffScoreCalculator {
 
     private Map<String, Integer> filePointValues = new HashMap<>();
     private final Map<String, String[]> commentCharacters = new HashMap<>();
     private int commentPointValue = 1;
+    private final int DEFAULT_FILE_POINTS = 2;
+    private enum lineTypes {
+        code,
+        comment,
+        blockComment,
+        syntax,
+    }
 
 
     //TODO read in point values
-    public CalculateDiffScore(){
+    public DiffScoreCalculator(){
         initializeCommentCharacters();
     }
 
@@ -43,6 +52,11 @@ public class CalculateDiffScore {
         return calculateFileScore(file.getDiff(), findFileType(file));
     }
 
+    // Used to test scoreing directly without GitlabFileChange obj
+    public int calculateScore(String diff, String fileType){
+        return calculateFileScore(diff, fileType);
+    }
+
 
     private String findFileType(GitLabFileChange file){
         String[] fileNameParsed;
@@ -56,11 +70,11 @@ public class CalculateDiffScore {
 
     //TODO look into handling of default values may not need function
     private int getFilePointValue(String fileType){
-        return  filePointValues.getOrDefault(fileType, 1);
+        return  filePointValues.getOrDefault(fileType, DEFAULT_FILE_POINTS);
     }
 
     private int calculateFileScore(String diff, String fileType){
-        int scoreTotal = 0;
+        int totalScore = 0;
         int pointValue = getFilePointValue(fileType);
         boolean inCommentBlock = false;
         String[] lines = diff.split("\n");
@@ -71,49 +85,48 @@ public class CalculateDiffScore {
             // remove whitespace
             line = line.replaceAll("\\s+","");
             if(inCommentBlock){
-                scoreTotal += commentPointValue;
+                totalScore += commentPointValue;
                 if(line.contains(commentTerminator)){
                     inCommentBlock = false;
                 }
             }else if(line.length() > 1 && !line.equals("\\Nonewlineatendoffile")){
                 if(line.charAt(0) == '+'){
-                    String lineType = typeOfLine(line, commentOperator);
-                    switch (lineType) {
-                        case "code":
-                            scoreTotal += pointValue;
+                    switch (typeOfLine(line, commentOperator)) {
+                        case code:
+                            totalScore += pointValue;
                             break;
-                        case "comment":
-                            scoreTotal += commentPointValue;
+                        case comment:
+                            totalScore += commentPointValue;
                             break;
-                        case "blockComment":
-                            scoreTotal += commentPointValue;
+                        case blockComment:
+                            totalScore += commentPointValue;
                             inCommentBlock = true;
                             break;
                     }
                 } else {
                     //TODO give proper weight to removing line
-                    scoreTotal += commentPointValue/2;
+                    totalScore += commentPointValue/2;
                 }
             }
         }
-        return scoreTotal;
+        return totalScore;
     }
 
-    private String typeOfLine(String line, String[] commentOperator){
+    private lineTypes typeOfLine(String line, String[] commentOperator){
         for(int i = 0; i < commentOperator.length; i++){
             //Todo find better way to handle single character syntax
             if(1+ commentOperator[i].length() > line.length()){
-                return "syntax";
+                return lineTypes.syntax;
             }
             String lineStartChar = line.substring(1, (1 + commentOperator[i].length()));
             if(lineStartChar.equals(commentOperator[i])){
                 if(i > 0){
-                    return "blockComment";
+                    return lineTypes.blockComment;
                 }
-                return "comment";
+                return lineTypes.comment;
             }
         }
-        return "code";
+        return lineTypes.code;
     }
 
 }
