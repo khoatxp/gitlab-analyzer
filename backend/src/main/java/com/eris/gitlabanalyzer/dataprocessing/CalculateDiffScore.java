@@ -3,7 +3,6 @@ package com.eris.gitlabanalyzer.dataprocessing;
 import com.eris.gitlabanalyzer.model.GitLabFileChange;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class CalculateDiffScore {
@@ -31,31 +30,17 @@ public class CalculateDiffScore {
 
 
     public int calculateScore(Iterable<GitLabFileChange> files){
-        Map<Integer, String[]> fileDictionary = new HashMap<>();
         int totalScore = 0;
-        int fileCount = getIteratorSize(files.iterator());
-        String[] fileTypes = new String[fileCount];
 
-        int i = 0;
-        // separate out lines and find file types for each file
         for(GitLabFileChange file : files){
-           fileTypes[i] = findFileType(file);
-           String[] lines = file.getDiff().split("\n");
-           fileDictionary.put(i, lines);
-           i++;
+           totalScore += calculateFileScore(file.getDiff(), findFileType(file));
         }
 
-        for(int j = 0; j < fileTypes.length; j++){
-          totalScore += calculateFileScore(fileDictionary.get(j), fileTypes[j]);
-        }
         return totalScore;
-
     }
 
     public int calculateScore(GitLabFileChange file){
-        String fileType = findFileType(file);
-        String[] lines = file.getDiff().split("\n");
-        return calculateFileScore(lines, fileType);
+        return calculateFileScore(file.getDiff(), findFileType(file));
     }
 
 
@@ -74,12 +59,14 @@ public class CalculateDiffScore {
         return  filePointValues.getOrDefault(fileType, 1);
     }
 
-    private int calculateFileScore(String[] lines, String fileType){
+    private int calculateFileScore(String diff, String fileType){
         int scoreTotal = 0;
         int pointValue = getFilePointValue(fileType);
         boolean inCommentBlock = false;
+        String[] lines = diff.split("\n");
         String[] commentOperator = commentCharacters.getOrDefault(fileType, new String[]{" ", " "});
         String commentTerminator = commentOperator[commentOperator.length - 1];
+
         for(String line : lines){
             // remove whitespace
             line = line.replaceAll("\\s+","");
@@ -107,9 +94,7 @@ public class CalculateDiffScore {
                     //TODO give proper weight to removing line
                     scoreTotal += commentPointValue/2;
                 }
-
             }
-
         }
         return scoreTotal;
     }
@@ -130,15 +115,5 @@ public class CalculateDiffScore {
         }
         return "code";
     }
-
-    private int getIteratorSize(Iterator iterator) {
-        int count = 0;
-        while(iterator.hasNext()){
-            count++;
-            iterator.next();
-        }
-        return count;
-    }
-
 
 }
