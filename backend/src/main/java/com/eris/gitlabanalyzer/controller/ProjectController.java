@@ -1,10 +1,13 @@
 package com.eris.gitlabanalyzer.controller;
 
 import com.eris.gitlabanalyzer.model.Project;
+import com.eris.gitlabanalyzer.model.RawTimeLineProjectData;
 import com.eris.gitlabanalyzer.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @RestController
@@ -15,12 +18,15 @@ public class ProjectController {
     public ProjectController(ProjectService projectService){
         this.projectService = projectService;
     }
-    @PostMapping(path = "/analytics")
-    public void analyzeProject(
-            @RequestBody List<Long> projectIdList,
-            @RequestParam(required = true) String serverUrl,
-            @RequestParam(required = true) String accessToken){
-        projectService.getProjectAnalytics(projectIdList);
+
+    @GetMapping(path = "/{projectId}/rawdata")
+    public RawTimeLineProjectData analyzeProject(
+            @PathVariable("projectId") Long projectId,
+            @RequestParam("startDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDateTime,
+            @RequestParam("endDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endDateTime) {
+        return projectService.getTimeLineProjectData(projectId, startDateTime, endDateTime);
     }
 
     @GetMapping
