@@ -17,6 +17,8 @@ public class GitLabService {
     private final WebClient webClient;
     private final String projectPath = "api/v4/projects/";
 
+    WebClient.RequestHeadersUriSpec
+
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
 
