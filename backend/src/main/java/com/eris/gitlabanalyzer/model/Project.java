@@ -90,7 +90,7 @@ public class Project {
     @ManyToMany(mappedBy = "projects",
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY)
-    private List<GitLabUser> gitLabUsers = new ArrayList<>();
+    private List<GitManagementUser> gitManagementUsers = new ArrayList<>();
 
     public Project() {
     }
@@ -139,25 +139,25 @@ public class Project {
         return server;
     }
 
-    public List<GitLabUser> getGitLabUsers() {
-        return gitLabUsers;
+    public List<GitManagementUser> getGitLabUsers() {
+        return gitManagementUsers;
     }
 
     public void setServer(Server server) {
         this.server = server;
     }
 
-    public void addGitLabUser(GitLabUser gitLabUser) {
-        if (!this.gitLabUsers.contains(gitLabUser)) {
-            this.gitLabUsers.add(gitLabUser);
-            gitLabUser.getProjects().add(this);
+    public void addGitLabUser(GitManagementUser gitManagementUser) {
+        if (!this.gitManagementUsers.contains(gitManagementUser)) {
+            this.gitManagementUsers.add(gitManagementUser);
+            gitManagementUser.getProjects().add(this);
         }
     }
 
-    public void removeGitLabUser(GitLabUser gitLabUser) {
-        if (this.gitLabUsers.contains(gitLabUser)) {
-            this.gitLabUsers.remove(gitLabUser);
-            gitLabUser.getProjects().remove(this);
+    public void removeGitLabUser(GitManagementUser gitManagementUser) {
+        if (this.gitManagementUsers.contains(gitManagementUser)) {
+            this.gitManagementUsers.remove(gitManagementUser);
+            gitManagementUser.getProjects().remove(this);
         }
     }
 

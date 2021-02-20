@@ -30,10 +30,10 @@ public class IssueComment {
 
     @ManyToOne
     @JoinColumn(
-            name = "gitlab_user_id",
+            name = "git_management_user_id",
             nullable = false,
-            referencedColumnName = "gitlab_user_id")
-    private GitLabUser gitLabUser;
+            referencedColumnName = "git_management_user_id")
+    private GitManagementUser gitManagementUser;
 
     @ManyToOne
     @JoinColumn(
@@ -58,9 +58,9 @@ public class IssueComment {
     public IssueComment() {
     }
 
-    public IssueComment(Long iid, GitLabUser gitLabUser, Issue issue, String webUrl, String createdAt) {
+    public IssueComment(Long iid, GitManagementUser gitManagementUser, Issue issue, String webUrl, String createdAt) {
         this.iid = iid;
-        this.gitLabUser = gitLabUser;
+        this.gitManagementUser = gitManagementUser;
         this.issue = issue;
         this.webUrl = webUrl;
         this.createdAt = createdAt;
@@ -74,8 +74,8 @@ public class IssueComment {
         return iid;
     }
 
-    public GitLabUser getGitLabUser() {
-        return gitLabUser;
+    public GitManagementUser getGitLabUser() {
+        return gitManagementUser;
     }
 
     public Issue getIssue() {
@@ -90,8 +90,8 @@ public class IssueComment {
         return createdAt;
     }
 
-    public void setMember(GitLabUser gitLabUser) {
-        this.gitLabUser = gitLabUser;
+    public void setMember(GitManagementUser gitManagementUser) {
+        this.gitManagementUser = gitManagementUser;
     }
 
     public void setIssue(Issue issue) {
@@ -103,7 +103,7 @@ public class IssueComment {
         return "IssueComment{" +
                 "id=" + id +
                 ", iid=" + iid +
-                ", gitLabUser=" + gitLabUser +
+                ", gitLabUser=" + gitManagementUser +
                 ", issue=" + issue +
                 ", webUrl='" + webUrl + '\'' +
                 ", createdAt='" + createdAt + '\'' +

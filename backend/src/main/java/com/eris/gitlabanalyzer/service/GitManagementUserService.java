@@ -1,8 +1,8 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.model.GitLabUser;
+import com.eris.gitlabanalyzer.model.GitManagementUser;
 import com.eris.gitlabanalyzer.model.Project;
-import com.eris.gitlabanalyzer.repository.GitLabUserRepository;
+import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class GitLabUserService {
-    private final GitLabUserRepository gitLabUserRepository;
+public class GitManagementUserService {
+    private final GitManagementUserRepository gitManagementUserRepository;
     private final ProjectRepository projectRepository;
     private final ServerRepository serverRepository;
     private final GitLabService gitLabService;
@@ -23,14 +23,14 @@ public class GitLabUserService {
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public GitLabUserService(GitLabUserRepository gitLabUserRepository, ProjectRepository projectRepository, ServerRepository serverRepository, GitLabService gitLabService) {
-        this.gitLabUserRepository = gitLabUserRepository;
+    public GitManagementUserService(GitManagementUserRepository gitManagementUserRepository, ProjectRepository projectRepository, ServerRepository serverRepository, GitLabService gitLabService) {
+        this.gitManagementUserRepository = gitManagementUserRepository;
         this.projectRepository = projectRepository;
         this.serverRepository = serverRepository;
         this.gitLabService = gitLabService;
     }
 
-    public void saveGitlabUserInfo(Long gitLabProjectId){
+    public void saveGitManagementUserInfo(Long gitLabProjectId){
         Project project = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, serverUrl);
 
         var gitLabUsers = gitLabService.getMembers(gitLabProjectId);
@@ -38,21 +38,21 @@ public class GitLabUserService {
 
         if (gitLabUserList != null && !gitLabUserList.isEmpty()) {
             gitLabUserList.forEach(gitLabMember -> {
-                GitLabUser gitLabUser = gitLabUserRepository.findByUserNameAndServerUrl(gitLabMember.getUsername(),serverUrl);
-                if (gitLabUser == null){
-                    gitLabUser = new GitLabUser(
+                GitManagementUser gitManagementUser= gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMember.getUsername(),serverUrl);
+                if (gitManagementUser == null){
+                    gitManagementUser = new GitManagementUser(
                             gitLabMember.getUsername(),
                             gitLabMember.getName(),
                             serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken)
                     );
                 }
-                gitLabUser.addProject(project);
-                gitLabUserRepository.save(gitLabUser);
+                gitManagementUser.addProject(project);
+                gitManagementUserRepository.save(gitManagementUser);
             });
         }
     }
 
-    public List<GitLabUser> getMembersByProjectId(Long projectId){
-        return gitLabUserRepository.findByProjectId(projectId);
+    public List<GitManagementUser> getMembersByProjectId(Long projectId){
+        return gitManagementUserRepository.findByProjectId(projectId);
     }
 }

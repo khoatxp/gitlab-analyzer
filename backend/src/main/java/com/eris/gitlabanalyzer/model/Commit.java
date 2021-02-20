@@ -115,10 +115,10 @@ public class Commit {
 
     @ManyToOne
     @JoinColumn(
-            name = "gitlab_user_id",
+            name = "git_management_user_id",
             nullable = false,
-            referencedColumnName = "gitlab_user_id")
-    private GitLabUser gitLabUser;
+            referencedColumnName = "git_management_user_id")
+    private GitManagementUser gitManagementUser;
 
     @ManyToOne
     @JoinColumn(
@@ -130,7 +130,7 @@ public class Commit {
     public Commit() {
     }
 
-    public Commit(String sha, String title, String authorName, String authorEmail, String committerName, String committerEmail, String committedDate, String createdAt, String webUrl, Project project, GitLabUser gitLabUser, MergeRequest mergeRequest) {
+    public Commit(String sha, String title, String authorName, String authorEmail, String committerName, String committerEmail, String committedDate, String createdAt, String webUrl, Project project, GitManagementUser gitManagementUser, MergeRequest mergeRequest) {
         this.sha = sha;
         this.title = title;
         this.authorName = authorName;
@@ -141,7 +141,7 @@ public class Commit {
         this.createdAt = createdAt;
         this.webUrl = webUrl;
         this.project = project;
-        this.gitLabUser = gitLabUser;
+        this.gitManagementUser = gitManagementUser;
         this.mergeRequest = mergeRequest;
     }
 
@@ -197,8 +197,8 @@ public class Commit {
         this.project = project;
     }
 
-    public void setGitLabUser(GitLabUser gitLabUser) {
-        this.gitLabUser = gitLabUser;
+    public void setGitLabUser(GitManagementUser gitManagementUser) {
+        this.gitManagementUser = gitManagementUser;
     }
 
     public void setMergeRequest(MergeRequest mergeRequest) {

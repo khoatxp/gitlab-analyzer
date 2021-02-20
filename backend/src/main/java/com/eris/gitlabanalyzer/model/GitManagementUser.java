@@ -6,21 +6,21 @@ import java.util.List;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
-@Entity(name = "GitLabUser")
-@Table(name = "gitlab_user")
-public class GitLabUser {
+@Entity(name = "GitManagementUser")
+@Table(name = "git_management_user")
+public class GitManagementUser {
     @Id
     @SequenceGenerator(
-            name = "gitlab_user_sequence",
-            sequenceName = "gitlab_user_sequence",
+            name = "git_management_user_sequence",
+            sequenceName = "git_management_user_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = SEQUENCE,
-            generator = "gitlab_user_sequence"
+            generator = "git_management_user_sequence"
     )
     @Column(
-            name = "gitlab_user_id"
+            name = "git_management_user_id"
     )
     private Long id;
 
@@ -46,7 +46,7 @@ public class GitLabUser {
     private float score;
 
     @OneToMany(
-            mappedBy = "gitLabUser",
+            mappedBy = "gitManagementUser",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
@@ -54,7 +54,7 @@ public class GitLabUser {
     private List<CommitMapping> commitMappings = new ArrayList<>();
 
     @OneToMany(
-            mappedBy ="gitLabUser",
+            mappedBy ="gitManagementUser",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
@@ -62,7 +62,7 @@ public class GitLabUser {
     private List<Commit> commits = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "gitLabUser",
+            mappedBy = "gitManagementUser",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
@@ -70,7 +70,7 @@ public class GitLabUser {
     private List<MergeRequest> mergeRequests = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "gitLabUser",
+            mappedBy = "gitManagementUser",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
@@ -78,7 +78,7 @@ public class GitLabUser {
     private List<CommitComment> commitComments = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "gitLabUser",
+            mappedBy = "gitManagementUser",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
@@ -86,7 +86,7 @@ public class GitLabUser {
     private List<IssueComment> issueComments = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "gitLabUser",
+            mappedBy = "gitManagementUser",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
@@ -96,7 +96,7 @@ public class GitLabUser {
     @ManyToMany
     @JoinTable(
             name = "member",
-            joinColumns = @JoinColumn(name = "gitlab_user_id"),
+            joinColumns = @JoinColumn(name = "git_management_user_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id"))
     private List<Project> projects = new ArrayList<>();
 
@@ -107,9 +107,9 @@ public class GitLabUser {
             referencedColumnName = "server_id")
     private Server server;
 
-    public GitLabUser(){}
+    public GitManagementUser(){}
 
-    public GitLabUser(String username, String name, Server server) {
+    public GitManagementUser(String username, String name, Server server) {
         this.username = username;
         this.name = name;
         this.server = server;
@@ -271,9 +271,11 @@ public class GitLabUser {
 
     @Override
     public String toString() {
-        return "GitLabUser{" +
-                "username='" + username + '\'' +
+        return "GitManagementUser{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
+                ", score=" + score +
                 '}';
     }
 }

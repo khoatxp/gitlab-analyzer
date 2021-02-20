@@ -46,7 +46,7 @@ public class Server {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
-    private List<GitLabUser> gitLabUsers = new ArrayList<>();
+    private List<GitManagementUser> gitManagementUsers = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "server",
@@ -89,17 +89,17 @@ public class Server {
         }
     }
 
-    public void addGitLabUser(GitLabUser gitLabUser) {
-        if (!this.gitLabUsers.contains(gitLabUser)) {
-            this.gitLabUsers.add(gitLabUser);
-            gitLabUser.setServer(this);
+    public void addGitLabUser(GitManagementUser gitManagementUser) {
+        if (!this.gitManagementUsers.contains(gitManagementUser)) {
+            this.gitManagementUsers.add(gitManagementUser);
+            gitManagementUser.setServer(this);
         }
     }
 
-    public void removeGitLabUser(GitLabUser gitLabUser) {
-        if (this.gitLabUsers.contains(gitLabUser)) {
-            this.gitLabUsers.remove(gitLabUser);
-            gitLabUser.setServer(null);
+    public void removeGitLabUser(GitManagementUser gitManagementUser) {
+        if (this.gitManagementUsers.contains(gitManagementUser)) {
+            this.gitManagementUsers.remove(gitManagementUser);
+            gitManagementUser.setServer(null);
         }
     }
 

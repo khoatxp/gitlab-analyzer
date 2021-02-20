@@ -30,10 +30,10 @@ public class MergeRequestComment {
 
     @ManyToOne
     @JoinColumn(
-            name = "gitlab_user_id",
+            name = "git_management_user_id",
             nullable = false,
-            referencedColumnName = "gitlab_user_id")
-    private GitLabUser gitLabUser;
+            referencedColumnName = "git_management_user_id")
+    private GitManagementUser gitManagementUser;
 
     @ManyToOne
     @JoinColumn(
@@ -58,9 +58,9 @@ public class MergeRequestComment {
     public MergeRequestComment() {
     }
 
-    public MergeRequestComment(Long iid, GitLabUser gitLabUser, MergeRequest mergeRequest, String webUrl, String createdAt) {
+    public MergeRequestComment(Long iid, GitManagementUser gitManagementUser, MergeRequest mergeRequest, String webUrl, String createdAt) {
         this.iid = iid;
-        this.gitLabUser = gitLabUser;
+        this.gitManagementUser = gitManagementUser;
         this.mergeRequest = mergeRequest;
         this.webUrl = webUrl;
         this.createdAt = createdAt;
@@ -74,8 +74,8 @@ public class MergeRequestComment {
         return iid;
     }
 
-    public GitLabUser getMember() {
-        return gitLabUser;
+    public GitManagementUser getMember() {
+        return gitManagementUser;
     }
 
     public MergeRequest getMergeRequest() {
@@ -90,8 +90,8 @@ public class MergeRequestComment {
         return createdAt;
     }
 
-    public void setMember(GitLabUser gitLabUser) {
-        this.gitLabUser = gitLabUser;
+    public void setMember(GitManagementUser gitManagementUser) {
+        this.gitManagementUser = gitManagementUser;
     }
 
     public void setMergeRequest(MergeRequest mergeRequest) {
@@ -103,7 +103,7 @@ public class MergeRequestComment {
         return "MergeRequestComment{" +
                 "id=" + id +
                 ", iid=" + iid +
-                ", gitLabUser=" + gitLabUser +
+                ", gitLabUser=" + gitManagementUser +
                 ", mergeRequest=" + mergeRequest +
                 ", webUrl='" + webUrl + '\'' +
                 ", createdAt='" + createdAt + '\'' +

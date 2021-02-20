@@ -31,10 +31,10 @@ public class CommitComment {
 
     @ManyToOne
     @JoinColumn(
-            name = "gitlab_user_id",
+            name = "git_management_user_id",
             nullable = false,
-            referencedColumnName = "gitlab_user_id")
-    private GitLabUser gitLabUser;
+            referencedColumnName = "git_management_user_id")
+    private GitManagementUser gitManagementUser;
 
     @ManyToOne
     @JoinColumn(
@@ -61,8 +61,8 @@ public class CommitComment {
         return id;
     }
 
-    public GitLabUser getMember() {
-        return gitLabUser;
+    public GitManagementUser getMember() {
+        return gitManagementUser;
     }
 
     public String getWebUrl() {
@@ -73,8 +73,8 @@ public class CommitComment {
         return createdAt;
     }
 
-    public void setMember(GitLabUser gitLabUser) {
-        this.gitLabUser = gitLabUser;
+    public void setMember(GitManagementUser gitManagementUser) {
+        this.gitManagementUser = gitManagementUser;
     }
 
     public void setCommit(Commit commit) {
@@ -84,9 +84,9 @@ public class CommitComment {
     public CommitComment() {
     }
 
-    public CommitComment(Long iid, GitLabUser gitLabUser, Commit commit, String webUrl, String createdAt) {
+    public CommitComment(Long iid, GitManagementUser gitManagementUser, Commit commit, String webUrl, String createdAt) {
         this.iid = iid;
-        this.gitLabUser = gitLabUser;
+        this.gitManagementUser = gitManagementUser;
         this.commit = commit;
         this.webUrl = webUrl;
         this.createdAt = createdAt;
@@ -97,7 +97,7 @@ public class CommitComment {
         return "CommitComment{" +
                 "id=" + id +
                 ", iid=" + iid +
-                ", gitLabUser=" + gitLabUser +
+                ", gitLabUser=" + gitManagementUser +
                 ", commit=" + commit +
                 ", webUrl='" + webUrl + '\'' +
                 ", createdAt='" + createdAt + '\'' +

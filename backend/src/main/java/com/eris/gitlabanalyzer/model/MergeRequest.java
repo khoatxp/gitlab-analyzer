@@ -65,10 +65,10 @@ public class MergeRequest {
 
     @ManyToOne
     @JoinColumn(
-            name = "gitlab_user_id",
+            name = "git_management_user_id",
             nullable = false,
-            referencedColumnName = "gitlab_user_id")
-    private GitLabUser gitLabUser;
+            referencedColumnName = "git_management_user_id")
+    private GitManagementUser gitManagementUser;
 
     @OneToMany(
             mappedBy = "mergeRequest",
@@ -114,29 +114,29 @@ public class MergeRequest {
         return project;
     }
 
-    public GitLabUser getGitLabUser() {
-        return gitLabUser;
+    public GitManagementUser getGitLabUser() {
+        return gitManagementUser;
     }
 
     public void setProject(Project project) {
         this.project = project;
     }
 
-    public void setGitLabUser(GitLabUser gitLabUser) {
-        this.gitLabUser = gitLabUser;
+    public void setGitLabUser(GitManagementUser gitManagementUser) {
+        this.gitManagementUser = gitManagementUser;
     }
 
     public MergeRequest() {
     }
 
-    public MergeRequest(Long iid, String authorUsername, String title, ZonedDateTime createdAt, String webUrl, Project project, GitLabUser gitLabUser) {
+    public MergeRequest(Long iid, String authorUsername, String title, ZonedDateTime createdAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
         this.iid = iid;
         this.authorUsername = authorUsername;
         this.title = title;
         this.createdAt = createdAt;
         this.webUrl = webUrl;
         this.project = project;
-        this.gitLabUser = gitLabUser;
+        this.gitManagementUser = gitManagementUser;
     }
 
     public void addCommit(Commit commit) {
@@ -177,7 +177,7 @@ public class MergeRequest {
                 ", createdAt='" + createdAt + '\'' +
                 ", webUrl='" + webUrl + '\'' +
                 ", project=" + project +
-                ", gitLabUser=" + gitLabUser +
+                ", gitLabUser=" + gitManagementUser +
                 ", commits=" + commits +
                 ", mergeRequestComments=" + mergeRequestComments +
                 '}';
