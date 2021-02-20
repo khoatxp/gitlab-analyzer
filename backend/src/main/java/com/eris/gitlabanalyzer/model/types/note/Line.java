@@ -1,4 +1,4 @@
-package com.eris.gitlabanalyzer.model.types;
+package com.eris.gitlabanalyzer.model.types.note;
 
 import com.fasterxml.jackson.annotation.*;
 
