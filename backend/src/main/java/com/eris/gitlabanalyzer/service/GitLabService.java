@@ -174,4 +174,34 @@ public class GitLabService {
                 .retrieve()
                 .bodyToFlux(GitLabMergeRequestNote.class);
     }
+
+    public Flux<GitLabIssue> getIssues(Long projectId) {
+        URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/issues")
+                .queryParam("per_page", 100)
+                .build()
+                .encode()
+                .toUri();
+
+        return webClient.get()
+                .uri(gitlabUrl)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .retrieve()
+                .bodyToFlux(GitLabIssue.class);
+    }
+
+    public Flux<GitLabIssueNote> getIssueNotes(Long projectId, Long issue_iid) {
+        URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/issues/" + issue_iid + "/notes")
+                .queryParam("per_page", 100)
+                .build()
+                .encode()
+                .toUri();
+
+        return webClient.get()
+                .uri(gitlabUrl)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .retrieve()
+                .bodyToFlux(GitLabIssueNote.class);
+    }
 }
