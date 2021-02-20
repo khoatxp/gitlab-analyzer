@@ -17,6 +17,10 @@ import {
 import {FixedSizeList, areEqual} from 'react-window';
 import memoize from 'memoize-one';
 import AutoSizer from 'react-virtualized-auto-sizer';
+import {Note} from "../../interfaces/GitLabNote";
+import {MergeRequest} from "../../interfaces/GitLabMergeRequest";
+import {Issue} from "../../interfaces/GitLabIssue";
+import {Task} from "../../interfaces/GitLabTask";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -27,14 +31,10 @@ const useStyles = makeStyles((theme: Theme) =>
             height: '75vh',
         },
         appBarSpacer: theme.mixins.toolbar,
-        content: {
-            flexGrow: 1,
-        },
         container: {
             paddingTop: theme.spacing(2),
             paddingBottom: theme.spacing(2),
         },
-        sticky: {},
         overflow: {
             overflow: 'auto',
             height: '80vh',
@@ -45,52 +45,80 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-interface Note {
-    id: number;
-    name: string;
-    email: string;
-    body: string;
-}
-
 enum NoteType {
     MergeRequest,
     Issue
 }
 
-// const URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/5/merge_request/10/notes`
-const URL = "https://jsonplaceholder.typicode.com/comments";
+const PROJECT_ID = 5; // TODO: get project id from route
+const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${PROJECT_ID}`;
 
 const index = () => {
+    const [mergeRequests, setMergeRequests] = useState<MergeRequest[]>([]);
+    const [issues, setIssues] = useState<Issue[]>([]);
     const [notes, setNotes] = useState<Note[]>([]);
-    const [mergeRequests, setMergeRequests] = useState<Note[]>([]);
-
-    const [selectedItem, setSelectedItem] = useState(0);
-    const handleSelectItem = (
-        index: number,
-    ) => {
-        axios
-            .get(`${URL}?postId=${selectedItem + 1}`)
-            .then((resp: AxiosResponse) => {
-                setNotes(resp.data);
-            });
-        setSelectedItem(index);
-    };
 
     const [noteType, setNoteType] = React.useState(NoteType.MergeRequest);
+
     const handleSelectNoteType = (event: React.ChangeEvent<HTMLInputElement>) => {
         setNoteType(Number((event.target as HTMLInputElement).value));
     };
 
+    useEffect(() => {
+        handleSelectItem(0);
+    }, [noteType]);
+
+    const [selectedItem, setSelectedItem] = useState(0);
+
+    const getMergeRequestNotes = (mergeRequestIid: number) => {
+        axios
+            .get(`${PROJECT_ID_URL}/merge_requests/${mergeRequestIid}/notes`)
+            .then((resp: AxiosResponse) => {
+                setNotes(resp.data);
+            })
+    };
+
+    const getIssueNotes = (issueIid: number) => {
+        axios
+            .get(`${PROJECT_ID_URL}/issues/${issueIid}/notes`)
+            .then((resp: AxiosResponse) => {
+                setNotes(resp.data);
+            });
+    };
+
+    const handleSelectItem = (
+        index: number,
+    ) => {
+        setSelectedItem(index);
+        if (noteType === NoteType.MergeRequest) {
+            if (mergeRequests?.[index]?.iid) {
+                getMergeRequestNotes(mergeRequests[index].iid);
+            }
+        } else {
+            if (issues?.[index]?.iid) {
+                getIssueNotes(issues[index].iid);
+            }
+        }
+    };
 
     useEffect(() => {
         axios
-            .get(URL)
+            .get(`${PROJECT_ID_URL}/merge_requests?startDateTime=2021-01-01T08:00:00Z&endDateTime=2021-03-15T08:00:00Z`)
             .then((resp: AxiosResponse) => {
-                setNotes(resp.data);
                 setMergeRequests(resp.data);
             });
+        axios
+            .get(`${PROJECT_ID_URL}/issues`)
+            .then((resp: AxiosResponse) => {
+                setIssues(resp.data);
+            });
+
     }, []);
 
+    // first item is selected on page load
+    useEffect(() => {
+        handleSelectItem(0);
+    }, [mergeRequests]);
 
     const classes = useStyles();
     return (
@@ -108,7 +136,7 @@ const index = () => {
                                     handleChange={handleSelectNoteType}/>
                             </Box>
                             <Box className={classes.card}>
-                                <MergeRequestList items={mergeRequests}
+                                <MergeRequestList items={noteType === NoteType.MergeRequest ? mergeRequests : issues}
                                                   selectedItem={selectedItem}
                                                   handleSelectedItemChange={handleSelectItem}/>
                             </Box>
@@ -156,7 +184,7 @@ const RadioGroupSelectMergeRequestsOrIssues = ({value, handleChange}
 
 const Row = memo(({data, index, style}
                       : {
-    data: { items: Note[], selectedItem: number, setSelectedItem: React.Dispatch<number> },
+    data: { items: Task[], selectedItem: number, setSelectedItem: React.Dispatch<number> },
     index: number,
     style: React.CSSProperties
 }) => {
@@ -173,13 +201,13 @@ const Row = memo(({data, index, style}
             style={style}
         >
             <ListItemText
-                primary={"21-Pull-repo-Information-from-gitlab-server"}
-                secondary={"!11 · opened 1 day ago by Jason Lee"}/>
+                primary={item.title}
+                secondary={`#${item.iid} · opened ${item.created_at} by ${item.author.name}`}/>
         </ListItem>
     );
 }, areEqual);
 
-const createItemData = memoize((items: Note[],
+const createItemData = memoize((items: Task[],
                                 selectedItem: number,
                                 setSelectedItem: React.Dispatch<number>) => ({
     items,
@@ -189,7 +217,7 @@ const createItemData = memoize((items: Note[],
 
 function MergeRequestList({items, selectedItem, handleSelectedItemChange}
                               : {
-                              items: Note[],
+                              items: Task[],
                               selectedItem: number,
                               handleSelectedItemChange: React.Dispatch<number>
                           }
@@ -221,19 +249,19 @@ const NotesList = ({notes}: { notes: Note[] }) => {
 
     return (
         <List subheader={<ListSubheader disableSticky>Notes</ListSubheader>} className={classes.overflow}>
-            {notes.map((note) => (
+            {!notes?.length ? <Box>{"No notes!"}</Box> : notes.map((note) => (
                 <ListItem>
                     <ListItemText
                         primary={
                             <React.Fragment>
-                                {"First Last "}
+                                {`${note.author.name} `}
                                 <Typography
                                     component="span"
                                     variant="body2"
                                     className={classes.inline}
                                     color="textSecondary"
                                 >
-                                    {"@flast · 6 hours ago"}
+                                    {`@${note.author.username} · ${note.created_at}`}
                                 </Typography>
                             </React.Fragment>}
                         secondary={note.body}/>
@@ -241,6 +269,6 @@ const NotesList = ({notes}: { notes: Note[] }) => {
             ))}
         </List>
     );
-}
+};
 
 export default index;
