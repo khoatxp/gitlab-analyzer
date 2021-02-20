@@ -163,6 +163,7 @@ public class GitLabService {
     public Flux<GitLabMergeRequestNote> getMergeRequestNotes(Long projectId, Long mergeRequestIid) {
         URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/notes")
+                .queryParam("per_page", 100)
                 .build()
                 .encode()
                 .toUri();
