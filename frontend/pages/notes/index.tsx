@@ -24,23 +24,14 @@ import {Task} from "../../interfaces/GitLabTask";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        root: {},
-        card: {
-            padding: theme.spacing(1),
+        appBarSpacer: theme.mixins.toolbar,
+        taskList: {
             overflow: 'auto',
             height: '75vh',
         },
-        appBarSpacer: theme.mixins.toolbar,
-        container: {
-            paddingTop: theme.spacing(2),
-            paddingBottom: theme.spacing(2),
-        },
-        overflow: {
+        notesList: {
             overflow: 'auto',
             height: '80vh',
-        },
-        inline: {
-            display: 'inline',
         },
     }),
 );
@@ -122,9 +113,9 @@ const index = () => {
 
     const classes = useStyles();
     return (
-        <Box className={classes.root}>
+        <Box>
             <NavBar/>
-            <div className={classes.appBarSpacer}/>
+            <Box className={classes.appBarSpacer}/>
             <Container maxWidth='xl'>
                 <Grid container spacing={2}>
 
@@ -135,8 +126,8 @@ const index = () => {
                                     value={noteType}
                                     handleChange={handleSelectNoteType}/>
                             </Box>
-                            <Box className={classes.card}>
-                                <MergeRequestList items={noteType === NoteType.MergeRequest ? mergeRequests : issues}
+                            <Box className={classes.taskList}>
+                                <TaskList items={noteType === NoteType.MergeRequest ? mergeRequests : issues}
                                                   selectedItem={selectedItem}
                                                   handleSelectedItemChange={handleSelectItem}/>
                             </Box>
@@ -215,16 +206,15 @@ const createItemData = memoize((items: Task[],
     setSelectedItem,
 }));
 
-function MergeRequestList({items, selectedItem, handleSelectedItemChange}
+const TaskList = ({items, selectedItem, handleSelectedItemChange}
                               : {
                               items: Task[],
                               selectedItem: number,
                               handleSelectedItemChange: React.Dispatch<number>
                           }
-) {
+) => {
 
     const itemData = createItemData(items, selectedItem, handleSelectedItemChange);
-    const classes = useStyles();
     return (
         <AutoSizer>
             {({height, width}) => (
@@ -234,8 +224,6 @@ function MergeRequestList({items, selectedItem, handleSelectedItemChange}
                     itemData={itemData}
                     itemSize={100}
                     width={width}
-                    className={classes.overflow}
-
                 >
                     {Row}
                 </FixedSizeList>
@@ -248,8 +236,10 @@ const NotesList = ({notes}: { notes: Note[] }) => {
     const classes = useStyles();
 
     return (
-        <List subheader={<ListSubheader disableSticky>Notes</ListSubheader>} className={classes.overflow}>
-            {!notes?.length ? <Box>{"No notes!"}</Box> : notes.map((note) => (
+        <List subheader={<ListSubheader disableSticky>{`${notes.length} Notes`}</ListSubheader>}
+              className={classes.notesList}
+        >
+            {notes.map((note) => (
                 <ListItem>
                     <ListItemText
                         primary={
@@ -258,7 +248,6 @@ const NotesList = ({notes}: { notes: Note[] }) => {
                                 <Typography
                                     component="span"
                                     variant="body2"
-                                    className={classes.inline}
                                     color="textSecondary"
                                 >
                                     {`@${note.author.username} · ${note.created_at}`}
