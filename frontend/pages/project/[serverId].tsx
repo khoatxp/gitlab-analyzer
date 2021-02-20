@@ -4,7 +4,7 @@ import React, {useState, useEffect} from "react";
 import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
 import CardLayout from "../../components/CardLayout";
-import DatePicker from "../../components/DatePicker";
+import AppDateTimePicker from "../../components/AppDateTimePicker";
 import {GitLabProject} from "../../interfaces/GitLabProject";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 
@@ -78,7 +78,7 @@ const index = () => {
               alignItems="column"
           >
             <div className='Date picker'>
-              <DatePicker/>
+              <AppDateTimePicker/>
             </ div>
           </Box>
         </div>

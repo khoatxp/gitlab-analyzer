@@ -5,7 +5,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, DateTimePicker} from '@material-ui/pickers';
 
 
-const DatePicker = () => {
+const AppDateTimePicker = () => {
 
     var now = new Date();
     const [startDate, setStartDate] = React.useState<Date>(new Date(now.getFullYear(),now.getMonth()-1, now.getDate()));
@@ -46,4 +46,4 @@ const DatePicker = () => {
 
 }
 
-export default DatePicker;
+export default AppDateTimePicker;
