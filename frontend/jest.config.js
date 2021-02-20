@@ -15,10 +15,10 @@ module.exports = {
     collectCoverage: true,
     coverageThreshold: {
         global: {
-            branches: 100,
-            functions: 10,
-            lines: 10,
-            statements: 20,
+            branches: 70,
+            functions: 60,
+            lines: 88,
+            statements: 88,
         }
     },
     "snapshotSerializers": ["enzyme-to-json/serializer"],
