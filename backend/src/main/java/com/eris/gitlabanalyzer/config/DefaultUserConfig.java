@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class DatabaseConfig {
+public class DefaultUserConfig {
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
 

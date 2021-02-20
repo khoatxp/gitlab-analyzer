@@ -39,7 +39,7 @@ public class GitManagementUserService {
 
         if (gitLabMemberList != null && !gitLabMemberList.isEmpty()) {
             gitLabMemberList.forEach(gitLabMember -> {
-                GitManagementUser gitManagementUser= gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMember.getUsername(),serverUrl);
+                    GitManagementUser gitManagementUser= gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMember.getUsername(),serverUrl);
                     if (gitManagementUser == null){
                         gitManagementUser = new GitManagementUser(
                                 gitLabMember.getUsername(),
@@ -49,7 +49,8 @@ public class GitManagementUserService {
                     }
                     gitManagementUser.addProject(project);
                     gitManagementUserRepository.save(gitManagementUser);
-            });
+                }
+            );
         }
     }
 

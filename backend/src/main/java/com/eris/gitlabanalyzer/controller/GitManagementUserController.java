@@ -15,8 +15,8 @@ public class GitManagementUserController {
         this.gitManagementUserService = gitManagementUserService;
     }
 
-    @GetMapping("/api/v1/managementuser/members")
-    public List<GitManagementUser> getMembersByProjectId(@RequestParam(required = true) String projectId){
-        return gitManagementUserService.getMembersByProjectId(Long.parseLong(projectId));
+    @GetMapping("/api/v1/{projectId}/managementuser/members")
+    public List<GitManagementUser> getMembersByProjectId(@PathVariable("projectId") Long projectId){
+        return gitManagementUserService.getMembersByProjectId(projectId);
     }
 }
