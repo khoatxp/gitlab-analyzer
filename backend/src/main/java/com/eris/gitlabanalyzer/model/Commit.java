@@ -130,7 +130,7 @@ public class Commit {
     public Commit() {
     }
 
-    public Commit(String sha, String title, String authorName, String authorEmail, String committerName, String committerEmail, String committedDate, String createdAt, String webUrl, Project project, GitManagementUser gitManagementUser, MergeRequest mergeRequest) {
+    public Commit(String sha, String title, String authorName, String authorEmail, String committerName, String committerEmail, String committedDate, String createdAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
         this.sha = sha;
         this.title = title;
         this.authorName = authorName;
@@ -142,7 +142,6 @@ public class Commit {
         this.webUrl = webUrl;
         this.project = project;
         this.gitManagementUser = gitManagementUser;
-        this.mergeRequest = mergeRequest;
     }
 
     public CommitMapping getCommitMapping() {

@@ -84,8 +84,8 @@ public class Issue {
     public Issue() {
     }
 
-    public Issue(Long id, String title, String authorName, String createdAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
-        this.id = id;
+    public Issue(Long iid, String title, String authorName, String createdAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
+        this.iid = iid;
         this.title = title;
         this.authorName = authorName;
         this.createdAt = createdAt;
