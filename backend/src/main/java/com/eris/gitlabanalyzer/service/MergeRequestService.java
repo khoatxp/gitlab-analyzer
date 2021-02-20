@@ -31,28 +31,28 @@ public class MergeRequestService {
         this.gitManagementUserRepository = gitManagementUserRepository;
     }
 
-    public void saveMergeRequestInfo(Long gitLabProjectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime){
+    public void saveMergeRequestInfo(Long gitLabProjectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
         Project project = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, serverUrl);
 
         var gitLabMergeRequests = gitLabService.getMergeRequests(gitLabProjectId, startDateTime, endDateTime);
         var gitLabMergeRequestList = gitLabMergeRequests.collectList().block();
 
-        if (gitLabMergeRequestList != null && !gitLabMergeRequestList.isEmpty()){
+        if (gitLabMergeRequestList != null && !gitLabMergeRequestList.isEmpty()) {
             gitLabMergeRequestList.forEach(gitLabMergeRequest -> {
-                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMergeRequest.getUsername(),serverUrl);
-                    MergeRequest mergeRequest = new MergeRequest(
-                            gitLabMergeRequest.getIid(),
-                            gitLabMergeRequest.getUsername(),
-                            gitLabMergeRequest.getTitle(),
-                            gitLabMergeRequest.getCreatedAt(),
-                            gitLabMergeRequest.getWebUrl(),
-                            project,
-                            gitManagementUser
-                    );
-                    mergeRequestRepository.save(mergeRequest);
-                }
+                        GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMergeRequest.getUsername(), serverUrl);
+                        MergeRequest mergeRequest = new MergeRequest(
+                                gitLabMergeRequest.getIid(),
+                                gitLabMergeRequest.getUsername(),
+                                gitLabMergeRequest.getTitle(),
+                                gitLabMergeRequest.getCreatedAt(),
+                                gitLabMergeRequest.getWebUrl(),
+                                project,
+                                gitManagementUser
+                        );
+                        mergeRequestRepository.save(mergeRequest);
+                    }
             );
         }
-
     }
+
 }

@@ -30,27 +30,29 @@ public class GitManagementUserService {
         this.gitLabService = gitLabService;
     }
 
+    //TODO Investigate other ways rather than using block(). Current issue is that there is a race condition when using subscribe()
     public void saveGitManagementUserInfo(Long gitLabProjectId){
         Project project = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, serverUrl);
 
-        var gitLabUsers = gitLabService.getMembers(gitLabProjectId);
-        var gitLabUserList= gitLabUsers.collectList().block();
+        var gitLabMembers = gitLabService.getMembers(gitLabProjectId);
+        var gitLabMemberList= gitLabMembers.collectList().block();
 
-        if (gitLabUserList != null && !gitLabUserList.isEmpty()) {
-            gitLabUserList.forEach(gitLabMember -> {
+        if (gitLabMemberList != null && !gitLabMemberList.isEmpty()) {
+            gitLabMemberList.forEach(gitLabMember -> {
                 GitManagementUser gitManagementUser= gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMember.getUsername(),serverUrl);
-                if (gitManagementUser == null){
-                    gitManagementUser = new GitManagementUser(
-                            gitLabMember.getUsername(),
-                            gitLabMember.getName(),
-                            serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken)
-                    );
-                }
-                gitManagementUser.addProject(project);
-                gitManagementUserRepository.save(gitManagementUser);
+                    if (gitManagementUser == null){
+                        gitManagementUser = new GitManagementUser(
+                                gitLabMember.getUsername(),
+                                gitLabMember.getName(),
+                                serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken)
+                        );
+                    }
+                    gitManagementUser.addProject(project);
+                    gitManagementUserRepository.save(gitManagementUser);
             });
         }
     }
+
 
     public List<GitManagementUser> getMembersByProjectId(Long projectId){
         return gitManagementUserRepository.findByProjectId(projectId);
