@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Login Folder Snapshot Index 1`] = `
+<div>
+  <div
+    class="MuiBox-root MuiBox-root-3 makeStyles-backgroundGradient-1"
+  >
+    <div
+      class="MuiBox-root MuiBox-root-4 makeStyles-backgroundGradient-1"
+    >
+      <div
+        class="MuiBox-root MuiBox-root-5"
+      >
+        <div
+          class="MuiBox-root MuiBox-root-6"
+          id="card-header"
+        >
+          <div
+            style="display: inline-block; max-width: 100%; overflow: hidden; position: relative; box-sizing: border-box; margin: 0px;"
+          >
+            <div
+              style="box-sizing: border-box; display: block; max-width: 100%;"
+            >
+              <img
+                alt=""
+                aria-hidden="true"
+                role="presentation"
+                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI1IiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiLz4="
+                style="max-width: 100%; display: block; margin: 0px; padding: 0px;"
+              />
+            </div>
+            <img
+              alt="The Gitlab Logo"
+              decoding="async"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+              style="visibility: hidden; position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; box-sizing: border-box; padding: 0px; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"
+            />
+          </div>
+          <h6
+            class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom"
+          >
+            GitLab
+            <br />
+            Analyzer
+          </h6>
+        </div>
+        <div
+          class="MuiFormControl-root MuiTextField-root MuiFormControl-marginNormal MuiFormControl-fullWidth"
+        >
+          <div
+            class="MuiInputBase-root MuiFilledInput-root makeStyles-root-7 MuiFilledInput-underline makeStyles-underline-9 MuiInputBase-fullWidth MuiInputBase-formControl"
+          >
+            <input
+              aria-invalid="false"
+              class="MuiInputBase-input MuiFilledInput-input makeStyles-input-8"
+              placeholder="Username"
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+        <div
+          class="MuiFormControl-root MuiTextField-root MuiFormControl-marginNormal MuiFormControl-fullWidth"
+        >
+          <div
+            class="MuiInputBase-root MuiFilledInput-root makeStyles-root-7 MuiFilledInput-underline makeStyles-underline-9 MuiInputBase-fullWidth MuiInputBase-formControl"
+          >
+            <input
+              aria-invalid="false"
+              class="MuiInputBase-input MuiFilledInput-input makeStyles-input-8"
+              placeholder="Password"
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+        <div
+          class="MuiBox-root MuiBox-root-10"
+        >
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-button-11 MuiButton-containedPrimary MuiButton-disableElevation"
+            tabindex="0"
+            type="button"
+          >
+            <span
+              class="MuiButton-label"
+            >
+              Login
+            </span>
+            <span
+              class="MuiTouchRipple-root"
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
