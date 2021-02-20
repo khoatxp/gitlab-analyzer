@@ -174,56 +174,29 @@ public class GitManagementUser {
     public void addProject(Project project) {
         if (!this.projects.contains(project)) {
             this.projects.add(project);
-            project.getGitLabUsers().add(this);
+            project.getGitManagementUsers().add(this);
         }
     }
 
-    public void removeProject(Project project) {
-        if (this.projects.contains(project)) {
-            this.projects.remove(project);
-            project.getGitLabUsers().remove(this);
-        }
-    }
 
     public void addCommitMapping(CommitMapping commitMapping) {
         if (!this.commitMappings.contains(commitMapping)) {
             this.commitMappings.add(commitMapping);
-            commitMapping.setGitLabUser(this);
-        }
-    }
-
-    public void removeCommitMapping(CommitMapping commitMapping) {
-        if (this.commitMappings.contains(commitMapping)) {
-            this.commitMappings.remove(commitMapping);
-            commitMapping.setGitLabUser(null);
+            commitMapping.setGitManagementUser(this);
         }
     }
 
     public void addCommit(Commit commit) {
         if (!this.commits.contains(commit)) {
             this.commits.add(commit);
-            commit.setGitLabUser(this);
-        }
-    }
-
-    public void removeCommit(Commit commit) {
-        if (this.commits.contains(commit)) {
-            this.commits.remove(commit);
-            commit.setGitLabUser(null);
+            commit.setGitManagementUser(this);
         }
     }
 
     public void addMergeRequest(MergeRequest mergeRequest) {
         if (!this.mergeRequests.contains(mergeRequest)) {
             this.mergeRequests.add(mergeRequest);
-            mergeRequest.setGitLabUser(this);
-        }
-    }
-
-    public void removeMergeRequest(MergeRequest mergeRequest) {
-        if (this.mergeRequests.contains(mergeRequest)) {
-            this.mergeRequests.remove(mergeRequest);
-            mergeRequest.setGitLabUser(null);
+            mergeRequest.setGitManagementUser(this);
         }
     }
 
@@ -234,13 +207,6 @@ public class GitManagementUser {
         }
     }
 
-    public void removeCommitComment(CommitComment commitComment) {
-        if (this.commitComments.contains(commitComment)) {
-            this.commitComments.remove(commitComment);
-            commitComment.setMember(null);
-        }
-    }
-
     public void addMergeRequestComment(MergeRequestComment mergeRequestComment) {
         if (!this.mergeRequestComments.contains(mergeRequestComment)) {
             this.mergeRequestComments.add(mergeRequestComment);
@@ -248,24 +214,10 @@ public class GitManagementUser {
         }
     }
 
-    public void removeMergeRequestComment(MergeRequestComment mergeRequestComment) {
-        if (this.mergeRequestComments.contains(mergeRequestComment)) {
-            this.mergeRequestComments.remove(mergeRequestComment);
-            mergeRequestComment.setMember(null);
-        }
-    }
-
     public void addIssueComment(IssueComment issueComment) {
         if (!this.issueComments.contains(issueComment)) {
             this.issueComments.add(issueComment);
             issueComment.setMember(this);
-        }
-    }
-
-    public void removeIssueComment(IssueComment issueComment) {
-        if (this.issueComments.contains(issueComment)) {
-            this.issueComments.remove(issueComment);
-            issueComment.setMember(null);
         }
     }
 

@@ -54,7 +54,7 @@ public class CommitMapping {
         return gitManagementUser;
     }
 
-    public void setGitLabUser(GitManagementUser gitManagementUser) {
+    public void setGitManagementUser(GitManagementUser gitManagementUser) {
         this.gitManagementUser = gitManagementUser;
     }
 

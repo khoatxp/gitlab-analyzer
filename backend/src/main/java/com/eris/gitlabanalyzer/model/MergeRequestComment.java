@@ -103,7 +103,7 @@ public class MergeRequestComment {
         return "MergeRequestComment{" +
                 "id=" + id +
                 ", iid=" + iid +
-                ", gitLabUser=" + gitManagementUser +
+                ", gitManagementUser=" + gitManagementUser +
                 ", mergeRequest=" + mergeRequest +
                 ", webUrl='" + webUrl + '\'' +
                 ", createdAt='" + createdAt + '\'' +

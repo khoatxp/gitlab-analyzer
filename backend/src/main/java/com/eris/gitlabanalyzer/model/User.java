@@ -67,13 +67,6 @@ public class User {
         }
     }
 
-    public void removeUserServer(UserServer userServer) {
-        if (this.userServers.contains(userServer)) {
-            this.userServers.remove(userServer);
-            userServer.setUser(null);
-        }
-    }
-
     @Override
     public String toString() {
         return "User{" +

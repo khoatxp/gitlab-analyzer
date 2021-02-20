@@ -137,13 +137,6 @@ public class Issue {
         }
     }
 
-    public void removeIssueComment(IssueComment issueComment) {
-        if (this.issueComments.contains(issueComment)) {
-            this.issueComments.remove(issueComment);
-            issueComment.setIssue(null);
-        }
-    }
-
     @Override
     public String toString() {
         return "Issue{" +

@@ -197,7 +197,7 @@ public class Commit {
         this.project = project;
     }
 
-    public void setGitLabUser(GitManagementUser gitManagementUser) {
+    public void setGitManagementUser(GitManagementUser gitManagementUser) {
         this.gitManagementUser = gitManagementUser;
     }
 
@@ -209,13 +209,6 @@ public class Commit {
         if (!this.commitComments.contains(commitComment)) {
             this.commitComments.add(commitComment);
             commitComment.setCommit(this);
-        }
-    }
-
-    public void removeCommitComment(CommitComment commitComment) {
-        if (this.commitComments.contains(commitComment)) {
-            this.commitComments.remove(commitComment);
-            commitComment.setCommit(null);
         }
     }
 

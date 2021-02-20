@@ -82,24 +82,10 @@ public class Server {
         }
     }
 
-    public void removeProject(Project project) {
-        if (this.projects.contains(project)) {
-            this.projects.remove(project);
-            project.setServer(null);
-        }
-    }
-
-    public void addGitLabUser(GitManagementUser gitManagementUser) {
+    public void addGitManagementUser(GitManagementUser gitManagementUser) {
         if (!this.gitManagementUsers.contains(gitManagementUser)) {
             this.gitManagementUsers.add(gitManagementUser);
             gitManagementUser.setServer(this);
-        }
-    }
-
-    public void removeGitLabUser(GitManagementUser gitManagementUser) {
-        if (this.gitManagementUsers.contains(gitManagementUser)) {
-            this.gitManagementUsers.remove(gitManagementUser);
-            gitManagementUser.setServer(null);
         }
     }
 
@@ -110,12 +96,6 @@ public class Server {
         }
     }
 
-    public void removeUserServer(UserServer userServer) {
-        if (this.userServers.contains(userServer)) {
-            this.userServers.remove(userServer);
-            userServer.setUser(null);
-        }
-    }
 
     @Override
     public String toString() {

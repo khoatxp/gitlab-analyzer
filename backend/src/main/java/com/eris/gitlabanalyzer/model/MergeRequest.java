@@ -114,7 +114,7 @@ public class MergeRequest {
         return project;
     }
 
-    public GitManagementUser getGitLabUser() {
+    public GitManagementUser getGitManagementUser() {
         return gitManagementUser;
     }
 
@@ -122,7 +122,7 @@ public class MergeRequest {
         this.project = project;
     }
 
-    public void setGitLabUser(GitManagementUser gitManagementUser) {
+    public void setGitManagementUser(GitManagementUser gitManagementUser) {
         this.gitManagementUser = gitManagementUser;
     }
 
@@ -146,24 +146,10 @@ public class MergeRequest {
         }
     }
 
-    public void removeCommit(Commit commit) {
-        if (this.commits.contains(commit)) {
-            this.commits.remove(commit);
-            commit.setMergeRequest(null);
-        }
-    }
-
     public void addMergeRequestComment(MergeRequestComment mergeRequestComment) {
         if (!this.mergeRequestComments.contains(mergeRequestComment)) {
             this.mergeRequestComments.add(mergeRequestComment);
             mergeRequestComment.setMergeRequest(this);
-        }
-    }
-
-    public void removeMergeRequestComment(MergeRequestComment mergeRequestComment) {
-        if (this.mergeRequestComments.contains(mergeRequestComment)) {
-            this.mergeRequestComments.remove(mergeRequestComment);
-            mergeRequestComment.setMergeRequest(null);
         }
     }
 
@@ -177,7 +163,7 @@ public class MergeRequest {
                 ", createdAt='" + createdAt + '\'' +
                 ", webUrl='" + webUrl + '\'' +
                 ", project=" + project +
-                ", gitLabUser=" + gitManagementUser +
+                ", gitManagementUser=" + gitManagementUser +
                 ", commits=" + commits +
                 ", mergeRequestComments=" + mergeRequestComments +
                 '}';

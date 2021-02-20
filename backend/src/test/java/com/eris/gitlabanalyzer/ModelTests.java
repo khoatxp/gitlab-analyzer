@@ -39,7 +39,7 @@ class ModelTests {
         // Add project to server
         testServer.addProject(testProject);
         // Add member to project
-        testProject.addGitLabUser(testGitManagementUser);
+        testProject.addGitManagementUser(testGitManagementUser);
         // Connect project to member
         testGitManagementUser.addProject(testProject);
     }

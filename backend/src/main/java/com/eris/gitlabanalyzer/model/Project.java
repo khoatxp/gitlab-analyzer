@@ -139,7 +139,7 @@ public class Project {
         return server;
     }
 
-    public List<GitManagementUser> getGitLabUsers() {
+    public List<GitManagementUser> getGitManagementUsers() {
         return gitManagementUsers;
     }
 
@@ -147,17 +147,10 @@ public class Project {
         this.server = server;
     }
 
-    public void addGitLabUser(GitManagementUser gitManagementUser) {
+    public void addGitManagementUser(GitManagementUser gitManagementUser) {
         if (!this.gitManagementUsers.contains(gitManagementUser)) {
             this.gitManagementUsers.add(gitManagementUser);
             gitManagementUser.getProjects().add(this);
-        }
-    }
-
-    public void removeGitLabUser(GitManagementUser gitManagementUser) {
-        if (this.gitManagementUsers.contains(gitManagementUser)) {
-            this.gitManagementUsers.remove(gitManagementUser);
-            gitManagementUser.getProjects().remove(this);
         }
     }
 
@@ -168,13 +161,6 @@ public class Project {
         }
     }
 
-    public void removeCommit(Commit commit) {
-        if (this.commits.contains(commit)) {
-            this.commits.remove(commit);
-            commit.setProject(null);
-        }
-    }
-
     public void addMergeRequest(MergeRequest mergeRequest) {
         if (!this.mergeRequests.contains(mergeRequest)) {
             this.mergeRequests.add(mergeRequest);
@@ -182,24 +168,10 @@ public class Project {
         }
     }
 
-    public void removeMergeRequest(MergeRequest mergeRequest) {
-        if (this.mergeRequests.contains(mergeRequest)) {
-            this.mergeRequests.remove(mergeRequest);
-            mergeRequest.setProject(null);
-        }
-    }
-
     public void addIssue(Issue issue) {
         if (!this.issues.contains(issue)) {
             this.issues.add(issue);
             issue.setProject(this);
-        }
-    }
-
-    public void removeIssue(Issue issue) {
-        if (this.issues.contains(issue)) {
-            this.issues.remove(issue);
-            issue.setProject(null);
         }
     }
 

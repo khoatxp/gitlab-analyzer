@@ -74,7 +74,7 @@ public class IssueComment {
         return iid;
     }
 
-    public GitManagementUser getGitLabUser() {
+    public GitManagementUser getGitManagementUser() {
         return gitManagementUser;
     }
 
@@ -103,7 +103,7 @@ public class IssueComment {
         return "IssueComment{" +
                 "id=" + id +
                 ", iid=" + iid +
-                ", gitLabUser=" + gitManagementUser +
+                ", gitManagementUser=" + gitManagementUser +
                 ", issue=" + issue +
                 ", webUrl='" + webUrl + '\'' +
                 ", createdAt='" + createdAt + '\'' +

@@ -97,7 +97,7 @@ public class CommitComment {
         return "CommitComment{" +
                 "id=" + id +
                 ", iid=" + iid +
-                ", gitLabUser=" + gitManagementUser +
+                ", gitManagementUser=" + gitManagementUser +
                 ", commit=" + commit +
                 ", webUrl='" + webUrl + '\'' +
                 ", createdAt='" + createdAt + '\'' +
