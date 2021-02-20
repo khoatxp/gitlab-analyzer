@@ -25,7 +25,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-# .env.local TODO uncomment this once our environments are set up
+.env.local
 .env.development.local
 .env.test.local
 .env.production.local
