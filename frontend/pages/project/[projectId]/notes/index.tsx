@@ -2,7 +2,7 @@ import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import React, {useEffect, useState, memo} from "react";
 import axios, {AxiosResponse} from "axios";
 
-import NavBar from "../../components/NavBar";
+import NavBar from "../../../../components/NavBar";
 import {
     Box,
     Card,
@@ -17,10 +17,11 @@ import {
 import {FixedSizeList, areEqual} from 'react-window';
 import memoize from 'memoize-one';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import {Note} from "../../interfaces/GitLabNote";
-import {MergeRequest} from "../../interfaces/GitLabMergeRequest";
-import {Issue} from "../../interfaces/GitLabIssue";
-import {Task} from "../../interfaces/GitLabTask";
+import {Note} from "../../../../interfaces/GitLabNote";
+import {MergeRequest} from "../../../../interfaces/GitLabMergeRequest";
+import {Issue} from "../../../../interfaces/GitLabIssue";
+import {Task} from "../../../../interfaces/GitLabTask";
+import {useRouter} from "next/router";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -41,10 +42,11 @@ enum NoteType {
     Issue
 }
 
-const PROJECT_ID = 5; // TODO: get project id from route
-const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${PROJECT_ID}`;
-
 const index = () => {
+    const router = useRouter();
+    const { projectId } =  router.query;
+    const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`;
+
     const [mergeRequests, setMergeRequests] = useState<MergeRequest[]>([]);
     const [issues, setIssues] = useState<Issue[]>([]);
     const [notes, setNotes] = useState<Note[]>([]);
@@ -93,18 +95,20 @@ const index = () => {
     };
 
     useEffect(() => {
-        axios
-            .get(`${PROJECT_ID_URL}/merge_requests?startDateTime=2021-01-01T08:00:00Z&endDateTime=2021-03-15T08:00:00Z`)
-            .then((resp: AxiosResponse) => {
-                setMergeRequests(resp.data);
-            });
-        axios
-            .get(`${PROJECT_ID_URL}/issues`)
-            .then((resp: AxiosResponse) => {
-                setIssues(resp.data);
-            });
+        if(projectId){
+            axios
+                .get(`${PROJECT_ID_URL}/merge_requests?startDateTime=2021-01-01T08:00:00Z&endDateTime=2021-03-15T08:00:00Z`)
+                .then((resp: AxiosResponse) => {
+                    setMergeRequests(resp.data);
+                });
+            axios
+                .get(`${PROJECT_ID_URL}/issues`)
+                .then((resp: AxiosResponse) => {
+                    setIssues(resp.data);
+                });
+        }
 
-    }, []);
+    }, [projectId]);
 
     // first item is selected on page load
     useEffect(() => {
@@ -124,7 +128,10 @@ const index = () => {
                             <Box style={{display: 'flex', justifyContent: 'center'}}>
                                 <RadioGroupSelectMergeRequestsOrIssues
                                     value={noteType}
-                                    handleChange={handleSelectNoteType}/>
+                                    handleChange={handleSelectNoteType}
+                                    numMergeRequests={mergeRequests.length}
+                                    numIssues={issues.length}
+                                />
                             </Box>
                             <Box className={classes.taskList}>
                                 <TaskList items={noteType === NoteType.MergeRequest ? mergeRequests : issues}
@@ -145,10 +152,12 @@ const index = () => {
     );
 };
 
-const RadioGroupSelectMergeRequestsOrIssues = ({value, handleChange}
+const RadioGroupSelectMergeRequestsOrIssues = ({value, handleChange, numMergeRequests, numIssues}
                                                    : {
     value: NoteType,
-    handleChange: React.Dispatch<React.ChangeEvent<HTMLInputElement>>
+    handleChange: React.Dispatch<React.ChangeEvent<HTMLInputElement>>,
+    numMergeRequests: number,
+    numIssues : number,
 }) => {
 
     return (
@@ -161,12 +170,12 @@ const RadioGroupSelectMergeRequestsOrIssues = ({value, handleChange}
                 <FormControlLabel
                     value={NoteType.MergeRequest}
                     control={<Radio color="primary" size="small"/>}
-                    label="Merge Requests"
+                    label={`${numMergeRequests} Merge Requests`}
                 />
                 <FormControlLabel
                     value={NoteType.Issue}
                     control={<Radio color="secondary" size="small"/>}
-                    label="Issues"
+                    label={`${numIssues} Issues`}
                 />
             </RadioGroup>
         </FormControl>
@@ -240,7 +249,7 @@ const NotesList = ({notes}: { notes: Note[] }) => {
               className={classes.notesList}
         >
             {notes.map((note) => (
-                <ListItem>
+                <ListItem key = {note.id}>
                     <ListItemText
                         primary={
                             <React.Fragment>

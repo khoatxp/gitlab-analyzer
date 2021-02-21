@@ -3,8 +3,8 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
-import CardLayout from "../../components/CardLayout";
-import {GitLabProject} from "../../interfaces/GitLabProject";
+import CardLayout from "../../../components/CardLayout";
+import {GitLabProject} from "../../../interfaces/GitLabProject";
 
 const LoadingBar = () => {
   return <div>
@@ -19,7 +19,7 @@ const index = () => {
   const [projects, setProjects] = useState<GitLabProject[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
-  const { serverId } =  router.query;
+  const { projectId } =  router.query;
 
   useEffect(() => {
     if (router.isReady) {
@@ -32,7 +32,7 @@ const index = () => {
             setIsLoading(false);
           });
     }
-  }, [serverId]);
+  }, [projectId]);
 
   let loadingBar =  null;
   if (isLoading) {

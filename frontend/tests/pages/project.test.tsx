@@ -1,13 +1,13 @@
 import React from 'react';
 import {render} from '@testing-library/react';
-import Index from '../../pages/project/[serverId]';
+import Index from '../../pages/project/[projectId]';
 
 describe("Project Folder", () =>{
     const useRouter = jest.spyOn(require('next/router'), 'useRouter');
     const mockUseEffect = jest.spyOn(React, 'useEffect')
     const mockAxios = jest.spyOn(require('axios'), 'get');
 
-    it("Snapshot serverId", () => {
+    it("Snapshot projectId", () => {
         useRouter.mockImplementationOnce(() => ({
             query: { serverId: 'TestId' },
         }));
