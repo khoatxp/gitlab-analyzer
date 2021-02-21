@@ -3,9 +3,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import React, {useState, useEffect} from "react";
 import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
-import CardLayout from "../../components/CardLayout";
-import AppDateTimePicker from "../../components/AppDateTimePicker";
-import {GitLabProject} from "../../interfaces/GitLabProject";
+import CardLayout from "../../../components/CardLayout";
+import AppDateTimePicker from "../../../components/AppDateTimePicker";
+import {GitLabProject} from "../../../interfaces/GitLabProject";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 
 const useStyles = makeStyles((theme) => ({
@@ -30,7 +30,7 @@ const index = () => {
   const [projects, setProjects] = useState<GitLabProject[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
-  const { projectId } =  router.query;
+  const { serverId } =  router.query;
 
   useEffect(() => {
     if (router.isReady) {
@@ -43,7 +43,7 @@ const index = () => {
             setIsLoading(false);
           });
     }
-  }, [projectId]);
+  }, [serverId]);
 
   let loadingBar =  null;
   if (isLoading) {
