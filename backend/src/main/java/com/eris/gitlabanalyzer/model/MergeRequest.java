@@ -162,10 +162,6 @@ public class MergeRequest {
                 ", title='" + title + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 ", webUrl='" + webUrl + '\'' +
-                ", project=" + project +
-                ", gitManagementUser=" + gitManagementUser +
-                ", commits=" + commits +
-                ", mergeRequestComments=" + mergeRequestComments +
                 '}';
     }
 }

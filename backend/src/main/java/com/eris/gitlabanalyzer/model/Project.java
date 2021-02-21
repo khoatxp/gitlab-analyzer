@@ -184,7 +184,6 @@ public class Project {
                 ", name='" + name + '\'' +
                 ", nameWithNamespace='" + nameWithNamespace + '\'' +
                 ", webUrl='" + webUrl + '\'' +
-                ", server=" + server +
                 '}';
     }
 }

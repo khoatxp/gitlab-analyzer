@@ -47,7 +47,12 @@ public class GitManagementUserService {
                                 serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken)
                         );
                     }
-                    gitManagementUser.addProject(project);
+
+                    GitManagementUser checkIfAlreadyInProject = gitManagementUserRepository.findByUsernameAndProjectId(gitLabMember.getUsername(),project.getId());
+                    if(checkIfAlreadyInProject == null){
+                        gitManagementUser.addProject(project);
+                    }
+
                     gitManagementUserRepository.save(gitManagementUser);
                 }
             );

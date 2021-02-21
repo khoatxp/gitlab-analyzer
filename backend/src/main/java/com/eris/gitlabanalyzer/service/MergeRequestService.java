@@ -40,15 +40,18 @@ public class MergeRequestService {
         if (gitLabMergeRequestList != null && !gitLabMergeRequestList.isEmpty()) {
             gitLabMergeRequestList.forEach(gitLabMergeRequest -> {
                         GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMergeRequest.getUsername(), serverUrl);
-                        MergeRequest mergeRequest = new MergeRequest(
-                                gitLabMergeRequest.getIid(),
-                                gitLabMergeRequest.getUsername(),
-                                gitLabMergeRequest.getTitle(),
-                                gitLabMergeRequest.getCreatedAt(),
-                                gitLabMergeRequest.getWebUrl(),
-                                project,
-                                gitManagementUser
-                        );
+                        MergeRequest mergeRequest = mergeRequestRepository.findByIidAndProjectId(gitLabMergeRequest.getIid(),project.getId());
+                        if(mergeRequest == null){
+                            mergeRequest = new MergeRequest(
+                                    gitLabMergeRequest.getIid(),
+                                    gitLabMergeRequest.getUsername(),
+                                    gitLabMergeRequest.getTitle(),
+                                    gitLabMergeRequest.getCreatedAt(),
+                                    gitLabMergeRequest.getWebUrl(),
+                                    project,
+                                    gitManagementUser
+                            );
+                        }
                         mergeRequestRepository.save(mergeRequest);
                     }
             );

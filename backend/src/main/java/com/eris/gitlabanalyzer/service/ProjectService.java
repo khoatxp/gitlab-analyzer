@@ -36,10 +36,15 @@ public class ProjectService {
     }
 
 
-    public Project saveProjectInfo(Long projectId) {
+    public void saveProjectInfo(Long projectId) {
+        Project project = projectRepository.findByGitlabProjectIdAndServerUrl(projectId,serverUrl);
+        if(project != null){
+            return;
+        }
+
         var gitLabProject = gitLabService.getProject(projectId).block();
-        // TODO Check if project already exists
-        Project project = new Project(
+
+        project = new Project(
                 projectId,
                 gitLabProject.getName(),
                 gitLabProject.getNameWithNamespace(),
@@ -47,7 +52,7 @@ public class ProjectService {
                 serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken)
         );
 
-        return projectRepository.save(project);
+        projectRepository.save(project);
     }
 
     public RawTimeLineProjectData getTimeLineProjectData(Long gitLabProjectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
