@@ -5,7 +5,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import CodePage from './CodeAnalysis';
+import CodeAnalysis from './CodeAnalysis';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -81,13 +81,13 @@ export default function NavTabs() {
           onChange={handleChange}
           aria-label="nav tabs example"
         >
-          <LinkTab label="Code" href="/code" {...a11yProps(0)} />
+          <LinkTab label="Code" href="#" {...a11yProps(0)} />
           <LinkTab label="Activity" href="#" {...a11yProps(1)} />
           <LinkTab label="Notes" href="#" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        <CodePage/>
+        <CodeAnalysis/>
       </TabPanel>
       <TabPanel value={value} index={1}>
         This is the Activity Page. (Under construction)
