@@ -92,8 +92,8 @@ const useStyles = makeStyles((theme: Theme) =>
 const CodeAnalysis = () => {
     const classes = useStyles();
     const [state, setState] = React.useState({
-        checkedA: true,
-        checkedB: true,
+        isCommitsChecked: true,
+        isMergeRequestsChecked: true,
     });
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,11 +122,11 @@ const CodeAnalysis = () => {
                 </div>
                 <FormGroup>
                     <FormControlLabel
-                        control={<GreenCheckbox checked={state.checkedG} onChange={handleChange} name="checkedA" />}
+                        control={<GreenCheckbox checked={state.checkedCommit} onChange={handleChange} name="isCommitsChecked"/>}
                         label="Commits"
                     />
                     <FormControlLabel
-                        control={<PurpleCheckbox checked={state.checkedG} onChange={handleChange} name="checkedB" />}
+                        control={<PurpleCheckbox checked={state.checkedMergeRequest} onChange={handleChange} name="isMergeRequestsChecked"/>}
                         label="Merge Requests"
                     />
                 </FormGroup>
@@ -137,11 +137,11 @@ const CodeAnalysis = () => {
                 </div>
                 <FormGroup>
                     <FormControlLabel
-                        control={<GreenCheckbox checked={state.checkedG} onChange={handleChange} name="checkedA" />}
+                        control={<GreenCheckbox checked={state.checkedCommit} onChange={handleChange} name="isCommitsChecked"/>}
                         label="Commits"
                     />
                     <FormControlLabel
-                        control={<PurpleCheckbox checked={state.checkedG} onChange={handleChange} name="checkedB" />}
+                        control={<PurpleCheckbox checked={state.checkedMergeRequest} onChange={handleChange} name="isMergeRequestsChecked"/>}
                         label="Merge Requests"
                     />
                 </FormGroup>
