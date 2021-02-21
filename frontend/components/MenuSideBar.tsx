@@ -31,18 +31,8 @@ const MenuButton = withStyles({
 })(Button);
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
   background: {
      background: theme.palette.primary.main,
-  },
-  card: {
-     background: "white",
-  },
-  button: {
-      margin: theme.spacing(1),
-      borderRadius: "999"
   },
 }));
 
@@ -62,16 +52,16 @@ const MenuSideBar = () => {
         justifyContent="flex-start"
         alignItems="center"
         >
-        <MenuButton variant="contained" color="primary" disableRipple className={classes.margin}>
+        <MenuButton variant="contained" disableRipple>
             Everyone
         </MenuButton>
-        <MenuButton variant="contained" color="primary" disableRipple className={classes.margin}>
+        <MenuButton variant="contained" disableRipple>
             Bob
         </MenuButton>
-        <MenuButton variant="contained" color="primary" disableRipple className={classes.margin}>
+        <MenuButton variant="contained" disableRipple>
             Phil
         </MenuButton>
-        <MenuButton variant="contained" color="primary" disableRipple className={classes.margin}>
+        <MenuButton variant="contained" disableRipple>
             Stacey
         </MenuButton>
     </Box>
