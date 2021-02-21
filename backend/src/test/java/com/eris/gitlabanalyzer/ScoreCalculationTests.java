@@ -1,8 +1,8 @@
 package com.eris.gitlabanalyzer;
 
 import com.eris.gitlabanalyzer.dataprocessing.DiffScoreCalculator;
-import com.eris.gitlabanalyzer.model.GitLabFileChange;
-import com.eris.gitlabanalyzer.model.GitLabMergeRequestChange;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabFileChange;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequestChange;
 import com.eris.gitlabanalyzer.service.GitLabService;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.json.JSONException;

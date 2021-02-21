@@ -1,6 +1,9 @@
 package com.eris.gitlabanalyzer.controller;
 
-import com.eris.gitlabanalyzer.model.*;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabFileChange;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabProject;
 import com.eris.gitlabanalyzer.service.GitLabService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;

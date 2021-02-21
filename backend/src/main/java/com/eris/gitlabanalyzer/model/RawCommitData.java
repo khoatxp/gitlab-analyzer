@@ -1,5 +1,7 @@
 package com.eris.gitlabanalyzer.model;
 
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabFileChange;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import reactor.core.publisher.Flux;
 

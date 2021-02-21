@@ -1,4 +1,6 @@
-package com.eris.gitlabanalyzer.model;
+package com.eris.gitlabanalyzer.model.gitlabresponse;
+
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabFileChange;
 
 import java.util.List;
 
