@@ -91,13 +91,15 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const CodeAnalysis = () => {
     const classes = useStyles();
-    const [state, setState] = React.useState({
-        isCommitsChecked: true,
-        isMergeRequestsChecked: true,
+    const [checkboxState, setCheckboxState] = React.useState({
+        checkedCommitForGraphA: true,
+        checkedMergeRequestForGraphA: true,
+        checkedCommitForGraphB: true,
+        checkedMergeRequestForGraphB: true,
     });
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setState({ ...state, [event.target.name]: event.target.checked });
+        setCheckboxState({ ...checkboxState, [event.target.name]: event.target.checked });
     };
 
     return (
@@ -122,11 +124,11 @@ const CodeAnalysis = () => {
                 </div>
                 <FormGroup>
                     <FormControlLabel
-                        control={<GreenCheckbox checked={state.checkedCommit} onChange={handleChange} name="isCommitsChecked"/>}
+                        control={<GreenCheckbox checked={checkboxState.checkedCommitForGraphA} onChange={handleChange} name="checkedCommitForGraphA"/>}
                         label="Commits"
                     />
                     <FormControlLabel
-                        control={<PurpleCheckbox checked={state.checkedMergeRequest} onChange={handleChange} name="isMergeRequestsChecked"/>}
+                        control={<PurpleCheckbox checked={checkboxState.checkedMergeRequestForGraphA} onChange={handleChange} name="checkedMergeRequestForGraphA"/>}
                         label="Merge Requests"
                     />
                 </FormGroup>
@@ -137,11 +139,11 @@ const CodeAnalysis = () => {
                 </div>
                 <FormGroup>
                     <FormControlLabel
-                        control={<GreenCheckbox checked={state.checkedCommit} onChange={handleChange} name="isCommitsChecked"/>}
+                        control={<GreenCheckbox checked={checkboxState.checkedCommitForGraphB} onChange={handleChange} name="checkedCommitForGraphB"/>}
                         label="Commits"
                     />
                     <FormControlLabel
-                        control={<PurpleCheckbox checked={state.checkedMergeRequest} onChange={handleChange} name="isMergeRequestsChecked"/>}
+                        control={<PurpleCheckbox checked={checkboxState.checkedMergeRequestForGraphB} onChange={handleChange} name="checkedMergeRequestForGraphB"/>}
                         label="Merge Requests"
                     />
                 </FormGroup>
