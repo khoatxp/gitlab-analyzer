@@ -1,4 +1,4 @@
-package com.eris.gitlabanalyzer.model;
+package com.eris.gitlabanalyzer.model.gitlabresponse;
 
 import com.eris.gitlabanalyzer.model.types.Author;
 import com.eris.gitlabanalyzer.model.types.note.Position;

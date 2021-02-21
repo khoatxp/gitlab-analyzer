@@ -1,6 +1,7 @@
 package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class MergeRequest {
             name = "created_at",
             nullable = false
     )
-    private ZonedDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     @Column(
             name = "web_url",
@@ -102,7 +103,7 @@ public class MergeRequest {
         return title;
     }
 
-    public ZonedDateTime getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
@@ -129,7 +130,7 @@ public class MergeRequest {
     public MergeRequest() {
     }
 
-    public MergeRequest(Long iid, String authorUsername, String title, ZonedDateTime createdAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
+    public MergeRequest(Long iid, String authorUsername, String title, OffsetDateTime createdAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
         this.iid = iid;
         this.authorUsername = authorUsername;
         this.title = title;
