@@ -1,5 +1,4 @@
 import React from "react";
-
 import { withStyles, makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import { Box } from "@material-ui/core";
@@ -8,7 +7,7 @@ import NavBar from "./NavBar";
 const MenuButton = withStyles({
   root: {
     textTransform: 'none',
-    fontSize: 16,
+    fontSize: '16px',
     padding: '20px',
     border: '1px solid white',
     color: 'black',
