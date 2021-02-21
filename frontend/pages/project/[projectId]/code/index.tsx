@@ -1,7 +1,7 @@
 import React from "react";
-import NavBar from "../../components/NavBar";
-import MenuSideBar from "../../components/MenuSideBar";
-import NavTabs from "../../components/NavTabs";
+import NavBar from "../../../../components/NavBar";
+import MenuSideBar from "../../../../components/MenuSideBar";
+import NavTabs from "../../../../components/NavTabs";
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) =>
