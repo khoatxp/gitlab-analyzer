@@ -143,6 +143,45 @@ public class GitLabService {
         return headersSpec.retrieve().bodyToMono(GitLabMergeRequestChange.class).flatMapIterable(GitLabMergeRequestChange::getChanges);
     }
 
+    public Flux<GitLabMergeRequestNote> getMergeRequestNotes(Long projectId, Long mergeRequestIid) {
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/notes")
+                .queryParam("per_page", 100)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+
+        return fetchPages(gitlabUrl)
+                .flatMap(response -> response.bodyToFlux(GitLabMergeRequestNote.class));
+    }
+
+    public Flux<GitLabIssue> getIssues(Long projectId) {
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/issues")
+                .queryParam("per_page", 100)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+
+        return fetchPages(gitlabUrl)
+                .flatMap(response -> response.bodyToFlux(GitLabIssue.class));
+    }
+
+    public Flux<GitLabIssueNote> getIssueNotes(Long projectId, Long issue_iid) {
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/issues/" + issue_iid + "/notes")
+                .queryParam("per_page", 100)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+
+        return fetchPages(gitlabUrl)
+                .flatMap(response -> response.bodyToFlux(GitLabIssueNote.class));
+    }
+
     // recursively make a request for the next page and then return a collection of response
     private Flux<ClientResponse> fetchPages(String url) {
         var headersSpec = authorizedGetRequestHeadersSpec(url);
@@ -203,50 +242,5 @@ public class GitLabService {
         }
 
         return relUrls;
-    }
-
-    public Flux<GitLabMergeRequestNote> getMergeRequestNotes(Long projectId, Long mergeRequestIid) {
-        URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
-                .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/notes")
-                .queryParam("per_page", 100)
-                .build()
-                .encode()
-                .toUri();
-
-        return webClient.get()
-                .uri(gitlabUrl)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .retrieve()
-                .bodyToFlux(GitLabMergeRequestNote.class);
-    }
-
-    public Flux<GitLabIssue> getIssues(Long projectId) {
-        URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
-                .path(projectPath + projectId + "/issues")
-                .queryParam("per_page", 100)
-                .build()
-                .encode()
-                .toUri();
-
-        return webClient.get()
-                .uri(gitlabUrl)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .retrieve()
-                .bodyToFlux(GitLabIssue.class);
-    }
-
-    public Flux<GitLabIssueNote> getIssueNotes(Long projectId, Long issue_iid) {
-        URI gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
-                .path(projectPath + projectId + "/issues/" + issue_iid + "/notes")
-                .queryParam("per_page", 100)
-                .build()
-                .encode()
-                .toUri();
-
-        return webClient.get()
-                .uri(gitlabUrl)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .retrieve()
-                .bodyToFlux(GitLabIssueNote.class);
     }
 }
