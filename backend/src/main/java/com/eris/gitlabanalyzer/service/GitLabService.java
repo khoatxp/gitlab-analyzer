@@ -11,6 +11,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 
 @Service
 public class GitLabService {
@@ -165,33 +166,42 @@ public class GitLabService {
     // Based on https://github.com/eclipse/egit-github/blob/master/org.eclipse.egit.github.core/src/org/eclipse/egit/github/core/client/PageLinks.java
     private String getResponseHeaderNextLink(ClientResponse response) {
         if (response != null) {
-            var linkHeader = response.headers().asHttpHeaders().getFirst(HttpHeaders.LINK);
-            if (linkHeader != null) {
-                String[] links = linkHeader.split(",");
-                for (String link : links) {
-                    String[] segments = link.split(";");
-                    if (segments.length < 2)
-                        continue;
-
-                    String linkPart = segments[0].trim();
-                    if (!linkPart.startsWith("<") || !linkPart.endsWith(">")) //$NON-NLS-1$ //$NON-NLS-2$
-                        continue;
-                    linkPart = linkPart.substring(1, linkPart.length() - 1);
-
-                    for (int i = 1; i < segments.length; i++) {
-                        String[] rel = segments[i].trim().split("="); //$NON-NLS-1$
-                        if (rel.length < 2 || !"rel".equals(rel[0]))
-                            continue;
-
-                        String relValue = rel[1];
-                        if (relValue.startsWith("\"") && relValue.endsWith("\"")) //$NON-NLS-1$ //$NON-NLS-2$
-                            relValue = relValue.substring(1, relValue.length() - 1);
-                        if ("next".equals(relValue))
-                            return linkPart;
-                    }
-                }
+            var headerLink = response.headers().asHttpHeaders().getFirst(HttpHeaders.LINK);
+            if (headerLink != null) {
+                var relUrls = getUrlsFromHeaderLink(headerLink);
+                return relUrls.get("next");
             }
         }
         return null;
+    }
+
+    // Based on https://github.com/eclipse/egit-github/blob/master/org.eclipse.egit.github.core/src/org/eclipse/egit/github/core/client/PageLinks.java
+    private HashMap<String, String> getUrlsFromHeaderLink(String headerLink) {
+        HashMap<String, String> relUrls = new HashMap<>();
+        String[] links = headerLink.split(",");
+        for (String link : links) {
+            String[] segments = link.split(";");
+            if (segments.length < 2)
+                continue;
+
+            String linkPart = segments[0].trim();
+            if (!linkPart.startsWith("<") || !linkPart.endsWith(">"))
+                continue;
+
+            var url = linkPart.substring(1, linkPart.length() - 1); // get the url string inside the "<" & ">"
+            for (int i = 1; i < segments.length; i++) { // check the remaining string part for "rel" key
+                String[] rel = segments[i].trim().split("=");
+                if (rel.length < 2 || !"rel".equals(rel[0]))
+                    continue;
+
+                String relValue = rel[1];
+                if (relValue.startsWith("\"") && relValue.endsWith("\""))
+                    relValue = relValue.substring(1, relValue.length() - 1); // get the rel string inside the double quotes
+
+                relUrls.put(relValue,  url);
+            }
+        }
+
+        return relUrls;
     }
 }
