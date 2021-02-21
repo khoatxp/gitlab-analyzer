@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 
+//TODO create public method to read-in/update point values
 @Service
 public class DiffScoreCalculator {
 
@@ -21,7 +22,7 @@ public class DiffScoreCalculator {
     }
 
 
-    //TODO read in point values
+
     public DiffScoreCalculator(){
         initializeCommentCharacters();
     }
@@ -91,7 +92,7 @@ public class DiffScoreCalculator {
                 }
             }else if(line.length() > 1 && !line.equals("\\Nonewlineatendoffile")){
                 if(line.charAt(0) == '+'){
-                    switch (typeOfLine(line, commentOperator)) {
+                    switch (typeOfLine(line, commentOperator)){
                         case code:
                             totalScore += pointValue;
                             break;
@@ -103,7 +104,7 @@ public class DiffScoreCalculator {
                             inCommentBlock = true;
                             break;
                     }
-                } else {
+                } else{
                     //TODO give proper weight to removing line
                     totalScore += commentPointValue/2;
                 }
