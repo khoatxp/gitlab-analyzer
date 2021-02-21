@@ -1,12 +1,10 @@
 import React from "react";
-
 import { makeStyles, withStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { green, purple } from '@material-ui/core/colors';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
 import Avatar from '@material-ui/core/Avatar';
-import SingleBarGraph from "./SingleBarGraph";
 
 const GreenCheckbox = withStyles({
     root: {
@@ -38,58 +36,57 @@ const useStyles = makeStyles((theme: Theme) =>
             display: 'flex',
             width: '100%',
         },
-    container2: {
-        display: 'flex',
-        justifyContent: 'flex-start',
-        width: '70%',
-    },
-    outerContainer: {
-        flexDirection: 'column',
-        width: '100%',
-    },
-    textContainer1: {
-        flexDirection: 'column',
-        margin: '0px 0px 0px 20px',
-        padding: '0px',
-    },
-    textContainer2: {
-        flexDirection: 'column',
-
-        width:'30%',
-    },
-    repoNameText: {
-        fontSize: '2em',
-        margin: '16px 0px',
-    },
-    smallTextColor: {
-        color: 'grey',
-        margin: '0px 0px',
-    },
-    mrScoreText: {
-        fontSize:'1.2em',
-        margin: '16px 0px',
-        textAlign: 'right'
-    },
-    commitScoreText: {
-        fontSize:'1.2em',
-        margin: '0px 0px',
-        textAlign: 'right'
-    },
-    container3: {
-        display: 'flex',
-        justifyContent: 'space-around',
-        margin: '24px 0px',
-    },
-    graphContainer: {
-        display: 'flex',
-        justifyContent: 'space-around',
-        flexDirection: 'column',
-    },
-    avatarSize: {
-        width: theme.spacing(15),
-        height: theme.spacing(15),
-    },
-  }),
+        container2: {
+            display: 'flex',
+            justifyContent: 'flex-start',
+            width: '70%',
+        },
+        outerContainer: {
+            flexDirection: 'column',
+            width: '100%',
+        },
+        textContainer1: {
+            flexDirection: 'column',
+            margin: '0px 0px 0px 20px',
+            padding: '0px',
+        },
+        textContainer2: {
+            flexDirection: 'column',
+            width:'30%',
+        },
+        repoNameText: {
+            fontSize: '2em',
+            margin: '16px 0px',
+        },
+        smallTextColor: {
+            color: 'grey',
+            margin: '0px 0px',
+        },
+        mrScoreText: {
+            fontSize:'1.2em',
+            margin: '16px 0px',
+            textAlign: 'right'
+        },
+        commitScoreText: {
+            fontSize:'1.2em',
+            margin: '0px 0px',
+            textAlign: 'right'
+        },
+        container3: {
+            display: 'flex',
+            justifyContent: 'space-around',
+            margin: '24px 0px',
+        },
+        graphContainer: {
+            display: 'flex',
+            justifyContent: 'space-around',
+            flexDirection: 'column',
+        },
+        avatarSize: {
+            width: theme.spacing(15),
+            height: theme.spacing(15),
+        },
+    }),
 );
 
 const CodeAnalysis = () => {
