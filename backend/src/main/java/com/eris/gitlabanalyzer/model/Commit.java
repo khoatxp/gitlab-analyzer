@@ -2,6 +2,7 @@ package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,18 +68,11 @@ public class Commit {
     private String committerEmail;
 
     @Column(
-            name = "committed_date",
-            nullable = false
-
-    )
-    private String committedDate;
-
-    @Column(
             name = "created_at",
             nullable = false
 
     )
-    private String createdAt;
+    private ZonedDateTime createdAt;
 
     @Column(
             name = "web_url",
@@ -130,14 +124,13 @@ public class Commit {
     public Commit() {
     }
 
-    public Commit(String sha, String title, String authorName, String authorEmail, String committerName, String committerEmail, String committedDate, String createdAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
+    public Commit(String sha, String title, String authorName, String authorEmail, String committerName, String committerEmail, ZonedDateTime createdAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
         this.sha = sha;
         this.title = title;
         this.authorName = authorName;
         this.authorEmail = authorEmail;
         this.committerName = committerName;
         this.committerEmail = committerEmail;
-        this.committedDate = committedDate;
         this.createdAt = createdAt;
         this.webUrl = webUrl;
         this.project = project;
@@ -180,11 +173,7 @@ public class Commit {
         return committerEmail;
     }
 
-    public String getCommittedDate() {
-        return committedDate;
-    }
-
-    public String getCreatedAt() {
+    public ZonedDateTime getCreatedAt() {
         return createdAt;
     }
 
@@ -221,7 +210,6 @@ public class Commit {
                 ", authorEmail='" + authorEmail + '\'' +
                 ", committerName='" + committerName + '\'' +
                 ", committerEmail='" + committerEmail + '\'' +
-                ", committedDate='" + committedDate + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 ", webUrl='" + webUrl + '\'' +
                 '}';
