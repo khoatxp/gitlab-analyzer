@@ -3,7 +3,7 @@ package com.eris.gitlabanalyzer.model.types.task;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@lombok.Data
+@lombok.Getter
 public class TimeStats {
     @JsonProperty("time_estimate")
     private int timeEstimate;

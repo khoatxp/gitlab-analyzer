@@ -5,7 +5,7 @@ import com.eris.gitlabanalyzer.model.types.note.Position;
 import com.fasterxml.jackson.annotation.*;
 import java.time.OffsetDateTime;
 
-@lombok.Data
+@lombok.Getter
 public class GitLabMergeRequestNote {
     private Long id;
     private String type;

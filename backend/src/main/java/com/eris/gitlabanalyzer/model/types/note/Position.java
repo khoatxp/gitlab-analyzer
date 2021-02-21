@@ -2,7 +2,7 @@ package com.eris.gitlabanalyzer.model.types.note;
 
 import com.fasterxml.jackson.annotation.*;
 
-@lombok.Data
+@lombok.Getter
 public class Position {
     @JsonProperty("base_sha")
     private String baseSha;

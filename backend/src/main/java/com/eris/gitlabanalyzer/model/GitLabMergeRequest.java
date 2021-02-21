@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-@lombok.Data
+@lombok.Getter
 public class GitLabMergeRequest {
     private Long id;
     private Long iid;

@@ -2,7 +2,7 @@ package com.eris.gitlabanalyzer.model.types;
 
 import com.fasterxml.jackson.annotation.*;
 
-@lombok.Data
+@lombok.Getter
 public class Author {
     private long id;
     private String name;

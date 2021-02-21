@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.OffsetDateTime;
 
-@lombok.Data
+@lombok.Getter
 public class GitLabIssueNote {
     private Long id;
     private String type;

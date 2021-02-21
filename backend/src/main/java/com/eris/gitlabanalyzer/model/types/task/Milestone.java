@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.OffsetDateTime;
 
-@lombok.Data
+@lombok.Getter
 public class Milestone {
     private Long id;
     private Long iid;
