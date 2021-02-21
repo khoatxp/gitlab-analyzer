@@ -1,7 +1,7 @@
 package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.dataprocessing.DiffScoreCalculator;
-import com.eris.gitlabanalyzer.model.GitLabFileChange;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabFileChange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
