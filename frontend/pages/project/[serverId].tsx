@@ -1,10 +1,18 @@
-import { LinearProgress, TextField, Typography } from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import React, {useEffect, useState} from "react";
+import { Box, Button, TextField, Typography, LinearProgress } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import React, {useState, useEffect} from "react";
 import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
 import CardLayout from "../../components/CardLayout";
+import AppDateTimePicker from "../../components/AppDateTimePicker";
 import {GitLabProject} from "../../interfaces/GitLabProject";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+
+const useStyles = makeStyles((theme) => ({
+    AnalyzeButtonMargin: {
+        margin: theme.spacing(1),
+    },
+}));
 
 const LoadingBar = () => {
   return <div>
@@ -15,7 +23,10 @@ const LoadingBar = () => {
   </div>;
 }
 
+
 const index = () => {
+
+  const classes = useStyles();
   const [projects, setProjects] = useState<GitLabProject[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
@@ -39,17 +50,47 @@ const index = () => {
     loadingBar = <LoadingBar />;
   }
 
+
   return (
-    <CardLayout>
-      {loadingBar}
-      {!isLoading && <Autocomplete
-          id="project-select"
-          options={projects}
-          getOptionLabel={(proj) => proj.name_with_namespace}
-          renderInput={(params) => <TextField {...params} label="Search Projects" variant="outlined" />}
-      /> }
-    </CardLayout>
+      <CardLayout>
+        {loadingBar}
+        {!isLoading && <Autocomplete
+            id="project-select"
+            options={projects}
+            getOptionLabel={(proj) => proj.name_with_namespace}
+            renderInput={(params) => <TextField {...params} label="Search Projects" variant="outlined" />}
+        /> }
+
+        <div className='menu' style={{ marginTop: `30px` }} align="center">
+
+          <Box
+              marginleft="5px"
+              marginright="5px"
+              color="white"
+              boxShadow={0}
+              width="56vw"
+              height="10vh"
+              minWidth="260px"
+              minHeight="10vh"
+              display="flex"
+              flexDirection="column"
+              justifyContent="column"
+              alignItems="column"
+          >
+            <div className='Date picker'>
+              <AppDateTimePicker/>
+            </ div>
+          </Box>
+        </div>
+
+          <div align="center">
+            <Button variant="contained" color="primary" size="medium" className={classes.AnalyzeButtonMargin} >
+              ANALYZE
+            </Button>
+          </div>
+
+      </CardLayout>
+
   );
 };
-
 export default index;
