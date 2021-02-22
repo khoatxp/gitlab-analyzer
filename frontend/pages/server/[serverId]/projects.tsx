@@ -3,10 +3,10 @@ import {makeStyles} from "@material-ui/core/styles";
 import React, {useState, useEffect} from "react";
 import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
-import CardLayout from "../../components/CardLayout";
-import AppDateTimePicker from "../../components/AppDateTimePicker";
-import AppButton from "../../components/AppButton";
-import {GitLabProject} from "../../interfaces/GitLabProject";
+import CardLayout from "../../../components/CardLayout";
+import AppDateTimePicker from "../../../components/AppDateTimePicker";
+import AppButton from "../../../components/AppButton";
+import {GitLabProject} from "../../../interfaces/GitLabProject";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 
 const useStyles = makeStyles((theme) => ({
