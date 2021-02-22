@@ -102,22 +102,22 @@ const CodeAnalysis = () => {
     const [commitNumber, setCommitNumber] = React.useState<number>();
 
     const router = useRouter();
-    const { projectId } =  router.query;
+    const { projectId, startDateTime, endDateTime } =  router.query;
 
     useEffect(() => {
         if (router.isReady) {
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/`+projectId)
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`)
                 .then((resp: AxiosResponse) => {
                     setProjectName(resp.data.name_with_namespace);
                 });
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/`+projectId+"/merge_requests?startDateTime=2020-09-01T14:00:00.000Z&endDateTime=2020-12-21T14:00:00.000Z")
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_requests?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
                 .then((resp: AxiosResponse) => {
                     setMergeRequestNumber(resp.data.length);
                 });
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/`+projectId+"/commits?startDateTime=2020-08-03T14:00:00.000Z&endDateTime=2020-12-29T14:00:00.000Z")
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commits?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
                 .then((resp: AxiosResponse) => {
                     setCommitNumber(resp.data.length);
                 });
