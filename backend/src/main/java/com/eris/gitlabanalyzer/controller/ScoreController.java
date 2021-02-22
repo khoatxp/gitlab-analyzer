@@ -19,8 +19,13 @@ public class ScoreController {
     }
 
     @GetMapping(path ="/projects/{projectId}/merge_request/{merge_request_iid}/diff/score")
-    public int getDiffScore (@PathVariable("projectId") Long projectId,
+    public int getMergeDiffScore (@PathVariable("projectId") Long projectId,
                              @PathVariable("merge_request_iid") Long merge_request_iid){
-        return scoreService.getDiffScore(projectId, merge_request_iid);
+        return scoreService.getMergeDiffScore(projectId, merge_request_iid);
+    }
+    @GetMapping(path ="/projects/{projectId}/commit/{sha}/diff/score")
+    public int getCommitDiffScore (@PathVariable("projectId") Long projectId,
+                             @PathVariable("sha") String sha){
+        return scoreService.getCommitDiffScore(projectId, sha);
     }
 }
