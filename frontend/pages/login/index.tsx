@@ -26,15 +26,15 @@ const Login = () => {
     }
 
     const handleLogin = () => {
+        saveLoginSession();
         axios.get(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
             auth: {
                 username: username,
                 password: password,
             }
         }).then((resp: AxiosResponse) => {
-            saveLoginSession();
             enqueueSnackbar("Login successful!", {variant: 'success',});
-            router.push('/project/1') // TODO: Change route so server id is not hard coded
+            router.push('/server/1') // TODO: Change route so server id is not hard coded
         }).catch((err: AxiosError) => {
             enqueueSnackbar(`Login failed: ${err.message}`, {variant: 'error',});
         })
