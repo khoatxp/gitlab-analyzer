@@ -125,12 +125,12 @@ const CodeAnalysis = () => {
                     setCommitNumber(resp.data.length);
                 });
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_requests/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_requests/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
                 .then((resp: AxiosResponse) => {
                     setMergeRequestScore(resp.data);
                 });
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commits/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/commits/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
                 .then((resp: AxiosResponse) => {
                     setCommitScore(resp.data);
                 });
