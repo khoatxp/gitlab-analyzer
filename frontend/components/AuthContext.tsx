@@ -6,7 +6,7 @@ export type UserCredential = {
     password: String,
 }
 
-const defaultUserCredential: UserCredential = {
+export const defaultUserCredential: UserCredential = {
     username: '',
     password: '',
 }

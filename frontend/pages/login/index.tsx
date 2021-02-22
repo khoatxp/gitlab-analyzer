@@ -4,10 +4,9 @@ import AppTextField from "../../components/AppTextField";
 import AppButton from "../../components/AppButton";
 import CardLayout from "../../components/CardLayout";
 import {Box} from "@material-ui/core";
-import {AuthContext} from "../../components/AuthContext";
 import {useSnackbar} from 'notistack';
 import {useRouter} from "next/router";
-import {UserCredential} from "../../components/AuthContext";
+import {AuthContext, UserCredential} from "../../components/AuthContext";
 
 const Login = () => {
     const {enqueueSnackbar} = useSnackbar();
