@@ -18,9 +18,14 @@ public class ScoreService {
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public int getDiffScore(Long projectId, Long mergeRequestIid){
+    public int getMergeDiffScore(Long projectId, Long mergeRequestIid){
         Iterable<GitLabFileChange> mr = gitLabService.getMergeRequestDiff(projectId, mergeRequestIid).toIterable();
         return diffScoreCalculator.calculateScore(mr);
+    }
+    // This will most likely change as we update how we retrieve diff's
+    public int getCommitDiffScore(Long projectId, String sha){
+        Iterable<GitLabFileChange> commit = gitLabService.getCommitDiff(projectId, sha).toIterable();
+        return diffScoreCalculator.calculateScore(commit);
     }
 
 }
