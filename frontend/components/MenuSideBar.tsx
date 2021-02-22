@@ -45,13 +45,14 @@ const MenuSideBar = () => {
     const classes = useStyles();
     const router = useRouter();
     const { projectId } =  router.query;
+    const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/members`;
 
-    const [gitLabMemberName, setGitLabMemberName] = React.useState<String>("");
+    const [gitLabMemberName, setGitLabMemberName] = React.useState<[]>([]);
 
     useEffect(() => {
         if (router.isReady) {
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/`+projectId+"/members")
+                .get(PROJECT_ID_URL)
                 .then((resp: AxiosResponse) => {
                     setGitLabMemberName(resp.data);
                 });
@@ -71,9 +72,9 @@ const MenuSideBar = () => {
             <MenuButton variant="contained" disableRipple>
                 Everyone
             </MenuButton>
-            <MenuButton variant="contained" disableRipple>
-                {gitLabMemberName}
-            </MenuButton>
+            <div>
+                {gitLabMemberName.map(member => <div><MenuButton variant="contained" disableRipple> {member.name}</MenuButton></div>)}
+            </div>
         </Box>
     );
 };
