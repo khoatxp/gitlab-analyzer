@@ -100,12 +100,18 @@ const CodeAnalysis = () => {
         checkedMergeRequestForGraphB: true,
     });
     const [mergeRequestNumber, setMergeRequestNumber] = React.useState<number>();
+    const [projectName, setProjectName] = React.useState<String>();
 
     const router = useRouter();
     const { projectId } =  router.query;
 
     useEffect(() => {
         if (router.isReady) {
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/`+projectId)
+                .then((resp: AxiosResponse) => {
+                    setProjectName(resp.data.name_with_namespace);
+                });
             axios
                 .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/`+projectId+"/merge_requests?startDateTime=2020-09-01T14:00:00.000Z&endDateTime=2020-12-21T14:00:00.000Z")
                 .then((resp: AxiosResponse) => {
@@ -125,7 +131,7 @@ const CodeAnalysis = () => {
                 <div className={classes.container2}>
                     <Avatar className={classes.avatarSize} variant='square'>R</Avatar>
                     <div className={classes.textContainer1}>
-                        <h1 className={classes.repoNameText}>Repo Name</h1>
+                        <h1 className={classes.repoNameText}>{projectName}</h1>
                         <p className={classes.smallTextColor}>- 110 Commits - {mergeRequestNumber} Merge Request -</p>
                     </div>
                 </div>
