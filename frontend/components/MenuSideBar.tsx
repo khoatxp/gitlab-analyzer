@@ -71,7 +71,7 @@ const MenuSideBar = () => {
                 Everyone
             </MenuButton>
             <div>
-                {gitLabMemberName.map(member => <div><MenuButton variant="contained" disableRipple> {member.name}</MenuButton></div>)}
+                {gitLabMemberName.map(member => <MenuButton variant="contained" disableRipple> {member.name}</MenuButton>)}
             </div>
         </Box>
     );
