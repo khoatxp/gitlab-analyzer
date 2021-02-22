@@ -1,11 +1,8 @@
 package com.eris.gitlabanalyzer.model.gitlabresponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
+@lombok.Data
+@lombok.NoArgsConstructor
 public class GitLabProject {
     private Long id;
 

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.ZonedDateTime;
 import java.util.Map;
 
+@lombok.Data
+@lombok.NoArgsConstructor
 public class GitLabMergeRequest {
     private Long iid;
 
@@ -27,36 +29,5 @@ public class GitLabMergeRequest {
     @SuppressWarnings("unchecked")
     private void authorDeserializer(Map<String, Object> author) {
         this.username = (String) author.get("username");
-    }
-
-
-    public GitLabMergeRequest(){}
-
-    public Long getIid() {
-        return iid;
-    }
-
-    public Long getProjectId() {
-        return projectId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public ZonedDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public ZonedDateTime getMergedAt() {
-        return mergedAt;
-    }
-
-    public String getWebUrl() {
-        return webUrl;
-    }
-
-    public String getUsername() {
-        return username;
     }
 }

@@ -1,9 +1,7 @@
 package com.eris.gitlabanalyzer.model.gitlabresponse;
 
-import lombok.*;
-
-@Data
-@NoArgsConstructor
+@lombok.Data
+@lombok.NoArgsConstructor
 public class GitLabMember {
     private Long id;
     private String username;
