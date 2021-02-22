@@ -44,7 +44,6 @@ const MenuSideBar = () => {
     const router = useRouter();
     const { projectId } =  router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/members`;
-
     const [gitLabMemberName, setGitLabMemberName] = React.useState<[]>([]);
 
     useEffect(() => {
@@ -70,9 +69,7 @@ const MenuSideBar = () => {
             <MenuButton variant="contained" disableRipple>
                 Everyone
             </MenuButton>
-            <div>
-                {gitLabMemberName.map(member => <MenuButton variant="contained" disableRipple> {member.name}</MenuButton>)}
-            </div>
+            {gitLabMemberName.map(member => <MenuButton variant="contained" disableRipple> {member.name}</MenuButton>)}
         </Box>
     );
 };
