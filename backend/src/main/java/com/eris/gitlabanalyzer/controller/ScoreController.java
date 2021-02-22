@@ -3,8 +3,8 @@ import com.eris.gitlabanalyzer.service.ScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+
+import java.time.ZonedDateTime;
 
 
 @RestController
@@ -23,9 +23,26 @@ public class ScoreController {
                              @PathVariable("merge_request_iid") Long merge_request_iid){
         return scoreService.getMergeDiffScore(projectId, merge_request_iid);
     }
+    @GetMapping(path ="/projects/{projectId}/merge_requests/score")
+    public int getTotalMergeDiffScore (@PathVariable("projectId") Long projectId,
+                                       @RequestParam("startDateTime")
+                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDateTime,
+                                       @RequestParam("endDateTime")
+                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endDateTime){
+        return scoreService.getTotalMergeDiffScore(projectId, startDateTime, endDateTime);
+    }
+
     @GetMapping(path ="/projects/{projectId}/commit/{sha}/diff/score")
     public int getCommitDiffScore (@PathVariable("projectId") Long projectId,
                              @PathVariable("sha") String sha){
         return scoreService.getCommitDiffScore(projectId, sha);
+    }
+    @GetMapping(path ="/projects/{projectId}/commits/score")
+    public int getTotalCommitDiffScore (@PathVariable("projectId") Long projectId,
+                                       @RequestParam("startDateTime")
+                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDateTime,
+                                       @RequestParam("endDateTime")
+                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endDateTime){
+        return scoreService.getTotalCommitDiffScore(projectId, startDateTime, endDateTime);
     }
 }
