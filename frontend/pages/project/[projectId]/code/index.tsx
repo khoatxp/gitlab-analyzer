@@ -11,6 +11,8 @@ const useStyles = makeStyles(() =>
   createStyles({
     contentContainer: {
       display: 'flex',
+      width: '100%',
+      padding: '24px',
     },
   }),
 );
