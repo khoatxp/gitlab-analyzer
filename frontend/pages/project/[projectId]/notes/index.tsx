@@ -45,7 +45,7 @@ enum NoteType {
 
 const NotesPage = () => {
     const router = useRouter();
-    const { projectId } =  router.query;
+    const { projectId, startDateTime, endDateTime } =  router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`;
 
     const [mergeRequests, setMergeRequests] = useState<MergeRequest[]>([]);
@@ -97,13 +97,14 @@ const NotesPage = () => {
 
     useEffect(() => {
         if(projectId){
+            const dateQuery = `?startDateTime=${startDateTime ? startDateTime : "2021-01-01T00:00:00-08:00"}&endDateTime=${endDateTime ? endDateTime : "2021-03-21T00:00:00-08:00"}`;
             axios
-                .get(`${PROJECT_ID_URL}/merge_requests?startDateTime=2021-01-01T08:00:00Z&endDateTime=2021-03-15T08:00:00Z`)
+                .get(`${PROJECT_ID_URL}/merge_requests${dateQuery}`)
                 .then((resp: AxiosResponse) => {
                     setMergeRequests(resp.data);
                 });
             axios
-                .get(`${PROJECT_ID_URL}/issues`)
+                .get(`${PROJECT_ID_URL}/issues${dateQuery}`)
                 .then((resp: AxiosResponse) => {
                     setIssues(resp.data);
                 });

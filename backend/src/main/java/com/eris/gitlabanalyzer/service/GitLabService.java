@@ -156,9 +156,11 @@ public class GitLabService {
                 .flatMap(response -> response.bodyToFlux(GitLabMergeRequestNote.class));
     }
 
-    public Flux<GitLabIssue> getIssues(Long projectId) {
+    public Flux<GitLabIssue> getIssues(Long projectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/issues")
+                .queryParam("created_after", startDateTime.toInstant().toString())
+                .queryParam("updated_before", endDateTime.toInstant().toString())
                 .queryParam("per_page", 100)
                 .build()
                 .encode()

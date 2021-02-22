@@ -14,7 +14,8 @@ const useStyles = makeStyles(() => ({
 
 export default function NavTabs({tabSelected}: { tabSelected: number }) {
     const router = useRouter();
-    const {projectId} = router.query;
+    const {projectId, startDateTime, endDateTime} = router.query;
+    const queryDate = `?startDateTime=${startDateTime ? startDateTime : "2021-01-01T00:00:00-08:00"}&endDateTime=${endDateTime ? endDateTime : "2021-03-21T00:00:00-08:00"}`;
 
     const classes = useStyles();
 
@@ -26,9 +27,11 @@ export default function NavTabs({tabSelected}: { tabSelected: number }) {
                     value={tabSelected}
                     aria-label="nav tabs"
                 >
-                    <Tab label="Code" href={`/project/${projectId}/code`}/>
+                    <Tab label="Code"
+                         href={`/project/${projectId}/code${queryDate}`}/>
                     <Tab label="Activity" href="#"/>
-                    <Tab label="Notes" href={`/project/${projectId}/notes`}/>
+                    <Tab label="Notes"
+                         href={`/project/${projectId}/notes${queryDate}`}/>
                 </Tabs>
             </AppBar>
         </div>

@@ -87,8 +87,12 @@ public class GitLabController {
     // Used in notes page for now
     @GetMapping(path = "/projects/{projectId}/issues")
     public Flux<GitLabIssue> getIssues(
-            @PathVariable("projectId") Long projectId) {
-        return gitLabService.getIssues(projectId);
+            @PathVariable("projectId") Long projectId,
+            @RequestParam("startDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDateTime,
+            @RequestParam("endDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endDateTime) {
+        return gitLabService.getIssues(projectId, startDateTime, endDateTime);
     }
 
     // Used in notes page for now
