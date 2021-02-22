@@ -10,6 +10,7 @@ const useStyles = makeStyles(() =>
     contentContainer: {
       display: 'flex',
       width: '100%',
+      padding: '24px',
     },
   }),
 );
