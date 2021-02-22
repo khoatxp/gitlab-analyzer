@@ -22,6 +22,7 @@ import {MergeRequest} from "../../../../interfaces/GitLabMergeRequest";
 import {Issue} from "../../../../interfaces/GitLabIssue";
 import {Task} from "../../../../interfaces/GitLabTask";
 import {useRouter} from "next/router";
+import NavTabs from "../../../../components/NavTabs";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -42,7 +43,7 @@ enum NoteType {
     Issue
 }
 
-const index = () => {
+const NotesPage = () => {
     const router = useRouter();
     const { projectId } =  router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`;
@@ -119,7 +120,8 @@ const index = () => {
     return (
         <Box>
             <NavBar/>
-            <Box className={classes.appBarSpacer}/>
+            <NavTabs tabSelected={2}/>
+            <Box m={1} />
             <Container maxWidth='xl'>
                 <Grid container spacing={2}>
 
@@ -269,4 +271,4 @@ const NotesList = ({notes}: { notes: Note[] }) => {
     );
 };
 
-export default index;
+export default NotesPage;

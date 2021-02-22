@@ -2,13 +2,14 @@ import React from "react";
 import NavBar from "../../../../components/NavBar";
 import MenuSideBar from "../../../../components/MenuSideBar";
 import NavTabs from "../../../../components/NavTabs";
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
+import CodeAnalysis from "../../../../components/CodeAnalysis";
+import {Box} from "@material-ui/core";
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     contentContainer: {
       display: 'flex',
-      width: '100%',
     },
   }),
 );
@@ -18,10 +19,11 @@ const index = () => {
     return (
         <>
             <NavBar/>
-            <div className={classes.contentContainer}>
+            <NavTabs tabSelected={0}/>
+            <Box className={classes.contentContainer}>
                 <MenuSideBar/>
-                <NavTabs/>
-            </div>
+                <CodeAnalysis/>
+            </Box>
         </>
     );
 };
