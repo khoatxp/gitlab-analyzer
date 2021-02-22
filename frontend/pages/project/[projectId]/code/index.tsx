@@ -2,9 +2,10 @@ import React from "react";
 import NavBar from "../../../../components/NavBar";
 import MenuSideBar from "../../../../components/MenuSideBar";
 import NavTabs from "../../../../components/NavTabs";
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
+import AuthView from "../../../../components/AuthView";
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     contentContainer: {
       display: 'flex',
@@ -16,13 +17,13 @@ const useStyles = makeStyles((theme: Theme) =>
 const index = () => {
     const classes = useStyles();
     return (
-        <>
+        <AuthView>
             <NavBar/>
             <div className={classes.contentContainer}>
                 <MenuSideBar/>
                 <NavTabs/>
             </div>
-        </>
+        </AuthView>
     );
 };
 
