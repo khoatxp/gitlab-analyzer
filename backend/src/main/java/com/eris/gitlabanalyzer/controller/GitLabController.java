@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.ZonedDateTime;
 
@@ -27,6 +28,13 @@ public class GitLabController {
     @GetMapping(path ="/projects")
     public Flux<GitLabProject> getProjects() {
         return gitLabService.getProjects();
+    }
+
+    @GetMapping(path ="/projects/{projectId}")
+    public Mono<GitLabProject> getProject(
+            @PathVariable("projectId") Long projectId
+    ) {
+        return gitLabService.getProject(projectId);
     }
 
     // TODO: currently there is no direct use for this endpoint, to be removed
