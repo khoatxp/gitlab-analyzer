@@ -1,6 +1,6 @@
 package com.eris.gitlabanalyzer;
 
-import com.eris.gitlabanalyzer.security.ApplicationSecurityConfig;
+import com.eris.gitlabanalyzer.config.ApplicationSecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

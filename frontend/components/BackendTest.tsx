@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import { useSnackbar } from 'notistack';
 
+// TODO: Remove component
 const BackendTest = () => {
     const { enqueueSnackbar } = useSnackbar();
     const [repos, setRepos] = useState([]);
