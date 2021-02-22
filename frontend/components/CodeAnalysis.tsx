@@ -45,6 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
         outerContainer: {
             flexDirection: 'column',
             width: '100%',
+            padding: 24,
         },
         textContainer1: {
             flexDirection: 'column',
