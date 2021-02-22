@@ -34,8 +34,8 @@ public class Commit {
 
     @Column(
             name = "title",
-            nullable = false
-
+            nullable = false,
+            columnDefinition="TEXT"
     )
     private String title;
 
