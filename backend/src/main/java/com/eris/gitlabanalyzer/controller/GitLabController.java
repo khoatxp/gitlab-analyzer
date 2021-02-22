@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.ZonedDateTime;
 
@@ -31,6 +32,14 @@ public class GitLabController {
     }
 
     // Used in notes page for now
+    @GetMapping(path ="/projects/{projectId}")
+    public Mono<GitLabProject> getProject(
+            @PathVariable("projectId") Long projectId
+    ) {
+        return gitLabService.getProject(projectId);
+    }
+
+    // TODO: currently there is no direct use for this endpoint, to be removed
     @GetMapping(path ="/projects/{projectId}/merge_requests")
     public Flux<GitLabMergeRequest> getMergeRequests(
             @PathVariable("projectId") Long projectId,
@@ -101,5 +110,10 @@ public class GitLabController {
             @PathVariable("projectId") Long projectId,
             @PathVariable("issue_iid") Long issue_iid) {
         return gitLabService.getIssueNotes(projectId, issue_iid);
+    }
+    @GetMapping(path ="/projects/{projectId}/members")
+    public Flux<GitLabMember> getMembers(
+            @PathVariable("projectId") Long projectId) {
+        return gitLabService.getMembers(projectId);
     }
 }
