@@ -2,9 +2,9 @@ import React, { useState, useEffect }  from "react";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import { Box } from "@material-ui/core";
-import NavBar from "./NavBar";
 import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
+import {AuthContext} from "./AuthContext";
 
 const MenuButton = withStyles({
     root: {
@@ -45,11 +45,12 @@ const MenuSideBar = () => {
     const { projectId } =  router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/members`;
     const [gitLabMemberName, setGitLabMemberName] = React.useState<[]>([]);
+    const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
     useEffect(() => {
         if (router.isReady) {
             axios
-                .get(PROJECT_ID_URL)
+                .get(PROJECT_ID_URL, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setGitLabMemberName(resp.data);
                 });
