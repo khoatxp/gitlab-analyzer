@@ -97,9 +97,12 @@ const CodeAnalysis = () => {
         checkedCommitForGraphB: true,
         checkedMergeRequestForGraphB: true,
     });
+
     const [mergeRequestNumber, setMergeRequestNumber] = React.useState<number>();
     const [projectName, setProjectName] = React.useState<String>();
     const [commitNumber, setCommitNumber] = React.useState<number>();
+    const [mergeRequestScore, setMergeRequestScore] = React.useState<number>();
+    const [commitScore, setCommitScore] = React.useState<number>();
 
     const router = useRouter();
     const { projectId, startDateTime, endDateTime } =  router.query;
@@ -121,6 +124,16 @@ const CodeAnalysis = () => {
                 .then((resp: AxiosResponse) => {
                     setCommitNumber(resp.data.length);
                 });
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_requests/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
+                .then((resp: AxiosResponse) => {
+                    setMergeRequestScore(resp.data);
+                });
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commits/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
+                .then((resp: AxiosResponse) => {
+                    setCommitScore(resp.data);
+                });
         }
     }, [projectId]);
 
@@ -140,8 +153,8 @@ const CodeAnalysis = () => {
                     </div>
                 </div>
                 <div className={classes.textContainer2}>
-                    <p className={classes.mrScoreText}>Merge Request Score: 300</p>
-                    <p className={classes.commitScoreText}>Commit Score: 120</p>
+                    <p className={classes.mrScoreText}>Merge Request Score: {mergeRequestScore}</p>
+                    <p className={classes.commitScoreText}>Commit Score: {commitScore}</p>
                 </div>
             </div>
             <div className={classes.container3}>
