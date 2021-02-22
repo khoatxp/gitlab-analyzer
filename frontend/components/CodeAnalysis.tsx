@@ -1,10 +1,12 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { makeStyles, withStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { green, purple } from '@material-ui/core/colors';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
 import Avatar from '@material-ui/core/Avatar';
+import axios, {AxiosResponse} from "axios";
+import {useRouter} from "next/router";
 
 const GreenCheckbox = withStyles({
     root: {
@@ -97,6 +99,20 @@ const CodeAnalysis = () => {
         checkedCommitForGraphB: true,
         checkedMergeRequestForGraphB: true,
     });
+    const [mergeRequestNumber, setMergeRequestNumber] = React.useState<number>();
+
+    const router = useRouter();
+    const { projectId } =  router.query;
+
+    useEffect(() => {
+        if (router.isReady) {
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/`+projectId+"/merge_requests?startDateTime=2020-09-01T14:00:00.000Z&endDateTime=2020-12-21T14:00:00.000Z")
+                .then((resp: AxiosResponse) => {
+                    setMergeRequestNumber(resp.data.length);
+                });
+        }
+    }, [projectId]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setCheckboxState({ ...checkboxState, [event.target.name]: event.target.checked });
@@ -110,7 +126,7 @@ const CodeAnalysis = () => {
                     <Avatar className={classes.avatarSize} variant='square'>R</Avatar>
                     <div className={classes.textContainer1}>
                         <h1 className={classes.repoNameText}>Repo Name</h1>
-                        <p className={classes.smallTextColor}>- 110 Commits - 11 Merge Request -</p>
+                        <p className={classes.smallTextColor}>- 110 Commits - {mergeRequestNumber} Merge Request -</p>
                     </div>
                 </div>
                 <div className={classes.textContainer2}>
