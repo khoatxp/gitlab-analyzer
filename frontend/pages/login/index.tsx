@@ -34,7 +34,7 @@ const Login = () => {
             }
         }).then((resp: AxiosResponse) => {
             enqueueSnackbar("Login successful!", {variant: 'success',});
-            router.push('/server/1') // TODO: Change route so server id is not hard coded
+            router.push('/server/1/projects') // TODO: Change route so server id is not hard coded
         }).catch((err: AxiosError) => {
             enqueueSnackbar(`Login failed: ${err.message}`, {variant: 'error',});
         })
