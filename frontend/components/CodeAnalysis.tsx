@@ -28,8 +28,6 @@ const PurpleCheckbox = withStyles({
     checked: {},
 })((props: CheckboxProps) => <Checkbox color="default" {...props} />);
 
-// TODO: add real data based on gitlab API request and analysis for the
-//       repo name, commit score, merge request score, repo avatar
 // TODO: add graph tag where placeholder is
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -101,6 +99,7 @@ const CodeAnalysis = () => {
     });
     const [mergeRequestNumber, setMergeRequestNumber] = React.useState<number>();
     const [projectName, setProjectName] = React.useState<String>();
+    const [commitNumber, setCommitNumber] = React.useState<number>();
 
     const router = useRouter();
     const { projectId } =  router.query;
@@ -117,6 +116,11 @@ const CodeAnalysis = () => {
                 .then((resp: AxiosResponse) => {
                     setMergeRequestNumber(resp.data.length);
                 });
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/`+projectId+"/commits?startDateTime=2020-08-03T14:00:00.000Z&endDateTime=2020-12-29T14:00:00.000Z")
+                .then((resp: AxiosResponse) => {
+                    setCommitNumber(resp.data.length);
+                });
         }
     }, [projectId]);
 
@@ -132,7 +136,7 @@ const CodeAnalysis = () => {
                     <Avatar className={classes.avatarSize} variant='square'>R</Avatar>
                     <div className={classes.textContainer1}>
                         <h1 className={classes.repoNameText}>{projectName}</h1>
-                        <p className={classes.smallTextColor}>- 110 Commits - {mergeRequestNumber} Merge Request -</p>
+                        <p className={classes.smallTextColor}>- {commitNumber} Commits - {mergeRequestNumber} Merge Request -</p>
                     </div>
                 </div>
                 <div className={classes.textContainer2}>
