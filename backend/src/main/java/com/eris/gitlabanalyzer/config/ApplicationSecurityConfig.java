@@ -1,4 +1,4 @@
-package com.eris.gitlabanalyzer.security;
+package com.eris.gitlabanalyzer.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +25,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .authorizeRequests()
-                .antMatchers("**") // TODO: This pattern will permit all routes to skip authentication. Remove once authentication fully implemented.
+//                .antMatchers("**") // TODO: This pattern will permit all routes to skip authentication. Uncomment for easier route testing
+//                .permitAll()
+                .antMatchers("/")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
@@ -42,6 +44,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Collections.singletonList(FRONTEND_URL));
         configuration.setAllowedMethods(Collections.singletonList("*"));
+        configuration.setAllowedHeaders(Collections.singletonList("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
