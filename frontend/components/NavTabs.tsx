@@ -27,11 +27,18 @@ export default function NavTabs({tabSelected}: { tabSelected: number }) {
                     value={tabSelected}
                     aria-label="nav tabs"
                 >
-                    <Tab label="Code"
-                         href={`/project/${projectId}/code${queryDate}`}/>
-                    <Tab label="Activity" href="#"/>
-                    <Tab label="Notes"
-                         href={`/project/${projectId}/notes${queryDate}`}/>
+                    <Tab
+                        label="Code"
+                        onClick={() => router.push(`/project/${projectId}/code${queryDate}`)}
+                    />
+                    <Tab
+                        label="Activity"
+                        onClick={() => {}}
+                    />
+                    <Tab
+                        label="Notes"
+                        onClick={() => router.push(`/project/${projectId}/notes${queryDate}`)}
+                    />
                 </Tabs>
             </AppBar>
         </div>

@@ -23,6 +23,8 @@ import {Issue} from "../../../../interfaces/GitLabIssue";
 import {Task} from "../../../../interfaces/GitLabTask";
 import {useRouter} from "next/router";
 import NavTabs from "../../../../components/NavTabs";
+import {AuthContext } from "../../../../components/AuthContext";
+import AuthView from "../../../../components/AuthView";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -45,6 +47,7 @@ enum NoteType {
 
 const NotesPage = () => {
     const router = useRouter();
+    const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const { projectId, startDateTime, endDateTime } =  router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`;
 
@@ -66,7 +69,7 @@ const NotesPage = () => {
 
     const getMergeRequestNotes = (mergeRequestIid: number) => {
         axios
-            .get(`${PROJECT_ID_URL}/merge_requests/${mergeRequestIid}/notes`)
+            .get(`${PROJECT_ID_URL}/merge_requests/${mergeRequestIid}/notes`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
                 setNotes(resp.data);
             })
@@ -74,7 +77,7 @@ const NotesPage = () => {
 
     const getIssueNotes = (issueIid: number) => {
         axios
-            .get(`${PROJECT_ID_URL}/issues/${issueIid}/notes`)
+            .get(`${PROJECT_ID_URL}/issues/${issueIid}/notes`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
                 setNotes(resp.data);
             });
@@ -99,12 +102,12 @@ const NotesPage = () => {
         if(projectId){
             const dateQuery = `?startDateTime=${startDateTime ? startDateTime : "2021-01-01T00:00:00-08:00"}&endDateTime=${endDateTime ? endDateTime : "2021-03-21T00:00:00-08:00"}`;
             axios
-                .get(`${PROJECT_ID_URL}/merge_requests${dateQuery}`)
+                .get(`${PROJECT_ID_URL}/merge_requests${dateQuery}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setMergeRequests(resp.data);
                 });
             axios
-                .get(`${PROJECT_ID_URL}/issues${dateQuery}`)
+                .get(`${PROJECT_ID_URL}/issues${dateQuery}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setIssues(resp.data);
                 });
@@ -119,7 +122,7 @@ const NotesPage = () => {
 
     const classes = useStyles();
     return (
-        <Box>
+        <AuthView>
             <NavBar/>
             <NavTabs tabSelected={2}/>
             <Box m={1} />
@@ -151,7 +154,7 @@ const NotesPage = () => {
                     </Grid>
                 </Grid>
             </Container>
-        </Box>
+        </AuthView>
     );
 };
 
