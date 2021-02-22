@@ -1,6 +1,6 @@
 package com.eris.gitlabanalyzer.dataprocessing;
 
-import com.eris.gitlabanalyzer.model.GitLabFileChange;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabFileChange;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
