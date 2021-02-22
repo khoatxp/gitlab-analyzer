@@ -1,44 +1,53 @@
 import React from "react";
-import axios, { AxiosResponse, AxiosError } from "axios";
+import axios, {AxiosResponse, AxiosError} from "axios";
 import AppTextField from "../../components/AppTextField";
 import AppButton from "../../components/AppButton";
-import { useSnackbar } from 'notistack';
 import CardLayout from "../../components/CardLayout";
 import {Box} from "@material-ui/core";
+import {AuthContext} from "../../components/AuthContext";
+import {useSnackbar} from 'notistack';
+import {useRouter} from "next/router";
+import {UserCredential} from "../../components/AuthContext";
 
 const Login = () => {
-    const { enqueueSnackbar } = useSnackbar();
-    const [userName, setUserName] = React.useState<string>("");
+    const {enqueueSnackbar} = useSnackbar();
+    const router = useRouter();
+    const {setUserCredential} = React.useContext(AuthContext);
+    const [username, setUserName] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
 
+    const saveLoginSession = () => {
+        // TODO: When changing to SSO. save token from response to local storage or cookie
+        const credential: UserCredential = {
+            username: username,
+            password: password
+        }
+        setUserCredential(credential);
+    }
+
     const handleLogin = () => {
-        enqueueSnackbar("Attempting login.", {variant: 'default',});
-        axios
-            .post(`http://localhost:8080/login`,{},{
-                auth: {
-                    username: userName,
-                    password: password,
-                }
-            })
-            .then((resp: AxiosResponse) => {
-                setUserName("");
-                setPassword("");
-                console.log(resp.data);
-            })
-            .catch((err: AxiosError) => {
-                enqueueSnackbar(`Login failed: ${err.message}`, {variant: 'error',});
-            })
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+            auth: {
+                username: username,
+                password: password,
+            }
+        }).then((resp: AxiosResponse) => {
+            saveLoginSession();
+            enqueueSnackbar("Login successful!", {variant: 'success',});
+            router.push('/project/1') // TODO: Change route so server id is not hard coded
+        }).catch((err: AxiosError) => {
+            enqueueSnackbar(`Login failed: ${err.message}`, {variant: 'error',});
+        })
     }
 
     return (
         <CardLayout size="sm">
-            <AppTextField placeholder="Username" value={userName} onChange={(e) => setUserName(e.target.value)}/>
+            <AppTextField placeholder="Username" value={username} onChange={(e) => setUserName(e.target.value)}/>
             <AppTextField placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
             <Box alignSelf="center">
                 <AppButton color="primary" onClick={handleLogin}>Login</AppButton>
             </Box>
         </CardLayout>
-
     )
 }
 
