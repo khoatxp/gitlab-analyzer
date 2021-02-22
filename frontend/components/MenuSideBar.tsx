@@ -1,7 +1,7 @@
-import React, { useState, useEffect }  from "react";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import React, {useEffect} from "react";
+import {makeStyles, withStyles} from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import { Box } from "@material-ui/core";
+import {Box} from "@material-ui/core";
 import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
 import {AuthContext} from "./AuthContext";
@@ -70,7 +70,10 @@ const MenuSideBar = () => {
             <MenuButton variant="contained" disableRipple>
                 Everyone
             </MenuButton>
-            {gitLabMemberName.map(member => <MenuButton variant="contained" disableRipple> {member.name}</MenuButton>)}
+            {gitLabMemberName.map(member => {
+                const {name} = member;
+                return <MenuButton variant="contained" disableRipple> {name}</MenuButton>;
+            })}
         </Box>
     );
 };
