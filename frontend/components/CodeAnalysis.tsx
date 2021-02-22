@@ -7,6 +7,7 @@ import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
 import Avatar from '@material-ui/core/Avatar';
 import axios, {AxiosResponse} from "axios";
 import {useRouter} from "next/router";
+import {AuthContext } from "./AuthContext";
 
 const GreenCheckbox = withStyles({
     root: {
@@ -44,6 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
         outerContainer: {
             flexDirection: 'column',
             width: '100%',
+            padding: 24,
         },
         textContainer1: {
             flexDirection: 'column',
@@ -98,39 +100,40 @@ const CodeAnalysis = () => {
         checkedMergeRequestForGraphB: true,
     });
 
-    const [mergerRequestCount, setMergerRequestCount] = React.useState<number>();
-    const [projectName, setProjectName] = React.useState<String>();
-    const [commitCount, setCommitCount] = React.useState<number>();
-    const [mergeRequestScore, setMergeRequestScore] = React.useState<number>();
-    const [commitScore, setCommitScore] = React.useState<number>();
+    const [mergerRequestCount, setMergerRequestCount] = React.useState<String>('loading...');
+    const [projectName, setProjectName] = React.useState<String>('loading...');
+    const [commitCount, setCommitCount] = React.useState<String>('loading...');
+    const [mergeRequestScore, setMergeRequestScore] = React.useState<String>('loading...');
+    const [commitScore, setCommitScore] = React.useState<String>('loading...');
 
     const router = useRouter();
     const { projectId, startDateTime, endDateTime } =  router.query;
+    const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
     useEffect(() => {
         if (router.isReady) {
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`)
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setProjectName(resp.data.name_with_namespace);
                 });
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_requests?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_requests?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setMergerRequestCount(resp.data.length);
                 });
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commits?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commits?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setCommitCount(resp.data.length);
                 });
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_requests/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_requests/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setMergeRequestScore(resp.data);
                 });
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/commits/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/commits/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setCommitScore(resp.data);
                 });
