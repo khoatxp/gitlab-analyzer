@@ -27,6 +27,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 //                .antMatchers("**") // TODO: This pattern will permit all routes to skip authentication. Uncomment for easier route testing
 //                .permitAll()
+                .antMatchers("/")
+                .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
