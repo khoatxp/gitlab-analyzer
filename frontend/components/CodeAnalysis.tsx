@@ -1,10 +1,12 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { makeStyles, withStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { green, purple } from '@material-ui/core/colors';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
 import Avatar from '@material-ui/core/Avatar';
+import axios, {AxiosResponse} from "axios";
+import {useRouter} from "next/router";
 
 const GreenCheckbox = withStyles({
     root: {
@@ -26,8 +28,6 @@ const PurpleCheckbox = withStyles({
     checked: {},
 })((props: CheckboxProps) => <Checkbox color="default" {...props} />);
 
-// TODO: add real data based on gitlab API request and analysis for the
-//       repo name, commit score, merge request score, repo avatar
 // TODO: add graph tag where placeholder is
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -98,6 +98,45 @@ const CodeAnalysis = () => {
         checkedMergeRequestForGraphB: true,
     });
 
+    const [mergerRequestCount, setMergerRequestCount] = React.useState<number>();
+    const [projectName, setProjectName] = React.useState<String>();
+    const [commitCount, setCommitCount] = React.useState<number>();
+    const [mergeRequestScore, setMergeRequestScore] = React.useState<number>();
+    const [commitScore, setCommitScore] = React.useState<number>();
+
+    const router = useRouter();
+    const { projectId, startDateTime, endDateTime } =  router.query;
+
+    useEffect(() => {
+        if (router.isReady) {
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`)
+                .then((resp: AxiosResponse) => {
+                    setProjectName(resp.data.name_with_namespace);
+                });
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_requests?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
+                .then((resp: AxiosResponse) => {
+                    setMergerRequestCount(resp.data.length);
+                });
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commits?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
+                .then((resp: AxiosResponse) => {
+                    setCommitCount(resp.data.length);
+                });
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_requests/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
+                .then((resp: AxiosResponse) => {
+                    setMergeRequestScore(resp.data);
+                });
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/commits/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
+                .then((resp: AxiosResponse) => {
+                    setCommitScore(resp.data);
+                });
+        }
+    }, [projectId]);
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setCheckboxState({ ...checkboxState, [event.target.name]: event.target.checked });
     };
@@ -109,13 +148,13 @@ const CodeAnalysis = () => {
                 <div className={classes.container2}>
                     <Avatar className={classes.avatarSize} variant='square'>R</Avatar>
                     <div className={classes.textContainer1}>
-                        <h1 className={classes.repoNameText}>Repo Name</h1>
-                        <p className={classes.smallTextColor}>- 110 Commits - 11 Merge Request -</p>
+                        <h1 className={classes.repoNameText}>{projectName}</h1>
+                        <p className={classes.smallTextColor}>- {commitCount} Commits - {mergerRequestCount} Merge Request -</p>
                     </div>
                 </div>
                 <div className={classes.textContainer2}>
-                    <p className={classes.mrScoreText}>Merge Request Score: 300</p>
-                    <p className={classes.commitScoreText}>Commit Score: 120</p>
+                    <p className={classes.mrScoreText}>Merge Request Score: {mergeRequestScore}</p>
+                    <p className={classes.commitScoreText}>Commit Score: {commitScore}</p>
                 </div>
             </div>
             <div className={classes.container3}>

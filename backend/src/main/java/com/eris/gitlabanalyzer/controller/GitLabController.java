@@ -1,14 +1,12 @@
 package com.eris.gitlabanalyzer.controller;
 
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabFileChange;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabProject;
+import com.eris.gitlabanalyzer.model.gitlabresponse.*;
 import com.eris.gitlabanalyzer.service.GitLabService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.ZonedDateTime;
 
@@ -30,6 +28,13 @@ public class GitLabController {
     @GetMapping(path ="/projects")
     public Flux<GitLabProject> getProjects() {
         return gitLabService.getProjects();
+    }
+
+    @GetMapping(path ="/projects/{projectId}")
+    public Mono<GitLabProject> getProject(
+            @PathVariable("projectId") Long projectId
+    ) {
+        return gitLabService.getProject(projectId);
     }
 
     // TODO: currently there is no direct use for this endpoint, to be removed
@@ -78,4 +83,9 @@ public class GitLabController {
         return gitLabService.getMergeRequestDiff(projectId, merge_request_iid);
     }
 
+    @GetMapping(path ="/projects/{projectId}/members")
+    public Flux<GitLabMember> getMembers(
+            @PathVariable("projectId") Long projectId) {
+        return gitLabService.getMembers(projectId);
+    }
 }
