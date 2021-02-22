@@ -1,9 +1,6 @@
 package com.eris.gitlabanalyzer.controller;
 
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabFileChange;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabProject;
+import com.eris.gitlabanalyzer.model.gitlabresponse.*;
 import com.eris.gitlabanalyzer.service.GitLabService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -78,4 +75,9 @@ public class GitLabController {
         return gitLabService.getMergeRequestDiff(projectId, merge_request_iid);
     }
 
+    @GetMapping(path ="/projects/{projectId}/members")
+    public Flux<GitLabMember> getMembers(
+            @PathVariable("projectId") Long projectId) {
+        return gitLabService.getMembers(projectId);
+    }
 }
