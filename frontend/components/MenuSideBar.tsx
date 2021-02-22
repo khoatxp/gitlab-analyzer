@@ -4,6 +4,7 @@ import Button from "@material-ui/core/Button";
 import { Box } from "@material-ui/core";
 import NavBar from "./NavBar";
 import {useRouter} from "next/router";
+import axios, {AxiosResponse} from "axios";
 
 const MenuButton = withStyles({
     root: {
@@ -45,6 +46,18 @@ const MenuSideBar = () => {
     const router = useRouter();
     const { projectId } =  router.query;
 
+    const [gitLabMemberName, setGitLabMemberName] = React.useState<String>("");
+
+    useEffect(() => {
+        if (router.isReady) {
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/`+projectId+"/members")
+                .then((resp: AxiosResponse) => {
+                    setGitLabMemberName(resp.data);
+                });
+        }
+    }, [projectId]);
+
     return (
         <Box
             className={classes.background}
@@ -59,7 +72,7 @@ const MenuSideBar = () => {
                 Everyone
             </MenuButton>
             <MenuButton variant="contained" disableRipple>
-                Eris Test
+                {gitLabMemberName}
             </MenuButton>
         </Box>
     );
