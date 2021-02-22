@@ -98,9 +98,9 @@ const CodeAnalysis = () => {
         checkedMergeRequestForGraphB: true,
     });
 
-    const [mergeRequestNumber, setMergeRequestNumber] = React.useState<number>();
+    const [mergerRequestCount, setMergerRequestCount] = React.useState<number>();
     const [projectName, setProjectName] = React.useState<String>();
-    const [commitNumber, setCommitNumber] = React.useState<number>();
+    const [commitCount, setCommitCount] = React.useState<number>();
     const [mergeRequestScore, setMergeRequestScore] = React.useState<number>();
     const [commitScore, setCommitScore] = React.useState<number>();
 
@@ -117,12 +117,12 @@ const CodeAnalysis = () => {
             axios
                 .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_requests?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
                 .then((resp: AxiosResponse) => {
-                    setMergeRequestNumber(resp.data.length);
+                    setMergerRequestCount(resp.data.length);
                 });
             axios
                 .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commits?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
                 .then((resp: AxiosResponse) => {
-                    setCommitNumber(resp.data.length);
+                    setCommitCount(resp.data.length);
                 });
             axios
                 .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_requests/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`)
@@ -149,7 +149,7 @@ const CodeAnalysis = () => {
                     <Avatar className={classes.avatarSize} variant='square'>R</Avatar>
                     <div className={classes.textContainer1}>
                         <h1 className={classes.repoNameText}>{projectName}</h1>
-                        <p className={classes.smallTextColor}>- {commitNumber} Commits - {mergeRequestNumber} Merge Request -</p>
+                        <p className={classes.smallTextColor}>- {commitCount} Commits - {mergerRequestCount} Merge Request -</p>
                     </div>
                 </div>
                 <div className={classes.textContainer2}>
