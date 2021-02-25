@@ -17,10 +17,13 @@
     "@material-ui/pickers": "^3.2.10",
     "axios": "^0.21.1",
     "date-fns": "^2.0.0-beta.5",
+    "memoize-one": "^5.1.1",
     "next": "10.0.5",
     "notistack": "^1.0.3",
     "react": "17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "react-virtualized-auto-sizer": "^1.0.4",
+    "react-window": "^1.8.6"
   },
   "devDependencies": {
     "@babel/core": "^7.12.11",
@@ -31,6 +34,8 @@
     "@types/node": "^14.14.22",
     "@types/react": "^17.0.1",
     "@types/react-dom": "^17.0.0",
+    "@types/react-virtualized-auto-sizer": "^1.0.0",
+    "@types/react-window": "^1.8.2",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.6",
     "enzyme-to-json": "^3.6.1",

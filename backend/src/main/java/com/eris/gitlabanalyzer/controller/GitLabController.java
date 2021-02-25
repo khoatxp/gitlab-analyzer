@@ -1,14 +1,13 @@
 package com.eris.gitlabanalyzer.controller;
 
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabFileChange;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabProject;
+import com.eris.gitlabanalyzer.model.gitlabresponse.*;
+
 import com.eris.gitlabanalyzer.service.GitLabService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.ZonedDateTime;
 
@@ -30,6 +29,14 @@ public class GitLabController {
     @GetMapping(path ="/projects")
     public Flux<GitLabProject> getProjects() {
         return gitLabService.getProjects();
+    }
+
+    // Used in notes page for now
+    @GetMapping(path ="/projects/{projectId}")
+    public Mono<GitLabProject> getProject(
+            @PathVariable("projectId") Long projectId
+    ) {
+        return gitLabService.getProject(projectId);
     }
 
     // TODO: currently there is no direct use for this endpoint, to be removed
@@ -78,4 +85,35 @@ public class GitLabController {
         return gitLabService.getMergeRequestDiff(projectId, merge_request_iid);
     }
 
+    // Used in notes page for now
+    @GetMapping(path = "/projects/{projectId}/merge_requests/{merge_request_iid}/notes")
+    public Flux<GitLabMergeRequestNote> getMergeRequestNotes(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("merge_request_iid") Long merge_request_iid) {
+        return gitLabService.getMergeRequestNotes(projectId, merge_request_iid);
+    }
+
+    // Used in notes page for now
+    @GetMapping(path = "/projects/{projectId}/issues")
+    public Flux<GitLabIssue> getIssues(
+            @PathVariable("projectId") Long projectId,
+            @RequestParam("startDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDateTime,
+            @RequestParam("endDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endDateTime) {
+        return gitLabService.getIssues(projectId, startDateTime, endDateTime);
+    }
+
+    // Used in notes page for now
+    @GetMapping(path = "/projects/{projectId}/issues/{issue_iid}/notes")
+    public Flux<GitLabIssueNote> getIssueNotes(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("issue_iid") Long issue_iid) {
+        return gitLabService.getIssueNotes(projectId, issue_iid);
+    }
+    @GetMapping(path ="/projects/{projectId}/members")
+    public Flux<GitLabMember> getMembers(
+            @PathVariable("projectId") Long projectId) {
+        return gitLabService.getMembers(projectId);
+    }
 }
