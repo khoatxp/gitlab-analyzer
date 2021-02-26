@@ -39,12 +39,12 @@ public class MergeRequestService {
 
         if (gitLabMergeRequestList != null && !gitLabMergeRequestList.isEmpty()) {
             gitLabMergeRequestList.forEach(gitLabMergeRequest -> {
-                        GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMergeRequest.getUsername(), serverUrl);
+                        GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMergeRequest.getAuthor().getUsername(), serverUrl);
                         MergeRequest mergeRequest = mergeRequestRepository.findByIidAndProjectId(gitLabMergeRequest.getIid(),project.getId());
                         if(mergeRequest == null){
                             mergeRequest = new MergeRequest(
                                     gitLabMergeRequest.getIid(),
-                                    gitLabMergeRequest.getUsername(),
+                                    gitLabMergeRequest.getAuthor().getUsername(),
                                     gitLabMergeRequest.getTitle(),
                                     gitLabMergeRequest.getCreatedAt(),
                                     gitLabMergeRequest.getWebUrl(),

@@ -1,16 +1,17 @@
 import 'date-fns';
-import React,{useState} from 'react';
+import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, DateTimePicker} from '@material-ui/pickers';
 
+interface Props {
+    onStartDateTimeChange: (x:Date) => void
+    onEndDateTimeChange: (x:Date) => void
+    startDateTime: Date,
+    endDateTime: Date
+}
 
-const AppDateTimePicker = () => {
-
-    var now = new Date();
-    const [startDate, setStartDate] = React.useState<Date>(new Date(now.getFullYear(),now.getMonth()-1, now.getDate()));
-    const [endDate, setEndDate] =  React.useState<Date>(new Date());
-
+const AppDateTimePicker = ({onStartDateTimeChange, onEndDateTimeChange, startDateTime, endDateTime}:Props) => {
     return(
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container justify="space-around">
@@ -20,9 +21,9 @@ const AppDateTimePicker = () => {
                     margin="normal"
                     id="start-date-picker"
                     label="Start Date:"
-                    value={startDate}
+                    value={startDateTime}
                     helperText='day/month/year hour:minute'
-                    onChange={setStartDate}
+                    onChange={onStartDateTimeChange}
                     autoOk={true}
 
                 />
@@ -33,9 +34,9 @@ const AppDateTimePicker = () => {
                     margin="normal"
                     id="end-date-picker"
                     label="End Date:"
-                    value={endDate}
+                    value={endDateTime}
                     helperText='day/month/year hour:minute'
-                    onChange={setEndDate}
+                    onChange={onEndDateTimeChange}
                     autoOk={true}
 
                 />

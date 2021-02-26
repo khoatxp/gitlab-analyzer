@@ -68,8 +68,8 @@ public class GitLabService {
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests")
                 .queryParam("state", "merged")
-                .queryParam("created_after", startDateTime.toString())
-                .queryParam("updated_before", endDateTime.toString())
+                .queryParam("created_after", startDateTime.toInstant().toString())
+                .queryParam("updated_before", endDateTime.toInstant().toString())
                 .queryParam("per_page", 100)
                 .build()
                 .encode()
@@ -94,8 +94,8 @@ public class GitLabService {
     public Flux<GitLabCommit> getCommits(Long projectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/repository/commits")
-                .queryParam("since", startDateTime.toString())
-                .queryParam("until", endDateTime.toString())
+                .queryParam("since", startDateTime.toInstant().toString())
+                .queryParam("until", endDateTime.toInstant().toString())
                 .queryParam("per_page", 100)
                 .build()
                 .encode()
@@ -141,6 +141,47 @@ public class GitLabService {
 
         var headersSpec = authorizedGetRequestHeadersSpec(gitlabUrl);
         return headersSpec.retrieve().bodyToMono(GitLabMergeRequestChange.class).flatMapIterable(GitLabMergeRequestChange::getChanges);
+    }
+
+    public Flux<GitLabMergeRequestNote> getMergeRequestNotes(Long projectId, Long mergeRequestIid) {
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/notes")
+                .queryParam("per_page", 100)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+
+        return fetchPages(gitlabUrl)
+                .flatMap(response -> response.bodyToFlux(GitLabMergeRequestNote.class));
+    }
+
+    public Flux<GitLabIssue> getIssues(Long projectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/issues")
+                .queryParam("created_after", startDateTime.toInstant().toString())
+                .queryParam("updated_before", endDateTime.toInstant().toString())
+                .queryParam("per_page", 100)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+
+        return fetchPages(gitlabUrl)
+                .flatMap(response -> response.bodyToFlux(GitLabIssue.class));
+    }
+
+    public Flux<GitLabIssueNote> getIssueNotes(Long projectId, Long issue_iid) {
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/issues/" + issue_iid + "/notes")
+                .queryParam("per_page", 100)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+
+        return fetchPages(gitlabUrl)
+                .flatMap(response -> response.bodyToFlux(GitLabIssueNote.class));
     }
 
     // recursively make a request for the next page and then return a collection of response

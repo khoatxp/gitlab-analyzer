@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 
 @SpringBootTest
@@ -38,7 +39,7 @@ class ModelTests {
             "URL", "2014-12-12");
     private Issue testIssue = new Issue(1L, "Issue", "csl33", "2014-12-32", "URL", testProject, testGitManagementUser);
     private IssueComment testIssueComment = new IssueComment(1L, testGitManagementUser, testIssue, "URL", "2012-12-21");
-    private MergeRequest testMergeRequest = new MergeRequest(1L, "csl33", "MR_title", ZonedDateTime.parse("2016-10-05T08:20:10+05:30[Asia/Kolkata]"), "URL",
+    private MergeRequest testMergeRequest = new MergeRequest(1L, "csl33", "MR_title", OffsetDateTime.parse("2016-10-05T08:20:10+05:30[Asia/Kolkata]"), "URL",
     testProject, testGitManagementUser);
 
     @BeforeAll
