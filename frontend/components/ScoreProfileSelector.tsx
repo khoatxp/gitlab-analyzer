@@ -1,65 +1,96 @@
-import React from 'react';
-import Select, { components } from "react-select";
-import {Divider, IconButton} from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
+import React, {useEffect, useState} from "react";
+import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
+import {Divider, IconButton, LinearProgress, Typography} from "@material-ui/core";
+import DeleteIcon from "@material-ui/icons/Delete";
+import ScoreProfile from "../interfaces/ScoreProfile";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import {makeStyles} from "@material-ui/core/styles";
 
-const ScoreProfileSelector = ({options}) => {
 
-    const[profile, setProfile] =  React.useState('');
+const useStyles = makeStyles(theme => ({
+    formControl: {
+        margin: theme.spacing(1),
+        minWidth: 120
+    },
+    selectEmpty: {
+        marginTop: theme.spacing(2)
+    }
+}));
+
+const ScoreProfileSelector = () => {
+
+    const[profile, setProfile] =  useState<ScoreProfile[]>([]);
+    const[selectedProfile, setSelectedProfile] = useState<number>()
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const router = useRouter();
+    const {serverId} = router.query;
     const [isIconVisibile, setIconVisibile] = React.useState(false);
+    const inputLabel = React.useRef(null);
+    const [labelWidth, setLabelWidth] = React.useState(0);
+    React.useEffect(() => {
+        setLabelWidth(inputLabel.current.offsetWidth);
+    }, []);
 
-    const handleChange = (event) => {
-        setProfile(event.target.value);
-    };
-    
-    axios.get("https://localhost:8080/api/v1/scoreprofile/profiles").then((res))
-}
+
+    useEffect(() => {
+        if (router.isReady) {
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scoreprofile/profiles`)
+                .then((resp: AxiosResponse) => {
+                    setProfile(resp.data);
+                    setIsLoading(false);
+                });
+            ;
+        }
+    });
+
+    const onProfileSelect = (_event: any, value: ScoreProfile) => {
+        setSelectedProfile(value.id);
+    }
+
+    let loadingBar = null;
+    if (isLoading) {
+        loadingBar = <LoadingBar/>;
+    }
+
+    const LoadingBar = () => {
+        return <div>
+            <Typography variant={"body1"}>
+                Loading projects...
+            </Typography>
+            <LinearProgress/>
+        </div>;
+    }
 
     return(
-        <div className='selector'>
-            <Select
-                placeholder="Choose score profile"
-                mode="single"
-                value={profile}
-                onChage{handleChange}
-                onOpen={() => setIconVisibile(true)}
-                onClose={() => setIconVisibile(false)}
-                dropdownRender={menu => (
-                    <div>
-                        {menu}
-                        <Divider style={{ margin: '4px 0' }} />
-                        <div
-                            style={{ padding: '4px 8px', cursor: 'pointer' }}
-                            onMouseDown={e => e.preventDefault()}
-                            onClick={this.openModal.bind(this)}
-                        >
-                            <IconButton type="plus" /> Add Profile
-                        </div>
-                    </div>
-                )}
-            >
-                {dbConfigList.map(item => (
-                    <Option key={item}>{item}
-
-                        <ListItemSecondaryAction variant="outlined">
-                            <IconButton edge="end" aria-label="delete">
-                                <DeleteIcon />
-                            </IconButton>
-                        </ListItemSecondaryAction>
-
-                            <Icon
-                            onClick={this.deleteFun.bind(this)}
-                            type="delete"
-                            style={{ fontSize: "20px", color: "#CC160B" }}
-                            theme="outlined"
-                            /> : null}
-                    </Option>
-
-                ))}
-            />
+        <div>
+            <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel ref={inputLabel} id="scoreOptions">
+                    Score Options
+                </InputLabel>
+                <Select
+                    labelId="score-option"
+                    id="scoreOptions"
+                    value={selectedProfile}
+                    onChange={onProfileSelect}
+                    labelWidth={labelWidth}
+                >
+                    {profile.map(item => {
+                        return (
+                            <MenuItem value={item}>
+                                <li>{item.name}</li>
+                            </MenuItem>
+                        );
+                    })}
+                </Select>
+            </FormControl>
         </div>
+
     )
 }
 
-export default ScoreProfile;
+export default ScoreProfileSelector;
