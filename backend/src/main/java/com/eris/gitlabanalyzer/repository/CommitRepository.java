@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommitRepository extends JpaRepository<Commit,Long> {
-    @Query("select c from Commit c where c.sha = ?1")
-    Commit findByCommitSha(String sha);
+    @Query("select c from Commit c where c.sha = ?1 and c.project.id = ?2")
+    Commit findByCommitShaAndProjectId(String sha, Long projectId);
 }
