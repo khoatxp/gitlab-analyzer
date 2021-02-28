@@ -94,7 +94,6 @@ const index = () => {
                             startDateTime={startDateTime}
                             endDateTime={endDateTime}
                         />
-
                     </Box>
                     <Box
                         alignSelf="center"
