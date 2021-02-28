@@ -23,6 +23,7 @@ const useStyles = makeStyles(theme => ({
 
 const ScoreProfileSelector = () => {
 
+    const classes = useStyles();
     const[profile, setProfile] =  useState<ScoreProfile[]>([]);
     const[selectedProfile, setSelectedProfile] = useState<number>()
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -52,18 +53,18 @@ const ScoreProfileSelector = () => {
         setSelectedProfile(value.id);
     }
 
-    let loadingBar = null;
-    if (isLoading) {
-        loadingBar = <LoadingBar/>;
-    }
-
     const LoadingBar = () => {
         return <div>
             <Typography variant={"body1"}>
-                Loading projects...
+                Loading profiles...
             </Typography>
             <LinearProgress/>
         </div>;
+    }
+
+    let loadingBar = null;
+    if (isLoading) {
+        loadingBar = <LoadingBar/>;
     }
 
     return(
