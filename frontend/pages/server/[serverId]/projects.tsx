@@ -11,7 +11,6 @@ import AuthView from "../../../components/AuthView";
 import {AuthContext} from "../../../components/AuthContext";
 import {useSnackbar} from 'notistack';
 import {formatISO} from "date-fns";
-import ScoreProfileSelector from "../../../components/ScoreProfileSelector";
 
 const index = () => {
     const {enqueueSnackbar} = useSnackbar();
@@ -95,10 +94,6 @@ const index = () => {
                             startDateTime={startDateTime}
                             endDateTime={endDateTime}
                         />
-
-                        <ScoreProfileSelector>
-
-                        </ScoreProfileSelector>
 
                     </Box>
                     <Box
