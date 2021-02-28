@@ -1,5 +1,7 @@
 package com.eris.gitlabanalyzer.model;
 
+import lombok.AllArgsConstructor;
+
 import javax.persistence.*;
 
 import java.util.ArrayList;
@@ -39,6 +41,12 @@ public class User {
     public User(){}
 
     public User(String username) {
+        this.username = username;
+    }
+
+    // TODO I don't think we need this I have added it temporarily so I can create a user instance in ServerController
+    public User(Long id, String username) {
+        this.id = id;
         this.username = username;
     }
 
