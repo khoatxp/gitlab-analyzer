@@ -3,7 +3,6 @@ package com.eris.gitlabanalyzer.service;
 import com.eris.gitlabanalyzer.exception.RessourceNotFoundException;
 import com.eris.gitlabanalyzer.model.ScoreProfile;
 import com.eris.gitlabanalyzer.repository.ScoreProfileRepository;
-import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -37,10 +36,10 @@ public class ScoreProfileService {
 
         ScoreProfile oldProfile =  scoreProfileRepository.findById(id).orElseThrow(()->new RessourceNotFoundException("Profile not found for this id : " + id));
         oldProfile.setName(scoreProfile.getName());
-        oldProfile.setComments(scoreProfile.getComments());
-        oldProfile.setDelete(scoreProfile.getDelete());
-        oldProfile.setLine(scoreProfile.getLine());
-        oldProfile.setSyntax(scoreProfile.getSyntax());
+        oldProfile.setCommentsWeight(scoreProfile.getCommentsWeight());
+        oldProfile.setDeleteWeight(scoreProfile.getDeleteWeight());
+        oldProfile.setLineWeight(scoreProfile.getLineWeight());
+        oldProfile.setSyntaxWeight(scoreProfile.getSyntaxWeight());
         oldProfile.getExtension().forEach((k,v)-> scoreProfile.getExtension().put(k,v));
         final ScoreProfile updatedProfile = scoreProfileRepository.save(oldProfile);
         return ResponseEntity.ok(updatedProfile);

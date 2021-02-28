@@ -1,8 +1,9 @@
 export default interface ScoreProfile{
     id: number,
     name: string,
-    line: number,
-    delete: number,
-    syntax: number,
-    comments: number,
+    lineWeight: number,
+    deleteWeight: number,
+    syntaxWeight: number,
+    commentsWeight: number,
+    extension: Map<string,number>,
 }

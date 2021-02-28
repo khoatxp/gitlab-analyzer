@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Entity
-@Table(name = "score_Profile")
+@Table(name = "Score_Profile")
 public class ScoreProfile {
 
     @Id
@@ -18,39 +18,39 @@ public class ScoreProfile {
     private String name;
 
     @Column(name="line")
-    private float line;
+    private double lineWeight;
 
     @Column(name="delete")
-    private float delete;
+    private double deleteWeight;
 
     @Column(name = "syntax")
-    private float syntax;
+    private double syntaxWeight;
 
     @Column(name = "comments")
-    private float comments;
+    private double commentsWeight;
 
     @ElementCollection
     @MapKeyColumn(name="extension")
     @Column(name="weight")
-    private Map<String, Float> extension = new HashMap<String, Float>();
+    private Map<String, Double> extension = new HashMap<String, Double>();
 
     public ScoreProfile(){
     }
 
-    public ScoreProfile(String name, float line, float delete, float syntax, float comments){
+    public ScoreProfile(String name, double lineWeight, double deleteWeight, double syntaxWeight, double commentsWeight){
         this.name = name;
-        this.line = line;
-        this.delete = delete;
-        this.syntax = syntax;
-        this.comments = comments;
+        this.lineWeight = lineWeight;
+        this.deleteWeight = deleteWeight;
+        this.syntaxWeight = syntaxWeight;
+        this.commentsWeight = commentsWeight;
     }
 
-    public ScoreProfile(String name, float line, float delete, float syntax, float comments, Map<String, Float> extensions){
+    public ScoreProfile(String name, double lineWeight, double deleteWeight, double syntaxWeight, double commentsWeight, Map<String, Double> extensions){
         this.name = name;
-        this.line = line;
-        this.delete = delete;
-        this.syntax = syntax;
-        this.comments = comments;
+        this.lineWeight = lineWeight;
+        this.deleteWeight = deleteWeight;
+        this.syntaxWeight = syntaxWeight;
+        this.commentsWeight = commentsWeight;
         if(extensions != null){
             this.addExtension(extensions);
         }
@@ -72,44 +72,44 @@ public class ScoreProfile {
         this.name = name;
     }
 
-    public float getLine() {
-        return line;
+    public double getLineWeight() {
+        return lineWeight;
     }
 
-    public void setLine(float line) {
-        this.line = line;
+    public void setLineWeight(double line) {
+        this.lineWeight = line;
     }
 
-    public float getSyntax() {
-        return syntax;
+    public double getSyntaxWeight() {
+        return syntaxWeight;
     }
 
-    public void setSyntax(float syntax) {
-        this.syntax = syntax;
+    public void setSyntaxWeight(double syntaxWeight) {
+        this.syntaxWeight = syntaxWeight;
     }
 
-    public float getDelete() {
-        return delete;
+    public double getDeleteWeight() {
+        return deleteWeight;
     }
 
-    public void setDelete(float delete) {
-        this.delete = delete;
+    public void setDeleteWeight(double delete) {
+        this.deleteWeight = delete;
     }
 
-    public float getComments() {
-        return comments;
+    public double getCommentsWeight() {
+        return commentsWeight;
     }
 
-    public void setComments(float comments) {
-        this.comments = comments;
+    public void setCommentsWeight(double comments) {
+        this.commentsWeight = comments;
     }
 
-    public Map<String, Float> getExtension() {
+    public Map<String, Double> getExtension() {
         return extension;
     }
 
 
-    public void addExtension( Map<String, Float> New ){
+    public void addExtension( Map<String, Double> New ){
 
        extension.putAll(New);
     }
