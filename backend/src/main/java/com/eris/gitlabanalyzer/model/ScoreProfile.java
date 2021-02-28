@@ -6,7 +6,6 @@ import java.util.Map;
 
 @Entity
 @Table(name = "score_Profile")
-
 public class ScoreProfile {
 
     @Id
@@ -46,14 +45,14 @@ public class ScoreProfile {
         this.comments = comments;
     }
 
-    public ScoreProfile(String name, float line, float delete, float syntax, float comments, Map<String, Float> New){
+    public ScoreProfile(String name, float line, float delete, float syntax, float comments, Map<String, Float> extensions){
         this.name = name;
         this.line = line;
         this.delete = delete;
         this.syntax = syntax;
         this.comments = comments;
-        if(New != null){
-            this.addExtension(New);
+        if(extensions != null){
+            this.addExtension(extensions);
         }
     }
 
