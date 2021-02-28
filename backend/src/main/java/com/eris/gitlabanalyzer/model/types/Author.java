@@ -12,4 +12,6 @@ public class Author {
     private String avatarURL;
     @JsonProperty("web_url")
     private String webURL;
+    @JsonProperty("created_at")
+    private String createdAt;
 }

@@ -2,6 +2,8 @@ package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
 
+import java.time.OffsetDateTime;
+
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "MergeRequestComment")
@@ -43,26 +45,27 @@ public class MergeRequestComment {
     private MergeRequest mergeRequest;
 
     @Column(
-            name = "web_url",
-            nullable = false
+            name = "body",
+            nullable = false,
+            columnDefinition="TEXT"
 
     )
-    private String webUrl;
+    private String body;
 
     @Column(
             name = "created_at",
             nullable = false
     )
-    private String createdAt;
+    private OffsetDateTime createdAt;
 
     public MergeRequestComment() {
     }
 
-    public MergeRequestComment(Long iid, GitManagementUser gitManagementUser, MergeRequest mergeRequest, String webUrl, String createdAt) {
+    public MergeRequestComment(Long iid, String body, OffsetDateTime createdAt, GitManagementUser gitManagementUser, MergeRequest mergeRequest) {
         this.iid = iid;
         this.gitManagementUser = gitManagementUser;
         this.mergeRequest = mergeRequest;
-        this.webUrl = webUrl;
+        this.body = body;
         this.createdAt = createdAt;
     }
 
@@ -82,11 +85,11 @@ public class MergeRequestComment {
         return mergeRequest;
     }
 
-    public String getWebUrl() {
-        return webUrl;
+    public String getBody() {
+        return body;
     }
 
-    public String getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
@@ -105,7 +108,7 @@ public class MergeRequestComment {
                 ", iid=" + iid +
                 ", gitManagementUser=" + gitManagementUser +
                 ", mergeRequest=" + mergeRequest +
-                ", webUrl='" + webUrl + '\'' +
+                ", body='" + body + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 '}';
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.ZonedDateTime;
 
+@lombok.Getter
 public class GitLabCommit {
     @JsonProperty("id")
     private String sha;
@@ -23,28 +24,4 @@ public class GitLabCommit {
     private String webUrl;
 
     public GitLabCommit() { }
-
-    public String getSha() {
-        return sha;
-    }
-
-    public String getAuthorName() {
-        return authorName;
-    }
-
-    public String getAuthorEmail() {
-        return authorEmail;
-    }
-
-    public ZonedDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getWebUrl() {
-        return webUrl;
-    }
 }

@@ -79,6 +79,18 @@ public class GitLabService {
         return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabMergeRequest.class));
     }
 
+    public Flux<GitLabMergeRequestComment> getMergeRequestComments(Long projectId, Long mergeRequestIid) {
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/notes")
+                .queryParam("per_page", 100)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+
+        return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabMergeRequestComment.class));
+    }
+
     public Flux<GitLabCommit> getMergeRequestCommits(Long projectId, Long mergeRequestIid) {
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/commits")
@@ -90,6 +102,7 @@ public class GitLabService {
 
         return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabCommit.class));
     }
+
 
     public Flux<GitLabCommit> getCommits(Long projectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
@@ -127,6 +140,18 @@ public class GitLabService {
                 .toString();
 
         return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabFileChange.class));
+    }
+
+    public Flux<GitLabCommitComment> getCommitComments(Long projectId, String sha) {
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/repository/commits/" + sha + "/comments")
+                .queryParam("per_page", 100)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+
+        return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabCommitComment.class));
     }
 
     public Flux<GitLabFileChange> getMergeRequestDiff(Long projectId, Long mergeRequestIid) {

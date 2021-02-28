@@ -2,8 +2,10 @@ package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.GitManagementUser;
 import com.eris.gitlabanalyzer.model.MergeRequest;
+import com.eris.gitlabanalyzer.model.MergeRequestComment;
 import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
+import com.eris.gitlabanalyzer.repository.MergeRequestCommentRepository;
 import com.eris.gitlabanalyzer.repository.MergeRequestRepository;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +19,7 @@ public class MergeRequestService {
     MergeRequestRepository mergeRequestRepository;
     ProjectRepository projectRepository;
     GitManagementUserRepository gitManagementUserRepository;
+    MergeRequestCommentRepository mergeRequestCommentRepository;
 
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
@@ -24,11 +27,12 @@ public class MergeRequestService {
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public MergeRequestService(GitLabService gitLabService, MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository) {
+    public MergeRequestService(GitLabService gitLabService, MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, MergeRequestCommentRepository mergeRequestCommentRepository) {
         this.gitLabService = gitLabService;
         this.mergeRequestRepository = mergeRequestRepository;
         this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
+        this.mergeRequestCommentRepository = mergeRequestCommentRepository;
     }
 
     public void saveMergeRequestInfo(Long gitLabProjectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
@@ -53,8 +57,32 @@ public class MergeRequestService {
                             );
                         }
                         mergeRequestRepository.save(mergeRequest);
+                        saveMergeRequestComments(project, gitLabMergeRequest.getIid());
                     }
             );
+
+        }
+    }
+
+    public void saveMergeRequestComments (Project project, Long mergeRequestIid){
+        MergeRequest mergeRequest = mergeRequestRepository.findByIidAndProjectId(mergeRequestIid, project.getId());
+        var gitLabMergeRequestComments = gitLabService.getMergeRequestComments(project.getGitLabProjectId(), mergeRequest.getIid());
+        var gitLabMergeRequestCommentList = gitLabMergeRequestComments.collectList().block();
+        if (gitLabMergeRequestCommentList != null && !gitLabMergeRequestCommentList.isEmpty()) {
+            gitLabMergeRequestCommentList.forEach(gitLabMergeRequestComment -> {
+                GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMergeRequestComment.getAuthor().getUsername(),serverUrl);
+                MergeRequestComment mergeRequestComment = mergeRequestCommentRepository.findByIidAndMergeRequestId(gitLabMergeRequestComment.getId(),mergeRequest.getIid());
+                if(mergeRequestComment == null){
+                    mergeRequestComment = new MergeRequestComment(
+                            gitLabMergeRequestComment.getId(),
+                            gitLabMergeRequestComment.getBody(),
+                            gitLabMergeRequestComment.getCreatedAt(),
+                            gitManagementUser,
+                            mergeRequest
+                    );
+                }
+                mergeRequestCommentRepository.save(mergeRequestComment);
+            });
         }
     }
 

@@ -32,6 +32,7 @@ public class AnalyticsService {
             gitManagementUserService.saveGitManagementUserInfo(gitLabProjectId);
             mergeRequestService.saveMergeRequestInfo(gitLabProjectId, startDateTime, endDateTime);
             commitService.saveCommitInfo(gitLabProjectId, startDateTime, endDateTime);
+
         }
     }
 }
