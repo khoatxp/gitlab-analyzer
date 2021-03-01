@@ -37,8 +37,8 @@ class ModelTests {
             ZonedDateTime.parse("2016-10-05T08:20:10+05:30[Asia/Kolkata]"), "URL", testProject, testGitManagementUser);
     private CommitComment testCommitComment = new CommitComment(testGitManagementUser, testCommit,
             "URL", null);
-    private Issue testIssue = new Issue(1L, "Issue", "csl33", "2014-12-32", "URL", testProject, testGitManagementUser);
-    private IssueComment testIssueComment = new IssueComment(1L, testGitManagementUser, testIssue, "URL", "2012-12-21");
+    private Issue testIssue = new Issue(1L, "Issue", "csl33", null, "URL", testProject, testGitManagementUser);
+    private IssueComment testIssueComment = new IssueComment(1L, "URL", null, testGitManagementUser, testIssue);
     private MergeRequest testMergeRequest = new MergeRequest(1L, "csl33", "MR_title", OffsetDateTime.parse("2016-10-05T08:20:10+05:30[Asia/Kolkata]"), "URL",
     testProject, testGitManagementUser);
 

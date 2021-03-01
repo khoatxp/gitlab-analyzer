@@ -1,8 +1,6 @@
 package com.eris.gitlabanalyzer.service;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -12,18 +10,14 @@ public class AnalyticsService {
     private final GitManagementUserService gitManagementUserService;
     private final MergeRequestService mergeRequestService;
     private final CommitService commitService;
+    private final IssueService issueService;
 
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
-
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
-
-    public AnalyticsService(ProjectService projectService, GitManagementUserService gitManagementUserService, MergeRequestService mergeRequestService, CommitService commitService) {
+    public AnalyticsService(ProjectService projectService, GitManagementUserService gitManagementUserService, MergeRequestService mergeRequestService, CommitService commitService, IssueService issueService) {
         this.projectService = projectService;
         this.gitManagementUserService = gitManagementUserService;
         this.mergeRequestService = mergeRequestService;
         this.commitService = commitService;
+        this.issueService = issueService;
     }
 
     public void saveAllFromGitlab(List<Long> gitLabProjectIdList, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
@@ -32,7 +26,7 @@ public class AnalyticsService {
             gitManagementUserService.saveGitManagementUserInfo(gitLabProjectId);
             mergeRequestService.saveMergeRequestInfo(gitLabProjectId, startDateTime, endDateTime);
             commitService.saveCommitInfo(gitLabProjectId, startDateTime, endDateTime);
-
+            issueService.saveIssueInfo(gitLabProjectId, startDateTime, endDateTime);
         }
     }
 }

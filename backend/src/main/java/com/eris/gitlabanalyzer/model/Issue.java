@@ -2,6 +2,7 @@ package com.eris.gitlabanalyzer.model;
 
 import javax.persistence. *;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class Issue {
             nullable = false
 
     )
-    private String createdAt;
+    private OffsetDateTime createdAt;
 
     @Column(
             name = "web_url",
@@ -84,7 +85,7 @@ public class Issue {
     public Issue() {
     }
 
-    public Issue(Long iid, String title, String authorName, String createdAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
+    public Issue(Long iid, String title, String authorName, OffsetDateTime createdAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
         this.iid = iid;
         this.title = title;
         this.authorName = authorName;
@@ -98,6 +99,10 @@ public class Issue {
         return id;
     }
 
+    public Long getIid() {
+        return iid;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -106,7 +111,7 @@ public class Issue {
         return authorName;
     }
 
-    public String getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 

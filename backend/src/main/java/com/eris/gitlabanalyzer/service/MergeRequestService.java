@@ -24,9 +24,6 @@ public class MergeRequestService {
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
 
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
-
     public MergeRequestService(GitLabService gitLabService, MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, MergeRequestCommentRepository mergeRequestCommentRepository) {
         this.gitLabService = gitLabService;
         this.mergeRequestRepository = mergeRequestRepository;
@@ -71,7 +68,7 @@ public class MergeRequestService {
         if (gitLabMergeRequestCommentList != null && !gitLabMergeRequestCommentList.isEmpty()) {
             gitLabMergeRequestCommentList.forEach(gitLabMergeRequestComment -> {
                 GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMergeRequestComment.getAuthor().getUsername(),serverUrl);
-                MergeRequestComment mergeRequestComment = mergeRequestCommentRepository.findByIidAndMergeRequestId(gitLabMergeRequestComment.getId(),mergeRequest.getIid());
+                MergeRequestComment mergeRequestComment = mergeRequestCommentRepository.findByIidAndMergeRequestId(gitLabMergeRequestComment.getId(),mergeRequest.getId());
                 if(mergeRequestComment == null){
                     mergeRequestComment = new MergeRequestComment(
                             gitLabMergeRequestComment.getId(),

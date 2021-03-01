@@ -1,6 +1,5 @@
 package com.eris.gitlabanalyzer.repository;
 
-import com.eris.gitlabanalyzer.model.Commit;
 import com.eris.gitlabanalyzer.model.CommitComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
