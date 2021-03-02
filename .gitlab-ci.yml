@@ -8,7 +8,7 @@ GitAnalyzer-FrontendTests:
 
   before_script:
     - 'cd ./frontend'
-    - 'call npm install -frozen-lockfile'
+    - 'npm install -frozen-lockfile'
 
   script:
     - 'npm test'
@@ -18,7 +18,11 @@ GitAnalyzer-BackendTests:
   except:
     - master
   image: maven:3.6.3-openjdk-15
-  script:
+
+  before_script:
     - 'cd ./backend'
-    - 'mvnw clean test'
+    - 'mvn install -B'
+
+  script:
+    - 'mvn clean test'
     - 'cd ..'
