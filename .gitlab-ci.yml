@@ -1,0 +1,24 @@
+stages:
+  - test
+GitAnalyzer-FrontendTests:
+  except:
+    - master
+  image: node:12.18.4
+  stage: test
+
+  before_script:
+    - 'cd ./frontend'
+    - 'call npm install -frozen-lockfile'
+
+  script:
+    - 'npm test'
+    - 'cd ..'
+
+GitAnalyzer-BackendTests:
+  except:
+    -master
+  image: maven:3.6.3-openjdk-15
+  script:
+    - 'cd ./backend'
+    - 'mvnw clean test'
+    - 'cd ..'
