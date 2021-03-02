@@ -3,7 +3,7 @@ package com.eris.gitlabanalyzer.service;
 import com.eris.gitlabanalyzer.model.*;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
 import com.eris.gitlabanalyzer.repository.UserServerRepository;
-import com.eris.gitlabanalyzer.viewmodel.ServerAccess;
+import com.eris.gitlabanalyzer.viewmodel.UserServerRequestBody;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,32 +19,32 @@ public class UserServerService {
         this.userServerRepository = userServerRepository;
     }
 
-    public Server getServer(Long serverId) {
-        return serverRepository.getOne(serverId);
+    public UserServer getUserServer(Long serverId) {
+        return userServerRepository.getOne(serverId);
     }
 
-    public List<Server> getUserServers(User user) {
-        return serverRepository.findByServerUserId(user.getId());
+    public List<UserServer> getUserServers(User user) {
+        return userServerRepository.findUserServerByUserId(user.getId());
     }
 
-    public void createServer(User user, ServerAccess serverAccess) {
-        Optional<Server> serverByUser = serverRepository.findByServerUrlAndUserId(serverAccess.getServerUrl(), user.getId());
+    public UserServer createServer(User user, String serverUrl, String accessToken) {
+        Optional<Server> serverByUser = serverRepository.findByServerUrlAndUserId(serverUrl, user.getId());
         if (serverByUser.isPresent()) {
             throw new IllegalStateException("Server already registered");
         }
 
-        UserServer userServer = new UserServer(serverAccess.getAccessToken());
+        UserServer userServer = new UserServer(accessToken);
         userServer.setUser(user);
 
-        Optional<Server> ServerByUrl = serverRepository.findFirstByServerUrl(serverAccess.getServerUrl());
+        Optional<Server> ServerByUrl = serverRepository.findFirstByServerUrl(serverUrl);
         if (ServerByUrl.isPresent()) {
             userServer.setServer(ServerByUrl.get());
         }
         else {
-            var server = serverRepository.save(new Server(serverAccess.getServerUrl()));
+            var server = serverRepository.save(new Server(serverUrl));
             userServer.setServer(server);
         }
-        userServerRepository.save(userServer);
+        return userServerRepository.save(userServer);
     }
 
 }

@@ -24,7 +24,7 @@ public class DefaultUserConfig {
         return args -> {
             Server server = new Server(serverUrl);
             serverRepository.save(server);
-            User user = new User("test");
+            User user = new User("user");
             user.addServer(server, accessToken);
             userRepository.save(user);
         };
