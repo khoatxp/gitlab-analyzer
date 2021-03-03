@@ -5,7 +5,6 @@ import java.util.List;
 import com.eris.gitlabanalyzer.model.ScoreProfile;
 import com.eris.gitlabanalyzer.service.ScoreProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,7 +26,7 @@ public class ScoreProfileController {
 
     @CrossOrigin
     @GetMapping("/{id}")
-    public ResponseEntity<ScoreProfile> getScoreProfile(@PathVariable(value = "id") Long id) {
+    public ScoreProfile getScoreProfile(@PathVariable(value = "id") Long id) {
         return scoreProfileService.getScoreProfile(id);
     }
 
@@ -39,14 +38,14 @@ public class ScoreProfileController {
 
     @CrossOrigin
     @PutMapping(path = "/{id}")
-    public ResponseEntity<ScoreProfile> UpdateScoreProfile(@PathVariable(value = "id") Long id, @RequestBody ScoreProfile scoreProfile){
-        return scoreProfileService.UpdateScoreProfile(id,scoreProfile);
+    public ScoreProfile updateScoreProfile(@PathVariable(value = "id") Long id, @RequestBody ScoreProfile scoreProfile){
+        return scoreProfileService.updateScoreProfile(id,scoreProfile);
     }
 
     @CrossOrigin
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<Long> DeleteScoreProfile(@PathVariable Long id) {
-        return scoreProfileService.DeleteScoreProfile(id);
+    public Long deleteScoreProfile(@PathVariable Long id) {
+        return scoreProfileService.deleteScoreProfile(id);
     }
 
 }

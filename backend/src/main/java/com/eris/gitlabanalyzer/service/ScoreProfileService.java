@@ -3,7 +3,6 @@ package com.eris.gitlabanalyzer.service;
 import com.eris.gitlabanalyzer.model.ScoreProfile;
 import com.eris.gitlabanalyzer.repository.ScoreProfileRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
@@ -22,9 +21,8 @@ public class ScoreProfileService {
     }
 
 
-    public ResponseEntity<ScoreProfile> getScoreProfile(Long id) {
-        ScoreProfile scoreProfile = scoreProfileRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found for this id : " + id));
-        return ResponseEntity.ok().body(scoreProfile);
+    public ScoreProfile getScoreProfile(Long id) {
+        return scoreProfileRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found for this id : " + id));
     }
 
 
@@ -32,7 +30,7 @@ public class ScoreProfileService {
         return this.scoreProfileRepository.save(scoreProfile);
     }
 
-    public ResponseEntity<ScoreProfile> UpdateScoreProfile( Long id, ScoreProfile scoreProfile) {
+    public ScoreProfile updateScoreProfile( Long id, ScoreProfile scoreProfile) {
 
         ScoreProfile oldProfile =  scoreProfileRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found for this id : " + id));
         oldProfile.setName(scoreProfile.getName());
@@ -42,14 +40,14 @@ public class ScoreProfileService {
         oldProfile.setSyntaxWeight(scoreProfile.getSyntaxWeight());
         oldProfile.getExtension().forEach((k,v)-> scoreProfile.getExtension().put(k,v));
         final ScoreProfile updatedProfile = scoreProfileRepository.save(oldProfile);
-        return ResponseEntity.ok(updatedProfile);
+        return updatedProfile;
     }
 
 
-    public ResponseEntity<Long> DeleteScoreProfile( Long id) {
+    public Long deleteScoreProfile( Long id) {
         ScoreProfile scoreProfile = scoreProfileRepository.findById(id).orElseThrow(() ->new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found for this id : " + id));
         scoreProfileRepository.delete(scoreProfile);
-        return ResponseEntity.ok(id);
+        return id;
     }
 
 
