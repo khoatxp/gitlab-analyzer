@@ -1,11 +1,11 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.exception.RessourceNotFoundException;
 import com.eris.gitlabanalyzer.model.ScoreProfile;
 import com.eris.gitlabanalyzer.repository.ScoreProfileRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
@@ -22,8 +22,8 @@ public class ScoreProfileService {
     }
 
 
-    public ResponseEntity<ScoreProfile> getScoreProfile(Long id) throws RessourceNotFoundException {
-        ScoreProfile scoreProfile = scoreProfileRepository.findById(id).orElseThrow(() -> throw new ResponseStatusException(NOT_FOUND, "Profile not found for this id : " + id));
+    public ResponseEntity<ScoreProfile> getScoreProfile(Long id) {
+        ScoreProfile scoreProfile = scoreProfileRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found for this id : " + id));
         return ResponseEntity.ok().body(scoreProfile);
     }
 
@@ -32,9 +32,9 @@ public class ScoreProfileService {
         return this.scoreProfileRepository.save(scoreProfile);
     }
 
-    public ResponseEntity<ScoreProfile> UpdateScoreProfile( Long id, ScoreProfile scoreProfile) throws RessourceNotFoundException{
+    public ResponseEntity<ScoreProfile> UpdateScoreProfile( Long id, ScoreProfile scoreProfile) {
 
-        ScoreProfile oldProfile =  scoreProfileRepository.findById(id).orElseThrow(()->new RessourceNotFoundException("Profile not found for this id : " + id));
+        ScoreProfile oldProfile =  scoreProfileRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found for this id : " + id));
         oldProfile.setName(scoreProfile.getName());
         oldProfile.setCommentsWeight(scoreProfile.getCommentsWeight());
         oldProfile.setDeleteWeight(scoreProfile.getDeleteWeight());
@@ -46,8 +46,8 @@ public class ScoreProfileService {
     }
 
 
-    public ResponseEntity<Long> DeleteScoreProfile( Long id) throws RessourceNotFoundException {
-        ScoreProfile scoreProfile = scoreProfileRepository.findById(id).orElseThrow(() -> new RessourceNotFoundException("Profile not found for this id : " + id));
+    public ResponseEntity<Long> DeleteScoreProfile( Long id) {
+        ScoreProfile scoreProfile = scoreProfileRepository.findById(id).orElseThrow(() ->new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found for this id : " + id));
         scoreProfileRepository.delete(scoreProfile);
         return ResponseEntity.ok(id);
     }

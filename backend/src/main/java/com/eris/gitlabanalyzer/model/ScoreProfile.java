@@ -32,7 +32,7 @@ public class ScoreProfile {
     @ElementCollection
     @MapKeyColumn(name="extension")
     @Column(name="weight")
-    private Map<String, Double> extension = new HashMap<String, Double>();
+    private Map<String, Double> extensionWeights = new HashMap<String, Double>();
 
     public ScoreProfile(){
     }
@@ -105,18 +105,18 @@ public class ScoreProfile {
     }
 
     public Map<String, Double> getExtension() {
-        return extension;
+        return extensionWeights;
     }
 
 
     public void addExtension( Map<String, Double> New ){
 
-       extension.putAll(New);
+       extensionWeights.putAll(New);
     }
 
     public void deleteExtension(String file){
-        if(extension.containsKey(file)) {
-            extension.remove(file);
+        if(extensionWeights.containsKey(file)) {
+            extensionWeights.remove(file);
         }
     }
 
