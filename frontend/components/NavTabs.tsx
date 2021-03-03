@@ -28,12 +28,12 @@ export default function NavTabs({tabSelected}: { tabSelected: number }) {
                     aria-label="nav tabs"
                 >
                     <Tab
-                        label="Code"
-                        onClick={() => router.push(`/project/${projectId}/code${queryDate}`)}
+                        label="Overview"
+                        onClick={() => router.push(`/project/${projectId}/overview${queryDate}`)}
                     />
                     <Tab
-                        label="Activity"
-                        onClick={() => {}}
+                        label="Code"
+                        onClick={() => router.push(`/project/${projectId}/code${queryDate}`)}
                     />
                     <Tab
                         label="Notes"
