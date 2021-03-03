@@ -6,6 +6,12 @@ describe("Project Folder", () =>{
     const useRouter = jest.spyOn(require('next/router'), 'useRouter');
     const mockUseEffect = jest.spyOn(React, 'useEffect')
     const mockAxios = jest.spyOn(require('axios'), 'get');
+    const mockEnqueue = jest.spyOn(require('notistack'), "useSnackbar");
+    let enqueueSnackbar = jest.fn();
+
+    beforeAll(() =>{
+        mockEnqueue.mockImplementation(() => {return {enqueueSnackbar}});
+    })
 
     it("Snapshot serverId", () => {
         useRouter.mockImplementationOnce(() => ({

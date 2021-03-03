@@ -43,14 +43,14 @@ exports[`NavBar Snapshot NavBar 1`] = `
           Gitlab Analyzer
         </h6>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-colorInherit"
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-button-4 MuiButton-containedPrimary MuiButton-disableElevation"
           tabindex="0"
           type="button"
         >
           <span
             class="MuiButton-label"
           >
-            Login
+            Logout
           </span>
           <span
             class="MuiTouchRipple-root"

@@ -6,21 +6,25 @@ module.exports = {
     collectCoverageFrom: [
         "**/*.{tsx,ts}",
         "!**/node_modules/**",
+        "!**/interfaces/**",
         "!**/pages/_app.tsx/**",
         "!**/pages/_document.tsx/**",
         "!**/public/**",
         "!**/styles/**",
         "!**/tests/**",
     ],
+    transform: {
+        '^.+\\.(ts|tsx)?$': 'ts-jest'
+    },
     collectCoverage: true,
-    coverageThreshold: {
+   /* coverageThreshold: {
         global: {
             branches: 70,
             functions: 60,
             lines: 88,
             statements: 88,
         }
-    },
+    }, */
     "snapshotSerializers": ["enzyme-to-json/serializer"],
   // https://github.com/zeit/next.js/issues/8663#issue-490553899
     "globals": {
