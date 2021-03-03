@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Project Folder Snapshot serverId 1`] = `
+<div>
+  <div
+    class="MuiBox-root MuiBox-root-2 makeStyles-background-1"
+  >
+    <button
+      class="MuiButtonBase-root MuiButton-root WithStyles(ForwardRef(Button))-root-3 MuiButton-contained"
+      tabindex="0"
+      type="button"
+    >
+      <span
+        class="MuiButton-label"
+      >
+        Everyone
+      </span>
+    </button>
+  </div>
+</div>
+`;
