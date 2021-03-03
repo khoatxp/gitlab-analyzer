@@ -1,19 +1,13 @@
 import React from "react";
-import NavBar from "../../../../components/NavBar";
-import MenuSideBar from "../../../../components/MenuSideBar";
-import NavTabs from "../../../../components/NavTabs";
-import {Box} from "@material-ui/core";
 import AuthView from "../../../../components/AuthView";
+import MenuLayout from "../../../../components/layout/menu/MenuLayout";
 
 const index = () => {
     return (
         <AuthView>
-            <NavBar/>
-            <NavTabs tabSelected={1}/>
-            <Box display="flex">
-                <MenuSideBar/>
-                Code page
-            </Box>
+            <MenuLayout tabSelected={1}>
+                To be completed in a different ticket
+            </MenuLayout>
         </AuthView>
     );
 };

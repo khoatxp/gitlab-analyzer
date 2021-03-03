@@ -1,8 +1,6 @@
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import React, {memo, useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
-
-import NavBar from "../../../../components/NavBar";
 import {
     Box,
     Card,
@@ -26,9 +24,9 @@ import {MergeRequest} from "../../../../interfaces/GitLabMergeRequest";
 import {Issue} from "../../../../interfaces/GitLabIssue";
 import {Task} from "../../../../interfaces/GitLabTask";
 import {useRouter} from "next/router";
-import NavTabs from "../../../../components/NavTabs";
 import {AuthContext} from "../../../../components/AuthContext";
 import AuthView from "../../../../components/AuthView";
+import MenuLayout from "../../../../components/layout/menu/MenuLayout";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -127,37 +125,36 @@ const NotesPage = () => {
     const classes = useStyles();
     return (
         <AuthView>
-            <NavBar/>
-            <NavTabs tabSelected={2}/>
-            <Box m={1}/>
-            <Container maxWidth='xl'>
-                <Grid container spacing={2}>
+            <MenuLayout tabSelected={2}>
+                <Container maxWidth='xl'>
+                    <Grid container spacing={2}>
 
-                    <Grid item xs={12} md={4} lg={3}>
-                        <Card>
-                            <Box style={{display: 'flex', justifyContent: 'center'}}>
-                                <RadioGroupSelectMergeRequestsOrIssues
-                                    value={noteType}
-                                    handleChange={handleSelectNoteType}
-                                    numMergeRequests={mergeRequests.length}
-                                    numIssues={issues.length}
-                                />
-                            </Box>
-                            <Box className={classes.taskList}>
-                                <TaskList items={noteType === NoteType.MergeRequest ? mergeRequests : issues}
-                                          selectedItem={selectedItem}
-                                          handleSelectedItemChange={handleSelectItem}/>
-                            </Box>
-                        </Card>
-                    </Grid>
+                        <Grid item xs={12} md={4} lg={3}>
+                            <Card>
+                                <Box style={{display: 'flex', justifyContent: 'center'}}>
+                                    <RadioGroupSelectMergeRequestsOrIssues
+                                        value={noteType}
+                                        handleChange={handleSelectNoteType}
+                                        numMergeRequests={mergeRequests.length}
+                                        numIssues={issues.length}
+                                    />
+                                </Box>
+                                <Box className={classes.taskList}>
+                                    <TaskList items={noteType === NoteType.MergeRequest ? mergeRequests : issues}
+                                              selectedItem={selectedItem}
+                                              handleSelectedItemChange={handleSelectItem}/>
+                                </Box>
+                            </Card>
+                        </Grid>
 
-                    <Grid item xs={12} md={8} lg={9}>
-                        <Card>
-                            <NotesList notes={notes}/>
-                        </Card>
+                        <Grid item xs={12} md={8} lg={9}>
+                            <Card>
+                                <NotesList notes={notes}/>
+                            </Card>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Container>
+                </Container>
+            </MenuLayout>
         </AuthView>
     );
 };
