@@ -1,6 +1,6 @@
 
 import React, {ReactNode} from 'react';
-import CardLayout from '../../components/CardLayout';
+import CardLayout from '../../components/layout/CardLayout';
 import {render} from "@testing-library/react";
 
 

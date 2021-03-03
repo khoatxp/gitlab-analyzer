@@ -1,8 +1,8 @@
 import React from "react";
 import Box from '@material-ui/core/Box';
-import CardLayout from "../../components/CardLayout";
-import AppButton from "../../components/AppButton";
-import AppProgressBar from "../../components/AppProgressBar";
+import CardLayout from "../../components/layout/CardLayout";
+import AppButton from "../../components/app/AppButton";
+import AppProgressBar from "../../components/app/AppProgressBar";
 import AnimatedProgressText from "../../components/AnimatedProgressText";
 
 const index = () => {

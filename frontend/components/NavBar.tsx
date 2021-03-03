@@ -7,7 +7,7 @@ import Image from "next/image";
 import {Icon} from "@material-ui/core";
 import {useRouter} from "next/router";
 import { defaultUserCredential, AuthContext } from "./AuthContext";
-import AppButton from "./AppButton";
+import AppButton from "./app/AppButton";
 
 const useStyles = makeStyles((theme) => ({
     root: {
