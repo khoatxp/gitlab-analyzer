@@ -23,7 +23,7 @@ public class ScoreProfileService {
 
 
     public ResponseEntity<ScoreProfile> getScoreProfile(Long id) throws RessourceNotFoundException {
-        ScoreProfile scoreProfile = scoreProfileRepository.findById(id).orElseThrow(() -> new RessourceNotFoundException("Profile not found for this id : " + id));
+        ScoreProfile scoreProfile = scoreProfileRepository.findById(id).orElseThrow(() -> throw new ResponseStatusException(NOT_FOUND, "Profile not found for this id : " + id));
         return ResponseEntity.ok().body(scoreProfile);
     }
 
