@@ -2,7 +2,7 @@ package com.eris.gitlabanalyzer.model.gitlabresponse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 @lombok.Getter
 public class GitLabCommit {
@@ -13,7 +13,7 @@ public class GitLabCommit {
     @JsonProperty("author_email")
     private String authorEmail;
     @JsonProperty("created_at")
-    private ZonedDateTime createdAt;
+    private OffsetDateTime createdAt;
     private String title;
     @JsonProperty("web_url")
     private String webUrl;

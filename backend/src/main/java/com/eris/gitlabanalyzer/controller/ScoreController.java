@@ -1,10 +1,11 @@
 package com.eris.gitlabanalyzer.controller;
+
 import com.eris.gitlabanalyzer.service.ScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 
 @RestController
@@ -26,9 +27,9 @@ public class ScoreController {
     @GetMapping(path ="/projects/{projectId}/merge_requests/score")
     public int getTotalMergeDiffScore (@PathVariable("projectId") Long projectId,
                                        @RequestParam("startDateTime")
-                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDateTime,
+                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
                                        @RequestParam("endDateTime")
-                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endDateTime){
+                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
         return scoreService.getTotalMergeDiffScore(projectId, startDateTime, endDateTime);
     }
 
@@ -40,9 +41,9 @@ public class ScoreController {
     @GetMapping(path ="/projects/{projectId}/commits/score")
     public int getTotalCommitDiffScore (@PathVariable("projectId") Long projectId,
                                        @RequestParam("startDateTime")
-                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDateTime,
+                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
                                        @RequestParam("endDateTime")
-                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endDateTime){
+                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
         return scoreService.getTotalCommitDiffScore(projectId, startDateTime, endDateTime);
     }
 }
