@@ -33,8 +33,8 @@ class ModelTests {
     private Project testProject = new Project(25514L, "TestProject", "Test Proejct",
             "http:wow!", testServer);
     private GitManagementUser testGitManagementUser = new GitManagementUser("csl33", "Jason Lee", testServer);
-    private Commit testCommit = new Commit("SHA", "Title", "csl33", "csl33@sfu.ca", "csl33", "csl33@sfu.ca",
-            ZonedDateTime.parse("2016-10-05T08:20:10+05:30[Asia/Kolkata]"), "URL", testProject, testGitManagementUser);
+    private Commit testCommit = new Commit("SHA", "Title", "csl33", "csl33@sfu.ca",
+            ZonedDateTime.parse("2016-10-05T08:20:10+05:30[Asia/Kolkata]"), "URL", testProject);
     private CommitComment testCommitComment = new CommitComment(testGitManagementUser, testCommit,
             "URL", null);
     private Issue testIssue = new Issue(1L, "Issue", "csl33", null, "URL", testProject, testGitManagementUser);

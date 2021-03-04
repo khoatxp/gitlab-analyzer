@@ -74,9 +74,6 @@ public class CommitService {
                         if(gitManagementUser == null){
                             //Second attempt using author name
                             gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabCommit.getAuthorName(),serverUrl);
-                            if(gitManagementUser == null){
-                                return;
-                            }
                         }
 
                         commit = new Commit(
@@ -84,17 +81,18 @@ public class CommitService {
                                 gitLabCommit.getTitle(),
                                 gitLabCommit.getAuthorName(),
                                 gitLabCommit.getAuthorEmail(),
-                                gitLabCommit.getAuthorName(),
-                                gitLabCommit.getAuthorEmail(),
                                 gitLabCommit.getCreatedAt(),
                                 gitLabCommit.getWebUrl(),
-                                project,
-                                gitManagementUser
+                                project
                         );
 
                         if(mergeRequest != null){
                             mergeRequest.addCommit(commit);
                             mrCommitShas.add(gitLabCommit.getSha());
+                        }
+
+                        if(gitManagementUser!=null){
+                            commit.setGitManagementUser(gitManagementUser);
                         }
 
                         commitRepository.save(commit);
