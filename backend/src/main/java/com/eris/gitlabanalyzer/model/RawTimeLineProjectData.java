@@ -1,14 +1,15 @@
 package com.eris.gitlabanalyzer.model;
+
 import reactor.core.publisher.Flux;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public class RawTimeLineProjectData {
 
     private Long gitLabProjectId;
-    private ZonedDateTime startDateTime;
-    private ZonedDateTime endDateTime;
+    private OffsetDateTime startDateTime;
+    private OffsetDateTime endDateTime;
     private Flux<RawMergeRequestData> mergeRequestData;
     private Flux<RawCommitData> orphanCommits;
 
@@ -16,8 +17,8 @@ public class RawTimeLineProjectData {
     }
 
     public RawTimeLineProjectData(Long gitLabProjectId,
-                                  ZonedDateTime startDateTime,
-                                  ZonedDateTime endDateTime,
+                                  OffsetDateTime startDateTime,
+                                  OffsetDateTime endDateTime,
                                   Flux<RawMergeRequestData> mergeRequestData,
                                   Flux<RawCommitData> orphanCommits) {
         this.gitLabProjectId = gitLabProjectId;
@@ -31,11 +32,11 @@ public class RawTimeLineProjectData {
         return gitLabProjectId;
     }
 
-    public ZonedDateTime getStartDateTime() {
+    public OffsetDateTime getStartDateTime() {
         return startDateTime;
     }
 
-    public ZonedDateTime getEndDateTime() {
+    public OffsetDateTime getEndDateTime() {
         return endDateTime;
     }
 

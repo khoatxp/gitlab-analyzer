@@ -1,13 +1,9 @@
 package com.eris.gitlabanalyzer;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.eris.gitlabanalyzer.model.*;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
 import com.eris.gitlabanalyzer.repository.UserRepository;
-import org.hibernate.Hibernate;
-import org.hibernate.LazyInitializationException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -15,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.ZonedDateTime;
-import java.util.List;
+import java.time.OffsetDateTime;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -41,9 +39,9 @@ class ModelTests {
             "http:wow!", testServer);
     private final GitManagementUser testGitManagementUser = new GitManagementUser("csl33", "Jason Lee", testServer);
     private final Commit testCommit = new Commit("SHA", "Title", "csl33", "csl33@sfu.ca", "csl33", "csl33@sfu.ca",
-            ZonedDateTime.parse("2016-10-05T08:20:10+05:30[Asia/Kolkata]"), "URL", testProject, testGitManagementUser);
+            OffsetDateTime.parse("2016-10-05T08:20:10+05:30"), "URL", testProject, testGitManagementUser);
     private final CommitComment testCommitComment = new CommitComment(1L, testGitManagementUser, testCommit,
-            "URL", "2014-12-12");
+            "URL", OffsetDateTime.parse("2014-12-12T08:20:10+05:30"));
     private final Issue testIssue = new Issue(1L, "Issue", "csl33", "2014-12-32", "URL", testProject, testGitManagementUser);
 
     @BeforeAll
