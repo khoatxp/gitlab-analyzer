@@ -4,13 +4,18 @@ import Image from "next/image";
 import AppGradientBackground from "./AppGradientBackground";
 import ChildrenProps from "../interfaces/ChildrenProps";
 
-type CardLayoutProps =  ChildrenProps & {size?: "sm" | "md"}
+type CardLayoutProps =  ChildrenProps & {
+    size?: "sm" | "md"
+    smLogo?: boolean
+}
 
-const CardLayout = ({children, size}: CardLayoutProps) => {
+const CardLayout = ({children, size, smLogo}: CardLayoutProps) => {
     // Change card width based on size prop
     let width = "60vw";
     width = size == "sm" ? "20vw": width;
     width = size == "md" ? "60vw": width;
+
+    let logoSize = smLogo ? "50": "80";
 
     return (
         <AppGradientBackground>
@@ -31,10 +36,12 @@ const CardLayout = ({children, size}: CardLayoutProps) => {
                     <Image
                         src="/gitlab.svg"
                         alt="The Gitlab Logo"
-                        width="125px"
-                        height="125px"
+                        width={logoSize}
+                        height={logoSize}
                     />
-                    <Typography variant="h6" gutterBottom>GitLab<br/>Analyzer</Typography>
+                    <Typography variant="h6">
+                        Gitlab Analyzer
+                    </Typography>
                 </Box>
                 {children}
             </Box>
