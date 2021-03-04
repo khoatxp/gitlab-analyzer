@@ -2,6 +2,7 @@ package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.GitManagementUser;
 import com.eris.gitlabanalyzer.model.Project;
+import com.eris.gitlabanalyzer.model.frontendresponse.GitManagementUserResponse;
 import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
@@ -60,7 +61,7 @@ public class GitManagementUserService {
     }
 
 
-    public List<GitManagementUser> getMembersByProjectId(Long projectId){
-        return gitManagementUserRepository.findByProjectId(projectId);
+    public List<GitManagementUserResponse> getMembersByProjectId(Long projectId){
+        return gitManagementUserRepository.getByProjectId(projectId);
     }
 }

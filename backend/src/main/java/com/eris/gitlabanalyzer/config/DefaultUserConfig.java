@@ -23,10 +23,16 @@ public class DefaultUserConfig {
     CommandLineRunner commandLineRunner(ServerRepository serverRepository, UserRepository userRepository){
         return args -> {
             Server server = new Server(serverUrl);
-            serverRepository.save(server);
+            if(serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken) == null){
+                serverRepository.save(server);
+            }
+
             User user = new User("test");
-            user.addServer(server, accessToken);
-            userRepository.save(user);
+            if(userRepository.findUserByUsername("test") == null){
+                user.addServer(server, accessToken);
+                userRepository.save(user);
+            }
+
         };
     }
 

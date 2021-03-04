@@ -39,6 +39,10 @@ export default function NavTabs({tabSelected}: { tabSelected: number }) {
                         label="Notes"
                         onClick={() => router.push(`/project/${projectId}/notes${queryDate}`)}
                     />
+                    <Tab
+                        label="Members"
+                        onClick={() => router.push(`/project/${projectId}/members`)}
+                    />
                 </Tabs>
             </AppBar>
         </div>
