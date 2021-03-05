@@ -65,8 +65,9 @@ public class MergeRequestService {
         MergeRequest mergeRequest = mergeRequestRepository.findByIidAndProjectId(mergeRequestIid, project.getId());
         var gitLabMergeRequestComments = gitLabService.getMergeRequestComments(project.getGitLabProjectId(), mergeRequest.getIid());
         var gitLabMergeRequestCommentList = gitLabMergeRequestComments.collectList().block();
+
         if (gitLabMergeRequestCommentList != null && !gitLabMergeRequestCommentList.isEmpty()) {
-            gitLabMergeRequestCommentList.forEach(gitLabMergeRequestComment -> {
+            gitLabMergeRequestCommentList.parallelStream().forEach(gitLabMergeRequestComment -> {
                 GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMergeRequestComment.getAuthor().getUsername(),serverUrl);
                 MergeRequestComment mergeRequestComment = mergeRequestCommentRepository.findByIidAndMergeRequestId(gitLabMergeRequestComment.getId(),mergeRequest.getId());
                 if(mergeRequestComment == null){

@@ -49,10 +49,11 @@ public class CommitService {
         //Save commits associated with each merge request
         List<MergeRequest> mergeRequestList = mergeRequestRepository.findAllByProjectId(project.getId());
         List<String> mrCommitShas = new ArrayList<>(); //Used to filter for the case of orphan commits
-        for(MergeRequest mergeRequest : mergeRequestList){
+
+        mergeRequestList.forEach(mergeRequest -> {
             var gitLabCommits = gitLabService.getMergeRequestCommits(gitLabProjectId, mergeRequest.getIid());
             saveCommitHelper(project, mergeRequest, gitLabCommits, mrCommitShas);
-        }
+        });
 
         //Save orphan commits
         var gitLabCommits = gitLabService.getCommits(gitLabProjectId, startDateTime, endDateTime)
@@ -60,7 +61,7 @@ public class CommitService {
         saveCommitHelper(project, null, gitLabCommits, mrCommitShas);
     }
 
-    private void saveCommitHelper(Project project, MergeRequest mergeRequest,Flux<GitLabCommit> gitLabCommits, List<String> mrCommitShas){
+    public void saveCommitHelper(Project project, MergeRequest mergeRequest,Flux<GitLabCommit> gitLabCommits, List<String> mrCommitShas){
         var gitLabCommitList = gitLabCommits.collectList().block();
 
         if (gitLabCommitList != null && !gitLabCommitList.isEmpty()) {
@@ -107,8 +108,9 @@ public class CommitService {
         Commit commit = commitRepository.findByCommitShaAndProjectId(commitSha, project.getId());
         var gitLabCommitComments = gitLabService.getCommitComments(project.getGitLabProjectId(), commitSha);
         var gitLabCommitCommentList = gitLabCommitComments.collectList().block();
+
         if (gitLabCommitCommentList != null && !gitLabCommitCommentList.isEmpty()) {
-            gitLabCommitCommentList.forEach(gitLabCommitComment -> {
+            gitLabCommitCommentList.parallelStream().forEach(gitLabCommitComment -> {
                 GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabCommitComment.getAuthor().getUsername(),serverUrl);
                 if(gitManagementUser == null){
                     return;

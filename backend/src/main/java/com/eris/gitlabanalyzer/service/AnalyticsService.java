@@ -22,12 +22,12 @@ public class AnalyticsService {
     }
 
     public void saveAllFromGitlab(List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        for (Long gitLabProjectId : gitLabProjectIdList) {
+        gitLabProjectIdList.forEach(gitLabProjectId -> {
             projectService.saveProjectInfo(gitLabProjectId);
             gitManagementUserService.saveGitManagementUserInfo(gitLabProjectId);
             mergeRequestService.saveMergeRequestInfo(gitLabProjectId, startDateTime, endDateTime);
             commitService.saveCommitInfo(gitLabProjectId, startDateTime, endDateTime);
             issueService.saveIssueInfo(gitLabProjectId, startDateTime, endDateTime);
-        }
+        });
     }
 }

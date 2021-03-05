@@ -61,7 +61,7 @@ public class IssueService {
         var gitLabIssueComments = gitLabService.getIssueNotes(project.getGitLabProjectId(), issue.getIid());
         var gitLabIssueCommentList = gitLabIssueComments.collectList().block();
         if (gitLabIssueCommentList != null && !gitLabIssueCommentList.isEmpty()) {
-            gitLabIssueCommentList.forEach(gitLabIssueComment -> {
+            gitLabIssueCommentList.parallelStream().forEach(gitLabIssueComment -> {
                 GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabIssueComment.getAuthor().getUsername(),serverUrl);
                 IssueComment issueComment = issueCommentRepository.findByIssueNoteIdAndIssueId(gitLabIssueComment.getId(),issue.getIid());
                 if(issueComment == null){

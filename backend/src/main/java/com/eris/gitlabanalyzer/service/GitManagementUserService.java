@@ -30,7 +30,6 @@ public class GitManagementUserService {
         this.gitLabService = gitLabService;
     }
 
-    //TODO Investigate other ways rather than using block(). Current issue is that there is a race condition when using subscribe()
     public void saveGitManagementUserInfo(Long gitLabProjectId){
         Project project = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, serverUrl);
 
