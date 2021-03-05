@@ -2,6 +2,9 @@ import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
 import {Divider, IconButton, LinearProgress, Typography} from "@material-ui/core";
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import EditIcon from '@material-ui/icons/Edit';
+import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from "@material-ui/icons/Delete";
 import ScoreProfile from "../interfaces/ScoreProfile";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -40,7 +43,7 @@ const ScoreProfileSelector = () => {
     useEffect(() => {
         if (router.isReady) {
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scoreprofile/profiles`)
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scoreprofile`)
                 .then((resp: AxiosResponse) => {
                     setProfile(resp.data);
                     setIsLoading(false);
@@ -73,7 +76,8 @@ const ScoreProfileSelector = () => {
                 <InputLabel ref={inputLabel} id="scoreOptions">
                     Score Options
                 </InputLabel>
-                <Select
+                <Select 
+                    IconComponent = {ArrowDropDownIcon}
                     labelId="score-option"
                     id="scoreOptions"
                     value={selectedProfile}
