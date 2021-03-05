@@ -79,18 +79,6 @@ public class GitLabService {
         return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabMergeRequest.class));
     }
 
-    public Flux<GitLabMergeRequestComment> getMergeRequestComments(Long projectId, Long mergeRequestIid) {
-        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
-                .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/notes")
-                .queryParam("per_page", 100)
-                .build()
-                .encode()
-                .toUri()
-                .toString();
-
-        return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabMergeRequestComment.class));
-    }
-
     public Flux<GitLabCommit> getMergeRequestCommits(Long projectId, Long mergeRequestIid) {
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/commits")

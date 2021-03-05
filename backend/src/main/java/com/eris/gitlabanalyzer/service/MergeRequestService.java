@@ -63,7 +63,7 @@ public class MergeRequestService {
 
     public void saveMergeRequestComments (Project project, Long mergeRequestIid){
         MergeRequest mergeRequest = mergeRequestRepository.findByIidAndProjectId(mergeRequestIid, project.getId());
-        var gitLabMergeRequestComments = gitLabService.getMergeRequestComments(project.getGitLabProjectId(), mergeRequest.getIid());
+        var gitLabMergeRequestComments = gitLabService.getMergeRequestNotes(project.getGitLabProjectId(), mergeRequest.getIid());
         var gitLabMergeRequestCommentList = gitLabMergeRequestComments.collectList().block();
 
         if (gitLabMergeRequestCommentList != null && !gitLabMergeRequestCommentList.isEmpty()) {

@@ -25,8 +25,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .authorizeRequests()
-                .antMatchers("**") // TODO: This pattern will permit all routes to skip authentication. Uncomment for easier route testing
-                .permitAll()
+//                .antMatchers("**") // TODO: This pattern will permit all routes to skip authentication. Uncomment for easier route testing
+//                .permitAll()
                 .antMatchers("/")
                 .permitAll()
                 .anyRequest()
