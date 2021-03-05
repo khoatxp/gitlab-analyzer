@@ -1,14 +1,9 @@
 package com.eris.gitlabanalyzer.model.gitlabresponse;
 
 import com.eris.gitlabanalyzer.model.types.Author;
-import com.eris.gitlabanalyzer.model.types.task.Milestone;
-import com.eris.gitlabanalyzer.model.types.task.References;
-import com.eris.gitlabanalyzer.model.types.task.TaskCompletionStatus;
-import com.eris.gitlabanalyzer.model.types.task.TimeStats;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 import lombok.ToString;
 
 @ToString

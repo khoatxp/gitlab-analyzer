@@ -52,19 +52,6 @@ public class Commit {
     )
     private String authorEmail;
 
-    @Column(
-            name = "committer_name",
-            nullable = false
-
-    )
-    private String committerName;
-
-    @Column(
-            name = "committer_email",
-            nullable = false
-
-    )
-    private String committerEmail;
 
     @Column(
             name = "created_at",
@@ -109,31 +96,26 @@ public class Commit {
     @ManyToOne
     @JoinColumn(
             name = "git_management_user_id",
-            nullable = false,
             referencedColumnName = "git_management_user_id")
     private GitManagementUser gitManagementUser;
 
     @ManyToOne
     @JoinColumn(
             name = "merge_request_id",
-            nullable = true,
             referencedColumnName = "merge_request_id")
     private MergeRequest mergeRequest;
 
     public Commit() {
     }
 
-    public Commit(String sha, String title, String authorName, String authorEmail, ZonedDateTime createdAt, String webUrl, Project project) {
+    public Commit(String sha, String title, String authorName, String authorEmail, OffsetDateTime createdAt, String webUrl, Project project) {
         this.sha = sha;
         this.title = title;
         this.authorName = authorName;
         this.authorEmail = authorEmail;
-        this.committerName = committerName;
-        this.committerEmail = committerEmail;
         this.createdAt = createdAt;
         this.webUrl = webUrl;
         this.project = project;
-        this.gitManagementUser = gitManagementUser;
     }
 
     public CommitMapping getCommitMapping() {

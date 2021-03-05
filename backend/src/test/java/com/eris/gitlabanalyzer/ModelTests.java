@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
 
 @SpringBootTest
 class ModelTests {
@@ -34,7 +33,7 @@ class ModelTests {
             "http:wow!", testServer);
     private GitManagementUser testGitManagementUser = new GitManagementUser("csl33", "Jason Lee", testServer);
     private Commit testCommit = new Commit("SHA", "Title", "csl33", "csl33@sfu.ca",
-            ZonedDateTime.parse("2016-10-05T08:20:10+05:30[Asia/Kolkata]"), "URL", testProject);
+            OffsetDateTime.parse("2016-10-05T08:20:10+05:30[Asia/Kolkata]"), "URL", testProject);
     private CommitComment testCommitComment = new CommitComment(testGitManagementUser, testCommit,
             "URL", null);
     private Issue testIssue = new Issue(1L, "Issue", "csl33", null, "URL", testProject, testGitManagementUser);
