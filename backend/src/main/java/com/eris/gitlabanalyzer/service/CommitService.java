@@ -6,10 +6,11 @@ import com.eris.gitlabanalyzer.repository.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
+import java.time.OffsetDateTime;
 
 @Service
 public class CommitService {

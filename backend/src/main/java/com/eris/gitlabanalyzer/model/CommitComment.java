@@ -62,7 +62,7 @@ public class CommitComment {
         return gitManagementUser;
     }
 
-    public String getnote() {
+    public String getNote() {
         return note;
     }
 

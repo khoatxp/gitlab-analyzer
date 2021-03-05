@@ -1,8 +1,7 @@
 package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
-
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,11 +53,25 @@ public class Commit {
     private String authorEmail;
 
     @Column(
+            name = "committer_name",
+            nullable = false
+
+    )
+    private String committerName;
+
+    @Column(
+            name = "committer_email",
+            nullable = false
+
+    )
+    private String committerEmail;
+
+    @Column(
             name = "created_at",
             nullable = false
 
     )
-    private ZonedDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     @Column(
             name = "web_url",
@@ -96,12 +109,14 @@ public class Commit {
     @ManyToOne
     @JoinColumn(
             name = "git_management_user_id",
+            nullable = false,
             referencedColumnName = "git_management_user_id")
     private GitManagementUser gitManagementUser;
 
     @ManyToOne
     @JoinColumn(
             name = "merge_request_id",
+            nullable = true,
             referencedColumnName = "merge_request_id")
     private MergeRequest mergeRequest;
 
@@ -113,9 +128,12 @@ public class Commit {
         this.title = title;
         this.authorName = authorName;
         this.authorEmail = authorEmail;
+        this.committerName = committerName;
+        this.committerEmail = committerEmail;
         this.createdAt = createdAt;
         this.webUrl = webUrl;
         this.project = project;
+        this.gitManagementUser = gitManagementUser;
     }
 
     public CommitMapping getCommitMapping() {
@@ -146,7 +164,7 @@ public class Commit {
         return authorEmail;
     }
 
-    public ZonedDateTime getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 

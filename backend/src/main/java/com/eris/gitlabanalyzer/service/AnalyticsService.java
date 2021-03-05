@@ -1,7 +1,8 @@
 package com.eris.gitlabanalyzer.service;
 
 import org.springframework.stereotype.Service;
-import java.time.ZonedDateTime;
+
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -20,7 +21,7 @@ public class AnalyticsService {
         this.issueService = issueService;
     }
 
-    public void saveAllFromGitlab(List<Long> gitLabProjectIdList, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+    public void saveAllFromGitlab(List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         for (Long gitLabProjectId : gitLabProjectIdList) {
             projectService.saveProjectInfo(gitLabProjectId);
             gitManagementUserService.saveGitManagementUserInfo(gitLabProjectId);

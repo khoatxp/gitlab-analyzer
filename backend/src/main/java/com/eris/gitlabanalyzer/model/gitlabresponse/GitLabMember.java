@@ -1,7 +1,6 @@
 package com.eris.gitlabanalyzer.model.gitlabresponse;
 
-@lombok.Data
-@lombok.NoArgsConstructor
+@lombok.Getter
 public class GitLabMember {
     private Long id;
     private String username;
