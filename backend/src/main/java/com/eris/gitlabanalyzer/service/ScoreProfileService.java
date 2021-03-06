@@ -33,14 +33,8 @@ public class ScoreProfileService {
     public ScoreProfile updateScoreProfile( Long id, ScoreProfile scoreProfile) {
 
         ScoreProfile oldProfile =  scoreProfileRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found for this id : " + id));
-        oldProfile.setName(scoreProfile.getName());
-        oldProfile.setCommentsWeight(scoreProfile.getCommentsWeight());
-        oldProfile.setDeleteWeight(scoreProfile.getDeleteWeight());
-        oldProfile.setLineWeight(scoreProfile.getLineWeight());
-        oldProfile.setSyntaxWeight(scoreProfile.getSyntaxWeight());
-        oldProfile.getExtension().forEach((k,v)-> scoreProfile.getExtension().put(k,v));
-        final ScoreProfile updatedProfile = scoreProfileRepository.save(oldProfile);
-        return updatedProfile;
+        scoreProfile.setId(oldProfile.getId());
+        return this.scoreProfileRepository.save(scoreProfile);
     }
 
 
