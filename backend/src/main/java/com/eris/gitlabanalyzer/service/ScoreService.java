@@ -7,7 +7,7 @@ import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 @Service
 public class ScoreService {
@@ -28,7 +28,7 @@ public class ScoreService {
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public int getTotalMergeDiffScore(Long projectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime){
+    public int getTotalMergeDiffScore(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
         Iterable<GitLabMergeRequest> mergeRequests = gitLabService.getMergeRequests(projectId, startDateTime, endDateTime).toIterable();
         int totalScore = 0;
         for( GitLabMergeRequest mr : mergeRequests){
@@ -45,7 +45,7 @@ public class ScoreService {
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public int getTotalCommitDiffScore(Long projectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+    public int getTotalCommitDiffScore(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         Iterable<GitLabCommit> commits = gitLabService.getCommits(projectId, startDateTime, endDateTime).toIterable();
         int totalScore = 0;
         for (GitLabCommit commit : commits) {

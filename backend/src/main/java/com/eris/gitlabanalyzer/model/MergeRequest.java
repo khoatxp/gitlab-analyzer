@@ -2,7 +2,6 @@ package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

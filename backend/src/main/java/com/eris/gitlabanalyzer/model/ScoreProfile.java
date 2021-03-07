@@ -1,11 +1,18 @@
 package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: Map score profile to their users
 @Entity
 @Table(name = "Score_Profile")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ScoreProfile {
 
     @Id
@@ -32,10 +39,7 @@ public class ScoreProfile {
     @ElementCollection
     @MapKeyColumn(name="extension")
     @Column(name="weight")
-    private Map<String, Double> extension = new HashMap<String, Double>();
-
-    public ScoreProfile(){
-    }
+    private Map<String, Double> extensionWeights = new HashMap<String, Double>();
 
     public ScoreProfile(String name, double lineWeight, double deleteWeight, double syntaxWeight, double commentsWeight){
         this.name = name;
@@ -45,78 +49,13 @@ public class ScoreProfile {
         this.commentsWeight = commentsWeight;
     }
 
-    public ScoreProfile(String name, double lineWeight, double deleteWeight, double syntaxWeight, double commentsWeight, Map<String, Double> extensions){
-        this.name = name;
-        this.lineWeight = lineWeight;
-        this.deleteWeight = deleteWeight;
-        this.syntaxWeight = syntaxWeight;
-        this.commentsWeight = commentsWeight;
-        if(extensions != null){
-            this.addExtension(extensions);
-        }
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public double getLineWeight() {
-        return lineWeight;
-    }
-
-    public void setLineWeight(double line) {
-        this.lineWeight = line;
-    }
-
-    public double getSyntaxWeight() {
-        return syntaxWeight;
-    }
-
-    public void setSyntaxWeight(double syntaxWeight) {
-        this.syntaxWeight = syntaxWeight;
-    }
-
-    public double getDeleteWeight() {
-        return deleteWeight;
-    }
-
-    public void setDeleteWeight(double delete) {
-        this.deleteWeight = delete;
-    }
-
-    public double getCommentsWeight() {
-        return commentsWeight;
-    }
-
-    public void setCommentsWeight(double comments) {
-        this.commentsWeight = comments;
-    }
-
-    public Map<String, Double> getExtension() {
-        return extension;
-    }
-
-
-    public void addExtension( Map<String, Double> New ){
-
-       extension.putAll(New);
+    public void addExtension( Map<String, Double> newExtension ){
+       extensionWeights.putAll(newExtension);
     }
 
     public void deleteExtension(String file){
-        if(extension.containsKey(file)) {
-            extension.remove(file);
+        if(extensionWeights.containsKey(file)) {
+            extensionWeights.remove(file);
         }
     }
 
