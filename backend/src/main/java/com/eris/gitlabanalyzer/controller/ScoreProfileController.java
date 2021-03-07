@@ -24,25 +24,21 @@ public class ScoreProfileController {
         return scoreProfileService.getScoreProfiles();
     }
 
-    @CrossOrigin
     @GetMapping("/{id}")
     public ScoreProfile getScoreProfile(@PathVariable(value = "id") Long id) {
         return scoreProfileService.getScoreProfile(id);
     }
 
-    @CrossOrigin
     @PostMapping
     public ScoreProfile createScoreProfile(@RequestBody ScoreProfile scoreProfile){
         return scoreProfileService.createScoreProfile(scoreProfile);
     }
 
-    @CrossOrigin
     @PutMapping(path = "/{id}")
     public ScoreProfile updateScoreProfile(@PathVariable(value = "id") Long id, @RequestBody ScoreProfile scoreProfile){
         return scoreProfileService.updateScoreProfile(id,scoreProfile);
     }
 
-    @CrossOrigin
     @DeleteMapping(path = "/{id}")
     public Long deleteScoreProfile(@PathVariable Long id) {
         return scoreProfileService.deleteScoreProfile(id);
