@@ -1,49 +1,91 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
-import {Divider, IconButton, LinearProgress, Typography} from "@material-ui/core";
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import EditIcon from '@material-ui/icons/Edit';
-import AddIcon from '@material-ui/icons/Add';
-import DeleteIcon from "@material-ui/icons/Delete";
-import ScoreProfile from "../interfaces/ScoreProfile";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
+import {DeleteIcon, AddBoxIcon, EditIcon} from '@material-ui/icons';
 import {makeStyles} from "@material-ui/core/styles";
+import {AuthContext } from "./AuthContext";
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import FormControl from '@material-ui/core/FormControl';
+import DialogContent from "@material-ui/core/DialogContent";
+import TextField from "@material-ui/core/TextField";
+import IconButton from "@material-ui/core/IconButton";
+import Dialog from "@material-ui/core/Dialog";
+import Select from '@material-ui/core/Select';
 
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({  
     formControl: {
-        margin: theme.spacing(1),
-        minWidth: 120
+        margin: theme.spacing(5),
+        minWidth: 150,
     },
-    selectEmpty: {
-        marginTop: theme.spacing(2)
+    rowAlign:{
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems:"center",
     }
 }));
 
+function Popup(props){
+    const classes = useStyles();
+    const { open, handleClose, id } = props;
+  
+    const close = () => {
+      handleClose();
+    };
+  
+  
+  
+    const handleSubmit = e => {
+      //();
+  
+    };
+  
+    return (
+        <React.Fragment>
+        <Dialog open={open} onClose={close} fullWidth maxWidth="sm">
+          <button onClick={close}>X</button>
+          <Typography align="center"> Score Profile</Typography>
+            <DialogContent>
+              <form className={classes.root} onSubmit={handleSubmit}>
+              <div>
+                <TextField
+                  name="body"
+                  label="New Line"
+                  placeholder="Weight"
+                  //value
+                  //onChange={handleChange}        
+                />
+                </div>
+                <div align="end">
+                  <button type="submit" variant="contained" color="primary">
+                    Save           
+                  </button>
+                </div>
+              </form>
+            </DialogContent>
+        </Dialog>
+      </React.Fragment>
+    )
+  }
 const ScoreProfileSelector = () => {
 
     const classes = useStyles();
-    const[profile, setProfile] =  useState<ScoreProfile[]>([]);
-    const[selectedProfile, setSelectedProfile] = useState<number>()
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const router = useRouter();
-    const {serverId} = router.query;
+    //const[profiles, setProfiles] =  useState<ScoreProfile[]>([]);
+    const profiles = ['a','b','c','d'];
     const [isIconVisibile, setIconVisibile] = React.useState(false);
-    const inputLabel = React.useRef(null);
-    const [labelWidth, setLabelWidth] = React.useState(0);
-    React.useEffect(() => {
-        setLabelWidth(inputLabel.current.offsetWidth);
-    }, []);
-
-
+    const[selectedProfile, setSelectedProfile] = useState<number>()
+    const [open, setOpen] = React.useState(false);
+    const {getAxiosAuthConfig} = React.useContext(AuthContext);
+    const router = useRouter();
+      
+ 
+    /** 
     useEffect(() => {
         if (router.isReady) {
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scoreprofile`)
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scoreprofile/profiles`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setProfile(resp.data);
                     setIsLoading(false);
@@ -51,51 +93,55 @@ const ScoreProfileSelector = () => {
             ;
         }
     });
+    */
 
     const onProfileSelect = (_event: any, value: ScoreProfile) => {
         setSelectedProfile(value.id);
     }
 
-    const LoadingBar = () => {
-        return <div>
-            <Typography variant={"body1"}>
-                Loading profiles...
-            </Typography>
-            <LinearProgress/>
-        </div>;
+    const handleOpen = () => {
+        setOpen(true);
+      };
+    
+      const handleClose = () => {
+        setOpen(false);
+      };
+    
+    
+      return (
+        <div className={classes.rowAlign}>        
+                <FormControl className={classes.formControl}>
+                    <InputLabel id="score-options">Score Options</InputLabel>
+                    <Select 
+                        labelId="score-options"
+                        onOpen={() => setIconVisibile(true)}
+                        onClose={() => setIconVisibile(false)}
+                    >
+                      {profiles.map(p => (
+                        <MenuItem value={p}>
+                          {p}    
+                            {isIconVisibile ? (
+                              <ListItemSecondaryAction variant="outlined">
+                                <IconButton edge="end" aria-label="edit" onClick={handleOpen}>
+                                  <EditIcon style={{ fontSize: "25px", color: "grey" }} />
+                                </IconButton>
+                                <Popup  open={open} handleClose={handleClose} />
+                                <IconButton edge="end" aria-label="delete">
+                                  <DeleteIcon style={{ fontSize: "25px", color: "#CC160B" }}/>
+                                </IconButton>
+                              </ListItemSecondaryAction>
+                              ) : null}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                </FormControl>
+    
+                <IconButton edge="start" aria-label="add" onClick={handleOpen}>
+                    <AddBoxIcon style={{ fontSize: "25px", color: "green" }}/>
+                </IconButton>
+                <Popup  open={open} handleClose={handleClose} />
+          </div>
+      );
     }
-
-    let loadingBar = null;
-    if (isLoading) {
-        loadingBar = <LoadingBar/>;
-    }
-
-    return(
-        <div>
-            <FormControl variant="outlined" className={classes.formControl}>
-                <InputLabel ref={inputLabel} id="scoreOptions">
-                    Score Options
-                </InputLabel>
-                <Select 
-                    IconComponent = {ArrowDropDownIcon}
-                    labelId="score-option"
-                    id="scoreOptions"
-                    value={selectedProfile}
-                    onChange={onProfileSelect}
-                    labelWidth={labelWidth}
-                >
-                    {profile.map(item => {
-                        return (
-                            <MenuItem value={item}>
-                                <li>{item.name}</li>
-                            </MenuItem>
-                        );
-                    })}
-                </Select>
-            </FormControl>
-        </div>
-
-    )
-}
 
 export default ScoreProfileSelector;

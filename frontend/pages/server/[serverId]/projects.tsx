@@ -79,15 +79,15 @@ const index = () => {
                     <Box
                         marginLeft="5px"
                         marginRight="5px"
-                        marginTop="10px"
+                        marginTop="3px"
                         color="white"
                         boxShadow={0}
                         width="56vw"
                         minWidth="260px"
                         display="flex"
-                        flexDirection="column"
-                        justifyContent="column"
-                        alignItems="column"
+                        flexDirection="row"
+                        justifyContent="row"
+                        alignItems="center"
                     >
                         <AppDateTimePicker
                             onStartDateTimeChange={onStartDateTimeSelect}
@@ -96,9 +96,7 @@ const index = () => {
                             endDateTime={endDateTime}
                         />
 
-                        <ScoreProfileSelector>
-
-                        </ScoreProfileSelector>
+                        <ScoreProfileSelector/>
 
                     </Box>
                     <Box
