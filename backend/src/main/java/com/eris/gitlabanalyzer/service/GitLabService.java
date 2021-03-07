@@ -1,5 +1,7 @@
 package com.eris.gitlabanalyzer.service;
 
+import com.eris.gitlabanalyzer.model.Server;
+import com.eris.gitlabanalyzer.model.UserServer;
 import com.eris.gitlabanalyzer.model.gitlabresponse.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -13,19 +15,20 @@ import reactor.core.publisher.Mono;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 
-@Service
 public class GitLabService {
     private final WebClient webClient;
     private final String projectPath = "api/v4/projects/";
+    private String serverUrl;
+    private String accessToken;
 
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
+//    public GitLabService() {
+//        this.webClient = WebClient.create();
+//    }
 
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
-
-    public GitLabService() {
+    public GitLabService(String serverUrl, String accessToken) {
         this.webClient = WebClient.create();
+        this.serverUrl = serverUrl;
+        this.accessToken = accessToken;
     }
 
     public Flux<GitLabProject> getProjects(){

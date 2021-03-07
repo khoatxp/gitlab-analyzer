@@ -5,9 +5,12 @@ import com.eris.gitlabanalyzer.service.UserServerService;
 import com.eris.gitlabanalyzer.viewmodel.UserServerRequestBody;
 import com.eris.gitlabanalyzer.viewmodel.UserServerView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @RestController
@@ -34,9 +37,14 @@ public class UserServerController {
 
     //TODO change to userserver
     @GetMapping(path ="/{serverId}")
-    public UserServerView getServer(@PathVariable("serverId") Long serverId) {
-        var userServer = userServerService.getUserServer(serverId);
-        return UserServerView.fromUserServer(userServer);
+    public UserServerView getServer(Principal principal, @PathVariable("serverId") Long serverId) {
+        //TODO get logged in user based on SSO session params
+        var username = principal.getName();
+        var user = this.userRepository.findUserByUsername(username);
+
+        var userServer = userServerService.getUserServer(user, serverId);
+        var server = userServer.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find server."));
+        return UserServerView.fromUserServer(server);
     }
 
     //TODO change to return userserver

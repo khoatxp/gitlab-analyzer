@@ -15,23 +15,26 @@ public class GitManagementUserService {
     private final GitManagementUserRepository gitManagementUserRepository;
     private final ProjectRepository projectRepository;
     private final ServerRepository serverRepository;
-    private final GitLabService gitLabService;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public GitManagementUserService(GitManagementUserRepository gitManagementUserRepository, ProjectRepository projectRepository, ServerRepository serverRepository, GitLabService gitLabService) {
+    public GitManagementUserService(GitManagementUserRepository gitManagementUserRepository, ProjectRepository projectRepository, ServerRepository serverRepository) {
         this.gitManagementUserRepository = gitManagementUserRepository;
         this.projectRepository = projectRepository;
         this.serverRepository = serverRepository;
-        this.gitLabService = gitLabService;
     }
 
     //TODO Investigate other ways rather than using block(). Current issue is that there is a race condition when using subscribe()
     public void saveGitManagementUserInfo(Long gitLabProjectId){
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
+
         Project project = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, serverUrl);
 
         var gitLabMembers = gitLabService.getMembers(gitLabProjectId);

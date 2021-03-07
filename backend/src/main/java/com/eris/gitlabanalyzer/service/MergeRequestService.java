@@ -13,25 +13,28 @@ import java.time.ZonedDateTime;
 
 @Service
 public class MergeRequestService {
-    GitLabService gitLabService;
     MergeRequestRepository mergeRequestRepository;
     ProjectRepository projectRepository;
     GitManagementUserRepository gitManagementUserRepository;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public MergeRequestService(GitLabService gitLabService, MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository) {
-        this.gitLabService = gitLabService;
+    public MergeRequestService(MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository) {
         this.mergeRequestRepository = mergeRequestRepository;
         this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
     }
 
     public void saveMergeRequestInfo(Long gitLabProjectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
+
         Project project = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, serverUrl);
 
         var gitLabMergeRequests = gitLabService.getMergeRequests(gitLabProjectId, startDateTime, endDateTime);

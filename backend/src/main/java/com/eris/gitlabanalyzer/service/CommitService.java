@@ -15,19 +15,19 @@ import java.time.ZonedDateTime;
 @Service
 public class CommitService {
 
-    GitLabService gitLabService;
     MergeRequestRepository mergeRequestRepository;
     ProjectRepository projectRepository;
     GitManagementUserRepository gitManagementUserRepository;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public CommitService(GitLabService gitLabService, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository) {
-        this.gitLabService = gitLabService;
+    public CommitService(ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository) {
         this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
     }
@@ -39,6 +39,9 @@ public class CommitService {
 
     public void saveCommitInfo(Long gitLabProjectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
         Project project = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, serverUrl);
+
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
 
         var gitLabCommits = gitLabService.getCommits(gitLabProjectId, startDateTime, endDateTime);
         var gitLabCommitList = gitLabCommits.collectList().block();

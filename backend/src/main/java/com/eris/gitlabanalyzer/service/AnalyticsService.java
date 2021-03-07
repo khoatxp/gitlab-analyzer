@@ -12,12 +12,6 @@ public class AnalyticsService {
     private final GitManagementUserService gitManagementUserService;
     private final MergeRequestService mergeRequestService;
 
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
-
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
-
     public AnalyticsService(ProjectService projectService, GitManagementUserService gitManagementUserService, MergeRequestService mergeRequestService) {
         this.projectService = projectService;
         this.gitManagementUserService = gitManagementUserService;

@@ -19,8 +19,9 @@ public class UserServerService {
         this.userServerRepository = userServerRepository;
     }
 
-    public UserServer getUserServer(Long serverId) {
-        return userServerRepository.getOne(serverId);
+    public Optional<UserServer> getUserServer(User user, Long serverId) {
+        var userServers = this.getUserServers(user);
+        return userServers.stream().filter(s -> s.getServer().getId() == serverId).findFirst();
     }
 
     public List<UserServer> getUserServers(User user) {
