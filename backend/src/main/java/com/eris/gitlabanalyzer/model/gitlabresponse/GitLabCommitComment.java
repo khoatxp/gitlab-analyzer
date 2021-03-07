@@ -2,7 +2,6 @@ package com.eris.gitlabanalyzer.model.gitlabresponse;
 
 import com.eris.gitlabanalyzer.model.types.Author;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.time.OffsetDateTime;
 
 @lombok.Getter
