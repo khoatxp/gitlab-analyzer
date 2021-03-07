@@ -64,44 +64,43 @@ public class CommitService {
     public void saveCommitHelper(Project project, MergeRequest mergeRequest,Flux<GitLabCommit> gitLabCommits, List<String> mrCommitShas){
         var gitLabCommitList = gitLabCommits.collectList().block();
 
-        if (gitLabCommitList != null && !gitLabCommitList.isEmpty()) {
-            gitLabCommitList.forEach(gitLabCommit -> {
-                        Commit commit = commitRepository.findByCommitShaAndProjectId(gitLabCommit.getSha(),project.getId());
-                        if(commit != null){return;}
+        gitLabCommitList.forEach(gitLabCommit -> {
+                    Commit commit = commitRepository.findByCommitShaAndProjectId(gitLabCommit.getSha(),project.getId());
+                    if(commit != null){return;}
 
-                        //First attempt to map member and commit using email
-                        String username = splitEmail(gitLabCommit.getAuthorEmail());
-                        GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(username, serverUrl);
+                    //First attempt to map member and commit using email
+                    String username = splitEmail(gitLabCommit.getAuthorEmail());
+                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(username, serverUrl);
 
-                        if(gitManagementUser == null){
-                            //Second attempt using author name
-                            gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabCommit.getAuthorName(),serverUrl);
-                        }
-
-                        commit = new Commit(
-                                gitLabCommit.getSha(),
-                                gitLabCommit.getTitle(),
-                                gitLabCommit.getAuthorName(),
-                                gitLabCommit.getAuthorEmail(),
-                                gitLabCommit.getCreatedAt(),
-                                gitLabCommit.getWebUrl(),
-                                project
-                        );
-
-                        if(mergeRequest != null){
-                            mergeRequest.addCommit(commit);
-                            mrCommitShas.add(gitLabCommit.getSha());
-                        }
-
-                        if(gitManagementUser!=null){
-                            commit.setGitManagementUser(gitManagementUser);
-                        }
-
-                        commitRepository.save(commit);
-                        saveCommitComment(project, gitLabCommit.getSha());
+                    if(gitManagementUser == null){
+                        //Second attempt using author name
+                        gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabCommit.getAuthorName(),serverUrl);
                     }
-            );
-        }
+
+                    commit = new Commit(
+                            gitLabCommit.getSha(),
+                            gitLabCommit.getTitle(),
+                            gitLabCommit.getAuthorName(),
+                            gitLabCommit.getAuthorEmail(),
+                            gitLabCommit.getCreatedAt(),
+                            gitLabCommit.getWebUrl(),
+                            project
+                    );
+
+                    if(mergeRequest != null){
+                        mergeRequest.addCommit(commit);
+                        mrCommitShas.add(gitLabCommit.getSha());
+                    }
+
+                    if(gitManagementUser!=null){
+                        commit.setGitManagementUser(gitManagementUser);
+                    }
+
+                    commitRepository.save(commit);
+                    saveCommitComment(project, gitLabCommit.getSha());
+                }
+        );
+
     }
 
     public void saveCommitComment(Project project, String commitSha){
@@ -109,24 +108,21 @@ public class CommitService {
         var gitLabCommitComments = gitLabService.getCommitComments(project.getGitLabProjectId(), commitSha);
         var gitLabCommitCommentList = gitLabCommitComments.collectList().block();
 
-        if (gitLabCommitCommentList != null && !gitLabCommitCommentList.isEmpty()) {
-            gitLabCommitCommentList.parallelStream().forEach(gitLabCommitComment -> {
-                GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabCommitComment.getAuthor().getUsername(),serverUrl);
-                if(gitManagementUser == null){
-                    return;
-                }
-                CommitComment commitComment = commitCommentRepository.findByUsernameAndCreatedAtAndCommitSha(gitLabCommitComment.getAuthor().getUsername(),gitLabCommitComment.getCreatedAt(),commitSha);
-                if(commitComment == null){
-                    commitComment = new CommitComment(
-                            gitManagementUser,
-                            commit,
-                            gitLabCommitComment.getNote(),
-                            gitLabCommitComment.getCreatedAt());
-                }
-                commitCommentRepository.save(commitComment);
-            });
-        }
-
+        gitLabCommitCommentList.parallelStream().forEach(gitLabCommitComment -> {
+            GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabCommitComment.getAuthor().getUsername(),serverUrl);
+            if(gitManagementUser == null){
+                return;
+            }
+            CommitComment commitComment = commitCommentRepository.findByUsernameAndCreatedAtAndCommitSha(gitLabCommitComment.getAuthor().getUsername(),gitLabCommitComment.getCreatedAt(),commitSha);
+            if(commitComment == null){
+                commitComment = new CommitComment(
+                        gitManagementUser,
+                        commit,
+                        gitLabCommitComment.getNote(),
+                        gitLabCommitComment.getCreatedAt());
+            }
+            commitCommentRepository.save(commitComment);
+        });
     }
 
 }

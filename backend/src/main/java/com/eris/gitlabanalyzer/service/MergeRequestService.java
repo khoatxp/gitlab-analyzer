@@ -38,27 +38,24 @@ public class MergeRequestService {
         var gitLabMergeRequests = gitLabService.getMergeRequests(gitLabProjectId, startDateTime, endDateTime);
         var gitLabMergeRequestList = gitLabMergeRequests.collectList().block();
 
-        if (gitLabMergeRequestList != null && !gitLabMergeRequestList.isEmpty()) {
-            gitLabMergeRequestList.forEach(gitLabMergeRequest -> {
-                        GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMergeRequest.getAuthor().getUsername(), serverUrl);
-                        MergeRequest mergeRequest = mergeRequestRepository.findByIidAndProjectId(gitLabMergeRequest.getIid(),project.getId());
-                        if(mergeRequest == null){
-                            mergeRequest = new MergeRequest(
-                                    gitLabMergeRequest.getIid(),
-                                    gitLabMergeRequest.getAuthor().getUsername(),
-                                    gitLabMergeRequest.getTitle(),
-                                    gitLabMergeRequest.getCreatedAt(),
-                                    gitLabMergeRequest.getWebUrl(),
-                                    project,
-                                    gitManagementUser
-                            );
-                        }
-                        mergeRequestRepository.save(mergeRequest);
-                        saveMergeRequestComments(project, gitLabMergeRequest.getIid());
+        gitLabMergeRequestList.forEach(gitLabMergeRequest -> {
+                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMergeRequest.getAuthor().getUsername(), serverUrl);
+                    MergeRequest mergeRequest = mergeRequestRepository.findByIidAndProjectId(gitLabMergeRequest.getIid(),project.getId());
+                    if(mergeRequest == null){
+                        mergeRequest = new MergeRequest(
+                                gitLabMergeRequest.getIid(),
+                                gitLabMergeRequest.getAuthor().getUsername(),
+                                gitLabMergeRequest.getTitle(),
+                                gitLabMergeRequest.getCreatedAt(),
+                                gitLabMergeRequest.getWebUrl(),
+                                project,
+                                gitManagementUser
+                        );
                     }
-            );
-
-        }
+                    mergeRequestRepository.save(mergeRequest);
+                    saveMergeRequestComments(project, gitLabMergeRequest.getIid());
+                }
+        );
     }
 
     public void saveMergeRequestComments (Project project, Long mergeRequestIid){
@@ -66,22 +63,20 @@ public class MergeRequestService {
         var gitLabMergeRequestComments = gitLabService.getMergeRequestNotes(project.getGitLabProjectId(), mergeRequest.getIid());
         var gitLabMergeRequestCommentList = gitLabMergeRequestComments.collectList().block();
 
-        if (gitLabMergeRequestCommentList != null && !gitLabMergeRequestCommentList.isEmpty()) {
-            gitLabMergeRequestCommentList.parallelStream().forEach(gitLabMergeRequestComment -> {
-                GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMergeRequestComment.getAuthor().getUsername(),serverUrl);
-                MergeRequestComment mergeRequestComment = mergeRequestCommentRepository.findByIidAndMergeRequestId(gitLabMergeRequestComment.getId(),mergeRequest.getId());
-                if(mergeRequestComment == null){
-                    mergeRequestComment = new MergeRequestComment(
-                            gitLabMergeRequestComment.getId(),
-                            gitLabMergeRequestComment.getBody(),
-                            gitLabMergeRequestComment.getCreatedAt(),
-                            gitManagementUser,
-                            mergeRequest
-                    );
-                }
-                mergeRequestCommentRepository.save(mergeRequestComment);
-            });
-        }
+        gitLabMergeRequestCommentList.parallelStream().forEach(gitLabMergeRequestComment -> {
+            GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMergeRequestComment.getAuthor().getUsername(),serverUrl);
+            MergeRequestComment mergeRequestComment = mergeRequestCommentRepository.findByIidAndMergeRequestId(gitLabMergeRequestComment.getId(),mergeRequest.getId());
+            if(mergeRequestComment == null){
+                mergeRequestComment = new MergeRequestComment(
+                        gitLabMergeRequestComment.getId(),
+                        gitLabMergeRequestComment.getBody(),
+                        gitLabMergeRequestComment.getCreatedAt(),
+                        gitManagementUser,
+                        mergeRequest
+                );
+            }
+            mergeRequestCommentRepository.save(mergeRequestComment);
+        });
     }
 
 }
