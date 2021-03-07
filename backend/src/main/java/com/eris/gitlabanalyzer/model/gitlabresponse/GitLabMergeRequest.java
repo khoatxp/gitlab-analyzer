@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.OffsetDateTime;
 import lombok.ToString;
 
-@ToString
+@lombok.ToString
 @lombok.Getter
 public class GitLabMergeRequest {
     private Long id;
