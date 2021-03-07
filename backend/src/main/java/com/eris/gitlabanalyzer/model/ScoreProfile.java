@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: Map score profile to their users
 @Entity
 @Table(name = "Score_Profile")
 @Data
