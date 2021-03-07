@@ -1,5 +1,5 @@
 import React from "react";
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import AppTextField from "../../components/AppTextField";
 import AppButton from "../../components/AppButton";
 import CardLayout from "../../components/CardLayout";
@@ -49,9 +49,11 @@ const AddServer = () => {
                     },
                     getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
-                    router.push(`/server/${resp.data.serverId}/projects`)
-                }).catch(() => {
-                enqueueSnackbar('Failed to save server.', {variant: 'error',});
+                    router.push(`/server`)
+                }).catch((error: AxiosError) => {
+                    let data = error.response?.data;
+                    let errMsg = data && data.message ? data.message : 'Failed to save server.';
+                    enqueueSnackbar(errMsg, {variant: 'error',});
             });
         }
     }

@@ -10,7 +10,6 @@ import NextLink from 'next/link'
 import {UserServerView} from "../../interfaces/UserServerView";
 import CardLayout from "../../components/CardLayout";
 import AppButton from "../../components/AppButton";
-import EditIcon from '@material-ui/icons/Edit';
 import {makeStyles} from "@material-ui/styles";
 
 const useStyles = makeStyles({

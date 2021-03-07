@@ -30,7 +30,7 @@ public class UserServerService {
     public UserServer createServer(User user, String serverUrl, String accessToken) {
         Optional<Server> serverByUser = serverRepository.findByServerUrlAndUserId(serverUrl, user.getId());
         if (serverByUser.isPresent()) {
-            throw new IllegalStateException("Server already registered");
+            throw new IllegalStateException("Server already registered.");
         }
 
         UserServer userServer = new UserServer(accessToken);
