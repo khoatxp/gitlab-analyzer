@@ -2,6 +2,8 @@ package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
 
+import java.time.OffsetDateTime;
+
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "CommitComment")
@@ -55,7 +57,7 @@ public class CommitComment {
             nullable = false
 
     )
-    private String createdAt;
+    private OffsetDateTime createdAt;
 
     public Long getId() {
         return id;
@@ -69,7 +71,7 @@ public class CommitComment {
         return webUrl;
     }
 
-    public String getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
@@ -84,7 +86,7 @@ public class CommitComment {
     public CommitComment() {
     }
 
-    public CommitComment(Long iid, GitManagementUser gitManagementUser, Commit commit, String webUrl, String createdAt) {
+    public CommitComment(Long iid, GitManagementUser gitManagementUser, Commit commit, String webUrl, OffsetDateTime createdAt) {
         this.iid = iid;
         this.gitManagementUser = gitManagementUser;
         this.commit = commit;

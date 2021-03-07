@@ -1,7 +1,6 @@
 package com.eris.gitlabanalyzer.controller;
 
 import com.eris.gitlabanalyzer.model.gitlabresponse.*;
-
 import com.eris.gitlabanalyzer.service.GitLabService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -9,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 @RestController
 @RequestMapping(path = "/api/v1/gitlab")
@@ -44,9 +43,9 @@ public class GitLabController {
     public Flux<GitLabMergeRequest> getMergeRequests(
             @PathVariable("projectId") Long projectId,
             @RequestParam("startDateTime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDateTime,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endDateTime) {
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
         return gitLabService.getMergeRequests(projectId, startDateTime, endDateTime);
     }
 
@@ -63,9 +62,9 @@ public class GitLabController {
     public Flux<GitLabCommit> getCommits(
             @PathVariable("projectId") Long projectId,
             @RequestParam("startDateTime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDateTime,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endDateTime) {
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
         return gitLabService.getCommits(projectId, startDateTime, endDateTime);
     }
 
@@ -98,9 +97,9 @@ public class GitLabController {
     public Flux<GitLabIssue> getIssues(
             @PathVariable("projectId") Long projectId,
             @RequestParam("startDateTime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDateTime,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endDateTime) {
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
         return gitLabService.getIssues(projectId, startDateTime, endDateTime);
     }
 

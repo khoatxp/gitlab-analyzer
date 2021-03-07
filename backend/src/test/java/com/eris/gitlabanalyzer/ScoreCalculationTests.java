@@ -2,18 +2,13 @@ package com.eris.gitlabanalyzer;
 
 import com.eris.gitlabanalyzer.dataprocessing.DiffScoreCalculator;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabFileChange;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequestChange;
 import com.eris.gitlabanalyzer.service.GitLabService;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.json.JsonContent;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,10 +19,10 @@ class ScoreCalculationTests {
     private GitLabService gitLabService;
     private final DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
 
-    private final ZoneId zoneId = ZoneId.systemDefault();
-    private final ZonedDateTime startTime = ZonedDateTime.of(2015, 1, 1, 1, 1, 1, 1, zoneId);
-    private final ZonedDateTime endTime = ZonedDateTime.now();
-    private String diff = "+ code line 1 -2\n" +
+    private final ZoneOffset zoneId = ZoneOffset.UTC;
+    private final OffsetDateTime startTime = OffsetDateTime.of(2015, 1, 1, 1, 1, 1, 1, zoneId);
+    private final OffsetDateTime endTime = OffsetDateTime.now();
+    private final String diff = "+ code line 1 -2\n" +
             "+ code line 2 -4\n" +
             "+ // comment line 1 -5\n" +
             "+ code line 3 -7\n" +

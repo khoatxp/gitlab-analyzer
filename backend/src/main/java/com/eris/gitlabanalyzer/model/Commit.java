@@ -1,8 +1,7 @@
 package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
-
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +71,7 @@ public class Commit {
             nullable = false
 
     )
-    private ZonedDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     @Column(
             name = "web_url",
@@ -124,7 +123,8 @@ public class Commit {
     public Commit() {
     }
 
-    public Commit(String sha, String title, String authorName, String authorEmail, String committerName, String committerEmail, ZonedDateTime createdAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
+    public Commit(String sha, String title, String authorName, String authorEmail, String committerName,
+                  String committerEmail, OffsetDateTime createdAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
         this.sha = sha;
         this.title = title;
         this.authorName = authorName;
@@ -173,7 +173,7 @@ public class Commit {
         return committerEmail;
     }
 
-    public ZonedDateTime getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 

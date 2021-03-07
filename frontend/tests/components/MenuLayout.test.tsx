@@ -1,16 +1,16 @@
 import React, {ReactNode} from 'react';
-import CardLayout from '../../components/layout/CardLayout';
+import MenuLayout from '../../components/layout/menu/MenuLayout';
 import {render} from "@testing-library/react";
 
 
 
-describe("Cardlayout", () =>{
+describe("MenuLayout", () =>{
     // Dummy child to render CardLayout
     const children: ReactNode = <div/>;
 
-    it("Snapshot CardLayout", () => {
+    it("Snapshot MenuLayout", () => {
         const { container } = render(
-            <CardLayout children={children}/>
+            <MenuLayout tabSelected={0} children={children}/>
         )
         expect(container).toMatchSnapshot();
     });
