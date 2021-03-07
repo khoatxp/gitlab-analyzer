@@ -32,7 +32,7 @@ public class ScoreController {
                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
         return scoreService.getTotalMergeDiffScore(projectId, startDateTime, endDateTime);
     }
-
+    /*
     @GetMapping(path ="/projects/{projectId}/commit/{sha}/diff/score")
     public int getCommitDiffScore (@PathVariable("projectId") Long projectId,
                              @PathVariable("sha") String sha){
@@ -45,5 +45,5 @@ public class ScoreController {
                                        @RequestParam("endDateTime")
                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
         return scoreService.getTotalCommitDiffScore(projectId, startDateTime, endDateTime);
-    }
+    } */
 }
