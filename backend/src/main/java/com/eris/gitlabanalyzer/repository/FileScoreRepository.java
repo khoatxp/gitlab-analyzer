@@ -8,9 +8,9 @@ import java.util.List;
 
 @Repository
 public interface FileScoreRepository extends JpaRepository<FileScore, Long> {
-    @Query("select f from FileScore f where f.project.id = ?1 and f.mergeRequest.iid = ?2")
-    List<FileScore> findByProjectIdAndMergeId(Long projectId, Long mergeId);
+    @Query("select f from FileScore f where f.mergeRequest.id = ?1")
+    List<FileScore> findByMergeId(Long mergeId);
 
-    @Query("select f from FileScore f where f.project.id = ?1 and f.commit.sha = ?2")
-    List<FileScore> findByProjectIdAndCommitSha(Long projectId, String commitSha);
+    @Query("select f from FileScore f where f.commit.id = ?1")
+    List<FileScore> findByCommitId(Long commitId);
 }

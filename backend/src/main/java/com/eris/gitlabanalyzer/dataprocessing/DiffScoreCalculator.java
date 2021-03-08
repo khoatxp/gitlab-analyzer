@@ -24,10 +24,9 @@ public class DiffScoreCalculator {
     }
 
 
-    public int calculateScore(long mergeId, long projectId){
+    public int calculateScore(long mergeId){
         int totalScore = 0;
-
-        List<FileScore> fileScores = fileScoreRepository.findByProjectIdAndMergeId(projectId, mergeId);
+        List<FileScore> fileScores = fileScoreRepository.findByMergeId(mergeId);
         for(FileScore fileScore : fileScores){
            totalScore += calculateFileScore(fileScore);
         }

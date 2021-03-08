@@ -1,5 +1,6 @@
 package com.eris.gitlabanalyzer.dataprocessing;
 
+import com.eris.gitlabanalyzer.model.Commit;
 import com.eris.gitlabanalyzer.model.FileScore;
 import com.eris.gitlabanalyzer.model.MergeRequest;
 import com.eris.gitlabanalyzer.model.Project;
@@ -8,7 +9,6 @@ import com.eris.gitlabanalyzer.repository.FileScoreRepository;
 import com.eris.gitlabanalyzer.repository.MergeRequestRepository;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import com.eris.gitlabanalyzer.service.GitLabService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -21,11 +21,8 @@ public class CalculateDiffMetrics {
 
     private final GitLabService gitLabService;
     private final FileScoreRepository fileScoreRepository;
-    private final ProjectRepository projectRepository;
     private final MergeRequestRepository mergeRequestRepository;
-
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
+    private final ProjectRepository projectRepository;
 
     private enum lineTypes {
         code,
@@ -36,12 +33,12 @@ public class CalculateDiffMetrics {
     }
 
     public CalculateDiffMetrics(GitLabService gitLabService, FileScoreRepository fileScoreRepository,
-                                ProjectRepository projectRepository, MergeRequestRepository mergeRequestRepository){
+                                MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository){
         initializeCommentCharacters();
         this.gitLabService = gitLabService;
         this.fileScoreRepository = fileScoreRepository;
-        this.projectRepository = projectRepository;
         this.mergeRequestRepository = mergeRequestRepository;
+        this.projectRepository = projectRepository;
     }
 
     private void initializeCommentCharacters(){
@@ -54,15 +51,17 @@ public class CalculateDiffMetrics {
         commentCharacters.put("py", new String[]{"#", "\"\"\""});
     }
     //TODO finish after 34 is merged
-    public void storeMetrics(String sha, long projectId){
-        if(fileScoreRepository.findByProjectIdAndCommitSha(projectId, sha) == null){
-            Iterable<GitLabFileChange> commit = gitLabService.getCommitDiff(projectId, sha).toIterable();
-            Project project = projectRepository.findByGitlabProjectIdAndServerUrl(projectId,serverUrl);
+    public void storeMetricsCommit(long projectId, long commitId){
+        //TODO get commit sha from repo
+        //Commit commit = commitRepository
+        if(fileScoreRepository.findByCommitId(commitId) == null){
+            //TODO pass sha retrieved from repo
+            Iterable<GitLabFileChange> commitDiff = gitLabService.getCommitDiff(projectId, "sha").toIterable();
             //Todo get commit after 34 is merged
             //Commit commit =
 
-            if(commit != null){
-                for(GitLabFileChange file : commit){
+            if(commitDiff != null){
+                for(GitLabFileChange file : commitDiff){
                     Map<lineTypes, Integer> fileCount = countLineTypes(file.getDiff(), findFileType(file));
                 }
             }
@@ -70,27 +69,27 @@ public class CalculateDiffMetrics {
         }
     }
 
-    public void storeMetrics(long mergeId, long projectId){
-        if(fileScoreRepository.findByProjectIdAndMergeId(projectId, mergeId).isEmpty()){
+    public void storeMetricsMerge(long mergeId, long projectId){
+        if(fileScoreRepository.findByMergeId(mergeId).isEmpty()){
 
-            Iterable<GitLabFileChange> merge = gitLabService.getMergeRequestDiff(projectId, mergeId).toIterable();
-            Project project = projectRepository.findByGitlabProjectIdAndServerUrl(projectId,serverUrl);
-            MergeRequest mergeRequest = mergeRequestRepository.findByIidAndProjectId(mergeId, projectId);
+            MergeRequest mergeRequest = mergeRequestRepository.findById(mergeId).orElse(null);
+            Project project = projectRepository.findById(projectId).orElse(null);
+            if(mergeRequest != null && project != null){
+                Iterable<GitLabFileChange> merge = gitLabService.getMergeRequestDiff(projectId, mergeRequest.getIid()).toIterable();
+                if(merge.iterator().hasNext()){
+                    for(GitLabFileChange file : merge){
+                        String fileType = findFileType(file);
+                        Map<lineTypes, Integer> fileCount = countLineTypes(file.getDiff(), fileType);
 
-            if(merge.iterator().hasNext()){
-                for(GitLabFileChange file : merge){
-                    String fileType = findFileType(file);
-                    Map<lineTypes, Integer> fileCount = countLineTypes(file.getDiff(), fileType);
+                        FileScore fileScore = new FileScore(mergeRequest, fileType, file.getNewPath(),
+                                fileCount.getOrDefault(lineTypes.code, 0), fileCount.getOrDefault(lineTypes.syntax,0),
+                                fileCount.getOrDefault(lineTypes.comment,0), fileCount.getOrDefault(lineTypes.removed,0));
 
-                    FileScore fileScore = new FileScore(project, mergeRequest, fileType, file.getNewPath(),
-                            fileCount.getOrDefault(lineTypes.code, 0), fileCount.getOrDefault(lineTypes.syntax,0),
-                            fileCount.getOrDefault(lineTypes.comment,0), fileCount.getOrDefault(lineTypes.removed,0));
-
-                    fileScoreRepository.save(fileScore);
+                        fileScoreRepository.save(fileScore);
+                    }
                 }
             }
         }
-
     }
 
     private String findFileType(GitLabFileChange file){

@@ -6,16 +6,13 @@ import com.eris.gitlabanalyzer.model.GitManagementUser;
 import com.eris.gitlabanalyzer.model.MergeRequest;
 import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.Server;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabFileChange;
 import com.eris.gitlabanalyzer.repository.*;
-import com.eris.gitlabanalyzer.service.GitLabService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.access.method.P;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -27,8 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class ScoreCalculationTests {
 
     @Autowired
-    private GitLabService gitLabService;
-    @Autowired
     private ProjectRepository projectRepository;
     @Autowired
     private MergeRequestRepository mergeRequestRepository;
@@ -36,8 +31,6 @@ class ScoreCalculationTests {
     private ServerRepository serverRepository;
     @Autowired
     private GitManagementUserRepository gitManagementUserRepository;
-    @Autowired
-    private FileScoreRepository fileScoreRepository;
     @Autowired
     private DiffScoreCalculator diffScoreCalculator;
     @Autowired
@@ -82,10 +75,8 @@ class ScoreCalculationTests {
 
         MergeRequest mergeRequest = new MergeRequest(mergeId, "testAuthor", "testTitle", startTime, "weburl", project, gitManagementUser);
         mergeRequestRepository.save(mergeRequest);
-
-        calculateDiffMetrics.storeMetrics(mergeId, projectId);
-
-        int results = diffScoreCalculator.calculateScore(mergeId, projectId);
+        calculateDiffMetrics.storeMetricsMerge(mergeRequest.getId(), project.getId());
+        int results = diffScoreCalculator.calculateScore(mergeRequest.getId());
         assertTrue((results > 0));
 
     }

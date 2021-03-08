@@ -19,10 +19,10 @@ public class ScoreController {
         this.scoreService = scoreService;
     }
 
-    @GetMapping(path ="/projects/{projectId}/merge_request/{merge_request_iid}/diff/score")
+    @GetMapping(path ="/projects/{projectId}/merge_request/{merge_request_id}/diff/score")
     public int getMergeDiffScore (@PathVariable("projectId") Long projectId,
-                             @PathVariable("merge_request_iid") Long merge_request_iid){
-        return scoreService.getMergeDiffScore(projectId, merge_request_iid);
+                             @PathVariable("merge_request_id") Long merge_request_id){
+        return scoreService.getMergeDiffScore(projectId, merge_request_id);
     }
     @GetMapping(path ="/projects/{projectId}/merge_requests/score")
     public int getTotalMergeDiffScore (@PathVariable("projectId") Long projectId,

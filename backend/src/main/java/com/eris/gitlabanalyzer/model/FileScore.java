@@ -24,13 +24,6 @@ public class FileScore {
 
     @ManyToOne
     @JoinColumn(
-            name = "project_id",
-            nullable = false,
-            referencedColumnName = "project_id")
-    private Project project;
-
-    @ManyToOne
-    @JoinColumn(
             name = "commit_id",
             referencedColumnName = "commit_id")
     private Commit commit;
@@ -73,9 +66,8 @@ public class FileScore {
 
     public FileScore(){}
 
-    public FileScore(Project project, MergeRequest mergeRequest, String fileType, String filePath,
+    public FileScore(MergeRequest mergeRequest, String fileType, String filePath,
                      int codeLineAdded, int syntaxLineAdded, int commentLineAdded, int lineRemoved){
-        this.project = project;
         this.mergeRequest = mergeRequest;
         this.fileType = fileType;
         this.filePath = filePath;
@@ -85,9 +77,8 @@ public class FileScore {
         this.lineRemoved = lineRemoved;
     }
 
-    public FileScore(Project project, Commit commit, String fileType, String filePath,
+    public FileScore(Commit commit, String fileType, String filePath,
                      int codeLineAdded, int syntaxLineAdded, int commentLineAdded, int lineRemoved){
-        this.project = project;
         this.commit = commit;
         this.fileType = fileType;
         this.filePath = filePath;
@@ -99,10 +90,6 @@ public class FileScore {
 
     public Long getId() {
         return id;
-    }
-
-    public Project getProject() {
-        return project;
     }
 
     public Commit getCommit() {
