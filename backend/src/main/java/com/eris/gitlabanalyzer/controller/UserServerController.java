@@ -25,7 +25,6 @@ public class UserServerController {
         this.userServerService = userServerService;
     }
 
-    //TODO change to userserver
     @GetMapping
     public Stream<UserServerView> getUserServers(Principal principal) {
         //TODO get logged in user based on SSO session params
@@ -35,7 +34,6 @@ public class UserServerController {
         return userServers.stream().map(UserServerView::fromUserServer);
     }
 
-    //TODO change to userserver
     @GetMapping(path ="/{serverId}")
     public UserServerView getServer(Principal principal, @PathVariable("serverId") Long serverId) {
         //TODO get logged in user based on SSO session params
@@ -47,7 +45,6 @@ public class UserServerController {
         return UserServerView.fromUserServer(server);
     }
 
-    //TODO change to return userserver
     @PostMapping
     public UserServerView AddNewUserServer(Principal principal, @RequestBody UserServerRequestBody requestBody) {
         //TODO get logged in user based on SSO session params

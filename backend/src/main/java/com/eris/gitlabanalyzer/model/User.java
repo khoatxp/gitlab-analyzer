@@ -44,12 +44,6 @@ public class User {
         this.username = username;
     }
 
-    // TODO I don't think we need this I have added it temporarily so I can create a user instance in ServerController
-    public User(Long id, String username) {
-        this.id = id;
-        this.username = username;
-    }
-
     public Long getId() {
         return id;
     }

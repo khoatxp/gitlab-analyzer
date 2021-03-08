@@ -1,11 +1,7 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.model.Server;
-import com.eris.gitlabanalyzer.model.UserServer;
 import com.eris.gitlabanalyzer.model.gitlabresponse.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -20,10 +16,6 @@ public class GitLabService {
     private final String projectPath = "api/v4/projects/";
     private String serverUrl;
     private String accessToken;
-
-//    public GitLabService() {
-//        this.webClient = WebClient.create();
-//    }
 
     public GitLabService(String serverUrl, String accessToken) {
         this.webClient = WebClient.create();
