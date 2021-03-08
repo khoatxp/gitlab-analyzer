@@ -3,8 +3,9 @@ package com.eris.gitlabanalyzer;
 import com.eris.gitlabanalyzer.dataprocessing.DiffScoreCalculator;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabFileChange;
 import com.eris.gitlabanalyzer.service.GitLabService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -14,6 +15,7 @@ import java.time.ZoneOffset;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ScoreCalculationTests {
 
     @Value("${gitlab.SERVER_URL}")
@@ -22,7 +24,7 @@ class ScoreCalculationTests {
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    private GitLabService gitLabService =  new GitLabService(serverUrl, accessToken);
+    private GitLabService gitLabService;
     private final DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
 
     private final ZoneOffset zoneId = ZoneOffset.UTC;
@@ -39,6 +41,11 @@ class ScoreCalculationTests {
             "+ Block comment line 1 */-12\n" +
             "+ code line 6 -14\n" +
             "+ }";
+
+    @BeforeAll
+    void init(){
+        gitLabService =  new GitLabService(serverUrl, accessToken);
+    }
 
     @Test
     void check_MergeDiff()  {
