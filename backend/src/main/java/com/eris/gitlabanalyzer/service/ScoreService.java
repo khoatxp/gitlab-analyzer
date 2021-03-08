@@ -3,7 +3,6 @@ package com.eris.gitlabanalyzer.service;
 import com.eris.gitlabanalyzer.dataprocessing.CalculateDiffMetrics;
 import com.eris.gitlabanalyzer.dataprocessing.DiffScoreCalculator;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
-import com.eris.gitlabanalyzer.repository.FileScoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,15 +14,13 @@ public class ScoreService {
     private final GitLabService gitLabService;
     private final DiffScoreCalculator diffScoreCalculator;
     private final CalculateDiffMetrics calculateDiffMetrics;
-    private final FileScoreRepository fileScoreRepository;
 
     @Autowired
     public ScoreService(GitLabService gitLabService, DiffScoreCalculator diffScoreCalculator,
-                        CalculateDiffMetrics calculateDiffMetrics,FileScoreRepository fileScoreRepository){
+                        CalculateDiffMetrics calculateDiffMetrics){
         this.diffScoreCalculator = diffScoreCalculator;
         this.gitLabService = gitLabService;
         this.calculateDiffMetrics = calculateDiffMetrics;
-        this.fileScoreRepository = fileScoreRepository;
     }
 
     // This will most likely change as we update how we retrieve diff's
@@ -37,6 +34,7 @@ public class ScoreService {
         Iterable<GitLabMergeRequest> mergeRequests = gitLabService.getMergeRequests(projectId, startDateTime, endDateTime).toIterable();
         int totalScore = 0;
         for( GitLabMergeRequest mr : mergeRequests){
+            calculateDiffMetrics.storeMetricsMerge(mr.getId(), projectId);
           totalScore += diffScoreCalculator.calculateScore(mr.getId());
         }
 
