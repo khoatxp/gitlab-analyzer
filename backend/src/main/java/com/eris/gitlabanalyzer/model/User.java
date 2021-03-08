@@ -8,7 +8,7 @@ import java.util.List;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "User")
-@Table(name = "app_user")
+@Table(name = "app_user", uniqueConstraints=@UniqueConstraint(columnNames={"user_name"}))
 public class User {
     @Id
     @SequenceGenerator(
@@ -24,7 +24,9 @@ public class User {
             name = "user_id"
     )
     private Long id;
-
+    @Column(
+            name = "user_name"
+    )
     private String username;
 
     @OneToMany(

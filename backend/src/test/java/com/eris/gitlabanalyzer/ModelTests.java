@@ -12,9 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.OffsetDateTime;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -81,9 +81,9 @@ class ModelTests {
 
     @Test
     void userModel() {
-        User queryResult = userRepository.findUserByUsername("csl33");
-        assertNotNull(queryResult);
-        assertEquals(queryResult.getUsername(), "csl33");
+        Optional<User> queryResult = userRepository.findUserByUsername("csl33");
+        assertFalse(queryResult.isEmpty());
+        assertEquals(queryResult.get().getUsername(), "csl33");
     }
 
     /* From what I can tell this test can't lazy load as the userServer model is initialized and given

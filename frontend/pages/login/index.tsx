@@ -25,24 +25,11 @@ const Login = () => {
     }
 
     const handleLogin = () => {
-        saveLoginSession();
-        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
-            auth: {
-                username: username,
-                password: password,
-            }
-        }).then((resp: AxiosResponse) => {
-            enqueueSnackbar("Login successful!", {variant: 'success',});
-            router.push('/server/1/projects') // TODO: Change route so server id is not hard coded
-        }).catch((err: AxiosError) => {
-            enqueueSnackbar(`Login failed: ${err.message}`, {variant: 'error',});
-        })
+        location.replace(`https://cas.sfu.ca/cas/login?service=http://localhost:8080/api/v1/auth`)
     }
 
     return (
         <CardLayout size="sm">
-            <AppTextField placeholder="Username" value={username} onChange={(e) => setUserName(e.target.value)}/>
-            <AppTextField placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
             <Box alignSelf="center">
                 <AppButton color="primary" onClick={handleLogin}>Login</AppButton>
             </Box>
