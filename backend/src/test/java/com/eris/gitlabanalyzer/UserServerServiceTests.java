@@ -14,19 +14,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class UserServerServiceTests {
 
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
-
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
-
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private UserServerService userServerService;
-
-    private GitLabService gitLabService =  new GitLabService(serverUrl, accessToken);
 
 
     @Test

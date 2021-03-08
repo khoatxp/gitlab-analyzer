@@ -11,9 +11,6 @@ public interface ServerRepository extends JpaRepository<Server, Long> {
     @Query("select s from Server s join s.userServers us where s.serverUrl=?1 and us.accessToken=?2")
     Server findByServerUrlAndAccessToken(String serverUrl, String accessToken);
 
-    @Query("select s from Server s join s.userServers us where us.user.id=?1")
-    List<Server> findByServerUserId(Long userId);
-
     @Query("select s from Server s join s.userServers us where s.serverUrl=?1 and us.user.id=?2")
     Optional<Server> findByServerUrlAndUserId(String serverUrl, Long userId);
 

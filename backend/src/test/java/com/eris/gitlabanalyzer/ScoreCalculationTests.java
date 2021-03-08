@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JsonContent;
 
@@ -20,8 +21,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class ScoreCalculationTests {
 
-    @Autowired
-    private GitLabService gitLabService;
+    @Value("${gitlab.SERVER_URL}")
+    String serverUrl;
+
+    @Value("${gitlab.ACCESS_TOKEN}")
+    String accessToken;
+
+    private GitLabService gitLabService =  new GitLabService(serverUrl, accessToken);
     private final DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
 
     private final ZoneId zoneId = ZoneId.systemDefault();
