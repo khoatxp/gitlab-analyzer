@@ -1,34 +1,27 @@
 import React from 'react';
-import {render} from '@testing-library/react';
-import MenuSideBar from '../../components/MenuSideBar';
+import MenuSideBar from '../../components/layout/menu/MenuSideBar';
+import {mount, ReactWrapper} from "enzyme";
 
 describe("Project Folder", () =>{
     const useRouter = jest.spyOn(require('next/router'), 'useRouter');
-    const mockUseEffect = jest.spyOn(React, 'useEffect')
+    const mockUseEffect = jest.spyOn(React, 'useEffect');
     const mockAxios = jest.spyOn(require('axios'), 'get');
+    let rend:ReactWrapper;
 
 
-    beforeEach(() =>{
-        useRouter.mockClear();
-        mockUseEffect.mockClear();
-        mockAxios.mockClear();
+    beforeAll(async() =>{
+        useRouter.mockImplementationOnce(() => ({
+            query: { projectId: 'TestId' },
+        }));
+        rend = mount(<MenuSideBar />);
+        await Promise.resolve()
     })
 
     it("Snapshot serverId", () => {
-        useRouter.mockImplementationOnce(() => ({
-            query: { projectId: 'TestId' },
-        }));
-        const { container } = render(
-            <MenuSideBar />
-        )
-        expect(container).toMatchSnapshot();
+        expect(rend).toMatchSnapshot();
 
     })
     it("Test useEffect", ()=>{
-        useRouter.mockImplementationOnce(() => ({
-            query: { projectId: 'TestId' },
-        }));
-        render(<MenuSideBar />);
         expect(mockUseEffect).toBeCalled();
 
     })
@@ -38,13 +31,13 @@ describe("Project Folder", () =>{
             query: { projectId: 'TestId' },
             isReady: true,
         }));
-        render(<MenuSideBar />);
+        mount(<MenuSideBar />);
         expect(mockAxios).toHaveBeenCalledTimes(1);
         useRouter.mockImplementationOnce(() => ({
             query: { projectId: 'TestId' },
             isReady: false,
         }));
-        render(<MenuSideBar />);
+        mount(<MenuSideBar />);
         expect(mockAxios).toHaveBeenCalledTimes(1);
     })
 

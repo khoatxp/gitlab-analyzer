@@ -1,33 +1,29 @@
 import React from 'react';
-import {render} from '@testing-library/react';
 import CodeAnalysis from '../../components/CodeAnalysis';
+import {mount, ReactWrapper} from "enzyme";
 
 describe("Code Analysis", () =>{
     const useRouter = jest.spyOn(require('next/router'), 'useRouter');
     const mockUseEffect = jest.spyOn(React, 'useEffect')
     const mockAxios = jest.spyOn(require('axios'), 'get');
+    let rend:ReactWrapper
 
-    beforeEach(()=>{
-        useRouter.mockClear();
-        mockUseEffect.mockClear();
-        mockAxios.mockClear();
+        beforeAll(async()=>{
+        useRouter.mockImplementationOnce(() => ({
+            query: { projectId: 'TestId', startDateTime: '2020-08-22T15:40-05:00', endDateTime:'2021-08-22T15:40-05:00' },
+        }));
+        const rend = mount(
+            <CodeAnalysis />
+        );
+        await Promise.resolve();
     })
 
     it("Snapshot serverId", () => {
-        useRouter.mockImplementationOnce(() => ({
-            query: { projectId: 'TestId', startDateTime: '2020-08-22T15:40-05:00', endDateTime:'2021-08-22T15:40-05:00' },
-        }));
-        const { container } = render(
-            <CodeAnalysis />
-        )
-        expect(container).toMatchSnapshot();
+
+        expect(rend).toMatchSnapshot();
 
     })
     it("Test useEffect", ()=>{
-        useRouter.mockImplementationOnce(() => ({
-            query: { projectId: 'TestId', startDateTime: '2020-08-22T15:40-05:00', endDateTime:'2021-08-22T15:40-05:00' },
-        }));
-        render(<CodeAnalysis />);
         expect(mockUseEffect).toBeCalled();
 
     })
@@ -37,14 +33,14 @@ describe("Code Analysis", () =>{
             query: { projectId: 'TestId', startDateTime: '2020-08-22T15:40-05:00', endDateTime:'2021-08-22T15:40-05:00' },
             isReady: true,
         }));
-        render(<CodeAnalysis />);
+        mount(<CodeAnalysis />);
         expect(mockAxios).toHaveBeenCalledTimes(5);
 
         useRouter.mockImplementationOnce(() => ({
             query: { projectId: 'TestId', startDateTime: '2020-08-22T15:40-05:00', endDateTime:'2021-08-22T15:40-05:00' },
             isReady: false,
         }));
-        render(<CodeAnalysis />);
+        mount(<CodeAnalysis />);
         expect(mockAxios).toHaveBeenCalledTimes(5);
     })
 

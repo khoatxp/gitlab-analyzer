@@ -1,63 +1,378 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`NavBar Snapshot NavBar 1`] = `
-<div>
-  <div
-    class="makeStyles-root-1"
+<NavBar>
+  <WithStyles(ForwardRef(AppBar))
+    className="makeStyles-root-1"
+    color="default"
+    position="static"
   >
-    <header
-      class="MuiPaper-root MuiAppBar-root MuiAppBar-positionStatic MuiAppBar-colorDefault MuiPaper-elevation4"
+    <ForwardRef(AppBar)
+      className="makeStyles-root-1"
+      classes={
+        Object {
+          "colorDefault": "MuiAppBar-colorDefault",
+          "colorInherit": "MuiAppBar-colorInherit",
+          "colorPrimary": "MuiAppBar-colorPrimary",
+          "colorSecondary": "MuiAppBar-colorSecondary",
+          "colorTransparent": "MuiAppBar-colorTransparent",
+          "positionAbsolute": "MuiAppBar-positionAbsolute",
+          "positionFixed": "MuiAppBar-positionFixed",
+          "positionRelative": "MuiAppBar-positionRelative",
+          "positionStatic": "MuiAppBar-positionStatic",
+          "positionSticky": "MuiAppBar-positionSticky",
+          "root": "MuiAppBar-root",
+        }
+      }
+      color="default"
+      position="static"
     >
-      <div
-        class="MuiToolbar-root MuiToolbar-regular MuiToolbar-gutters"
+      <WithStyles(ForwardRef(Paper))
+        className="MuiAppBar-root MuiAppBar-positionStatic MuiAppBar-colorDefault makeStyles-root-1"
+        component="header"
+        elevation={4}
+        square={true}
       >
-        <span
-          aria-hidden="true"
-          class="material-icons MuiIcon-root"
+        <ForwardRef(Paper)
+          className="MuiAppBar-root MuiAppBar-positionStatic MuiAppBar-colorDefault makeStyles-root-1"
+          classes={
+            Object {
+              "elevation0": "MuiPaper-elevation0",
+              "elevation1": "MuiPaper-elevation1",
+              "elevation10": "MuiPaper-elevation10",
+              "elevation11": "MuiPaper-elevation11",
+              "elevation12": "MuiPaper-elevation12",
+              "elevation13": "MuiPaper-elevation13",
+              "elevation14": "MuiPaper-elevation14",
+              "elevation15": "MuiPaper-elevation15",
+              "elevation16": "MuiPaper-elevation16",
+              "elevation17": "MuiPaper-elevation17",
+              "elevation18": "MuiPaper-elevation18",
+              "elevation19": "MuiPaper-elevation19",
+              "elevation2": "MuiPaper-elevation2",
+              "elevation20": "MuiPaper-elevation20",
+              "elevation21": "MuiPaper-elevation21",
+              "elevation22": "MuiPaper-elevation22",
+              "elevation23": "MuiPaper-elevation23",
+              "elevation24": "MuiPaper-elevation24",
+              "elevation3": "MuiPaper-elevation3",
+              "elevation4": "MuiPaper-elevation4",
+              "elevation5": "MuiPaper-elevation5",
+              "elevation6": "MuiPaper-elevation6",
+              "elevation7": "MuiPaper-elevation7",
+              "elevation8": "MuiPaper-elevation8",
+              "elevation9": "MuiPaper-elevation9",
+              "outlined": "MuiPaper-outlined",
+              "root": "MuiPaper-root",
+              "rounded": "MuiPaper-rounded",
+            }
+          }
+          component="header"
+          elevation={4}
+          square={true}
         >
-          <div
-            style="display: inline-block; max-width: 100%; overflow: hidden; position: relative; box-sizing: border-box; margin: 0px;"
+          <header
+            className="MuiPaper-root MuiAppBar-root MuiAppBar-positionStatic MuiAppBar-colorDefault makeStyles-root-1 MuiPaper-elevation4"
           >
-            <div
-              style="box-sizing: border-box; display: block; max-width: 100%;"
-            >
-              <img
-                alt=""
-                aria-hidden="true"
-                role="presentation"
-                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiLz4="
-                style="max-width: 100%; display: block; margin: 0px; padding: 0px;"
-              />
-            </div>
-            <img
-              alt="The Gitlab Logo"
-              decoding="async"
-              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-              style="visibility: hidden; position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; box-sizing: border-box; padding: 0px; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"
-            />
-          </div>
-        </span>
-        <h6
-          class="MuiTypography-root makeStyles-title-3 MuiTypography-h6"
-        >
-          Gitlab Analyzer
-        </h6>
-        <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-button-4 MuiButton-containedPrimary MuiButton-disableElevation"
-          tabindex="0"
-          type="button"
-        >
-          <span
-            class="MuiButton-label"
-          >
-            Logout
-          </span>
-          <span
-            class="MuiTouchRipple-root"
-          />
-        </button>
-      </div>
-    </header>
-  </div>
-</div>
+            <WithStyles(ForwardRef(Toolbar))>
+              <ForwardRef(Toolbar)
+                classes={
+                  Object {
+                    "dense": "MuiToolbar-dense",
+                    "gutters": "MuiToolbar-gutters",
+                    "regular": "MuiToolbar-regular",
+                    "root": "MuiToolbar-root",
+                  }
+                }
+              >
+                <div
+                  className="MuiToolbar-root MuiToolbar-regular MuiToolbar-gutters"
+                >
+                  <WithStyles(ForwardRef(Icon))>
+                    <ForwardRef(Icon)
+                      classes={
+                        Object {
+                          "colorAction": "MuiIcon-colorAction",
+                          "colorDisabled": "MuiIcon-colorDisabled",
+                          "colorError": "MuiIcon-colorError",
+                          "colorPrimary": "MuiIcon-colorPrimary",
+                          "colorSecondary": "MuiIcon-colorSecondary",
+                          "fontSizeInherit": "MuiIcon-fontSizeInherit",
+                          "fontSizeLarge": "MuiIcon-fontSizeLarge",
+                          "fontSizeSmall": "MuiIcon-fontSizeSmall",
+                          "root": "MuiIcon-root",
+                        }
+                      }
+                    >
+                      <span
+                        aria-hidden={true}
+                        className="material-icons MuiIcon-root"
+                      >
+                        <Image
+                          alt="The Gitlab Logo"
+                          height={100}
+                          src="/gitlab.svg"
+                          width={100}
+                        >
+                          <div
+                            style={
+                              Object {
+                                "boxSizing": "border-box",
+                                "display": "inline-block",
+                                "margin": 0,
+                                "maxWidth": "100%",
+                                "overflow": "hidden",
+                                "position": "relative",
+                              }
+                            }
+                          >
+                            <div
+                              style={
+                                Object {
+                                  "boxSizing": "border-box",
+                                  "display": "block",
+                                  "maxWidth": "100%",
+                                }
+                              }
+                            >
+                              <img
+                                alt=""
+                                aria-hidden={true}
+                                role="presentation"
+                                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiLz4="
+                                style={
+                                  Object {
+                                    "border": "none",
+                                    "display": "block",
+                                    "margin": 0,
+                                    "maxWidth": "100%",
+                                    "padding": 0,
+                                  }
+                                }
+                              />
+                            </div>
+                            <img
+                              alt="The Gitlab Logo"
+                              decoding="async"
+                              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                              style={
+                                Object {
+                                  "border": "none",
+                                  "bottom": 0,
+                                  "boxSizing": "border-box",
+                                  "display": "block",
+                                  "height": 0,
+                                  "left": 0,
+                                  "margin": "auto",
+                                  "maxHeight": "100%",
+                                  "maxWidth": "100%",
+                                  "minHeight": "100%",
+                                  "minWidth": "100%",
+                                  "objectFit": undefined,
+                                  "objectPosition": undefined,
+                                  "padding": 0,
+                                  "position": "absolute",
+                                  "right": 0,
+                                  "top": 0,
+                                  "visibility": "hidden",
+                                  "width": 0,
+                                }
+                              }
+                            />
+                          </div>
+                        </Image>
+                      </span>
+                    </ForwardRef(Icon)>
+                  </WithStyles(ForwardRef(Icon))>
+                  <WithStyles(ForwardRef(Typography))
+                    className="makeStyles-title-3"
+                    variant="h6"
+                  >
+                    <ForwardRef(Typography)
+                      className="makeStyles-title-3"
+                      classes={
+                        Object {
+                          "alignCenter": "MuiTypography-alignCenter",
+                          "alignJustify": "MuiTypography-alignJustify",
+                          "alignLeft": "MuiTypography-alignLeft",
+                          "alignRight": "MuiTypography-alignRight",
+                          "body1": "MuiTypography-body1",
+                          "body2": "MuiTypography-body2",
+                          "button": "MuiTypography-button",
+                          "caption": "MuiTypography-caption",
+                          "colorError": "MuiTypography-colorError",
+                          "colorInherit": "MuiTypography-colorInherit",
+                          "colorPrimary": "MuiTypography-colorPrimary",
+                          "colorSecondary": "MuiTypography-colorSecondary",
+                          "colorTextPrimary": "MuiTypography-colorTextPrimary",
+                          "colorTextSecondary": "MuiTypography-colorTextSecondary",
+                          "displayBlock": "MuiTypography-displayBlock",
+                          "displayInline": "MuiTypography-displayInline",
+                          "gutterBottom": "MuiTypography-gutterBottom",
+                          "h1": "MuiTypography-h1",
+                          "h2": "MuiTypography-h2",
+                          "h3": "MuiTypography-h3",
+                          "h4": "MuiTypography-h4",
+                          "h5": "MuiTypography-h5",
+                          "h6": "MuiTypography-h6",
+                          "noWrap": "MuiTypography-noWrap",
+                          "overline": "MuiTypography-overline",
+                          "paragraph": "MuiTypography-paragraph",
+                          "root": "MuiTypography-root",
+                          "srOnly": "MuiTypography-srOnly",
+                          "subtitle1": "MuiTypography-subtitle1",
+                          "subtitle2": "MuiTypography-subtitle2",
+                        }
+                      }
+                      variant="h6"
+                    >
+                      <h6
+                        className="MuiTypography-root makeStyles-title-3 MuiTypography-h6"
+                      >
+                        Gitlab Analyzer
+                      </h6>
+                    </ForwardRef(Typography)>
+                  </WithStyles(ForwardRef(Typography))>
+                  <AppButton
+                    color="primary"
+                    onClick={[Function]}
+                  >
+                    <WithStyles(ForwardRef(Button))
+                      className="makeStyles-button-4"
+                      color="primary"
+                      disableElevation={true}
+                      onClick={[Function]}
+                      variant="contained"
+                    >
+                      <ForwardRef(Button)
+                        className="makeStyles-button-4"
+                        classes={
+                          Object {
+                            "colorInherit": "MuiButton-colorInherit",
+                            "contained": "MuiButton-contained",
+                            "containedPrimary": "MuiButton-containedPrimary",
+                            "containedSecondary": "MuiButton-containedSecondary",
+                            "containedSizeLarge": "MuiButton-containedSizeLarge",
+                            "containedSizeSmall": "MuiButton-containedSizeSmall",
+                            "disableElevation": "MuiButton-disableElevation",
+                            "disabled": "Mui-disabled",
+                            "endIcon": "MuiButton-endIcon",
+                            "focusVisible": "Mui-focusVisible",
+                            "fullWidth": "MuiButton-fullWidth",
+                            "iconSizeLarge": "MuiButton-iconSizeLarge",
+                            "iconSizeMedium": "MuiButton-iconSizeMedium",
+                            "iconSizeSmall": "MuiButton-iconSizeSmall",
+                            "label": "MuiButton-label",
+                            "outlined": "MuiButton-outlined",
+                            "outlinedPrimary": "MuiButton-outlinedPrimary",
+                            "outlinedSecondary": "MuiButton-outlinedSecondary",
+                            "outlinedSizeLarge": "MuiButton-outlinedSizeLarge",
+                            "outlinedSizeSmall": "MuiButton-outlinedSizeSmall",
+                            "root": "MuiButton-root",
+                            "sizeLarge": "MuiButton-sizeLarge",
+                            "sizeSmall": "MuiButton-sizeSmall",
+                            "startIcon": "MuiButton-startIcon",
+                            "text": "MuiButton-text",
+                            "textPrimary": "MuiButton-textPrimary",
+                            "textSecondary": "MuiButton-textSecondary",
+                            "textSizeLarge": "MuiButton-textSizeLarge",
+                            "textSizeSmall": "MuiButton-textSizeSmall",
+                          }
+                        }
+                        color="primary"
+                        disableElevation={true}
+                        onClick={[Function]}
+                        variant="contained"
+                      >
+                        <WithStyles(ForwardRef(ButtonBase))
+                          className="MuiButton-root MuiButton-contained makeStyles-button-4 MuiButton-containedPrimary MuiButton-disableElevation"
+                          component="button"
+                          disabled={false}
+                          focusRipple={true}
+                          focusVisibleClassName="Mui-focusVisible"
+                          onClick={[Function]}
+                          type="button"
+                        >
+                          <ForwardRef(ButtonBase)
+                            className="MuiButton-root MuiButton-contained makeStyles-button-4 MuiButton-containedPrimary MuiButton-disableElevation"
+                            classes={
+                              Object {
+                                "disabled": "Mui-disabled",
+                                "focusVisible": "Mui-focusVisible",
+                                "root": "MuiButtonBase-root",
+                              }
+                            }
+                            component="button"
+                            disabled={false}
+                            focusRipple={true}
+                            focusVisibleClassName="Mui-focusVisible"
+                            onClick={[Function]}
+                            type="button"
+                          >
+                            <button
+                              className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-button-4 MuiButton-containedPrimary MuiButton-disableElevation"
+                              disabled={false}
+                              onBlur={[Function]}
+                              onClick={[Function]}
+                              onDragLeave={[Function]}
+                              onFocus={[Function]}
+                              onKeyDown={[Function]}
+                              onKeyUp={[Function]}
+                              onMouseDown={[Function]}
+                              onMouseLeave={[Function]}
+                              onMouseUp={[Function]}
+                              onTouchEnd={[Function]}
+                              onTouchMove={[Function]}
+                              onTouchStart={[Function]}
+                              tabIndex={0}
+                              type="button"
+                            >
+                              <span
+                                className="MuiButton-label"
+                              >
+                                Logout
+                              </span>
+                              <WithStyles(memo)
+                                center={false}
+                              >
+                                <ForwardRef(TouchRipple)
+                                  center={false}
+                                  classes={
+                                    Object {
+                                      "child": "MuiTouchRipple-child",
+                                      "childLeaving": "MuiTouchRipple-childLeaving",
+                                      "childPulsate": "MuiTouchRipple-childPulsate",
+                                      "ripple": "MuiTouchRipple-ripple",
+                                      "ripplePulsate": "MuiTouchRipple-ripplePulsate",
+                                      "rippleVisible": "MuiTouchRipple-rippleVisible",
+                                      "root": "MuiTouchRipple-root",
+                                    }
+                                  }
+                                >
+                                  <span
+                                    className="MuiTouchRipple-root"
+                                  >
+                                    <TransitionGroup
+                                      childFactory={[Function]}
+                                      component={null}
+                                      exit={true}
+                                    />
+                                  </span>
+                                </ForwardRef(TouchRipple)>
+                              </WithStyles(memo)>
+                            </button>
+                          </ForwardRef(ButtonBase)>
+                        </WithStyles(ForwardRef(ButtonBase))>
+                      </ForwardRef(Button)>
+                    </WithStyles(ForwardRef(Button))>
+                  </AppButton>
+                </div>
+              </ForwardRef(Toolbar)>
+            </WithStyles(ForwardRef(Toolbar))>
+          </header>
+        </ForwardRef(Paper)>
+      </WithStyles(ForwardRef(Paper))>
+    </ForwardRef(AppBar)>
+  </WithStyles(ForwardRef(AppBar))>
+</NavBar>
 `;

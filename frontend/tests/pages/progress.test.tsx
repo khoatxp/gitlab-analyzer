@@ -1,19 +1,22 @@
 import React from 'react';
 
 import Index from '../../pages/progress';
-import {render} from "@testing-library/react";
+import {mount, ReactWrapper} from "enzyme";
+
 
 describe("Pages Progress", () =>{
-    const mockUseEffect = jest.spyOn(React, 'useEffect')
+    const mockUseEffect = jest.spyOn(React, 'useEffect');
+    let rend:ReactWrapper
+
+    beforeAll(async () =>{
+        rend = mount(<Index />);
+        await Promise.resolve();
+    })
 
     it("Snapshot Index", () => {
-        const { container } = render(
-            <Index />
-        )
-        expect(container).toMatchSnapshot();
+        expect(rend).toMatchSnapshot();
     })
     it("Test useEffect", ()=>{
-        render(<Index />);
         expect(mockUseEffect).toBeCalled();
     })
 

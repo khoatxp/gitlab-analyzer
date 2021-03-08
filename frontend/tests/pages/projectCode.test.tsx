@@ -1,15 +1,17 @@
 import React from 'react';
 
 import Index from '../../pages/project/[projectId]/code';
-import {render} from "@testing-library/react";
+import {mount} from "enzyme";
+
 
 describe("Pages Project Code", () =>{
 
-    it("Snapshot Index", () => {
-        const { container } = render(
+    it("Snapshot Index", async() => {
+        const rend = mount(
             <Index />
         )
-        expect(container).toMatchSnapshot();
+        await Promise.resolve();
+        expect(rend).toMatchSnapshot();
 
     })
 

@@ -1,43 +1,36 @@
 import React from 'react';
-import {render} from '@testing-library/react';
 import Index from '../../pages/project/[projectId]/notes';
+import {mount, ReactWrapper} from "enzyme";
 
 describe("Project Notes", () =>{
     const useRouter = jest.spyOn(require('next/router'), 'useRouter');
     const mockUseEffect = jest.spyOn(React, 'useEffect')
     const mockAxios = jest.spyOn(require('axios'), 'get');
+    let rend:ReactWrapper
 
-    beforeEach(()=>{
-        useRouter.mockClear();
-        mockUseEffect.mockClear();
-        mockAxios.mockClear();
+    beforeEach(async()=>{
+        useRouter.mockImplementationOnce(() => ({
+            query: { projectId: 'TestId', startDateTime: '2020-08-22T15:40-05:00', endDateTime:'2021-08-22T15:40-05:00' },
+        }));
+        rend = mount(
+            <Index />
+        );
+        await Promise.resolve();
+
     })
 
    it("Snapshot projectId", () => {
-        useRouter.mockImplementationOnce(() => ({
-            query: { projectId: 'TestId', startDateTime: '2020-08-22T15:40-05:00', endDateTime:'2021-08-22T15:40-05:00' },
-        }));
-        const { container } = render(
-            <Index />
-        )
-        expect(container).toMatchSnapshot();
+
+        expect(rend).toMatchSnapshot();
 
     })
     it("Test useEffect", ()=>{
-        useRouter.mockImplementationOnce(() => ({
-            query: { projectId: 'TestId', startDateTime: '2020-08-22T15:40-05:00', endDateTime:'2021-08-22T15:40-05:00' },
-        }));
-        render(<Index />);
         expect(mockUseEffect).toBeCalled();
 
     })
 
     it('Test axios',()=>{
-        useRouter.mockImplementationOnce(() => ({
-            query: { projectId: 'TestId', startDateTime: '2020-08-22T15:40-05:00', endDateTime:'2021-08-22T15:40-05:00' },
-        }));
-        render(<Index />);
-        expect(mockAxios).toHaveBeenCalledTimes(2);
+        expect(mockAxios).toBeCalled();
     })
 
 
