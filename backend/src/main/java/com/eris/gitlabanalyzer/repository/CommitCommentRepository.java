@@ -9,6 +9,6 @@ import java.time.OffsetDateTime;
 
 @Repository
 public interface CommitCommentRepository extends JpaRepository<CommitComment, Long> {
-    @Query("select c from CommitComment c where c.gitManagementUser.username = ?1 and c.createdAt= ?2 and c.commit.sha = ?3")
-    CommitComment findByUsernameAndCreatedAtAndCommitSha(String username, OffsetDateTime createdAt, String sha);
+    @Query("select c from CommitComment c where c.gitManagementUser.gitLabUserId = ?1 and c.createdAt= ?2 and c.commit.sha = ?3")
+    CommitComment findByGitLabUserIdAndCreatedAtAndCommitSha(Long gitLabUserId, OffsetDateTime createdAt, String sha);
 }

@@ -28,14 +28,12 @@ public class IssueService {
         this.gitManagementUserRepository = gitManagementUserRepository;
     }
 
-    public void saveIssueInfo(Long gitLabProjectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        Project project = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, serverUrl);
-
-        var gitLabIssues = gitLabService.getIssues(gitLabProjectId, startDateTime, endDateTime);
+    public void saveIssueInfo(Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        var gitLabIssues = gitLabService.getIssues(project.getGitLabProjectId(), startDateTime, endDateTime);
         var gitLabIssueList = gitLabIssues.collectList().block();
 
         gitLabIssueList.forEach(gitLabIssue -> {
-                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabIssue.getAuthor().getUsername(), serverUrl);
+                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabIssue.getAuthor().getId(), serverUrl);
                     Issue issue = issueRepository.findByIidAndProjectId(gitLabIssue.getIid(),project.getId());
                     if(issue == null){
                         issue = new Issue(
@@ -48,20 +46,19 @@ public class IssueService {
                                 gitManagementUser
                         );
                     }
-                    issueRepository.save(issue);
-                    saveIssueComments(project, gitLabIssue.getIid());
+                    issue = issueRepository.save(issue);
+                    saveIssueComments(project, issue);
                 }
         );
     }
 
-    public void saveIssueComments (Project project, Long issueIid){
-        Issue issue = issueRepository.findByIidAndProjectId(issueIid, project.getId());
+    public void saveIssueComments (Project project, Issue issue){
         var gitLabIssueComments = gitLabService.getIssueNotes(project.getGitLabProjectId(), issue.getIid());
         var gitLabIssueCommentList = gitLabIssueComments.collectList().block();
 
         gitLabIssueCommentList.parallelStream().forEach(gitLabIssueComment -> {
-            GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabIssueComment.getAuthor().getUsername(),serverUrl);
-            IssueComment issueComment = issueCommentRepository.findByIssueNoteIdAndIssueId(gitLabIssueComment.getId(),issue.getIid());
+            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabIssueComment.getAuthor().getId(),serverUrl);
+            IssueComment issueComment = issueCommentRepository.findByGitLabIssueNoteIdAndIssueId(gitLabIssueComment.getId(),issue.getIid());
             if(issueComment == null){
                 issueComment = new IssueComment(
                         gitLabIssueComment.getId(),

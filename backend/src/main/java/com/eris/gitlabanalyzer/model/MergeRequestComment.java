@@ -23,10 +23,10 @@ public class MergeRequestComment {
     private Long id;
 
     @Column(
-            name = "merge_request_comment_iid",
+            name = "gitlab_merge_request_note_id",
             nullable = false
     )
-    private Long iid;
+    private Long gitLabMergeRequestNoteId;
 
     @ManyToOne
     @JoinColumn(
@@ -59,8 +59,8 @@ public class MergeRequestComment {
     public MergeRequestComment() {
     }
 
-    public MergeRequestComment(Long iid, String body, OffsetDateTime createdAt, GitManagementUser gitManagementUser, MergeRequest mergeRequest) {
-        this.iid = iid;
+    public MergeRequestComment(Long gitLabMergeRequestNoteId, String body, OffsetDateTime createdAt, GitManagementUser gitManagementUser, MergeRequest mergeRequest) {
+        this.gitLabMergeRequestNoteId = gitLabMergeRequestNoteId;
         this.gitManagementUser = gitManagementUser;
         this.mergeRequest = mergeRequest;
         this.body = body;
@@ -71,8 +71,8 @@ public class MergeRequestComment {
         return id;
     }
 
-    public Long getIid() {
-        return iid;
+    public Long getGitLabMergeRequestNoteId() {
+        return gitLabMergeRequestNoteId;
     }
 
     public GitManagementUser getMember() {
@@ -103,11 +103,9 @@ public class MergeRequestComment {
     public String toString() {
         return "MergeRequestComment{" +
                 "id=" + id +
-                ", iid=" + iid +
-                ", gitManagementUser=" + gitManagementUser +
-                ", mergeRequest=" + mergeRequest +
+                ", gitLabMergeRequestNoteId=" + gitLabMergeRequestNoteId +
                 ", body='" + body + '\'' +
-                ", createdAt='" + createdAt + '\'' +
+                ", createdAt=" + createdAt +
                 '}';
     }
 }

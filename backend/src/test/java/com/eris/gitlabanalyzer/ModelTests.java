@@ -37,7 +37,7 @@ class ModelTests {
     private final UserServer testUserServer = new UserServer(testUser, testServer, ACCESS_TOKEN);
     private final Project testProject = new Project(25514L, "TestProject", "Test Proejct",
             "http:wow!", testServer);
-    private final GitManagementUser testGitManagementUser = new GitManagementUser("csl33", "Jason Lee", testServer);
+    private final GitManagementUser testGitManagementUser = new GitManagementUser(1L,"csl33", "Jason Lee", testServer);
     private final Commit testCommit = new Commit("SHA", "Title", "csl33", "csl33@sfu.ca",
             OffsetDateTime.parse("2016-10-05T08:20:10+05:30"), "URL", testProject);
     private final CommitComment testCommitComment = new CommitComment(testGitManagementUser, testCommit,

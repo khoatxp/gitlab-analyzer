@@ -32,14 +32,12 @@ public class MergeRequestService {
         this.mergeRequestCommentRepository = mergeRequestCommentRepository;
     }
 
-    public void saveMergeRequestInfo(Long gitLabProjectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        Project project = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, serverUrl);
-
-        var gitLabMergeRequests = gitLabService.getMergeRequests(gitLabProjectId, startDateTime, endDateTime);
+    public void saveMergeRequestInfo(Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        var gitLabMergeRequests = gitLabService.getMergeRequests(project.getGitLabProjectId(), startDateTime, endDateTime);
         var gitLabMergeRequestList = gitLabMergeRequests.collectList().block();
 
         gitLabMergeRequestList.forEach(gitLabMergeRequest -> {
-                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMergeRequest.getAuthor().getUsername(), serverUrl);
+                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabMergeRequest.getAuthor().getId(), serverUrl);
                     MergeRequest mergeRequest = mergeRequestRepository.findByIidAndProjectId(gitLabMergeRequest.getIid(),project.getId());
                     if(mergeRequest == null){
                         mergeRequest = new MergeRequest(
@@ -52,20 +50,19 @@ public class MergeRequestService {
                                 gitManagementUser
                         );
                     }
-                    mergeRequestRepository.save(mergeRequest);
-                    saveMergeRequestComments(project, gitLabMergeRequest.getIid());
+                    mergeRequest = mergeRequestRepository.save(mergeRequest);
+                    saveMergeRequestComments(project, mergeRequest);
                 }
         );
     }
 
-    public void saveMergeRequestComments (Project project, Long mergeRequestIid){
-        MergeRequest mergeRequest = mergeRequestRepository.findByIidAndProjectId(mergeRequestIid, project.getId());
+    public void saveMergeRequestComments (Project project, MergeRequest mergeRequest){
         var gitLabMergeRequestComments = gitLabService.getMergeRequestNotes(project.getGitLabProjectId(), mergeRequest.getIid());
         var gitLabMergeRequestCommentList = gitLabMergeRequestComments.collectList().block();
 
         gitLabMergeRequestCommentList.parallelStream().forEach(gitLabMergeRequestComment -> {
-            GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMergeRequestComment.getAuthor().getUsername(),serverUrl);
-            MergeRequestComment mergeRequestComment = mergeRequestCommentRepository.findByIidAndMergeRequestId(gitLabMergeRequestComment.getId(),mergeRequest.getId());
+            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabMergeRequestComment.getAuthor().getId(),serverUrl);
+            MergeRequestComment mergeRequestComment = mergeRequestCommentRepository.findByGitLabMergeRequestNoteIdAndMergeRequestId(gitLabMergeRequestComment.getId(),mergeRequest.getId());
             if(mergeRequestComment == null){
                 mergeRequestComment = new MergeRequestComment(
                         gitLabMergeRequestComment.getId(),

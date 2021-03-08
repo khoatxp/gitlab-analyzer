@@ -41,20 +41,18 @@ public class CommitService {
     }
 
 
-    public void saveCommitInfo(Long gitLabProjectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        Project project = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, serverUrl);
-
+    public void saveCommitInfo(Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         //Save commits associated with each merge request
         List<MergeRequest> mergeRequestList = mergeRequestRepository.findAllByProjectId(project.getId());
         List<String> mrCommitShas = new ArrayList<>(); //Used to filter for the case of orphan commits
 
         mergeRequestList.forEach(mergeRequest -> {
-            var gitLabCommits = gitLabService.getMergeRequestCommits(gitLabProjectId, mergeRequest.getIid());
+            var gitLabCommits = gitLabService.getMergeRequestCommits(project.getGitLabProjectId(), mergeRequest.getIid());
             saveCommitHelper(project, mergeRequest, gitLabCommits, mrCommitShas);
         });
 
         //Save orphan commits
-        var gitLabCommits = gitLabService.getCommits(gitLabProjectId, startDateTime, endDateTime)
+        var gitLabCommits = gitLabService.getCommits(project.getGitLabProjectId(), startDateTime, endDateTime)
                                                            .filter(gitLabCommit -> !mrCommitShas.contains(gitLabCommit.getSha()));
         saveCommitHelper(project, null, gitLabCommits, mrCommitShas);
     }
@@ -66,13 +64,14 @@ public class CommitService {
                     Commit commit = commitRepository.findByCommitShaAndProjectId(gitLabCommit.getSha(),project.getId());
                     if(commit != null){return;}
 
+                    //TODO check for the commit mapping table if the author is mapped and map that author to the associated git management user
                     //First attempt to map member and commit using email
                     String username = splitEmail(gitLabCommit.getAuthorEmail());
-                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(username, serverUrl);
+                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByUsernameAndServerUrl(username, serverUrl);
 
                     if(gitManagementUser == null){
                         //Second attempt using author name
-                        gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabCommit.getAuthorName(),serverUrl);
+                        gitManagementUser = gitManagementUserRepository.findByUsernameAndServerUrl(gitLabCommit.getAuthorName(),serverUrl);
                     }
 
                     commit = new Commit(
@@ -94,24 +93,24 @@ public class CommitService {
                         commit.setGitManagementUser(gitManagementUser);
                     }
 
-                    commitRepository.save(commit);
-                    saveCommitComment(project, gitLabCommit.getSha());
+                    commit = commitRepository.save(commit);
+                    saveCommitComment(project, commit);
                 }
         );
 
     }
 
-    public void saveCommitComment(Project project, String commitSha){
-        Commit commit = commitRepository.findByCommitShaAndProjectId(commitSha, project.getId());
-        var gitLabCommitComments = gitLabService.getCommitComments(project.getGitLabProjectId(), commitSha);
+    //TODO we might not need to store commit comments
+    public void saveCommitComment(Project project, Commit commit){
+        var gitLabCommitComments = gitLabService.getCommitComments(project.getGitLabProjectId(), commit.getSha());
         var gitLabCommitCommentList = gitLabCommitComments.collectList().block();
 
         gitLabCommitCommentList.parallelStream().forEach(gitLabCommitComment -> {
-            GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabCommitComment.getAuthor().getUsername(),serverUrl);
+            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabCommitComment.getAuthor().getId(),serverUrl);
             if(gitManagementUser == null){
                 return;
             }
-            CommitComment commitComment = commitCommentRepository.findByUsernameAndCreatedAtAndCommitSha(gitLabCommitComment.getAuthor().getUsername(),gitLabCommitComment.getCreatedAt(),commitSha);
+            CommitComment commitComment = commitCommentRepository.findByGitLabUserIdAndCreatedAtAndCommitSha(gitLabCommitComment.getAuthor().getId(),gitLabCommitComment.getCreatedAt(),commit.getSha());
             if(commitComment == null){
                 commitComment = new CommitComment(
                         gitManagementUser,

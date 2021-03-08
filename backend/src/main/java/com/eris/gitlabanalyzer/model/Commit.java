@@ -70,7 +70,6 @@ public class Commit {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(
             name = "commit_id",
-            nullable = true,
             referencedColumnName = "commit_id",
             foreignKey = @ForeignKey(
                     name = "commit_mapping_commit_id_fk"
