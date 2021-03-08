@@ -56,7 +56,14 @@ const CardLayout = ({children, size, smLogo, backLink, backLabel}: CardLayoutPro
                         Gitlab Analyzer
                     </Typography>
                 </Box>
-                {children}
+                <Box
+                    flex="1"
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                >
+                    {children}
+                </Box>
                 {backLink &&
                     <Box>
                         <NextLink href={backLink} passHref>
