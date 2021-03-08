@@ -8,5 +8,4 @@ import lombok.Getter;
 public class UserServerRequestBody {
     private String serverUrl;
     private String accessToken;
-    private String serverNickname;
 }

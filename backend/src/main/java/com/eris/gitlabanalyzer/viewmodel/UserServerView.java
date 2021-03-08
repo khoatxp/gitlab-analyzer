@@ -9,10 +9,9 @@ import lombok.Getter;
 public class UserServerView {
     private Long serverId;
     private String serverUrl;
-    private String serverNickname;
 
     public static UserServerView fromUserServer(UserServer userServer) {
         var server = userServer.getServer();
-        return new UserServerView(server.getId(), server.getServerUrl(), "");
+        return new UserServerView(server.getId(), server.getServerUrl());
     }
 }

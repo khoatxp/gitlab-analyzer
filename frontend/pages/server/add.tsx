@@ -44,8 +44,7 @@ const AddServer = () => {
                 .post(`${process.env.NEXT_PUBLIC_API_URL}/servers`,
                     {
                         serverUrl: trimmedUrl,
-                        accessToken: trimmedAccessToken,
-                        serverNickname: "nickname",
+                        accessToken: trimmedAccessToken
                     },
                     getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
