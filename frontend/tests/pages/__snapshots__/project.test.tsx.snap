@@ -1,65 +1,73 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Project Folder Snapshot serverId 1`] = `
-<div>
-  <div
-    class="MuiBox-root MuiBox-root-3 makeStyles-backgroundGradient-1"
-  >
-    <div
-      class="MuiBox-root MuiBox-root-4"
-    >
-      <div
-        class="MuiBox-root MuiBox-root-5"
-        id="card-header"
+<index>
+  <AuthView>
+    <LoadingPage>
+      <Styled(MuiBox)
+        alignItems="center"
+        display="flex"
+        height="100vh"
+        justifyContent="center"
+        width="100vw"
       >
         <div
-          style="display: inline-block; max-width: 100%; overflow: hidden; position: relative; box-sizing: border-box; margin: 0px;"
+          className="MuiBox-root MuiBox-root-1"
         >
-          <div
-            style="box-sizing: border-box; display: block; max-width: 100%;"
+          <WithStyles(ForwardRef(CircularProgress))
+            color="primary"
+            size="7em"
           >
-            <img
-              alt=""
-              aria-hidden="true"
-              role="presentation"
-              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI1IiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiLz4="
-              style="max-width: 100%; display: block; margin: 0px; padding: 0px;"
-            />
-          </div>
-          <img
-            alt="The Gitlab Logo"
-            decoding="async"
-            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-            style="visibility: hidden; position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; box-sizing: border-box; padding: 0px; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"
-          />
+            <ForwardRef(CircularProgress)
+              classes={
+                Object {
+                  "circle": "MuiCircularProgress-circle",
+                  "circleDeterminate": "MuiCircularProgress-circleDeterminate",
+                  "circleDisableShrink": "MuiCircularProgress-circleDisableShrink",
+                  "circleIndeterminate": "MuiCircularProgress-circleIndeterminate",
+                  "circleStatic": "MuiCircularProgress-circleStatic",
+                  "colorPrimary": "MuiCircularProgress-colorPrimary",
+                  "colorSecondary": "MuiCircularProgress-colorSecondary",
+                  "determinate": "MuiCircularProgress-determinate",
+                  "indeterminate": "MuiCircularProgress-indeterminate",
+                  "root": "MuiCircularProgress-root",
+                  "static": "MuiCircularProgress-static",
+                  "svg": "MuiCircularProgress-svg",
+                }
+              }
+              color="primary"
+              size="7em"
+            >
+              <div
+                className="MuiCircularProgress-root MuiCircularProgress-colorPrimary MuiCircularProgress-indeterminate"
+                role="progressbar"
+                style={
+                  Object {
+                    "height": "7em",
+                    "width": "7em",
+                  }
+                }
+              >
+                <svg
+                  className="MuiCircularProgress-svg"
+                  viewBox="22 22 44 44"
+                >
+                  <circle
+                    className="MuiCircularProgress-circle MuiCircularProgress-circleIndeterminate"
+                    cx={44}
+                    cy={44}
+                    fill="none"
+                    r={20.2}
+                    strokeWidth={3.6}
+                    style={Object {}}
+                  />
+                </svg>
+              </div>
+            </ForwardRef(CircularProgress)>
+          </WithStyles(ForwardRef(CircularProgress))>
         </div>
-        <h6
-          class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom"
-        >
-          GitLab
-          <br />
-          Analyzer
-        </h6>
-      </div>
-      <div>
-        <p
-          class="MuiTypography-root MuiTypography-body1"
-        >
-          Loading projects...
-        </p>
-        <div
-          class="MuiLinearProgress-root MuiLinearProgress-colorPrimary MuiLinearProgress-indeterminate"
-          role="progressbar"
-        >
-          <div
-            class="MuiLinearProgress-bar MuiLinearProgress-barColorPrimary MuiLinearProgress-bar1Indeterminate"
-          />
-          <div
-            class="MuiLinearProgress-bar MuiLinearProgress-bar2Indeterminate MuiLinearProgress-barColorPrimary"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+      </Styled(MuiBox)>
+    </LoadingPage>
+  </AuthView>
+</index>
 `;

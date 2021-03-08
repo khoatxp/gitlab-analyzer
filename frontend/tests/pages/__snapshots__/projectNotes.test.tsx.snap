@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Pages Root Snapshot Index 1`] = `
-<Home>
+exports[`Project Notes Snapshot projectId 1`] = `
+<NotesPage>
   <AuthView>
     <LoadingPage>
       <Styled(MuiBox)
@@ -12,7 +12,7 @@ exports[`Pages Root Snapshot Index 1`] = `
         width="100vw"
       >
         <div
-          className="MuiBox-root MuiBox-root-1"
+          className="MuiBox-root MuiBox-root-4"
         >
           <WithStyles(ForwardRef(CircularProgress))
             color="primary"
@@ -69,5 +69,5 @@ exports[`Pages Root Snapshot Index 1`] = `
       </Styled(MuiBox)>
     </LoadingPage>
   </AuthView>
-</Home>
+</NotesPage>
 `;
