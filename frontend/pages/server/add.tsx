@@ -3,7 +3,7 @@ import axios, {AxiosError, AxiosResponse} from "axios";
 import AppTextField from "../../components/AppTextField";
 import AppButton from "../../components/AppButton";
 import CardLayout from "../../components/CardLayout";
-import {Box} from "@material-ui/core";
+import {Box, Typography} from "@material-ui/core";
 import {useSnackbar} from 'notistack';
 import {useRouter} from "next/router";
 import AuthView from "../../components/AuthView";
@@ -60,21 +60,24 @@ const AddServer = () => {
 
     return (
         <AuthView>
-            <CardLayout size="md">
+            <CardLayout size="md" backLink={"/server"}>
+                <Typography align="center"  variant="h5">Add New Server</Typography>
                 <AppTextField
+                    id="server-url"
                     placeholder="Server Url"
                     value={serverUrl}
                     error={!isValidServerUrl}
                     helperText={isValidServerUrl ? "" : "Url is missing scheme"}
                     onChange={(e) => setServerUrl(e.target.value)}/>
                 <AppTextField
+                    id="access-token"
                     placeholder="Access Token"
                     value={serverAccessToken}
                     error={!isValidAccessToken}
                     helperText={isValidAccessToken ? "" : "Token must be at least 20 characters"}
                     onChange={(e) => setServerAccessToken(e.target.value)}/>
                 <Box alignSelf="center">
-                    <AppButton color="primary" onClick={saveServer}>Save</AppButton>
+                    <AppButton id="save-server" color="primary" onClick={saveServer}>Save</AppButton>
                 </Box>
             </CardLayout>
         </AuthView>

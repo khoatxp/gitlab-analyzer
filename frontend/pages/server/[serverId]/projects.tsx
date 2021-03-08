@@ -62,7 +62,7 @@ const index = () => {
 
     return (
         <AuthView>
-            <CardLayout>
+            <CardLayout backLink={"/server"}>
                 {loadingBar}
                 {!isLoading && <>
                     <Autocomplete
