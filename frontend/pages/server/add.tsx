@@ -1,8 +1,8 @@
 import React from "react";
 import axios, {AxiosError, AxiosResponse} from "axios";
-import AppTextField from "../../components/AppTextField";
-import AppButton from "../../components/AppButton";
-import CardLayout from "../../components/CardLayout";
+import AppTextField from "../../components/app/AppTextField";
+import AppButton from "../../components/app/AppButton";
+import CardLayout from "../../components/layout/CardLayout";
 import {Box, Typography} from "@material-ui/core";
 import {useSnackbar} from 'notistack';
 import {useRouter} from "next/router";

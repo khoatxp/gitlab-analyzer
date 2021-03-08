@@ -8,8 +8,8 @@ import AuthView from "../../components/AuthView";
 import {AuthContext} from "../../components/AuthContext";
 import NextLink from 'next/link'
 import {UserServerView} from "../../interfaces/UserServerView";
-import CardLayout from "../../components/CardLayout";
-import AppButton from "../../components/AppButton";
+import CardLayout from "../../components/layout/CardLayout";
+import AppButton from "../../components/app/AppButton";
 import {makeStyles} from "@material-ui/styles";
 
 const useStyles = makeStyles({
