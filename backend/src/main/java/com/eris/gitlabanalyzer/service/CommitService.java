@@ -6,11 +6,10 @@ import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
 import com.eris.gitlabanalyzer.repository.MergeRequestRepository;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 @Service
 public class CommitService {
@@ -37,7 +36,7 @@ public class CommitService {
         return stringArr[0];
     }
 
-    public void saveCommitInfo(Long gitLabProjectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+    public void saveCommitInfo(Long gitLabProjectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         Project project = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, serverUrl);
 
         // TODO use an internal projectId to find the correct server

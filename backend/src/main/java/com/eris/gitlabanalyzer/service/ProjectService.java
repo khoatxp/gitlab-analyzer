@@ -1,6 +1,9 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.model.*;
+import com.eris.gitlabanalyzer.model.Project;
+import com.eris.gitlabanalyzer.model.RawCommitData;
+import com.eris.gitlabanalyzer.model.RawMergeRequestData;
+import com.eris.gitlabanalyzer.model.RawTimeLineProjectData;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
@@ -11,7 +14,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -58,7 +61,7 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
-    public RawTimeLineProjectData getTimeLineProjectData(Long gitLabProjectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+    public RawTimeLineProjectData getTimeLineProjectData(Long gitLabProjectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         // TODO use an internal projectId to find the correct server
         var gitLabService = new GitLabService(serverUrl, accessToken);
         var mergeRequests = gitLabService.getMergeRequests(gitLabProjectId, startDateTime, endDateTime);

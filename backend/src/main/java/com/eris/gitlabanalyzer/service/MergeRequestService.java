@@ -9,7 +9,7 @@ import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 @Service
 public class MergeRequestService {
@@ -31,7 +31,7 @@ public class MergeRequestService {
         this.gitManagementUserRepository = gitManagementUserRepository;
     }
 
-    public void saveMergeRequestInfo(Long gitLabProjectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+    public void saveMergeRequestInfo(Long gitLabProjectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         // TODO use an internal projectId to find the correct server
         var gitLabService = new GitLabService(serverUrl, accessToken);
 

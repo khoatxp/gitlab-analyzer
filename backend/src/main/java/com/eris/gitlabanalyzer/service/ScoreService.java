@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 @Service
 public class ScoreService {
@@ -38,7 +38,7 @@ public class ScoreService {
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public int getTotalMergeDiffScore(Long projectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime){
+    public int getTotalMergeDiffScore(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
         // TODO use an internal projectId to find the correct server
         var gitLabService = new GitLabService(serverUrl, accessToken);
 
@@ -61,7 +61,7 @@ public class ScoreService {
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public int getTotalCommitDiffScore(Long projectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+    public int getTotalCommitDiffScore(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         // TODO use an internal projectId to find the correct server
         var gitLabService = new GitLabService(serverUrl, accessToken);
 

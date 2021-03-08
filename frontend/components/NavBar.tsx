@@ -3,16 +3,16 @@ import {makeStyles} from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
 import Image from "next/image";
 import {Icon} from "@material-ui/core";
 import {useRouter} from "next/router";
-import { defaultUserCredential, AuthContext } from "./AuthContext";
-import AppButton from "./AppButton";
+import {AuthContext, defaultUserCredential} from "./AuthContext";
+import AppButton from "./app/AppButton";
 
 const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
+        height: '7vh', // TODO: store in variable
     },
     menuButton: {
         marginRight: theme.spacing(2),
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 const NavBar = () => {
     const router = useRouter();
-    const { setUserCredential } = React.useContext(AuthContext);
+    const {setUserCredential} = React.useContext(AuthContext);
     const classes = useStyles();
 
     const handleLogout = () => {
@@ -34,24 +34,22 @@ const NavBar = () => {
     }
 
     return (
-        <div className={classes.root}>
-            <AppBar position="static" color="default">
-                <Toolbar>
-                    <Icon>
-                        <Image
-                            src="/gitlab.svg"
-                            alt="The Gitlab Logo"
-                            width={100}
-                            height={100}
-                        />
-                    </Icon>
-                    <Typography variant="h6" className={classes.title}>
-                        Gitlab Analyzer
-                    </Typography>
-                    <AppButton color="primary" onClick={handleLogout}>Logout</AppButton>
-                </Toolbar>
-            </AppBar>
-        </div>
+        <AppBar className={classes.root} position="static" color="default">
+            <Toolbar>
+                <Icon>
+                    <Image
+                        src="/gitlab.svg"
+                        alt="The Gitlab Logo"
+                        width={100}
+                        height={100}
+                    />
+                </Icon>
+                <Typography variant="h6" className={classes.title}>
+                    Gitlab Analyzer
+                </Typography>
+                <AppButton color="primary" onClick={handleLogout}>Logout</AppButton>
+            </Toolbar>
+        </AppBar>
     );
 };
 

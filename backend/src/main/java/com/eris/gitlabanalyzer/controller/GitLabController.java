@@ -2,7 +2,6 @@ package com.eris.gitlabanalyzer.controller;
 
 import com.eris.gitlabanalyzer.model.gitlabresponse.*;
 
-import com.eris.gitlabanalyzer.repository.ServerRepository;
 import com.eris.gitlabanalyzer.repository.UserRepository;
 import com.eris.gitlabanalyzer.service.GitLabService;
 import com.eris.gitlabanalyzer.service.UserServerService;
@@ -16,7 +15,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.security.Principal;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 @RestController
 @RequestMapping(path = "/api/v1/gitlab")
@@ -65,9 +64,9 @@ public class GitLabController {
     public Flux<GitLabMergeRequest> getMergeRequests(
             @PathVariable("projectId") Long projectId,
             @RequestParam("startDateTime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDateTime,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endDateTime) {
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
         // TODO this endpoint needs to be removed or use an internal projectId to find the correct server that user owns
         var gitLabService = new GitLabService(serverUrl, accessToken);
@@ -90,9 +89,9 @@ public class GitLabController {
     public Flux<GitLabCommit> getCommits(
             @PathVariable("projectId") Long projectId,
             @RequestParam("startDateTime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDateTime,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endDateTime) {
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
         // TODO this endpoint needs to be removed or use an internal projectId to find the correct server that user owns
         var gitLabService = new GitLabService(serverUrl, accessToken);
@@ -137,9 +136,9 @@ public class GitLabController {
     public Flux<GitLabIssue> getIssues(
             @PathVariable("projectId") Long projectId,
             @RequestParam("startDateTime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startDateTime,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endDateTime) {
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
         // TODO this endpoint needs to be removed or use an internal projectId to find the correct server that user owns
         var gitLabService = new GitLabService(serverUrl, accessToken);

@@ -1,10 +1,9 @@
 import {Box, Typography, Link, Icon} from "@material-ui/core";
 import React from "react";
 import Image from "next/image";
-import AppGradientBackground from "./AppGradientBackground";
-import ChildrenProps from "../interfaces/ChildrenProps";
+import AppGradientBackground from "../app/AppGradientBackground";
+import ChildrenProps from "../../interfaces/ChildrenProps";
 import NextLink from 'next/link'
-import Button from "@material-ui/core/Button";
 import {makeStyles} from "@material-ui/styles";
 
 type CardLayoutProps =  ChildrenProps & {
