@@ -1,8 +1,8 @@
 import {Box, Typography} from "@material-ui/core";
 import React from "react";
 import Image from "next/image";
-import AppGradientBackground from "./AppGradientBackground";
-import ChildrenProps from "../interfaces/ChildrenProps";
+import AppGradientBackground from "../app/AppGradientBackground";
+import ChildrenProps from "../../interfaces/ChildrenProps";
 
 type CardLayoutProps =  ChildrenProps & {size?: "sm" | "md"}
 

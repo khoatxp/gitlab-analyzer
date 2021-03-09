@@ -1,20 +1,22 @@
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
-import React, {useEffect, useState, memo} from "react";
+import React, {memo, useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
-
-import NavBar from "../../../../components/NavBar";
 import {
     Box,
     Card,
-    Container, FormControl, FormControlLabel,
+    Container,
+    FormControl,
+    FormControlLabel,
     Grid,
     List,
     ListItem,
     ListItemText,
-    ListSubheader, Radio, RadioGroup,
+    ListSubheader,
+    Radio,
+    RadioGroup,
     Typography
 } from "@material-ui/core";
-import {FixedSizeList, areEqual} from 'react-window';
+import {areEqual, FixedSizeList} from 'react-window';
 import memoize from 'memoize-one';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import {Note} from "../../../../interfaces/GitLabNote";
@@ -22,9 +24,9 @@ import {MergeRequest} from "../../../../interfaces/GitLabMergeRequest";
 import {Issue} from "../../../../interfaces/GitLabIssue";
 import {Task} from "../../../../interfaces/GitLabTask";
 import {useRouter} from "next/router";
-import NavTabs from "../../../../components/NavTabs";
-import {AuthContext } from "../../../../components/AuthContext";
+import {AuthContext} from "../../../../components/AuthContext";
 import AuthView from "../../../../components/AuthView";
+import MenuLayout from "../../../../components/layout/menu/MenuLayout";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -48,7 +50,7 @@ enum NoteType {
 const NotesPage = () => {
     const router = useRouter();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
-    const { projectId, startDateTime, endDateTime } =  router.query;
+    const {projectId, startDateTime, endDateTime} = router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`;
 
     const [mergeRequests, setMergeRequests] = useState<MergeRequest[]>([]);
@@ -99,7 +101,7 @@ const NotesPage = () => {
     };
 
     useEffect(() => {
-        if(projectId){
+        if (projectId) {
             const dateQuery = `?startDateTime=${startDateTime ? startDateTime : "2021-01-01T00:00:00-08:00"}&endDateTime=${endDateTime ? endDateTime : "2021-03-21T00:00:00-08:00"}`;
             axios
                 .get(`${PROJECT_ID_URL}/merge_requests${dateQuery}`, getAxiosAuthConfig())
@@ -123,37 +125,36 @@ const NotesPage = () => {
     const classes = useStyles();
     return (
         <AuthView>
-            <NavBar/>
-            <NavTabs tabSelected={2}/>
-            <Box m={1} />
-            <Container maxWidth='xl'>
-                <Grid container spacing={2}>
+            <MenuLayout tabSelected={2}>
+                <Container maxWidth='xl'>
+                    <Grid container spacing={2}>
 
-                    <Grid item xs={12} md={4} lg={3}>
-                        <Card>
-                            <Box style={{display: 'flex', justifyContent: 'center'}}>
-                                <RadioGroupSelectMergeRequestsOrIssues
-                                    value={noteType}
-                                    handleChange={handleSelectNoteType}
-                                    numMergeRequests={mergeRequests.length}
-                                    numIssues={issues.length}
-                                />
-                            </Box>
-                            <Box className={classes.taskList}>
-                                <TaskList items={noteType === NoteType.MergeRequest ? mergeRequests : issues}
-                                                  selectedItem={selectedItem}
-                                                  handleSelectedItemChange={handleSelectItem}/>
-                            </Box>
-                        </Card>
-                    </Grid>
+                        <Grid item xs={12} md={4} lg={3}>
+                            <Card>
+                                <Box style={{display: 'flex', justifyContent: 'center'}}>
+                                    <RadioGroupSelectMergeRequestsOrIssues
+                                        value={noteType}
+                                        handleChange={handleSelectNoteType}
+                                        numMergeRequests={mergeRequests.length}
+                                        numIssues={issues.length}
+                                    />
+                                </Box>
+                                <Box className={classes.taskList}>
+                                    <TaskList items={noteType === NoteType.MergeRequest ? mergeRequests : issues}
+                                              selectedItem={selectedItem}
+                                              handleSelectedItemChange={handleSelectItem}/>
+                                </Box>
+                            </Card>
+                        </Grid>
 
-                    <Grid item xs={12} md={8} lg={9}>
-                        <Card>
-                            <NotesList notes={notes}/>
-                        </Card>
+                        <Grid item xs={12} md={8} lg={9}>
+                            <Card>
+                                <NotesList notes={notes}/>
+                            </Card>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Container>
+                </Container>
+            </MenuLayout>
         </AuthView>
     );
 };
@@ -163,7 +164,7 @@ const RadioGroupSelectMergeRequestsOrIssues = ({value, handleChange, numMergeReq
     value: NoteType,
     handleChange: React.Dispatch<React.ChangeEvent<HTMLInputElement>>,
     numMergeRequests: number,
-    numIssues : number,
+    numIssues: number,
 }) => {
 
     return (
@@ -222,11 +223,11 @@ const createItemData = memoize((items: Task[],
 }));
 
 const TaskList = ({items, selectedItem, handleSelectedItemChange}
-                              : {
-                              items: Task[],
-                              selectedItem: number,
-                              handleSelectedItemChange: React.Dispatch<number>
-                          }
+                      : {
+                      items: Task[],
+                      selectedItem: number,
+                      handleSelectedItemChange: React.Dispatch<number>
+                  }
 ) => {
 
     const itemData = createItemData(items, selectedItem, handleSelectedItemChange);
@@ -255,7 +256,7 @@ const NotesList = ({notes}: { notes: Note[] }) => {
               className={classes.notesList}
         >
             {notes.map((note) => (
-                <ListItem key = {note.id}>
+                <ListItem key={note.id}>
                     <ListItemText
                         primary={
                             <React.Fragment>

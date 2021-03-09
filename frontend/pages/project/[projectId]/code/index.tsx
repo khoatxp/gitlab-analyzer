@@ -1,30 +1,13 @@
 import React from "react";
-import NavBar from "../../../../components/NavBar";
-import MenuSideBar from "../../../../components/MenuSideBar";
-import NavTabs from "../../../../components/NavTabs";
-import { makeStyles, createStyles } from '@material-ui/core/styles';
-import CodeAnalysis from "../../../../components/CodeAnalysis";
-import {Box} from "@material-ui/core";
 import AuthView from "../../../../components/AuthView";
-
-const useStyles = makeStyles(() =>
-  createStyles({
-    contentContainer: {
-      display: 'flex',
-    },
-  }),
-);
+import MenuLayout from "../../../../components/layout/menu/MenuLayout";
 
 const index = () => {
-    const classes = useStyles();
     return (
         <AuthView>
-            <NavBar/>
-            <NavTabs tabSelected={0}/>
-            <Box className={classes.contentContainer}>
-                <MenuSideBar/>
-                <CodeAnalysis/>
-            </Box>
+            <MenuLayout tabSelected={1}>
+                To be completed in a different ticket
+            </MenuLayout>
         </AuthView>
     );
 };

@@ -1,7 +1,7 @@
 package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
-
+import java.time.OffsetDateTime;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "IssueComment")
@@ -23,10 +23,10 @@ public class IssueComment {
     private Long id;
 
     @Column(
-            name = "issue_comment_iid",
+            name = "gitlab_issue_note_id",
             nullable = false
     )
-    private Long iid;
+    private Long gitLabIssueNoteId;
 
     @ManyToOne
     @JoinColumn(
@@ -43,26 +43,27 @@ public class IssueComment {
     private Issue issue;
 
     @Column(
-            name = "web_Url",
-            nullable = false
+            name = "body",
+            nullable = false,
+            columnDefinition = "TEXT"
 
     )
-    private String webUrl;
+    private String body;
 
     @Column(
             name = "created_at",
             nullable = false
     )
-    private String createdAt;
+    private OffsetDateTime createdAt;
 
     public IssueComment() {
     }
 
-    public IssueComment(Long iid, GitManagementUser gitManagementUser, Issue issue, String webUrl, String createdAt) {
-        this.iid = iid;
+    public IssueComment(Long gitLabIssueNoteId, String body, OffsetDateTime createdAt, GitManagementUser gitManagementUser, Issue issue) {
+        this.gitLabIssueNoteId = gitLabIssueNoteId;
         this.gitManagementUser = gitManagementUser;
         this.issue = issue;
-        this.webUrl = webUrl;
+        this.body = body;
         this.createdAt = createdAt;
     }
 
@@ -70,8 +71,8 @@ public class IssueComment {
         return id;
     }
 
-    public Long getIid() {
-        return iid;
+    public Long getgitLabIssueNoteId() {
+        return gitLabIssueNoteId;
     }
 
     public GitManagementUser getGitManagementUser() {
@@ -82,11 +83,11 @@ public class IssueComment {
         return issue;
     }
 
-    public String getWebUrl() {
-        return webUrl;
+    public String getbody() {
+        return body;
     }
 
-    public String getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
@@ -102,10 +103,10 @@ public class IssueComment {
     public String toString() {
         return "IssueComment{" +
                 "id=" + id +
-                ", iid=" + iid +
+                ", gitLabIssueNoteId=" + gitLabIssueNoteId +
                 ", gitManagementUser=" + gitManagementUser +
                 ", issue=" + issue +
-                ", webUrl='" + webUrl + '\'' +
+                ", body='" + body + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 '}';
     }
