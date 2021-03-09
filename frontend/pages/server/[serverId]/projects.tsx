@@ -12,6 +12,7 @@ import {AuthContext} from "../../../components/AuthContext";
 import {useSnackbar} from 'notistack';
 import {formatISO} from "date-fns";
 import ScoreProfileSelector from "../../../components/ScoreProfileSelector";
+import ScoreProfile from "../../../interfaces/ScoreProfile";
 
 const index = () => {
     const {enqueueSnackbar} = useSnackbar();
@@ -22,6 +23,7 @@ const index = () => {
     const [startDateTime, setStartDateTime] = useState<Date>(new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()));
     const [endDateTime, setEndDateTime] = useState<Date>(now);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [profile, setProfile] = useState<ScoreProfile>();
     const router = useRouter();
     const {serverId} = router.query;
 
@@ -55,6 +57,10 @@ const index = () => {
 
     const onEndDateTimeSelect = (end: Date) => {
         setEndDateTime(end);
+    }
+
+    const onProfileSelect = (x: ScoreProfile) => {
+        setProfile(x);
     }
 
     const onAnalyzeClicked = () => {
@@ -96,7 +102,11 @@ const index = () => {
                             endDateTime={endDateTime}
                         />
 
-                        <ScoreProfileSelector/>
+                        <ScoreProfileSelector
+                            profile={profile}
+                            setProfile={onProfileSelect}
+
+                        />
 
                     </Box>
                     <Box

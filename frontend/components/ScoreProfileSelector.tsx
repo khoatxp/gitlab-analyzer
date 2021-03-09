@@ -1,22 +1,27 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
-import {DeleteIcon, AddBoxIcon, EditIcon, AddCircleIcon} from '@material-ui/icons';
-import {makeStyles} from "@material-ui/core/styles";
-import Box from '@material-ui/core/Box';
-import {AuthContext } from "./AuthContext";
+import ScoreProfile from "../interfaces/ScoreProfile";
+import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
+import Button from '@material-ui/core/Button';
+import Box from '@material-ui/core/Box';
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import DialogActions from '@material-ui/core/DialogActions';
 import FormControl from '@material-ui/core/FormControl';
-import Typography from '@material-ui/core/Typography';
 import DialogContent from "@material-ui/core/DialogContent";
+import EditIcon from '@material-ui/icons/Edit';
+import AddBoxIcon from '@material-ui/icons/AddBox';
+import DeleteIcon from "@material-ui/icons/Delete";
 import TextField from "@material-ui/core/TextField";
 import IconButton from "@material-ui/core/IconButton";
 import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Select from '@material-ui/core/Select';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { View } from 'react-native';
-import ScoreProfile from "../interfaces/ScoreProfile";
+import {AuthContext} from "./AuthContext";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -32,25 +37,35 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: "center",
         alignItems:"center",
     },
-    textInput:{
-        margin:10
+    blue:{
+        backgroundColor: "8FC6F3",
+        color:"8FC6F3"
     }
 }));
 
+interface Props {
+    profile: ScoreProfile
+    setProfile: (x:ScoreProfile) => void
+}
+
 function Popup(props){
     const classes = useStyles();
-    const { open, handleClose, id, scoreProfile } = props;
+    const router = useRouter();
+    const { open, handleClose, scoreProfile } = props;
     const [extensionList, setExtensionList] = useState([{extension: "", weight: ""}]);
-    const [comments, setComments] = React.useState<Number>();
-    const [line, setLine] = React.useState<Number>();
-    const [Delete, setDelete] = React.useState<Number>();
+    const [commentsWeight, setCommentsWeight] = React.useState<Number>();
+    const [id, setId] = React.useState<Number>();
+    const [lineWeight, setLineWeight] = React.useState<Number>();
+    const [deleteWeight, setDeleteWeight] = React.useState<Number>();
     const [name, setName] = React.useState<String>("") ;
-    const [syntax, setSyntax] = React.useState<Number>();
+    const [syntaxWeight, setSyntaxWeight] = React.useState<Number>();
+    const [update, setUpdate] = React.useState(false);
+    const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
 
 
     const close = () => {
-        handleClose();
+        handleClose(update);
     };
 
     const handleAddExtension = () => {
@@ -70,47 +85,75 @@ function Popup(props){
         setExtensionList(list);
     };
 
-    const handleSubmit = e => {
-        //();
+    const handleSave = () => {
+
+        if (router.isReady) {
+
+            const newProfile = {
+                name: name,
+                lineWeight: lineWeight,
+                deleteWeight: deleteWeight,
+                syntaxWeight: syntaxWeight,
+                commentsWeight: commentsWeight,
+                extensionWeights: extensionList
+            }
+
+            if (id == null) {
+                axios
+                    .put(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scoreprofile`, newProfile, getAxiosAuthConfig())
+                    .then((resp: AxiosResponse) => {
+                        console.log(resp.data);
+                    });
+            } else {
+                axios
+                    .post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scoreprofile/${id}` , newProfile, getAxiosAuthConfig())
+                    .then((resp: AxiosResponse) => {
+                        console.log(resp.data);
+                    });
+            }
+            setUpdate(true)
+        }
 
     };
 
-    if(id != null && scoreProfile!= null){
-        setName(scoreProfile.nameWeight);
-        setDelete(scoreProfile.DeleteWeight);
-        setComments(scoreProfile.commentsWeight);
-        setSyntax(scoreProfile.syntaxWeight);
-        setExtensionList(scoreProfile.extensionWeight);
-        setLine(scoreProfile.lineWeight);
+    if( scoreProfile!= null){
+        setName(scoreProfile.name);
+        setDeleteWeight(scoreProfile.deleteWeight);
+        setCommentsWeight(scoreProfile.commentsWeight);
+        setSyntaxWeight(scoreProfile.syntaxWeight);
+        setExtensionList(scoreProfile.extensionWeights);
+        setLineWeight(scoreProfile.lineWeight);
+        setId(scoreProfile.id);
     }
 
     return (
 
         <React.Fragment>
-            <Dialog open={open} onClose={close} fullWidth maxWidth="sm">
+            <Dialog open={open} onClose={close} fullWidth maxWidth="sm" style={{color:"red", backgroundColor: 'transparent',
+                boxShadow: 'none'}} >
                 <button onClick={close}>X</button>
-                <Typography align="center"> Score Profile</Typography>
+                <DialogTitle id="edit-dialog-title" align="center">{"Score Profile"}</DialogTitle>
                 <DialogContent>
-                    <form className={classes.root} onSubmit={handleSubmit}>
-                        <div display="flex">
+                    <form className={classes.root} onSubmit={handleSave}>
+                        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
                             <TextField
                                 name="name"
                                 id="name"
                                 label="Name"
                                 type="text"
-                                className={classes.TextInput}
                                 value={name}
                                 onChange={setName}
                             />
+                        </View>
+                        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', flexWrap:'wrap'}}>
                             <TextField
                                 name="new-line"
                                 id="new-line"
                                 label="New Line"
                                 placeholder="Weight"
                                 type="number"
-                                className={classes.TextInput}
-                                value={line}
-                                onChange={setLine}
+                                value={lineWeight}
+                                onChange={setLineWeight}
                             />
                             <TextField
                                 name="delete"
@@ -118,9 +161,8 @@ function Popup(props){
                                 label="Deleting"
                                 placeholder="Weight"
                                 type="number"
-                                className={classes.TextInput}
-                                value = {Delete}
-                                onChange={setDelete}
+                                value = {deleteWeight}
+                                onChange={setDeleteWeight}
                             />
                             <TextField
                                 name="syntax"
@@ -128,9 +170,8 @@ function Popup(props){
                                 label="Syntax"
                                 placeholder="Weight"
                                 type="number"
-                                className={classes.TextInput}
-                                value={syntax}
-                                onChange={setSyntax}
+                                value={syntaxWeight}
+                                onChange={setSyntaxWeight}
                             />
                             <TextField
                                 name="comments"
@@ -138,28 +179,17 @@ function Popup(props){
                                 label="Comments"
                                 placeholder="Weight"
                                 type="number"
-                                className={classes.TextInput}
-                                value={comments}
-                                onChange={setComments}
+                                value={commentsWeight}
+                                onChange={setCommentsWeight}
                             />
-                        </div>
-                        <div align="start">
-                            <IconButton edge="start" aria-label="addextension" onClick={handleAddExtension}>
-                                <AddCircleIcon style={{ fontSize: "25px", color: "green" }} />
-                            </IconButton>
-                        </div>
-                        <View style={{flex: 1, flexDirection:"row", flexWrap:'wrap', alignItems:"flex-start"}}>
+                        </View>
+                        <DialogTitle id="extension-dialog-title" align="center">{"Extensions"}</DialogTitle>
+                        <View style={{flex: 1, flexDirection:"row", flexWrap:'wrap', alignItems:"flex-start", justifyContent: 'space-around'}}>
                             {extensionList.map((x, i) => {
                                 return (
 
                                     <Box
-                                        marginLeft="5px"
-                                        marginRight="15px"
-                                        //marginTop="3px"
-                                        color="white"
                                         boxShadow={0}
-                                        width="15vw"
-                                        minWidth="15px"
                                         display="flex"
                                         flexDirection="column"
                                         justifyContent="column"
@@ -189,56 +219,89 @@ function Popup(props){
                                 );
                             })}
                         </View>
-                        <div align="end">
-                            <button type="submit" variant="contained" color="primary">
-                                Save
-                            </button>
+                        <div align="start">
+                            <IconButton edge="start" aria-label="addextension" onClick={handleAddExtension}>
+                                <AddCircleIcon style={{ fontSize: "30px", color: "green" }} />
+                            </IconButton>
                         </div>
                     </form>
                 </DialogContent>
+                <DialogActions>
+                    <div align="end">
+                        <Button type="submit" variant="contained" color="primary" size="small" onClick={handleSave}>
+                            Save
+                        </Button>
+                    </div>
+                </DialogActions>
             </Dialog>
         </React.Fragment>
     )
 }
 
-const ScoreProfileSelector = () => {
+const ScoreProfileSelector = ({profile, setProfile}:Props) => {
 
     const classes = useStyles();
     const[profiles, setProfiles] =  useState<ScoreProfile[]>([]);
-    const profiles = ['a','b','c','d'];
     const [isIconVisible, setIconVisible] = React.useState(false);
-    const[selectedProfile, setSelectedProfile] = useState<number>()
+    const[selectedProfile, setSelectedProfile] = useState<ScoreProfile | null>()
     const [open, setOpen] = React.useState(false);
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const router = useRouter();
       
- 
-    /** 
+
     useEffect(() => {
         if (router.isReady) {
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scoreprofile/profiles`, getAxiosAuthConfig())
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scoreprofile`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
-                    setProfile(resp.data);
-                    setIsLoading(false);
+                    setProfiles(resp.data);
                 });
             ;
         }
     });
-    */
+
+    const update= () =>{
+        if (router.isReady) {
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scoreprofile`, getAxiosAuthConfig())
+                .then((resp: AxiosResponse) => {
+                    setProfiles(resp.data);
+                });
+        }
+    }
+
 
     const onProfileSelect = (_event: any, value: ScoreProfile) => {
-        setSelectedProfile(value.id);
+        setSelectedProfile(value);
     }
 
     const handleOpen = () => {
         setOpen(true);
     };
 
-    const handleClose = () => {
-        setOpen(false);
+    const handleEdit = (selected) => {
+        setOpen(true);
+        setSelectedProfile(selected);
     };
 
+    const handleClose = (update) => {
+        setOpen(false);
+        if(selectedProfile != null) {
+            setSelectedProfile(null);
+            if(update == true) {
+                update();
+            }
+        }
+    };
+
+    const handleDelete = (id) =>{
+        if (router.isReady) {
+            axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scoreprofile/${id}`, getAxiosAuthConfig())
+                .then((resp: AxiosResponse) => {
+                    console.log(resp.data);
+                });
+        }
+    },[id];
 
     return (
         <div className={classes.rowAlign}>
@@ -248,17 +311,19 @@ const ScoreProfileSelector = () => {
                     labelId="score-options"
                     onOpen={() => setIconVisible(true)}
                     onClose={() => setIconVisible(false)}
+                    value={profile}
+                    onChange={setProfile}
                 >
                     {profiles.map(p => (
                         <MenuItem value={p}>
                             {p}
                             {isIconVisible ? (
                                 <ListItemSecondaryAction variant="outlined">
-                                    <IconButton edge="end" aria-label="edit" onClick={handleOpen}>
+                                    <IconButton edge="end" aria-label="edit" onClick={() => { handleEdit(p);}} >
                                         <EditIcon style={{ fontSize: "25px", color: "grey" }} />
                                     </IconButton>
-                                    <Popup  open={open} handleClose={handleClose} />
-                                    <IconButton edge="end" aria-label="delete">
+                                    <Popup  open={open} handleClose={handleClose} scoreProfile={selectedProfile}/>
+                                    <IconButton edge="end" aria-label="delete"  onClick={() => { handleDelete(p.id);}}>
                                         <DeleteIcon style={{ fontSize: "25px", color: "#CC160B" }}/>
                                     </IconButton>
                                 </ListItemSecondaryAction>
@@ -271,7 +336,7 @@ const ScoreProfileSelector = () => {
             <IconButton edge="start" aria-label="add" onClick={handleOpen}>
                 <AddBoxIcon style={{ fontSize: "25px", color: "green" }}/>
             </IconButton>
-            <Popup  open={open} handleClose={handleClose} />
+            <Popup  open={open} handleClose={handleClose} scoreProfile={selectedProfile}/>
         </div>
     );
 }
