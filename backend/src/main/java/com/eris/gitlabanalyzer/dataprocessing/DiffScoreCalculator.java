@@ -24,14 +24,14 @@ public class DiffScoreCalculator {
     }
 
 
-    public int calculateScore(long mergeId){
-        int totalScore = 0;
+    public int calculateScoreMerge(long mergeId){
         List<FileScore> fileScores = fileScoreRepository.findByMergeId(mergeId);
-        for(FileScore fileScore : fileScores){
-           totalScore += calculateFileScore(fileScore);
-        }
+        return calculateFileScore(fileScores);
+    }
 
-        return totalScore;
+    public int calculateScoreCommit(long commitId){
+        List<FileScore> fileScores = fileScoreRepository.findByCommitId(commitId);
+        return calculateFileScore(fileScores);
     }
 
     //TODO look into handling of default values may not need function
@@ -40,15 +40,15 @@ public class DiffScoreCalculator {
     }
 
     //Todo update scoring values
-    private int calculateFileScore(FileScore fileScore){
+    private int calculateFileScore(List<FileScore> fileScores){
         int totalScore = 0;
-        int fileTypeWeight = filePointValues.getOrDefault(fileScore.getFileType(), DEFAULT_FILE_POINTS);
-
-
-        totalScore += fileScore.getCodeLineAdded() * fileTypeWeight;
-        totalScore += fileScore.getSyntaxLineAdded() * commentPointValue;
-        totalScore += fileScore.getCommentLineAdded() * commentPointValue;
-        totalScore += fileScore.getLineRemoved() * (fileTypeWeight/2);
+        for(FileScore fileScore : fileScores){
+            int fileTypeWeight = filePointValues.getOrDefault(fileScore.getFileType(), DEFAULT_FILE_POINTS);
+            totalScore += fileScore.getCodeLineAdded() * fileTypeWeight;
+            totalScore += fileScore.getSyntaxLineAdded() * commentPointValue;
+            totalScore += fileScore.getCommentLineAdded() * commentPointValue;
+            totalScore += fileScore.getLineRemoved() * (fileTypeWeight/2);
+        }
 
         return  totalScore;
     }

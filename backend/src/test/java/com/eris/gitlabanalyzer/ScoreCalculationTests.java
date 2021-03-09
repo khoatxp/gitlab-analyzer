@@ -2,11 +2,10 @@ package com.eris.gitlabanalyzer;
 
 import com.eris.gitlabanalyzer.dataprocessing.CalculateDiffMetrics;
 import com.eris.gitlabanalyzer.dataprocessing.DiffScoreCalculator;
-import com.eris.gitlabanalyzer.model.GitManagementUser;
-import com.eris.gitlabanalyzer.model.MergeRequest;
-import com.eris.gitlabanalyzer.model.Project;
-import com.eris.gitlabanalyzer.model.Server;
+import com.eris.gitlabanalyzer.model.*;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
 import com.eris.gitlabanalyzer.repository.*;
+import com.eris.gitlabanalyzer.service.GitLabService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -16,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,6 +28,8 @@ class ScoreCalculationTests {
     @Autowired
     private MergeRequestRepository mergeRequestRepository;
     @Autowired
+    private CommitRepository commitRepository;
+    @Autowired
     private ServerRepository serverRepository;
     @Autowired
     private GitManagementUserRepository gitManagementUserRepository;
@@ -35,6 +37,8 @@ class ScoreCalculationTests {
     private DiffScoreCalculator diffScoreCalculator;
     @Autowired
     private CalculateDiffMetrics calculateDiffMetrics;
+    @Autowired
+    private GitLabService gitLabService;
 
 
     @Value("${gitlab.SERVER_URL}")
@@ -42,8 +46,12 @@ class ScoreCalculationTests {
 
     private final ZoneOffset zoneId = ZoneOffset.UTC;
     private final OffsetDateTime startTime = OffsetDateTime.of(2015, 1, 1, 1, 1, 1, 1, zoneId);
+    private final OffsetDateTime endTime = OffsetDateTime.now();
     private Server server;
     private GitManagementUser gitManagementUser;
+    private Project project;
+
+    private final long projectId = 2L;
     private final String diff = "+ code line 1 -2\n" +
             "+ code line 2 -4\n" +
             "+ // comment line 1 -5\n" +
@@ -59,38 +67,58 @@ class ScoreCalculationTests {
      void setup(){
         server = new Server(serverUrl);
         serverRepository.save(server);
-        gitManagementUser= new GitManagementUser("testUsername", "testName", server);
+        gitManagementUser= new GitManagementUser(1L, "testUsername", "testName", server);
         gitManagementUserRepository.save(gitManagementUser);
-    }
 
+        project = new Project(projectId, "Test", "TestNameSpace", "webURl", server);
+        projectRepository.save(project);
+
+    }
 
     @Test
     void check_MergeDiff()  {
-        long projectId = 2L;
         long mergeId = 3L;
-
-
-        Project project = new Project(projectId, "Test", "TestNameSpace", "webURl", server);
-        projectRepository.save(project);
 
         MergeRequest mergeRequest = new MergeRequest(mergeId, "testAuthor", "testTitle", startTime, "weburl", project, gitManagementUser);
         mergeRequestRepository.save(mergeRequest);
-        calculateDiffMetrics.storeMetricsMerge(mergeRequest.getId(), project.getId());
-        int results = diffScoreCalculator.calculateScore(mergeRequest.getId());
+
+        calculateDiffMetrics.storeMetricsMerge(project.getId(), mergeRequest.getId());
+        int results = diffScoreCalculator.calculateScoreMerge(mergeRequest.getId());
         assertTrue((results > 0));
 
     }
 
-   /* @Test
+    @Test
+    void check_CommitDiff()  {
+
+        Iterable<GitLabCommit> commits = gitLabService.getCommits(projectId, startTime, endTime).toIterable();
+        String sha = commits.iterator().next().getSha();
+        Commit commit = new Commit(sha, "testTitle", "Author", "email", startTime, "weburl", project);
+        commitRepository.save(commit);
+
+        calculateDiffMetrics.storeMetricsCommit(project.getId(), commit.getId());
+        int results = diffScoreCalculator.calculateScoreCommit(commit.getId());
+        assertTrue((results > 0));
+
+    }
+
+    @Test
     void check_ScoreCalculations() {
         // TODO get actual values being set so test pass if point values change
         int javaCodePointval = 2;
         int commentValue = 1;
+        int syntaxValue = 1;
+        Long mergeId = 1L;
 
-        int results =  diffScoreCalculator.calculateScore(diff, "java");
+        MergeRequest mergeRequest = new MergeRequest(mergeId, "testAuthor", "testTitle", startTime, "weburl", project, gitManagementUser);
+        mergeRequestRepository.save(mergeRequest);
+
+        calculateDiffMetrics.testCalculateLines(diff, "java", mergeRequest);
+        int results = diffScoreCalculator.calculateScoreMerge(mergeRequest.getId());
         int expectedValue = javaCodePointval * 4;
         expectedValue += commentValue * 6;
-        assertEquals(results, expectedValue);
-    } */
+        expectedValue += syntaxValue;
+        assertEquals(expectedValue, results);
+    }
 
 }

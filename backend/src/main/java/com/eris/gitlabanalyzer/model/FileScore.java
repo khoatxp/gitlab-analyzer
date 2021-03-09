@@ -1,11 +1,15 @@
 package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "FileScore")
 @Table(name = "file_score")
+@Data
+@NoArgsConstructor
 public class FileScore {
     @Id
     @SequenceGenerator(
@@ -64,8 +68,6 @@ public class FileScore {
     )
     private int lineRemoved;
 
-    public FileScore(){}
-
     public FileScore(MergeRequest mergeRequest, String fileType, String filePath,
                      int codeLineAdded, int syntaxLineAdded, int commentLineAdded, int lineRemoved){
         this.mergeRequest = mergeRequest;
@@ -88,39 +90,4 @@ public class FileScore {
         this.lineRemoved = lineRemoved;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public Commit getCommit() {
-        return commit;
-    }
-
-    public MergeRequest getMergeRequest() {
-        return mergeRequest;
-    }
-
-    public String getFileType() {
-        return fileType;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public int getCodeLineAdded() {
-        return codeLineAdded;
-    }
-
-    public int getSyntaxLineAdded() {
-        return syntaxLineAdded;
-    }
-
-    public int getCommentLineAdded() {
-        return commentLineAdded;
-    }
-
-    public int getLineRemoved() {
-        return lineRemoved;
-    }
 }
