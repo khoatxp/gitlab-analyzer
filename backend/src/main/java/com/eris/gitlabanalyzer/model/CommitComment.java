@@ -25,12 +25,6 @@ public class CommitComment {
     )
     private Long id;
 
-    @Column(
-            name = "commit_comment_iid",
-            nullable = false
-    )
-    private Long iid;
-
     @ManyToOne
     @JoinColumn(
             name = "git_management_user_id",
@@ -46,11 +40,12 @@ public class CommitComment {
     private Commit commit;
 
     @Column(
-            name = "web_Url",
-            nullable = false
+            name = "note",
+            nullable = false,
+            columnDefinition = "TEXT"
 
     )
-    private String webUrl;
+    private String note;
 
     @Column(
             name = "created_at",
@@ -67,8 +62,8 @@ public class CommitComment {
         return gitManagementUser;
     }
 
-    public String getWebUrl() {
-        return webUrl;
+    public String getNote() {
+        return note;
     }
 
     public OffsetDateTime getCreatedAt() {
@@ -86,11 +81,10 @@ public class CommitComment {
     public CommitComment() {
     }
 
-    public CommitComment(Long iid, GitManagementUser gitManagementUser, Commit commit, String webUrl, OffsetDateTime createdAt) {
-        this.iid = iid;
+    public CommitComment(GitManagementUser gitManagementUser, Commit commit, String note, OffsetDateTime createdAt) {
         this.gitManagementUser = gitManagementUser;
         this.commit = commit;
-        this.webUrl = webUrl;
+        this.note = note;
         this.createdAt = createdAt;
     }
 
@@ -98,10 +92,9 @@ public class CommitComment {
     public String toString() {
         return "CommitComment{" +
                 "id=" + id +
-                ", iid=" + iid +
                 ", gitManagementUser=" + gitManagementUser +
                 ", commit=" + commit +
-                ", webUrl='" + webUrl + '\'' +
+                ", note='" + note + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 '}';
     }
