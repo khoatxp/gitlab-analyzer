@@ -26,11 +26,15 @@ public class DefaultUserConfig {
     @Bean
     CommandLineRunner commandLineRunner(ServerRepository serverRepository, UserRepository userRepository){
         return args -> {
-            Server server = new Server(serverUrl);
-            serverRepository.save(server);
-            User user = new User(username);
-            user.addServer(server, accessToken);
-            userRepository.save(user);
+            if (serverUrl != null && !serverUrl.isBlank() &&
+                    accessToken != null && !accessToken.isBlank() &&
+                    username != null && !username.isBlank()) {
+                Server server = new Server(serverUrl);
+                serverRepository.save(server);
+                User user = new User(username);
+                user.addServer(server, accessToken);
+                userRepository.save(user);
+            }
         };
     }
 

@@ -50,24 +50,12 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .authorizeRequests()
-//                .antMatchers("**") // TODO: This pattern will permit all routes to skip authentication. Uncomment for easier route testing
-//                .permitAll()
-
                 .antMatchers("/login", "/api/**")
-//                .permitAll()
-//                .anyRequest()
                 .authenticated()
-//                .antMatchers("/logout", "/exit")
-//                .permitAll()
-//                .and()
-//                .httpBasic()
                 .and()
                 // if uncommented, auto-redirect to CAS login if accessing an authenticated
 //                .exceptionHandling()
 //                .authenticationEntryPoint(authenticationEntryPoint())
-//                .and()
-//                .addFilterBefore(singleSignOutFilter, CasAuthenticationFilter.class)
-//                .addFilterBefore(logoutFilter, LogoutFilter.class)
                 .csrf()
                 .disable() // TODO: This will allow POST and DELETE requests to the server but left it vulnerable to CSRF attacks. Should have proper csrf configuration later on
                 .logout(logout -> logout
