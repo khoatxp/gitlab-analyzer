@@ -14,6 +14,6 @@ public interface ServerRepository extends JpaRepository<Server, Long> {
     @Query("select s from Server s join s.userServers us where s.serverUrl=?1 and us.user.id=?2")
     Optional<Server> findByServerUrlAndUserId(String serverUrl, Long userId);
 
-    Optional<Server> findFirstByServerUrl(String serverUrl);
+    Optional<Server> findByServerUrl(String serverUrl);
 }
 

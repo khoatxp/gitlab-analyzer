@@ -37,7 +37,7 @@ public class UserServerService {
         UserServer userServer = new UserServer(accessToken);
         userServer.setUser(user);
 
-        Optional<Server> ServerByUrl = serverRepository.findFirstByServerUrl(serverUrl);
+        Optional<Server> ServerByUrl = serverRepository.findByServerUrl(serverUrl);
         if (ServerByUrl.isPresent()) {
             userServer.setServer(ServerByUrl.get());
         }
