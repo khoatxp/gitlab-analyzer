@@ -17,14 +17,18 @@ public class DefaultUserConfig {
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
 
-    @Value("${gitlab.ACCESS_TOKEN}")
+    @Value("${env.ACCESS_TOKEN}")
     String accessToken;
+
+    @Value("${env.SFU_USERNAME}")
+    String username;
+
     @Bean
     CommandLineRunner commandLineRunner(ServerRepository serverRepository, UserRepository userRepository){
         return args -> {
             Server server = new Server(serverUrl);
             serverRepository.save(server);
-            User user = new User("test");
+            User user = new User(username);
             user.addServer(server, accessToken);
             userRepository.save(user);
         };

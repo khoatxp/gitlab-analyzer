@@ -17,6 +17,14 @@ export default function AuthView({children}: ChildrenProps) {
     // Async method that will return whether or not the user is logged in
     // Facilitates easy async use in useState
     const testUserLoggedIn = async () => {
+        try {
+            const userData = await getUserData()
+            console.log(userData);
+            return true;
+        } catch {
+            return false;
+        }
+        /*
         if (!isUserCredentialsAvailable()) {
             return false;
         }
@@ -26,6 +34,7 @@ export default function AuthView({children}: ChildrenProps) {
         } catch {
             return false;
         }
+         */
     }
 
     const isUserCredentialsAvailable = () => {
@@ -39,6 +48,13 @@ export default function AuthView({children}: ChildrenProps) {
         await axios.get(
             `${process.env.NEXT_PUBLIC_API_URL}/login`,
             getAxiosAuthConfig()
+        )
+    }
+
+    const getUserData = async () => {
+        await axios.get(
+            `${process.env.NEXT_PUBLIC_API_URL}/user`,
+            { withCredentials: true }
         )
     }
 

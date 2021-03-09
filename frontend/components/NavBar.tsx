@@ -29,8 +29,7 @@ const NavBar = () => {
     const classes = useStyles();
 
     const handleLogout = () => {
-        setUserCredential(defaultUserCredential);
-        router.push('/login');
+        location.assign(`${process.env.NEXT_PUBLIC_BACKEND_URL}/logout`);
     }
 
     return (

@@ -1,5 +1,7 @@
 package com.eris.gitlabanalyzer.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ public class User {
     )
     private String username;
 
+    @JsonIgnore
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
