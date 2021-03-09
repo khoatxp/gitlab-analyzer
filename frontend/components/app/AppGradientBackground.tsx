@@ -1,7 +1,7 @@
 import {Box} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import React from "react";
-import ChildrenProps from "../interfaces/ChildrenProps";
+import ChildrenProps from "../../interfaces/ChildrenProps";
 
 const useStyles = makeStyles((theme) => ({
     backgroundGradient: {

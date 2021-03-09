@@ -1,6 +1,6 @@
 package com.eris.gitlabanalyzer.service;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.eris.gitlabanalyzer.model.Project;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -11,24 +11,24 @@ public class AnalyticsService {
     private final ProjectService projectService;
     private final GitManagementUserService gitManagementUserService;
     private final MergeRequestService mergeRequestService;
+    private final CommitService commitService;
+    private final IssueService issueService;
 
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
-
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
-
-    public AnalyticsService(ProjectService projectService, GitManagementUserService gitManagementUserService, MergeRequestService mergeRequestService) {
+    public AnalyticsService(ProjectService projectService, GitManagementUserService gitManagementUserService, MergeRequestService mergeRequestService, CommitService commitService, IssueService issueService) {
         this.projectService = projectService;
         this.gitManagementUserService = gitManagementUserService;
         this.mergeRequestService = mergeRequestService;
+        this.commitService = commitService;
+        this.issueService = issueService;
     }
 
     public void saveAllFromGitlab(List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        for (Long gitLabProjectId : gitLabProjectIdList) {
-            projectService.saveProjectInfo(gitLabProjectId);
-            gitManagementUserService.saveGitManagementUserInfo(gitLabProjectId);
-            mergeRequestService.saveMergeRequestInfo(gitLabProjectId, startDateTime, endDateTime);
-        }
+        gitLabProjectIdList.forEach(gitLabProjectId -> {
+            Project project = projectService.saveProjectInfo(gitLabProjectId);
+            gitManagementUserService.saveGitManagementUserInfo(project);
+            mergeRequestService.saveMergeRequestInfo(project, startDateTime, endDateTime);
+            commitService.saveCommitInfo(project, startDateTime, endDateTime);
+            issueService.saveIssueInfo(project, startDateTime, endDateTime);
+        });
     }
 }

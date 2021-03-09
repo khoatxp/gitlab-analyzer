@@ -1,14 +1,15 @@
 import React from 'react';
-import NavbBar from '../../components/NavBar';
-import {render} from "@testing-library/react";
+import NavBar from '../../components/NavBar';
+import {mount} from "enzyme";
+
 
 describe("NavBar", () =>{
 
-    it("Snapshot NavBar", () => {
-        const { container } = render(
-            <NavbBar />
+    it("Snapshot NavBar", async() => {
+        const rend = mount(
+            <NavBar />
         )
-        expect(container).toMatchSnapshot();
+        expect(rend).toMatchSnapshot();
     })
 
 })
