@@ -1,8 +1,9 @@
 stages:
   - test
 GitAnalyzer-FrontendTests:
-  except:
+  only:
     - master
+    - merge_requests
   image: node:12.18.4
   stage: test
 
@@ -15,8 +16,9 @@ GitAnalyzer-FrontendTests:
     - 'cd ..'
 
 GitAnalyzer-BackendTests:
-  except:
+  only:
     - master
+    - merge_requests
   image: maven:3.6.3-openjdk-15
 
   before_script:
