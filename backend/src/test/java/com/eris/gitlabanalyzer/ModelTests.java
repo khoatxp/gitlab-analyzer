@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ModelTests<SERVER_URL> {
+class ModelTests {
 
     @Autowired
     private ServerRepository serverRepository;
@@ -27,8 +27,10 @@ class ModelTests<SERVER_URL> {
     @Autowired
     private ProjectRepository projectRepository;
 
-    private String SERVER_URL="http://142.58.22.215";
-    private String ACCESS_TOKEN="hpqTjsKz9pSSVRZPRsLE";
+    @Value("${env.SERVER_URL}")
+    private String SERVER_URL;
+    @Value("${env.ACCESS_TOKEN}")
+    private String ACCESS_TOKEN;
 
     private final Server testServer = new Server(SERVER_URL);
     private final User testUser = new User("csl33");
