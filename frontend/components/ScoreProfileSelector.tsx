@@ -14,6 +14,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import EditIcon from '@material-ui/icons/Edit';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import DeleteIcon from "@material-ui/icons/Delete";
+import AppTextField from "../../components/app/AppTextField";
 import TextField from "@material-ui/core/TextField";
 import IconButton from "@material-ui/core/IconButton";
 import Dialog from "@material-ui/core/Dialog";
@@ -52,13 +53,13 @@ function Popup(props){
     const router = useRouter();
     const { open, handleClose, scoreProfile } = props;
     const [extensionList, setExtensionList] = useState([{extension: "", weight: ""}]);
-    const [commentsWeight, setCommentsWeight] = React.useState<Number>();
-    const [id, setId] = React.useState<Number>();
-    const [lineWeight, setLineWeight] = React.useState<Number>();
-    const [deleteWeight, setDeleteWeight] = React.useState<Number>();
-    const [name, setName] = React.useState<String>("") ;
-    const [syntaxWeight, setSyntaxWeight] = React.useState<Number>();
-    const [update, setUpdate] = React.useState(false);
+    const [commentsWeight, setCommentsWeight] = useState<number>();
+    const [id, setId] = useState<number>();
+    const [lineWeight, setLineWeight] = useState<number>();
+    const [deleteWeight, setDeleteWeight] = useState<number>();
+    const [name, setName] = useState<string>("") ;
+    const [syntaxWeight, setSyntaxWeight] = useState<number>();
+    const [update, setUpdate] = useState(false);
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
 
@@ -134,56 +135,17 @@ function Popup(props){
                 <DialogTitle id="edit-dialog-title" align="center">{"Score Profile"}</DialogTitle>
                 <DialogContent>
                     <form className={classes.root} onSubmit={handleSave}>
-                        <Box style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
-                            <TextField
-                                name="name"
-                                id="name"
-                                label="Name"
-                                type="text"
-                                value={name}
-                                onChange={setName}
-                            />
+                        <Box display="flex" justifyContent="flex-end">
+                            <AppTextField placeholder="name" value={name} onChange={(e) => setName(e.target.value)}/>
                         </Box>
-                        <Box style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', flexWrap:'wrap'}}>
-                            <TextField
-                                name="new-line"
-                                id="new-line"
-                                label="New Line"
-                                placeholder="Weight"
-                                type="number"
-                                value={lineWeight}
-                                onChange={setLineWeight}
-                            />
-                            <TextField
-                                name="delete"
-                                id="delete"
-                                label="Deleting"
-                                placeholder="Weight"
-                                type="number"
-                                value = {deleteWeight}
-                                onChange={setDeleteWeight}
-                            />
-                            <TextField
-                                name="syntax"
-                                id="Syntax"
-                                label="Syntax"
-                                placeholder="Weight"
-                                type="number"
-                                value={syntaxWeight}
-                                onChange={setSyntaxWeight}
-                            />
-                            <TextField
-                                name="comments"
-                                id="comments"
-                                label="Comments"
-                                placeholder="Weight"
-                                type="number"
-                                value={commentsWeight}
-                                onChange={setCommentsWeight}
-                            />
+                        <Box display="flex" flexDirection="row" justifyContent="center" flexWrap="wrap">
+                            <AppTextField placeholder="New Line" value={lineWeight} onChange={(e) => setLineWeight(e.target.value)}/>
+                            <AppTextField placeholder="Deleting" value={deleteWeight} onChange={(e) => setDeleteWeight(e.target.value)}/>
+                            <AppTextField placeholder="Syntax" value={syntaxWeight} onChange={(e) => setSyntaxWeight(e.target.value)}/>
+                            <AppTextField placeholder="Comments" value={commentsWeight} onChange={(e) => setCommentsWeight(e.target.value)}/>
                         </Box>
                         <DialogTitle id="extension-dialog-title" align="center">{"Extensions"}</DialogTitle>
-                        <Box style={{flex: 1, flexDirection:"row", flexWrap:'wrap', alignItems:"flex-start", justifyContent: 'space-around'}}>
+                        <Box  display="flex" flexDirection="row" justifyContent="center" flexWrap="wrap">
                             {extensionList.map((x, i) => {
                                 return (
 
@@ -194,23 +156,11 @@ function Popup(props){
                                         justifyContent="column"
                                         alignItems="center"
                                     >
-                                        <TextField
-                                            name="extension"
-                                            value={x.extension}
-                                            label="extension"
-                                            type="text"
-                                            onChange={e => handleExtensionChange(e, i)}
-                                        />
-                                        <TextField
-                                            value={x.weight}
-                                            name="weight"
-                                            label="weight"
-                                            type="number"
-                                            onChange={e => handleExtensionChange(e, i)}
-                                        />
+                                        <AppTextField placeholder="extension" value={x.extension} onChange={(e) => handleExtensionChange(e.target.value, i)}/>
+                                        <AppTextField placeholder="weight" value={x.weight} onChange={(e) => handleExtensionChange(e.target.value, i)}/>
                                         <div className="btn-box">
                                             {extensionList.length !== 1 &&
-                                            <IconButton edge="center" aria-label="deleteextension" onClick={handleRemoveExtension}>
+                                            <IconButton edge="center" aria-label="deleteextension" onClick={()=>handleRemoveExtension(i)}>
                                                 <DeleteIcon style={{ fontSize: "25px", color: "grey" }} />
                                             </IconButton>}
                                         </div>
@@ -241,9 +191,9 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
 
     const classes = useStyles();
     const[profiles, setProfiles] =  useState<ScoreProfile[]>([]);
-    const [isIconVisible, setIconVisible] = React.useState(false);
+    const [isIconVisible, setIconVisible] = useState(false);
     const[selectedProfile, setSelectedProfile] = useState<ScoreProfile | null>()
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const router = useRouter();
       
@@ -300,10 +250,10 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                     console.log(resp.data);
                 });
         }
-    },[id];
+    };
 
     return (
-        <div className={classes.rowAlign}>
+        <Box display="flex" alignItems="row">
             <FormControl className={classes.formControl}>
                 <InputLabel id="score-options">Score Options</InputLabel>
                 <Select
@@ -336,7 +286,7 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                 <AddBoxIcon style={{ fontSize: "25px", color: "green" }}/>
             </IconButton>
             <Popup  open={open} handleClose={handleClose} scoreProfile={selectedProfile}/>
-        </div>
+        </Box>
     );
 }
 
