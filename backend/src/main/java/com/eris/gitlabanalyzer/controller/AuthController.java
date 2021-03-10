@@ -2,6 +2,7 @@ package com.eris.gitlabanalyzer.controller;
 
 import com.eris.gitlabanalyzer.model.User;
 import com.eris.gitlabanalyzer.repository.UserRepository;
+import com.eris.gitlabanalyzer.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -14,13 +15,15 @@ import java.security.Principal;
 public class AuthController {
 
     private final UserRepository userRepository;
+    private final AuthService authService;
 
     @Value("${FRONTEND_URL}")
     private String FRONTEND_URL;
 
     @Autowired
-    public AuthController(UserRepository userRepository){
+    public AuthController(UserRepository userRepository, AuthService authService){
         this.userRepository = userRepository;
+        this.authService = authService;
     }
 
     // TODO: Homepage redirects to frontend so that we know the backend is running when Brian is marking
@@ -32,9 +35,6 @@ public class AuthController {
 
     @GetMapping("/api/v1/user")
     public User getLoggedInUser(Principal currentUser) throws AccessDeniedException {
-        if (currentUser == null) {
-            throw new AccessDeniedException("User not logged in.");
-        }
-        return userRepository.findUserByUsername(currentUser.getName()).orElseThrow(() -> new AccessDeniedException("User not found."));
+        return authService.getLoggedInUser(currentUser);
     }
 }

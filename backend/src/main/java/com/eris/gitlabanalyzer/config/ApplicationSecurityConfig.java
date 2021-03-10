@@ -50,7 +50,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login", "/api/**")
+                .antMatchers("/api/**")
                 .authenticated()
                 .and()
                 // if uncommented, auto-redirect to CAS login if accessing an authenticated
@@ -61,7 +61,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout(logout -> logout
                     .logoutSuccessUrl("/")
                     .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
                 )
         ;
     }

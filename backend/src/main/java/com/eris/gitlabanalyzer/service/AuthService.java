@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
+import java.security.Principal;
 import java.util.Optional;
 
 
@@ -31,5 +33,11 @@ public class AuthService implements UserDetailsService {
                 true, true, true, true,
                 AuthorityUtils.createAuthorityList()
         );
+    }
+    public User getLoggedInUser(Principal principle) throws AccessDeniedException {
+        if (principle == null) {
+            throw new AccessDeniedException("User not logged in.");
+        }
+        return userRepository.findUserByUsername(principle.getName()).orElseThrow(() -> new AccessDeniedException("User not found."));
     }
 }
