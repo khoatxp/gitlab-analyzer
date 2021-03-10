@@ -7,11 +7,8 @@ public class Author {
     private long id;
     private String name;
     private String username;
-    private String state;
     @JsonProperty("avatar_url")
     private String avatarURL;
     @JsonProperty("web_url")
     private String webURL;
-    @JsonProperty("created_at")
-    private String createdAt;
 }

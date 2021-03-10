@@ -10,7 +10,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 
 @Service
@@ -64,7 +64,7 @@ public class GitLabService {
         return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabMember.class));
     }
 
-    public Flux<GitLabMergeRequest> getMergeRequests(Long projectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+    public Flux<GitLabMergeRequest> getMergeRequests(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests")
                 .queryParam("state", "merged")
@@ -79,18 +79,6 @@ public class GitLabService {
         return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabMergeRequest.class));
     }
 
-    public Flux<GitLabMergeRequestComment> getMergeRequestComments(Long projectId, Long mergeRequestIid) {
-        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
-                .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/notes")
-                .queryParam("per_page", 100)
-                .build()
-                .encode()
-                .toUri()
-                .toString();
-
-        return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabMergeRequestComment.class));
-    }
-
     public Flux<GitLabCommit> getMergeRequestCommits(Long projectId, Long mergeRequestIid) {
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/commits")
@@ -103,8 +91,7 @@ public class GitLabService {
         return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabCommit.class));
     }
 
-
-    public Flux<GitLabCommit> getCommits(Long projectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+    public Flux<GitLabCommit> getCommits(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/repository/commits")
                 .queryParam("since", startDateTime.toInstant().toString())
@@ -181,7 +168,7 @@ public class GitLabService {
                 .flatMap(response -> response.bodyToFlux(GitLabMergeRequestNote.class));
     }
 
-    public Flux<GitLabIssue> getIssues(Long projectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+    public Flux<GitLabIssue> getIssues(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/issues")
                 .queryParam("created_after", startDateTime.toInstant().toString())

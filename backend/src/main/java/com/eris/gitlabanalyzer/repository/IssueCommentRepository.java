@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IssueCommentRepository extends JpaRepository<IssueComment, Long> {
     @Query("select i from IssueComment i where i.gitLabIssueNoteId = ?1 and i.issue.id = ?2")
-    IssueComment findByIssueNoteIdAndIssueId(Long issueNoteId, Long issueId);
+    IssueComment findByGitLabIssueNoteIdAndIssueId(Long gitLabIssueNoteId, Long issueId);
 }

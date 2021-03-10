@@ -7,8 +7,7 @@ import com.eris.gitlabanalyzer.repository.IssueRepository;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 @Service
 public class IssueService {
@@ -29,54 +28,49 @@ public class IssueService {
         this.gitManagementUserRepository = gitManagementUserRepository;
     }
 
-    public void saveIssueInfo(Long gitLabProjectId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
-        Project project = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, serverUrl);
-
-        var gitLabIssues = gitLabService.getIssues(gitLabProjectId, startDateTime, endDateTime);
+    public void saveIssueInfo(Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        var gitLabIssues = gitLabService.getIssues(project.getGitLabProjectId(), startDateTime, endDateTime);
         var gitLabIssueList = gitLabIssues.collectList().block();
 
-        if (gitLabIssueList != null && !gitLabIssueList.isEmpty()) {
-            gitLabIssueList.forEach(gitLabIssue -> {
-                        GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabIssue.getAuthor().getUsername(), serverUrl);
-                        Issue issue = issueRepository.findByIidAndProjectId(gitLabIssue.getIid(),project.getId());
-                        if(issue == null){
-                            issue = new Issue(
-                                    gitLabIssue.getIid(),
-                                    gitLabIssue.getTitle(),
-                                    gitLabIssue.getAuthor().getName(),
-                                    gitLabIssue.getCreatedAt(),
-                                    gitLabIssue.getWebUrl(),
-                                    project,
-                                    gitManagementUser
-                            );
-                        }
-                        issueRepository.save(issue);
-                        saveIssueComments(project, gitLabIssue.getIid());
+        gitLabIssueList.forEach(gitLabIssue -> {
+                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabIssue.getAuthor().getId(), serverUrl);
+                    Issue issue = issueRepository.findByIidAndProjectId(gitLabIssue.getIid(),project.getId());
+                    if(issue == null){
+                        issue = new Issue(
+                                gitLabIssue.getIid(),
+                                gitLabIssue.getTitle(),
+                                gitLabIssue.getAuthor().getName(),
+                                gitLabIssue.getCreatedAt(),
+                                gitLabIssue.getWebUrl(),
+                                project,
+                                gitManagementUser
+                        );
                     }
-            );
-        }
+                    issue = issueRepository.save(issue);
+                    saveIssueComments(project, issue);
+                }
+        );
     }
 
-    public void saveIssueComments (Project project, Long issueIid){
-        Issue issue = issueRepository.findByIidAndProjectId(issueIid, project.getId());
+    public void saveIssueComments (Project project, Issue issue){
         var gitLabIssueComments = gitLabService.getIssueNotes(project.getGitLabProjectId(), issue.getIid());
         var gitLabIssueCommentList = gitLabIssueComments.collectList().block();
-        if (gitLabIssueCommentList != null && !gitLabIssueCommentList.isEmpty()) {
-            gitLabIssueCommentList.forEach(gitLabIssueComment -> {
-                GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabIssueComment.getAuthor().getUsername(),serverUrl);
-                IssueComment issueComment = issueCommentRepository.findByIssueNoteIdAndIssueId(gitLabIssueComment.getId(),issue.getIid());
-                if(issueComment == null){
-                    issueComment = new IssueComment(
-                            gitLabIssueComment.getId(),
-                            gitLabIssueComment.getBody(),
-                            gitLabIssueComment.getCreatedAt(),
-                            gitManagementUser,
-                            issue
-                    );
-                }
-                issueCommentRepository.save(issueComment);
-            });
-        }
+
+        gitLabIssueCommentList.parallelStream().forEach(gitLabIssueComment -> {
+            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabIssueComment.getAuthor().getId(),serverUrl);
+            IssueComment issueComment = issueCommentRepository.findByGitLabIssueNoteIdAndIssueId(gitLabIssueComment.getId(),issue.getIid());
+            if(issueComment == null){
+                issueComment = new IssueComment(
+                        gitLabIssueComment.getId(),
+                        gitLabIssueComment.getBody(),
+                        gitLabIssueComment.getCreatedAt(),
+                        gitManagementUser,
+                        issue
+                );
+            }
+            issueCommentRepository.save(issueComment);
+        });
+
     }
     
     

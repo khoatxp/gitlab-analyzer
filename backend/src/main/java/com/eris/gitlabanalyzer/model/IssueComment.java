@@ -1,9 +1,7 @@
 package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
-
 import java.time.OffsetDateTime;
-
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "IssueComment")

@@ -31,33 +31,28 @@ public class GitManagementUserService {
         this.gitLabService = gitLabService;
     }
 
-    //TODO Investigate other ways rather than using block(). Current issue is that there is a race condition when using subscribe()
-    public void saveGitManagementUserInfo(Long gitLabProjectId){
-        Project project = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, serverUrl);
-
-        var gitLabMembers = gitLabService.getMembers(gitLabProjectId);
+    public void saveGitManagementUserInfo(Project project){
+        var gitLabMembers = gitLabService.getMembers(project.getGitLabProjectId());
         var gitLabMemberList= gitLabMembers.collectList().block();
-
-        if (gitLabMemberList != null && !gitLabMemberList.isEmpty()) {
-            gitLabMemberList.forEach(gitLabMember -> {
-                    GitManagementUser gitManagementUser= gitManagementUserRepository.findByUserNameAndServerUrl(gitLabMember.getUsername(),serverUrl);
+        gitLabMemberList.forEach(gitLabMember -> {
+                    GitManagementUser gitManagementUser= gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabMember.getId(),serverUrl);
                     if (gitManagementUser == null){
                         gitManagementUser = new GitManagementUser(
+                                gitLabMember.getId(),
                                 gitLabMember.getUsername(),
                                 gitLabMember.getName(),
                                 serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken)
                         );
                     }
 
-                    GitManagementUser checkIfAlreadyInProject = gitManagementUserRepository.findByUsernameAndProjectId(gitLabMember.getUsername(),project.getId());
+                    GitManagementUser checkIfAlreadyInProject = gitManagementUserRepository.findByGitLabUserIdAndProjectId(gitLabMember.getId(),project.getId());
                     if(checkIfAlreadyInProject == null){
                         gitManagementUser.addProject(project);
                     }
 
                     gitManagementUserRepository.save(gitManagementUser);
                 }
-            );
-        }
+        );
     }
 
 
