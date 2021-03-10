@@ -26,10 +26,8 @@ const index = () => {
 
     useEffect(() => {
         if (router.isReady) {
-            // TODO need to pass serverId into this call to get the correct gitlab url and access code from db
-            // when that information is available in db
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects`, getAxiosAuthConfig())
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/${serverId}/projects`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setProjects(resp.data);
                     setIsLoading(false);
@@ -64,7 +62,7 @@ const index = () => {
 
     return (
         <AuthView>
-            <CardLayout>
+            <CardLayout backLink={"/server"}>
                 {loadingBar}
                 {!isLoading && <>
                     <Autocomplete

@@ -26,6 +26,10 @@ public class UserServer {
 
     public UserServer(){}
 
+    public UserServer(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
     public Long getId() {
         return id;
     }

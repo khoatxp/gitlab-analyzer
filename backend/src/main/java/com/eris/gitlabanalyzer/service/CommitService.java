@@ -15,21 +15,21 @@ import java.time.OffsetDateTime;
 @Service
 public class CommitService {
 
-    GitLabService gitLabService;
     MergeRequestRepository mergeRequestRepository;
     CommitRepository commitRepository;
     ProjectRepository projectRepository;
     GitManagementUserRepository gitManagementUserRepository;
     CommitCommentRepository commitCommentRepository;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public CommitService(GitLabService gitLabService, MergeRequestRepository mergeRequestRepository, CommitRepository commitRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, CommitCommentRepository commitCommentRepository) {
-        this.gitLabService = gitLabService;
+    public CommitService(MergeRequestRepository mergeRequestRepository, CommitRepository commitRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, CommitCommentRepository commitCommentRepository) {
         this.mergeRequestRepository = mergeRequestRepository;
         this.commitRepository = commitRepository;
         this.projectRepository = projectRepository;
@@ -47,6 +47,9 @@ public class CommitService {
         //Save commits associated with each merge request
         List<MergeRequest> mergeRequestList = mergeRequestRepository.findAllByProjectId(project.getId());
         List<String> mrCommitShas = new ArrayList<>(); //Used to filter for the case of orphan commits
+
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
 
         mergeRequestList.forEach(mergeRequest -> {
             var gitLabCommits = gitLabService.getMergeRequestCommits(project.getGitLabProjectId(), mergeRequest.getIid());
@@ -102,8 +105,9 @@ public class CommitService {
 
     }
 
-    //TODO we might not need to store commit comments
     public void saveCommitComment(Project project, Commit commit){
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
         var gitLabCommitComments = gitLabService.getCommitComments(project.getGitLabProjectId(), commit.getSha());
         var gitLabCommitCommentList = gitLabCommitComments.collectList().block();
 
