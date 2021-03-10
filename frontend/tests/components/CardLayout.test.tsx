@@ -1,6 +1,6 @@
 import React, {ReactNode} from 'react';
 import CardLayout from '../../components/layout/CardLayout';
-import {render} from "@testing-library/react";
+import {mount} from "enzyme";
 
 
 
@@ -8,11 +8,12 @@ describe("Cardlayout", () =>{
     // Dummy child to render CardLayout
     const children: ReactNode = <div/>;
 
-    it("Snapshot CardLayout", () => {
-        const { container } = render(
+    it("Snapshot CardLayout", async () => {
+        const rend = mount(
             <CardLayout children={children}/>
         )
-        expect(container).toMatchSnapshot();
+        await Promise.resolve();
+        expect(rend).toMatchSnapshot();
     });
 
 })

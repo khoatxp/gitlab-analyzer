@@ -11,18 +11,24 @@ public class AnalyticsService {
     private final ProjectService projectService;
     private final GitManagementUserService gitManagementUserService;
     private final MergeRequestService mergeRequestService;
+    private final CommitService commitService;
+    private final IssueService issueService;
 
-    public AnalyticsService(ProjectService projectService, GitManagementUserService gitManagementUserService, MergeRequestService mergeRequestService) {
+    public AnalyticsService(ProjectService projectService, GitManagementUserService gitManagementUserService, MergeRequestService mergeRequestService, CommitService commitService, IssueService issueService) {
         this.projectService = projectService;
         this.gitManagementUserService = gitManagementUserService;
         this.mergeRequestService = mergeRequestService;
+        this.commitService = commitService;
+        this.issueService = issueService;
     }
 
     public void saveAllFromGitlab(List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        for (Long gitLabProjectId : gitLabProjectIdList) {
-            projectService.saveProjectInfo(gitLabProjectId);
-            gitManagementUserService.saveGitManagementUserInfo(gitLabProjectId);
-            mergeRequestService.saveMergeRequestInfo(gitLabProjectId, startDateTime, endDateTime);
-        }
+        gitLabProjectIdList.forEach(gitLabProjectId -> {
+            Project project = projectService.saveProjectInfo(gitLabProjectId);
+            gitManagementUserService.saveGitManagementUserInfo(project);
+            mergeRequestService.saveMergeRequestInfo(project, startDateTime, endDateTime);
+            commitService.saveCommitInfo(project, startDateTime, endDateTime);
+            issueService.saveIssueInfo(project, startDateTime, endDateTime);
+        });
     }
 }

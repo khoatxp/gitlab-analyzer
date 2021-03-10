@@ -25,6 +25,13 @@ public class GitManagementUser {
     private Long id;
 
     @Column(
+            name = "gitlab_user_id",
+            nullable = false
+
+    )
+    private Long gitLabUserId;
+
+    @Column(
             name = "username",
             nullable = false
 
@@ -109,7 +116,8 @@ public class GitManagementUser {
 
     public GitManagementUser(){}
 
-    public GitManagementUser(String username, String name, Server server) {
+    public GitManagementUser(Long gitLabUserId, String username, String name, Server server) {
+        this.gitLabUserId = gitLabUserId;
         this.username = username;
         this.name = name;
         this.server = server;
@@ -119,9 +127,14 @@ public class GitManagementUser {
         return id;
     }
 
+    public Long getGitLabUserId() {
+        return gitLabUserId;
+    }
+
     public String getUsername() {
         return username;
     }
+
 
     public String getName() {
         return name;
@@ -225,6 +238,7 @@ public class GitManagementUser {
     public String toString() {
         return "GitManagementUser{" +
                 "id=" + id +
+                ", gitLabUserId=" + gitLabUserId +
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 ", score=" + score +

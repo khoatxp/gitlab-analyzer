@@ -1,7 +1,7 @@
 package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
-
+import java.time.OffsetDateTime;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "MergeRequestComment")
@@ -23,10 +23,10 @@ public class MergeRequestComment {
     private Long id;
 
     @Column(
-            name = "merge_request_comment_iid",
+            name = "gitlab_merge_request_note_id",
             nullable = false
     )
-    private Long iid;
+    private Long gitLabMergeRequestNoteId;
 
     @ManyToOne
     @JoinColumn(
@@ -43,26 +43,27 @@ public class MergeRequestComment {
     private MergeRequest mergeRequest;
 
     @Column(
-            name = "web_url",
-            nullable = false
+            name = "body",
+            nullable = false,
+            columnDefinition="TEXT"
 
     )
-    private String webUrl;
+    private String body;
 
     @Column(
             name = "created_at",
             nullable = false
     )
-    private String createdAt;
+    private OffsetDateTime createdAt;
 
     public MergeRequestComment() {
     }
 
-    public MergeRequestComment(Long iid, GitManagementUser gitManagementUser, MergeRequest mergeRequest, String webUrl, String createdAt) {
-        this.iid = iid;
+    public MergeRequestComment(Long gitLabMergeRequestNoteId, String body, OffsetDateTime createdAt, GitManagementUser gitManagementUser, MergeRequest mergeRequest) {
+        this.gitLabMergeRequestNoteId = gitLabMergeRequestNoteId;
         this.gitManagementUser = gitManagementUser;
         this.mergeRequest = mergeRequest;
-        this.webUrl = webUrl;
+        this.body = body;
         this.createdAt = createdAt;
     }
 
@@ -70,8 +71,8 @@ public class MergeRequestComment {
         return id;
     }
 
-    public Long getIid() {
-        return iid;
+    public Long getGitLabMergeRequestNoteId() {
+        return gitLabMergeRequestNoteId;
     }
 
     public GitManagementUser getMember() {
@@ -82,11 +83,11 @@ public class MergeRequestComment {
         return mergeRequest;
     }
 
-    public String getWebUrl() {
-        return webUrl;
+    public String getBody() {
+        return body;
     }
 
-    public String getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
@@ -102,11 +103,9 @@ public class MergeRequestComment {
     public String toString() {
         return "MergeRequestComment{" +
                 "id=" + id +
-                ", iid=" + iid +
-                ", gitManagementUser=" + gitManagementUser +
-                ", mergeRequest=" + mergeRequest +
-                ", webUrl='" + webUrl + '\'' +
-                ", createdAt='" + createdAt + '\'' +
+                ", gitLabMergeRequestNoteId=" + gitLabMergeRequestNoteId +
+                ", body='" + body + '\'' +
+                ", createdAt=" + createdAt +
                 '}';
     }
 }

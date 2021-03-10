@@ -39,13 +39,13 @@ public class ProjectService {
     }
 
 
-    public void saveProjectInfo(Long projectId) {
+    public Project saveProjectInfo(Long projectId) {
         // TODO use an internal projectId to find the correct server
         var gitLabService = new GitLabService(serverUrl, accessToken);
 
         Project project = projectRepository.findByGitlabProjectIdAndServerUrl(projectId,serverUrl);
         if(project != null){
-            return;
+            return project;
         }
 
         var gitLabProject = gitLabService.getProject(projectId).block();
@@ -58,7 +58,7 @@ public class ProjectService {
                 serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken)
         );
 
-        projectRepository.save(project);
+        return projectRepository.save(project);
     }
 
     public RawTimeLineProjectData getTimeLineProjectData(Long gitLabProjectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {

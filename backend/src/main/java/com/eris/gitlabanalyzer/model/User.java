@@ -1,16 +1,15 @@
 package com.eris.gitlabanalyzer.model;
 
 import lombok.AllArgsConstructor;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "User")
-@Table(name = "app_user")
+@Table(name = "app_user", uniqueConstraints=@UniqueConstraint(columnNames={"user_name"}))
 public class User {
     @Id
     @SequenceGenerator(
@@ -26,9 +25,12 @@ public class User {
             name = "user_id"
     )
     private Long id;
-
+    @Column(
+            name = "user_name"
+    )
     private String username;
 
+    @JsonIgnore
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,

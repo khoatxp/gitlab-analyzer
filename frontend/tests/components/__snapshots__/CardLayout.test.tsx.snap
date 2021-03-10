@@ -1,48 +1,175 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Cardlayout Snapshot CardLayout 1`] = `
-<div>
-  <div
-    class="MuiBox-root MuiBox-root-3 makeStyles-backgroundGradient-1"
-  >
-    <div
-      class="MuiBox-root MuiBox-root-4"
+<CardLayout>
+  <AppGradientBackground>
+    <Styled(MuiBox)
+      alignItems="center"
+      className="makeStyles-backgroundGradient-1"
+      display="flex"
+      height="100vh"
+      justifyContent="center"
+      width="100vw"
     >
       <div
-        class="MuiBox-root MuiBox-root-5"
-        id="card-header"
+        className="MuiBox-root MuiBox-root-3 makeStyles-backgroundGradient-1"
       >
-        <div
-          style="display: inline-block; max-width: 100%; overflow: hidden; position: relative; box-sizing: border-box; margin: 0px;"
+        <Styled(MuiBox)
+          bgcolor="primary.contrastText"
+          borderRadius={45}
+          boxShadow={20}
+          display="flex"
+          flexDirection="column"
+          height="60vh"
+          justifyContent="center"
+          minHeight="450px"
+          minWidth="250px"
+          padding="20px"
+          width="60vw"
         >
           <div
-            style="box-sizing: border-box; display: block; max-width: 100%;"
+            className="MuiBox-root MuiBox-root-4"
           >
-            <img
-              alt=""
-              aria-hidden="true"
-              role="presentation"
-              src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI1IiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiLz4="
-              style="max-width: 100%; display: block; margin: 0px; padding: 0px;"
-            />
+            <Styled(MuiBox)
+              id="card-header"
+              margin="10px"
+              textAlign="center"
+            >
+              <div
+                className="MuiBox-root MuiBox-root-5"
+                id="card-header"
+              >
+                <Image
+                  alt="The Gitlab Logo"
+                  height="125px"
+                  src="/gitlab.svg"
+                  width="125px"
+                >
+                  <div
+                    style={
+                      Object {
+                        "boxSizing": "border-box",
+                        "display": "inline-block",
+                        "margin": 0,
+                        "maxWidth": "100%",
+                        "overflow": "hidden",
+                        "position": "relative",
+                      }
+                    }
+                  >
+                    <div
+                      style={
+                        Object {
+                          "boxSizing": "border-box",
+                          "display": "block",
+                          "maxWidth": "100%",
+                        }
+                      }
+                    >
+                      <img
+                        alt=""
+                        aria-hidden={true}
+                        role="presentation"
+                        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI1IiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiLz4="
+                        style={
+                          Object {
+                            "border": "none",
+                            "display": "block",
+                            "margin": 0,
+                            "maxWidth": "100%",
+                            "padding": 0,
+                          }
+                        }
+                      />
+                    </div>
+                    <img
+                      alt="The Gitlab Logo"
+                      decoding="async"
+                      src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                      style={
+                        Object {
+                          "border": "none",
+                          "bottom": 0,
+                          "boxSizing": "border-box",
+                          "display": "block",
+                          "height": 0,
+                          "left": 0,
+                          "margin": "auto",
+                          "maxHeight": "100%",
+                          "maxWidth": "100%",
+                          "minHeight": "100%",
+                          "minWidth": "100%",
+                          "objectFit": undefined,
+                          "objectPosition": undefined,
+                          "padding": 0,
+                          "position": "absolute",
+                          "right": 0,
+                          "top": 0,
+                          "visibility": "hidden",
+                          "width": 0,
+                        }
+                      }
+                    />
+                  </div>
+                </Image>
+                <WithStyles(ForwardRef(Typography))
+                  gutterBottom={true}
+                  variant="h6"
+                >
+                  <ForwardRef(Typography)
+                    classes={
+                      Object {
+                        "alignCenter": "MuiTypography-alignCenter",
+                        "alignJustify": "MuiTypography-alignJustify",
+                        "alignLeft": "MuiTypography-alignLeft",
+                        "alignRight": "MuiTypography-alignRight",
+                        "body1": "MuiTypography-body1",
+                        "body2": "MuiTypography-body2",
+                        "button": "MuiTypography-button",
+                        "caption": "MuiTypography-caption",
+                        "colorError": "MuiTypography-colorError",
+                        "colorInherit": "MuiTypography-colorInherit",
+                        "colorPrimary": "MuiTypography-colorPrimary",
+                        "colorSecondary": "MuiTypography-colorSecondary",
+                        "colorTextPrimary": "MuiTypography-colorTextPrimary",
+                        "colorTextSecondary": "MuiTypography-colorTextSecondary",
+                        "displayBlock": "MuiTypography-displayBlock",
+                        "displayInline": "MuiTypography-displayInline",
+                        "gutterBottom": "MuiTypography-gutterBottom",
+                        "h1": "MuiTypography-h1",
+                        "h2": "MuiTypography-h2",
+                        "h3": "MuiTypography-h3",
+                        "h4": "MuiTypography-h4",
+                        "h5": "MuiTypography-h5",
+                        "h6": "MuiTypography-h6",
+                        "noWrap": "MuiTypography-noWrap",
+                        "overline": "MuiTypography-overline",
+                        "paragraph": "MuiTypography-paragraph",
+                        "root": "MuiTypography-root",
+                        "srOnly": "MuiTypography-srOnly",
+                        "subtitle1": "MuiTypography-subtitle1",
+                        "subtitle2": "MuiTypography-subtitle2",
+                      }
+                    }
+                    gutterBottom={true}
+                    variant="h6"
+                  >
+                    <h6
+                      className="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom"
+                    >
+                      GitLab
+                      <br />
+                      Analyzer
+                    </h6>
+                  </ForwardRef(Typography)>
+                </WithStyles(ForwardRef(Typography))>
+              </div>
+            </Styled(MuiBox)>
+            <div />
           </div>
-          <img
-            alt="The Gitlab Logo"
-            decoding="async"
-            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-            style="visibility: hidden; position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; box-sizing: border-box; padding: 0px; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"
-          />
-        </div>
-        <h6
-          class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom"
-        >
-          GitLab
-          <br />
-          Analyzer
-        </h6>
+        </Styled(MuiBox)>
       </div>
-      <div />
-    </div>
-  </div>
-</div>
+    </Styled(MuiBox)>
+  </AppGradientBackground>
+</CardLayout>
 `;

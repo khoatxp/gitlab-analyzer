@@ -124,6 +124,18 @@ public class GitLabService {
         return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabFileChange.class));
     }
 
+    public Flux<GitLabCommitComment> getCommitComments(Long projectId, String sha) {
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/repository/commits/" + sha + "/comments")
+                .queryParam("per_page", 100)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+
+        return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabCommitComment.class));
+    }
+
     public Flux<GitLabFileChange> getMergeRequestDiff(Long projectId, Long mergeRequestIid) {
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/changes")
