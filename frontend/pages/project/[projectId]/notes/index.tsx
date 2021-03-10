@@ -28,6 +28,7 @@ import {AuthContext} from "../../../../components/AuthContext";
 import AuthView from "../../../../components/AuthView";
 import MenuLayout from "../../../../components/layout/menu/MenuLayout";
 import formatDate from "../../../../interfaces/dateFormatter";
+import {useSnackbar} from "notistack";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -49,6 +50,7 @@ enum NoteType {
 }
 
 const NotesPage = () => {
+    const {enqueueSnackbar} = useSnackbar();
     const router = useRouter();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const {projectId, startDateTime, endDateTime} = router.query;
@@ -75,7 +77,9 @@ const NotesPage = () => {
             .get(`${PROJECT_ID_URL}/merge_requests/${mergeRequestIid}/notes`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
                 setNotes(resp.data);
-            })
+            }).catch(() => {
+            enqueueSnackbar('Failed to get merge request notes.', {variant: 'error',});
+        });
     };
 
     const getIssueNotes = (issueIid: number) => {
@@ -83,7 +87,9 @@ const NotesPage = () => {
             .get(`${PROJECT_ID_URL}/issues/${issueIid}/notes`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
                 setNotes(resp.data);
-            });
+            }).catch(() => {
+            enqueueSnackbar('Failed to get issue notes.', {variant: 'error',});
+        });
     };
 
     const handleSelectItem = (
@@ -108,12 +114,16 @@ const NotesPage = () => {
                 .get(`${PROJECT_ID_URL}/merge_requests${dateQuery}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setMergeRequests(resp.data);
-                });
+                }).catch(() => {
+                enqueueSnackbar('Failed to get merge requests data.', {variant: 'error',});
+            });
             axios
                 .get(`${PROJECT_ID_URL}/issues${dateQuery}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setIssues(resp.data);
-                });
+                }).catch(() => {
+                enqueueSnackbar('Failed to get issues data.', {variant: 'error',});
+            });
         }
 
     }, [projectId]);
