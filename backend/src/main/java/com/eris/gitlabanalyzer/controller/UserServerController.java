@@ -30,7 +30,7 @@ public class UserServerController {
         //TODO get logged in user based on SSO session params
         var username = principal.getName();
         var user = this.userRepository.findUserByUsername(username);
-        var userServers = userServerService.getUserServers(user);
+        var userServers = userServerService.getUserServers(user.get());
         return userServers.stream().map(UserServerView::fromUserServer);
     }
 
@@ -40,7 +40,7 @@ public class UserServerController {
         var username = principal.getName();
         var user = this.userRepository.findUserByUsername(username);
 
-        var userServer = userServerService.getUserServer(user, serverId);
+        var userServer = userServerService.getUserServer(user.get(), serverId);
         var server = userServer.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find server."));
         return UserServerView.fromUserServer(server);
     }
@@ -50,7 +50,7 @@ public class UserServerController {
         //TODO get logged in user based on SSO session params
         var username = principal.getName();
         var user = this.userRepository.findUserByUsername(username);
-        var userServer = userServerService.createServer(user, requestBody.getServerUrl(), requestBody.getAccessToken());
+        var userServer = userServerService.createServer(user.get(), requestBody.getServerUrl(), requestBody.getAccessToken());
         return UserServerView.fromUserServer(userServer);
     }
 

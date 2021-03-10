@@ -1,6 +1,6 @@
 package com.eris.gitlabanalyzer.service;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.eris.gitlabanalyzer.model.Project;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;

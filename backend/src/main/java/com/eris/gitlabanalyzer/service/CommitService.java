@@ -49,7 +49,6 @@ public class CommitService {
         // TODO use an internal projectId to find the correct server
         var gitLabService = new GitLabService(serverUrl, accessToken);
 
-        var gitLabCommits = gitLabService.getCommits(gitLabProjectId, startDateTime, endDateTime);
         mergeRequestList.forEach(mergeRequest -> {
             var gitLabCommits = gitLabService.getMergeRequestCommits(project.getGitLabProjectId(), mergeRequest.getIid());
             saveCommitHelper(project, mergeRequest, gitLabCommits, mrCommitShas);
@@ -104,8 +103,9 @@ public class CommitService {
 
     }
 
-    //TODO we might not need to store commit comments
     public void saveCommitComment(Project project, Commit commit){
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
         var gitLabCommitComments = gitLabService.getCommitComments(project.getGitLabProjectId(), commit.getSha());
         var gitLabCommitCommentList = gitLabCommitComments.collectList().block();
 

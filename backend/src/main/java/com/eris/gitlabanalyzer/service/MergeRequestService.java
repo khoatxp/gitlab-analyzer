@@ -28,7 +28,7 @@ public class MergeRequestService {
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public MergeRequestService(MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository) {
+    public MergeRequestService(MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, MergeRequestCommentRepository mergeRequestCommentRepository) {
         this.mergeRequestRepository = mergeRequestRepository;
         this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
@@ -63,6 +63,9 @@ public class MergeRequestService {
     }
 
     public void saveMergeRequestComments (Project project, MergeRequest mergeRequest){
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
+
         var gitLabMergeRequestComments = gitLabService.getMergeRequestNotes(project.getGitLabProjectId(), mergeRequest.getIid());
         var gitLabMergeRequestCommentList = gitLabMergeRequestComments.collectList().block();
 

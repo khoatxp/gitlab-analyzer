@@ -34,9 +34,7 @@ public class GitManagementUserService {
         // TODO use an internal projectId to find the correct server
         var gitLabService = new GitLabService(serverUrl, accessToken);
 
-        Project project = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, serverUrl);
-
-        var gitLabMembers = gitLabService.getMembers(gitLabProjectId);
+        var gitLabMembers = gitLabService.getMembers(project.getGitLabProjectId());
         var gitLabMemberList= gitLabMembers.collectList().block();
         gitLabMemberList.forEach(gitLabMember -> {
                     GitManagementUser gitManagementUser= gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabMember.getId(),serverUrl);

@@ -44,7 +44,7 @@ public class GitLabController {
         var username = principal.getName();
         var user = this.userRepository.findUserByUsername(username);
 
-        var userServer = userServerService.getUserServer(user, id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find server."));
+        var userServer = userServerService.getUserServer(user.get(), id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find server."));
         var gitLabService = new GitLabService(userServer.getServer().getServerUrl(), userServer.getAccessToken());
         return gitLabService.getProjects();
     }
