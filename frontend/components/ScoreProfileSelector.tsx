@@ -20,7 +20,6 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Select from '@material-ui/core/Select';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import { View } from 'react-native';
 import {AuthContext} from "./AuthContext";
 
 
@@ -135,7 +134,7 @@ function Popup(props){
                 <DialogTitle id="edit-dialog-title" align="center">{"Score Profile"}</DialogTitle>
                 <DialogContent>
                     <form className={classes.root} onSubmit={handleSave}>
-                        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
+                        <Box style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
                             <TextField
                                 name="name"
                                 id="name"
@@ -144,8 +143,8 @@ function Popup(props){
                                 value={name}
                                 onChange={setName}
                             />
-                        </View>
-                        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', flexWrap:'wrap'}}>
+                        </Box>
+                        <Box style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', flexWrap:'wrap'}}>
                             <TextField
                                 name="new-line"
                                 id="new-line"
@@ -182,9 +181,9 @@ function Popup(props){
                                 value={commentsWeight}
                                 onChange={setCommentsWeight}
                             />
-                        </View>
+                        </Box>
                         <DialogTitle id="extension-dialog-title" align="center">{"Extensions"}</DialogTitle>
-                        <View style={{flex: 1, flexDirection:"row", flexWrap:'wrap', alignItems:"flex-start", justifyContent: 'space-around'}}>
+                        <Box style={{flex: 1, flexDirection:"row", flexWrap:'wrap', alignItems:"flex-start", justifyContent: 'space-around'}}>
                             {extensionList.map((x, i) => {
                                 return (
 
@@ -218,7 +217,7 @@ function Popup(props){
                                     </Box>
                                 );
                             })}
-                        </View>
+                        </Box>
                         <div align="start">
                             <IconButton edge="start" aria-label="addextension" onClick={handleAddExtension}>
                                 <AddCircleIcon style={{ fontSize: "30px", color: "green" }} />

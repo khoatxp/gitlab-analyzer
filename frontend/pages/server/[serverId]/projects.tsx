@@ -2,9 +2,9 @@ import {Box, LinearProgress, TextField, Typography} from "@material-ui/core";
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
-import CardLayout from "../../../components/CardLayout";
-import AppDateTimePicker from "../../../components/AppDateTimePicker";
-import AppButton from "../../../components/AppButton";
+import CardLayout from "../../../components/layout/CardLayout";
+import AppDateTimePicker from "../../../components/app/AppDateTimePicker";
+import AppButton from "../../../components/app/AppButton";
 import {GitLabProject} from "../../../interfaces/GitLabProject";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import AuthView from "../../../components/AuthView";
@@ -102,11 +102,12 @@ const index = () => {
                             endDateTime={endDateTime}
                         />
 
+
                         <ScoreProfileSelector
                             profile={profile}
                             setProfile={onProfileSelect}
-
                         />
+
 
                     </Box>
                     <Box
