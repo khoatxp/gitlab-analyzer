@@ -47,7 +47,7 @@ const MenuSideBar = () => {
             </MenuButton>
             {gitLabMemberNames.map(member => {
                 const {name} = member;
-                return <MenuButton variant="contained" disableRipple> {name}</MenuButton>;
+                return <MenuButton key={name} variant="contained" disableRipple> {name}</MenuButton>;
             })}
         </Box>
     );
