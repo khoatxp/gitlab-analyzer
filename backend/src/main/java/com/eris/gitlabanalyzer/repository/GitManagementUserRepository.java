@@ -22,7 +22,6 @@ public interface GitManagementUserRepository extends JpaRepository<GitManagement
     // TODO use serverId instead of serverUrl
     @Query("select g from GitManagementUser g where g.gitLabUserId = ?1 and g.server.serverUrl = ?2")
     GitManagementUser findByGitLabUserIdAndServerUrl(Long gitLabUserId, String serverUrl);
-    GitManagementUser findByUserNameAndServerUrl(String username, String serverUrl);
 
     @Query("select g.id as id, g.username as username, g.name as name from GitManagementUser g inner join g.projects project where project.id = ?1 order by g.name asc")
     List<GitManagementUserResponse> getByProjectId(Long projectId);

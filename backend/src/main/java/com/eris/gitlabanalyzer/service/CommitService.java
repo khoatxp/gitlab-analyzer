@@ -123,24 +123,6 @@ public class CommitService {
             commitCommentRepository.save(commitComment);
         });
     }
-        if (gitLabCommitCommentList != null && !gitLabCommitCommentList.isEmpty()) {
-            gitLabCommitCommentList.forEach(gitLabCommitComment -> {
-                GitManagementUser gitManagementUser = gitManagementUserRepository.findByUserNameAndServerUrl(gitLabCommitComment.getAuthor().getUsername(),serverUrl);
-                if(gitManagementUser == null){
-                    return;
-                }
-                CommitComment commitComment = commitCommentRepository.findByUsernameAndCreatedAtAndCommitSha(gitLabCommitComment.getAuthor().getUsername(),gitLabCommitComment.getCreatedAt(),commitSha);
-                if(commitComment == null){
-                    commitComment = new CommitComment(
-                            gitManagementUser,
-                            commit,
-                            gitLabCommitComment.getNote(),
-                            gitLabCommitComment.getCreatedAt());
-                }
-                commitCommentRepository.save(commitComment);
-            });
-        }
-    }
 
     public List<CommitAuthorResponse> getCommitAuthorsByProjectId(Long projectId){
         return commitRepository.getCommitAuthorsByProjectId(projectId);
