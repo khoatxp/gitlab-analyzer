@@ -1,6 +1,5 @@
 package com.eris.gitlabanalyzer.config;
 
-import org.jasig.cas.client.session.SingleSignOutFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +14,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -31,8 +31,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${SFU_CAS_URL}")
     String sfuCasUrl;
 
-    private SingleSignOutFilter singleSignOutFilter;
-    private LogoutFilter logoutFilter;
     private CasAuthenticationProvider casAuthenticationProvider;
     private ServiceProperties serviceProperties;
 
@@ -82,6 +80,14 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(casAuthenticationProvider);
     }
 
+    @Bean
+    public CookieSerializer cookieSerializer() {
+        DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+        if (FRONTEND_URL.startsWith("https")) {
+            serializer.setSameSite("none");
+        }
+        return serializer;
+    }
 
     @Bean
     @Override
