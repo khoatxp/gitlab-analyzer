@@ -27,6 +27,7 @@ import {useRouter} from "next/router";
 import {AuthContext} from "../../../../components/AuthContext";
 import AuthView from "../../../../components/AuthView";
 import MenuLayout from "../../../../components/layout/menu/MenuLayout";
+import formatDate from "../../../../interfaces/dateFormatter";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -209,7 +210,7 @@ const Row = memo(({data, index, style}
         >
             <ListItemText
                 primary={item.title}
-                secondary={`#${item.iid} · opened ${item.created_at} by ${item.author.name}`}/>
+                secondary={`#${item.iid} · opened ${formatDate(item.created_at)} by ${item.author.name}`}/>
         </ListItem>
     );
 }, areEqual);
@@ -266,7 +267,7 @@ const NotesList = ({notes}: { notes: Note[] }) => {
                                     variant="body2"
                                     color="textSecondary"
                                 >
-                                    {`@${note.author.username} · ${note.created_at}`}
+                                    {`@${note.author.username} · ${formatDate(note.created_at)}`}
                                 </Typography>
                             </React.Fragment>}
                         secondary={note.body}/>
