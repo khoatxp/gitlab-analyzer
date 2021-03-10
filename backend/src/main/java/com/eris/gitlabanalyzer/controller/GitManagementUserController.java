@@ -1,8 +1,8 @@
 package com.eris.gitlabanalyzer.controller;
 
-import com.eris.gitlabanalyzer.model.frontendrequest.CommitAuthorRequest;
-import com.eris.gitlabanalyzer.model.frontendresponse.CommitAuthorResponse;
-import com.eris.gitlabanalyzer.model.frontendresponse.GitManagementUserResponse;
+import com.eris.gitlabanalyzer.viewmodel.CommitAuthorRequestBody;
+import com.eris.gitlabanalyzer.viewmodel.CommitAuthorView;
+import com.eris.gitlabanalyzer.viewmodel.GitManagementUserView;
 import com.eris.gitlabanalyzer.service.CommitService;
 import com.eris.gitlabanalyzer.service.GitManagementUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +22,17 @@ public class GitManagementUserController {
     }
 
     @GetMapping("/api/v1/{projectId}/managementuser/members")
-    public List<GitManagementUserResponse> getMembersByProjectId(@PathVariable("projectId") Long projectId){
+    public List<GitManagementUserView> getMembersByProjectId(@PathVariable("projectId") Long projectId){
         return gitManagementUserService.getMembersByProjectId(projectId);
     }
     @GetMapping("/api/v1/{projectId}/commitauthor")
-    public List<CommitAuthorResponse> getCommitAuthorsByProjectId(@PathVariable("projectId") Long projectId){
+    public List<CommitAuthorView> getCommitAuthorsByProjectId(@PathVariable("projectId") Long projectId){
         return commitService.getCommitAuthorsByProjectId(projectId);
     }
     @PostMapping("api/v1/{projectId}/managementuser/mapping")
     public void mapNewCommitAuthorsToCommits(
             @PathVariable("projectId") Long projectId,
-            @RequestBody List<CommitAuthorRequest> commitAuthors) {
+            @RequestBody List<CommitAuthorRequestBody> commitAuthors) {
         commitService.mapNewCommitAuthorsToCommits(projectId,commitAuthors);
     }
 }

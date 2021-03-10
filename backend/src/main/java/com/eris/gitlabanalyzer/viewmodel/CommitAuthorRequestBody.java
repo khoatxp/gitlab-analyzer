@@ -1,10 +1,10 @@
-package com.eris.gitlabanalyzer.model.frontendrequest;
+package com.eris.gitlabanalyzer.viewmodel;
 
 @lombok.Getter
-public class CommitAuthorRequest {
+public class CommitAuthorRequestBody {
     private String authorName;
     private String authorEmail;
     private String mappedGitManagementUserName;
     private Long mappedGitManagementUserId;
-    public CommitAuthorRequest(){}
+    public CommitAuthorRequestBody(){}
 }

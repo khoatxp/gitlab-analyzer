@@ -1,7 +1,6 @@
 import React from "react";
 import NavBar from "../../../../components/NavBar";
-import MenuSideBar from "../../../../components/MenuSideBar";
-import NavTabs from "../../../../components/NavTabs";
+import NavTabs from "../../../../components/layout/menu/NavTabs";
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import MemberMapping from "../../../../components/MemberMapping";
 import {Box} from "@material-ui/core";

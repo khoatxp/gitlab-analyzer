@@ -1,8 +1,8 @@
 package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.*;
-import com.eris.gitlabanalyzer.model.frontendrequest.CommitAuthorRequest;
-import com.eris.gitlabanalyzer.model.frontendresponse.CommitAuthorResponse;
+import com.eris.gitlabanalyzer.viewmodel.CommitAuthorRequestBody;
+import com.eris.gitlabanalyzer.viewmodel.CommitAuthorView;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
 import com.eris.gitlabanalyzer.repository.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -128,11 +128,11 @@ public class CommitService {
         });
     }
 
-    public List<CommitAuthorResponse> getCommitAuthorsByProjectId(Long projectId){
+    public List<CommitAuthorView> getCommitAuthorsByProjectId(Long projectId){
         return commitRepository.getCommitAuthorsByProjectId(projectId);
     }
 
-    public void mapNewCommitAuthorsToCommits(Long projectId, List<CommitAuthorRequest> commitAuthors){
+    public void mapNewCommitAuthorsToCommits(Long projectId, List<CommitAuthorRequestBody> commitAuthors){
         commitAuthors.forEach(commitAuthor -> {
             //The app user has not mapped this author to any member
             if(commitAuthor.getMappedGitManagementUserId() == null){

@@ -1,8 +1,7 @@
 package com.eris.gitlabanalyzer.repository;
 
 import com.eris.gitlabanalyzer.model.Commit;
-import com.eris.gitlabanalyzer.model.GitManagementUser;
-import com.eris.gitlabanalyzer.model.frontendresponse.CommitAuthorResponse;
+import com.eris.gitlabanalyzer.viewmodel.CommitAuthorView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -25,5 +24,5 @@ public interface CommitRepository extends JpaRepository<Commit,Long> {
     void updateNewCommitAuthors(Long gitManagementUserId, String authorName, String authorEmail, Long projectId);
 
     @Query("select distinct c.authorEmail as authorEmail, c.authorName as authorName, c.gitManagementUser.name as mappedGitManagementUserName, c.gitManagementUser.id as mappedGitManagementUserId  from Commit c where c.project.id = ?1 order by c.authorName asc")
-    List<CommitAuthorResponse> getCommitAuthorsByProjectId(Long projectId);
+    List<CommitAuthorView> getCommitAuthorsByProjectId(Long projectId);
 }

@@ -1,6 +1,6 @@
-package com.eris.gitlabanalyzer.model.frontendresponse;
+package com.eris.gitlabanalyzer.viewmodel;
 
-public interface CommitAuthorResponse {
+public interface CommitAuthorView {
     String getAuthorEmail();
     String getAuthorName();
     String getMappedGitManagementUserName();

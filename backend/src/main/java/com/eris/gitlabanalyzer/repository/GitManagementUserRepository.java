@@ -1,6 +1,6 @@
 package com.eris.gitlabanalyzer.repository;
 import com.eris.gitlabanalyzer.model.GitManagementUser;
-import com.eris.gitlabanalyzer.model.frontendresponse.GitManagementUserResponse;
+import com.eris.gitlabanalyzer.viewmodel.GitManagementUserView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -24,5 +24,5 @@ public interface GitManagementUserRepository extends JpaRepository<GitManagement
     GitManagementUser findByGitLabUserIdAndServerUrl(Long gitLabUserId, String serverUrl);
 
     @Query("select g.id as id, g.username as username, g.name as name from GitManagementUser g inner join g.projects project where project.id = ?1 order by g.name asc")
-    List<GitManagementUserResponse> getByProjectId(Long projectId);
+    List<GitManagementUserView> getByProjectId(Long projectId);
 }
