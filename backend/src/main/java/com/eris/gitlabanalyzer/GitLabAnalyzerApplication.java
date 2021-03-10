@@ -64,7 +64,7 @@ public class GitLabAnalyzerApplication {
 		provider.setServiceProperties(serviceProperties);
 		provider.setTicketValidator(ticketValidator);
 		provider.setUserDetailsService(authService);
-		provider.setKey("CAS_PROVIDER_LOCALHOST_8900");
+		provider.setKey("CAS_PROVIDER_SFU");
 		return provider;
 	}
 }
