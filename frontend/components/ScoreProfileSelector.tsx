@@ -14,31 +14,31 @@ import DialogContent from "@material-ui/core/DialogContent";
 import EditIcon from '@material-ui/icons/Edit';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import DeleteIcon from "@material-ui/icons/Delete";
-import AppTextField from "../../components/app/AppTextField";
 import IconButton from "@material-ui/core/IconButton";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Select from '@material-ui/core/Select';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import {AuthContext} from "./AuthContext";
+import AppTextField from "./app/AppTextField";
+import AppButton from "./app/AppButton";
 
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
-        margin: theme.spacing(5),
         minWidth: 150,
+        marginBottom: "15px"
     },
-    selectEmpty: {
-        marginTop: theme.spacing(2),
+    popup:{
+        borderRadius:45,
+        padding:"20px",
+        boxShadow:'none'
     },
-    rowAlign:{
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems:"center",
-    },
-    blue:{
-        backgroundColor: "8FC6F3",
-        color:"8FC6F3"
+    button: {
+        borderRadius: "20px",
+        padding: "12px 30px",
+        margin: "10px",
+        color:"primary"
     }
 }));
 
@@ -78,9 +78,9 @@ function Popup(props){
     };
 
     const handleExtensionChange = (e, index) => {
-        const { extension, value } = e.target;
+        const { extension, weight } = e.target.value;
         const list = [...extensionList];
-        list[index][extension] = value;
+        list[index][extension] = weight;
         setExtensionList(list);
     };
 
@@ -128,20 +128,29 @@ function Popup(props){
     return (
 
         <React.Fragment>
-            <Dialog open={open} onClose={close} fullWidth maxWidth="sm" style={{color:"red", backgroundColor: 'transparent',
-                boxShadow: 'none'}} >
-                <button onClick={close}>X</button>
+            <Dialog open={open} onClose={close} fullWidth maxWidth="sm" classes={{paper: classes.popup}} >
+                <button className={classes.button} onClick={close}>X</button>
                 <DialogTitle id="edit-dialog-title" align="center">{"Score Profile"}</DialogTitle>
                 <DialogContent>
                     <form className={classes.root} onSubmit={handleSave}>
-                        <Box display="flex" justifyContent="flex-end">
-                            <AppTextField placeholder="name" value={name} onChange={(e) => setName(e.target.value)}/>
-                        </Box>
-                        <Box display="flex" flexDirection="row" justifyContent="center" flexWrap="wrap">
-                            <AppTextField placeholder="New Line" value={lineWeight} onChange={(e) => setLineWeight(e.target.value)}/>
-                            <AppTextField placeholder="Deleting" value={deleteWeight} onChange={(e) => setDeleteWeight(e.target.value)}/>
-                            <AppTextField placeholder="Syntax" value={syntaxWeight} onChange={(e) => setSyntaxWeight(e.target.value)}/>
-                            <AppTextField placeholder="Comments" value={commentsWeight} onChange={(e) => setCommentsWeight(e.target.value)}/>
+                        <div marginLeft={2} align="right">
+                            <Box width={150}>
+                                <AppTextField label="name" value={name} onChange={(e) => setName(e.target.value)}/>
+                            </Box>
+                        </div>
+                        <Box display="flex" flexDirection="row" justifyContent="center" >
+                            <Box marginLeft={1} marginRight={1}>
+                                <AppTextField label="New Line" placeholder="Weight" value={lineWeight} onChange={(e) => setLineWeight(e.target.value)}/>
+                            </Box>
+                            <Box marginLeft={1} marginRight={1}>
+                                <AppTextField label="Deleting" placeholder="Weight" value={deleteWeight} onChange={(e) => setDeleteWeight(e.target.value)}/>
+                            </Box>
+                            <Box marginLeft={1} marginRight={1}>
+                                <AppTextField label="Syntax(e.g '}')" placeholder="Weight" value={syntaxWeight} onChange={(e) => setSyntaxWeight(e.target.value)}/>
+                            </Box>
+                            <Box marginLeft={1} marginRight={1}>
+                                <AppTextField label="Comments" placeholder="Weight" value={commentsWeight} onChange={(e) => setCommentsWeight(e.target.value)}/>
+                            </Box>
                         </Box>
                         <DialogTitle id="extension-dialog-title" align="center">{"Extensions"}</DialogTitle>
                         <Box  display="flex" flexDirection="row" justifyContent="center" flexWrap="wrap">
@@ -151,13 +160,15 @@ function Popup(props){
                                     <Box
                                         boxShadow={0}
                                         display="flex"
+                                        marginRight={3}
+                                        marginLeft={3}
                                         flexDirection="column"
                                         justifyContent="column"
                                         alignItems="center"
                                     >
-                                        <AppTextField placeholder="extension" value={x.extension} onChange={(e) => handleExtensionChange(e.target.value, i)}/>
-                                        <AppTextField placeholder="weight" value={x.weight} onChange={(e) => handleExtensionChange(e.target.value, i)}/>
-                                        <div className="btn-box">
+                                        <AppTextField label="extension" value={x.extension} onChange={(e) => handleExtensionChange(e.target.value, i)}/>
+                                        <AppTextField label="weight" value={x.weight} onChange={(e) => handleExtensionChange(e.target.value, i)}/>
+                                        <div>
                                             {extensionList.length !== 1 &&
                                             <IconButton edge="center" aria-label="deleteextension" onClick={()=>handleRemoveExtension(i)}>
                                                 <DeleteIcon style={{ fontSize: "25px", color: "grey" }} />
@@ -176,9 +187,7 @@ function Popup(props){
                 </DialogContent>
                 <DialogActions>
                     <div align="end">
-                        <Button type="submit" variant="contained" color="primary" size="small" onClick={handleSave}>
-                            Save
-                        </Button>
+                    <AppButton size="small" type="submit" color="primary" onClick={handleSave}>Save</AppButton>
                     </div>
                 </DialogActions>
             </Dialog>
@@ -252,8 +261,8 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
     };
 
     return (
-        <Box display="flex" alignItems="row">
-            <FormControl className={classes.formControl}>
+        <Box display="flex" flexDirection="row" justifyContent="row" marginLeft={5}>
+        <FormControl className={classes.formControl}>
                 <InputLabel id="score-options">Score Options</InputLabel>
                 <Select
                     labelId="score-options"
@@ -261,6 +270,13 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                     onClose={() => setIconVisible(false)}
                     value={profile}
                     onChange={setProfile}
+                    MenuProps={{
+                        getContentAnchorEl: null,
+                        anchorOrigin: {
+                          vertical: "bottom",
+                          horizontal: "left",
+                        }
+                    }}
                 >
                     {profiles.map(p => (
                         <MenuItem value={p}>  //value{p.name}=
@@ -279,12 +295,12 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                         </MenuItem>
                     ))}
                 </Select>
-            </FormControl>
-
-            <IconButton edge="start" aria-label="add" onClick={handleOpen}>
-                <AddBoxIcon style={{ fontSize: "25px", color: "green" }}/>
+            </FormControl> 
+            <IconButton aria-label="add" onClick={handleOpen} marginTop={5}>
+                    <AddBoxIcon style={{ fontSize: "25px", color: "green" }}/>
             </IconButton>
-            <Popup  open={open} handleClose={handleClose} scoreProfile={selectedProfile}/>
+            <Popup  open={open} handleClose={handleClose} scoreProfile={selectedProfile}/>             
+  
         </Box>
     );
 }
