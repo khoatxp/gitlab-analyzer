@@ -11,23 +11,23 @@ import AuthView from "../../../components/AuthView";
 import {AuthContext} from "../../../components/AuthContext";
 import {useSnackbar} from 'notistack';
 import {formatISO} from "date-fns";
+import ProjectSelect from "../../../components/ProjectSelect";
+import LoadingBar from "../../../components/LoadingBar";
 
 const index = () => {
+    const router = useRouter();
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
-    const now = new Date();
     const [projects, setProjects] = useState<GitLabProject[]>([]);
-    const [selectedProjectId, setSelectedProjectId] = useState<number>(0);
-    const [startDateTime, setStartDateTime] = useState<Date>(new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()));
-    const [endDateTime, setEndDateTime] = useState<Date>(now);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const router = useRouter();
+    const [itemBeingLoaded, setItemBeingLoaded] = useState<string>('');
     const {serverId} = router.query;
 
     useEffect(() => {
         if (router.isReady) {
             // TODO need to pass serverId into this call to get the correct gitlab url and access code from db
             // when that information is available in db
+            setItemBeingLoaded("Projects");
             axios
                 .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
@@ -39,81 +39,21 @@ const index = () => {
         }
     }, [serverId]);
 
-    let loadingBar = null;
-    if (isLoading) {
-        loadingBar = <LoadingBar/>;
-    }
-
-    const onProjectSelect = (_event: any, value: GitLabProject) => {
-        setSelectedProjectId(value.id);
-    }
-
-    const onStartDateTimeSelect = (start: Date) => {
-        setStartDateTime(start);
-    }
-
-    const onEndDateTimeSelect = (end: Date) => {
-        setEndDateTime(end);
-    }
-
-    const onAnalyzeClicked = () => {
-        const start = formatISO(startDateTime);
-        const end = formatISO(endDateTime);
-        router.push(`/project/${selectedProjectId}/code?startDateTime=${start}&endDateTime=${end}`);
+    const handleAnalyze = (projectId: number, startDateTime: Date, endDateTime: Date) => {
+        setItemBeingLoaded("Analysis");
+        setIsLoading(true);
+        // const start = formatISO(startDateTime);
+        // const end = formatISO(endDateTime);
+        // router.push(`/project/${projectId}/code?startDateTime=${start}&endDateTime=${end}`);
     }
 
     return (
         <AuthView>
             <CardLayout>
-                {loadingBar}
-                {!isLoading && <>
-                    <Autocomplete
-                        id="project-select"
-                        onChange={onProjectSelect}
-                        options={projects}
-                        getOptionLabel={(proj) => proj.name_with_namespace}
-                        renderInput={(params) => <TextField {...params} label="Search Projects" variant="outlined"/>}
-                    />
-
-                    <Box
-                        marginLeft="5px"
-                        marginRight="5px"
-                        marginTop="10px"
-                        color="white"
-                        boxShadow={0}
-                        width="56vw"
-                        minWidth="260px"
-                        display="flex"
-                        flexDirection="column"
-                        justifyContent="column"
-                        alignItems="column"
-                    >
-                        <AppDateTimePicker
-                            onStartDateTimeChange={onStartDateTimeSelect}
-                            onEndDateTimeChange={onEndDateTimeSelect}
-                            startDateTime={startDateTime}
-                            endDateTime={endDateTime}
-                        />
-                    </Box>
-                    <Box
-                        alignSelf="center"
-                        marginTop="10px">
-                        <AppButton color="primary" disabled={selectedProjectId === 0}
-                                   onClick={onAnalyzeClicked}>Analyze</AppButton>
-                    </Box>
-                </>}
+                {isLoading && <LoadingBar itemBeingLoaded={itemBeingLoaded}/>}
+                {!isLoading && <ProjectSelect projects={projects} onAnalyzeClick={handleAnalyze}/>}
             </CardLayout>
         </AuthView>
     );
 };
-
-const LoadingBar = () => {
-    return <div>
-        <Typography variant={"body1"}>
-            Loading projects...
-        </Typography>
-        <LinearProgress/>
-    </div>;
-}
-
 export default index;
