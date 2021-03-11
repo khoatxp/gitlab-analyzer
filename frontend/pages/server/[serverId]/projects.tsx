@@ -47,21 +47,12 @@ const index = () => {
         const end = formatISO(endDateTime);
         const dateQuery = `?startDateTime=${start}&endDateTime=${end}`;
         axios
-            .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/test`, getAxiosAuthConfig())
+            .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics${dateQuery}`, projectIds, getAxiosAuthConfig())
             .then(() => {
-                alert("worked");
-                setIsLoading(false);
-                // router.push(`/project/${projectIds[0]}/code?startDateTime=${start}&endDateTime=${end}`);
+                router.push(`/project/${projectIds[0]}/code?startDateTime=${start}&endDateTime=${end}`);
             }).catch(() => {
             enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});
         });
-    }
-
-    const getAxiosConfig = (projectIds: number[]) => {
-        return {
-            // data: projectIds,
-            withCredentials: true,
-        }
     }
 
     return (

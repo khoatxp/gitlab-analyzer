@@ -47,17 +47,4 @@ public class ProjectController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
         analyticsService.saveAllFromGitlab(projectIdList, startDateTime, endDateTime);
     }
-
-    @GetMapping(path = "/test")
-    public String test(
-    ){
-        return "Worked!";
-    }
-
-    @PostMapping(path = "/test")
-    public String zest(
-
-    ) {
-        return "Worked!";
-    }
 }
