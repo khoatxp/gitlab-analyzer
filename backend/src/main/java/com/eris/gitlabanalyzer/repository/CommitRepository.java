@@ -21,8 +21,5 @@ public interface CommitRepository extends JpaRepository<Commit,Long> {
     @Transactional
     @Modifying
     @Query("update Commit c set c.gitManagementUser.id = ?1 where c in (select c2 from Commit c2 where c2.authorName= ?2 and c2.authorEmail=?3 and c2.project.id = ?4)")
-    void updateNewCommitAuthors(Long gitManagementUserId, String authorName, String authorEmail, Long projectId);
-
-    @Query("select distinct c.authorEmail as authorEmail, c.authorName as authorName, c.gitManagementUser.name as mappedGitManagementUserName, c.gitManagementUser.id as mappedGitManagementUserId  from Commit c where c.project.id = ?1 order by c.authorName asc")
-    List<CommitAuthorView> getCommitAuthorsByProjectId(Long projectId);
+    void updateCommitAuthors(Long gitManagementUserId, String authorName, String authorEmail, Long projectId);
 }

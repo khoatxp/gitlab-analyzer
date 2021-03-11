@@ -67,16 +67,6 @@ public class Commit {
     )
     private String webUrl;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(
-            name = "commit_id",
-            referencedColumnName = "commit_id",
-            foreignKey = @ForeignKey(
-                    name = "commit_mapping_commit_id_fk"
-            )
-    )
-    private CommitMapping commitMapping;
-
     @OneToMany(
             mappedBy = "commit",
             orphanRemoval = true,
@@ -115,14 +105,6 @@ public class Commit {
         this.createdAt = createdAt;
         this.webUrl = webUrl;
         this.project = project;
-    }
-
-    public CommitMapping getCommitMapping() {
-        return commitMapping;
-    }
-
-    public void setCommitMapping(CommitMapping commitMapping) {
-        this.commitMapping = commitMapping;
     }
 
     public Long getId() {

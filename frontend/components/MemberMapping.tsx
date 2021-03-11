@@ -6,7 +6,6 @@ import {CommitAuthor} from "../interfaces/CommitAuthor";
 import {GitManagementUser} from "../interfaces/GitManagementUser";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {
-    Box,
     FormControl,
     InputLabel,
     Select
@@ -20,7 +19,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableFooter from '@material-ui/core/TableFooter';
 import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
-import AppButton from "./AppButton";
+import AppButton from "./app/AppButton";
 import {useSnackbar} from "notistack";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -52,6 +51,9 @@ const useStyles = makeStyles((theme: Theme) =>
         selectEmpty: {
             marginTop: theme.spacing(2),
         },
+        unmappedAuthorText:{
+            color: 'red'
+        }
     }),
 );
 
@@ -67,15 +69,19 @@ const MemberMapping = () => {
     useEffect(() => {
         if (router.isReady) {
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/1/commitauthor`, getAxiosAuthConfig())
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/${projectId}/commits/authors`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setCommitAuthors(resp.data);
-                });
+                }).catch((err: AxiosError)=>{
+                enqueueSnackbar(`Failed to get commit authors: ${err.message}`, {variant: 'error',});
+            })
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/1/managementuser/members`, getAxiosAuthConfig())
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/${projectId}/managementusers/members`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setGitManagementUsers(resp.data);
-                });
+                }).catch((err: AxiosError)=>{
+                enqueueSnackbar(`Failed to get members: ${err.message}`, {variant: 'error',});
+            })
         }
     }, [projectId]);
 
@@ -90,7 +96,7 @@ const MemberMapping = () => {
 
     const handleSave = () => {
         axios
-            .post(`${process.env.NEXT_PUBLIC_API_URL}/1/managementuser/mapping`,commitAuthors,getAxiosAuthConfig())
+            .post(`${process.env.NEXT_PUBLIC_API_URL}/${projectId}/commits/mapping`,commitAuthors,getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
                 enqueueSnackbar("Saved changes successfully!", {variant: 'success',});
             }).catch((err: AxiosError) => {
@@ -99,7 +105,6 @@ const MemberMapping = () => {
     }
 
     return(
-        <>
         <TableContainer className={classes.tableContainer} component={Paper}>
             <Table>
                 <TableHead className={classes.tableHead}>
@@ -117,7 +122,7 @@ const MemberMapping = () => {
                             </TableCell>
                             <TableCell>
                                 <FormControl className={classes.formControl}>
-                                    <InputLabel htmlFor="member">Member</InputLabel>
+                                    <InputLabel htmlFor="member">{commitAuthor.mappedGitManagementUserName?"Member":""}</InputLabel>
                                     <Select
                                         labelId="member-select-label"
                                         id="member-select"
@@ -127,10 +132,12 @@ const MemberMapping = () => {
                                         onChange={event => handleMemberChange(event, i)}
                                     >
                                         <MenuItem disabled value={commitAuthor.mappedGitManagementUserName}>
-                                            <em>{`${commitAuthor.mappedGitManagementUserName}`}</em>
+                                            <em className={commitAuthor.mappedGitManagementUserName?'':classes.unmappedAuthorText}>
+                                                {commitAuthor.mappedGitManagementUserName?commitAuthor.mappedGitManagementUserName:"Unmapped"}
+                                            </em>
                                         </MenuItem>
                                         {gitManagementUsers.map(gitManagementUser =>(
-                                            <MenuItem value={[gitManagementUser.id,gitManagementUser.name]}>
+                                            <MenuItem key={gitManagementUser.id} value={[gitManagementUser.id,gitManagementUser.name]}>
                                                 {gitManagementUser.name}
                                             </MenuItem>
                                         ))}
@@ -150,8 +157,6 @@ const MemberMapping = () => {
                 </TableFooter>
             </Table>
         </TableContainer>
-        </>
-
     )
 }
 

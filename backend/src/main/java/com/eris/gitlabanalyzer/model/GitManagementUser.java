@@ -58,7 +58,7 @@ public class GitManagementUser {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
-    private List<CommitMapping> commitMappings = new ArrayList<>();
+    private List<CommitAuthor> commitAuthors = new ArrayList<>();
 
     @OneToMany(
             mappedBy ="gitManagementUser",
@@ -140,9 +140,6 @@ public class GitManagementUser {
         return name;
     }
 
-    public List<CommitMapping> getCommitMappings() {
-        return commitMappings;
-    }
 
     public List<Commit> getCommits() {
         return commits;
@@ -192,9 +189,9 @@ public class GitManagementUser {
     }
 
 
-    public void addCommitMapping(CommitMapping commitMapping) {
-        if (!this.commitMappings.contains(commitMapping)) {
-            this.commitMappings.add(commitMapping);
+    public void addCommitMapping(CommitAuthor commitMapping) {
+        if (!this.commitAuthors.contains(commitMapping)) {
+            this.commitAuthors.add(commitMapping);
             commitMapping.setGitManagementUser(this);
         }
     }

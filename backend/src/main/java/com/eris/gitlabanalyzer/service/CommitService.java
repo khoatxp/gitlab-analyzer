@@ -9,8 +9,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.time.OffsetDateTime;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class CommitService {
@@ -20,6 +24,7 @@ public class CommitService {
     ProjectRepository projectRepository;
     GitManagementUserRepository gitManagementUserRepository;
     CommitCommentRepository commitCommentRepository;
+    CommitAuthorRepository commitAuthorRepository;
 
     // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
@@ -29,12 +34,13 @@ public class CommitService {
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public CommitService(MergeRequestRepository mergeRequestRepository, CommitRepository commitRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, CommitCommentRepository commitCommentRepository) {
+    public CommitService(MergeRequestRepository mergeRequestRepository, CommitRepository commitRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, CommitCommentRepository commitCommentRepository, CommitAuthorRepository commitAuthorRepository) {
         this.mergeRequestRepository = mergeRequestRepository;
         this.commitRepository = commitRepository;
         this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
         this.commitCommentRepository = commitCommentRepository;
+        this.commitAuthorRepository = commitAuthorRepository;
     }
 
     public String splitEmail(String email) {
@@ -69,15 +75,7 @@ public class CommitService {
                     Commit commit = commitRepository.findByCommitShaAndProjectId(gitLabCommit.getSha(),project.getId());
                     if(commit != null){return;}
 
-                    //TODO check for the commit mapping table if the author is mapped and map that author to the associated git management user
-                    //First attempt to map member and commit using email
-                    String username = splitEmail(gitLabCommit.getAuthorEmail());
-                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByUsernameAndServerUrl(username, serverUrl);
-
-                    if(gitManagementUser == null){
-                        //Second attempt using author name
-                        gitManagementUser = gitManagementUserRepository.findByUsernameAndServerUrl(gitLabCommit.getAuthorName(),serverUrl);
-                    }
+                    CommitAuthor commitAuthor = saveCommitAuthor(project,gitLabCommit);
 
                     commit = new Commit(
                             gitLabCommit.getSha(),
@@ -94,8 +92,8 @@ public class CommitService {
                         mrCommitShas.add(gitLabCommit.getSha());
                     }
 
-                    if(gitManagementUser!=null){
-                        commit.setGitManagementUser(gitManagementUser);
+                    if(commitAuthor.getGitManagementUser()!=null){
+                        commit.setGitManagementUser(commitAuthor.getGitManagementUser());
                     }
 
                     commit = commitRepository.save(commit);
@@ -103,6 +101,35 @@ public class CommitService {
                 }
         );
 
+    }
+
+    public CommitAuthor saveCommitAuthor(Project project, GitLabCommit gitLabCommit){
+        CommitAuthor commitAuthor = commitAuthorRepository.findByAuthorNameAndAuthorEmailAndProjectId(
+                gitLabCommit.getAuthorName(),
+                gitLabCommit.getAuthorEmail(),
+                project.getId()
+        );
+
+        if(commitAuthor != null){
+            return commitAuthor;
+        }
+
+        commitAuthor = new CommitAuthor(gitLabCommit.getAuthorName(), gitLabCommit.getAuthorEmail(), project);
+
+        //First attempt using author username extracted from email
+        String username = splitEmail(gitLabCommit.getAuthorEmail());
+        GitManagementUser gitManagementUser = gitManagementUserRepository.findByUsernameAndServerUrl(username, serverUrl);
+
+        if(gitManagementUser == null){
+            //Second attempt using author name
+            gitManagementUser = gitManagementUserRepository.findByUsernameAndServerUrl(gitLabCommit.getAuthorName(),serverUrl);
+        }
+
+        if(gitManagementUser != null){
+            commitAuthor.setGitManagementUser(gitManagementUser);
+        }
+
+        return commitAuthorRepository.save(commitAuthor);
     }
 
     public void saveCommitComment(Project project, Commit commit){
@@ -128,17 +155,30 @@ public class CommitService {
         });
     }
 
-    public List<CommitAuthorView> getCommitAuthorsByProjectId(Long projectId){
-        return commitRepository.getCommitAuthorsByProjectId(projectId);
+    public List<CommitAuthorView> getCommitAuthors(Long projectId){
+        List<CommitAuthorView> mappedCommitAuthors = commitAuthorRepository.findByProjectId(projectId);
+        List<CommitAuthorView> unmappedCommitAuthors = commitAuthorRepository.findUnmappedCommitAuthorsByProjectId(projectId);
+        return Stream.of(mappedCommitAuthors, unmappedCommitAuthors).flatMap(Collection::stream)
+                                                                    .sorted(Comparator.comparing(CommitAuthorView::getAuthorName))
+                                                                    .collect(Collectors.toList());
     }
 
-    public void mapNewCommitAuthorsToCommits(Long projectId, List<CommitAuthorRequestBody> commitAuthors){
+    public List<CommitAuthorView> getUnmappedCommitAuthors(Long projectId){
+        return commitAuthorRepository.findUnmappedCommitAuthorsByProjectId(projectId);
+    }
+
+    public void mapNewCommitAuthors(Long projectId, List<CommitAuthorRequestBody> commitAuthors){
         commitAuthors.forEach(commitAuthor -> {
-            //The app user has not mapped this author to any member
             if(commitAuthor.getMappedGitManagementUserId() == null){
                 return;
             }
-            commitRepository.updateNewCommitAuthors(
+
+            commitAuthorRepository.updateCommitAuthors(
+                    commitAuthor.getMappedGitManagementUserId(),
+                    commitAuthor.getAuthorName(),
+                    commitAuthor.getAuthorEmail(),
+                    projectId);
+            commitRepository.updateCommitAuthors(
                     commitAuthor.getMappedGitManagementUserId(),
                     commitAuthor.getAuthorName(),
                     commitAuthor.getAuthorEmail(),
