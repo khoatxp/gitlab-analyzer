@@ -56,6 +56,14 @@ public class Server {
     )
     private List<UserServer> userServers = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "server",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<UserProjectPermission> userProjectPermissions = new ArrayList<>();
+
     public Server() {
     }
 
@@ -93,6 +101,13 @@ public class Server {
         if (!this.userServers.contains(userServer)) {
             this.userServers.add(userServer);
             userServer.setServer(this);
+        }
+    }
+
+    public void addUserProjectPermission(UserProjectPermission userProjectPermission) {
+        if (!this.userProjectPermissions.contains(userProjectPermission)) {
+            this.userProjectPermissions.add(userProjectPermission);
+            userProjectPermission.setServer(this);
         }
     }
 
