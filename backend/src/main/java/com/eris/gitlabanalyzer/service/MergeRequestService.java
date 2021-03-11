@@ -15,17 +15,20 @@ import java.time.OffsetDateTime;
 
 @Service
 public class MergeRequestService {
-    GitLabService gitLabService;
     MergeRequestRepository mergeRequestRepository;
     ProjectRepository projectRepository;
     GitManagementUserRepository gitManagementUserRepository;
     MergeRequestCommentRepository mergeRequestCommentRepository;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
 
-    public MergeRequestService(GitLabService gitLabService, MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, MergeRequestCommentRepository mergeRequestCommentRepository) {
-        this.gitLabService = gitLabService;
+    // TODO Remove after server info is correctly retrieved based on internal projectId
+    @Value("${gitlab.ACCESS_TOKEN}")
+    String accessToken;
+
+    public MergeRequestService(MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, MergeRequestCommentRepository mergeRequestCommentRepository) {
         this.mergeRequestRepository = mergeRequestRepository;
         this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
@@ -33,6 +36,9 @@ public class MergeRequestService {
     }
 
     public void saveMergeRequestInfo(Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
+
         var gitLabMergeRequests = gitLabService.getMergeRequests(project.getGitLabProjectId(), startDateTime, endDateTime);
         var gitLabMergeRequestList = gitLabMergeRequests.collectList().block();
 
@@ -57,6 +63,9 @@ public class MergeRequestService {
     }
 
     public void saveMergeRequestComments (Project project, MergeRequest mergeRequest){
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
+
         var gitLabMergeRequestComments = gitLabService.getMergeRequestNotes(project.getGitLabProjectId(), mergeRequest.getIid());
         var gitLabMergeRequestCommentList = gitLabMergeRequestComments.collectList().block();
 
