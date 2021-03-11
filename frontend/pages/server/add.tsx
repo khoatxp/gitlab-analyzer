@@ -25,10 +25,7 @@ const AddServer = () => {
         return false;
     }
     const validateToken = (token:string) => {
-        if (token.length >= 20){
-            return true;
-        }
-        return false;
+        return token.length >= 20
     }
     const saveServer = () => {
         let trimmedUrl = serverUrl.trim();
