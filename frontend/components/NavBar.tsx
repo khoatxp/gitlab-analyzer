@@ -5,8 +5,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Image from "next/image";
 import {Icon} from "@material-ui/core";
-import {useRouter} from "next/router";
-import {AuthContext, defaultUserCredential} from "./AuthContext";
+import {AuthContext } from "./AuthContext";
 import AppButton from "./app/AppButton";
 
 const useStyles = makeStyles((theme) => ({
@@ -24,13 +23,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NavBar = () => {
-    const router = useRouter();
-    const {setUserCredential} = React.useContext(AuthContext);
+    const {user} = React.useContext(AuthContext);
     const classes = useStyles();
 
     const handleLogout = () => {
-        setUserCredential(defaultUserCredential);
-        router.push('/login');
+        location.assign(`${process.env.NEXT_PUBLIC_BACKEND_URL}/logout`);
     }
 
     return (
@@ -47,6 +44,7 @@ const NavBar = () => {
                 <Typography variant="h6" className={classes.title}>
                     Gitlab Analyzer
                 </Typography>
+                <Typography>Hello {user ? user.username : ''}</Typography>
                 <AppButton color="primary" onClick={handleLogout}>Logout</AppButton>
             </Toolbar>
         </AppBar>
