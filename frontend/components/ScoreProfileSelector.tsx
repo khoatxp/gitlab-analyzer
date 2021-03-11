@@ -15,7 +15,6 @@ import EditIcon from '@material-ui/icons/Edit';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import DeleteIcon from "@material-ui/icons/Delete";
 import AppTextField from "../../components/app/AppTextField";
-import TextField from "@material-ui/core/TextField";
 import IconButton from "@material-ui/core/IconButton";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -264,8 +263,8 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                     onChange={setProfile}
                 >
                     {profiles.map(p => (
-                        <MenuItem value={p}>
-                            {p}
+                        <MenuItem value={p}>  //value{p.name}=
+                            {p.name}
                             {isIconVisible ? (
                                 <ListItemSecondaryAction variant="outlined">
                                     <IconButton edge="end" aria-label="edit" onClick={() => { handleEdit(p);}} >
