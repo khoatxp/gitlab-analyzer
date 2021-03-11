@@ -1,21 +1,26 @@
 import React, {useEffect} from "react";
 import { makeStyles, withStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { green, purple } from '@material-ui/core/colors';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
 import Avatar from '@material-ui/core/Avatar';
 import axios, {AxiosResponse} from "axios";
 import {useRouter} from "next/router";
-import BarChart from "../components/BarChart";
 import {useSnackbar} from "notistack";
 import {AuthContext} from "./AuthContext";
 
+import CommitsCountGraph from '../graphs/CommitsCountGraph';
+import CommitsScoreGraph from '../graphs/CommitsScoreGraph';
+import MergeRequestsCountGraph from '../graphs/MergeRequestsCountGraph';
+import MergeRequestsScoreGraph from '../graphs/MergeRequestsScoreGraph';
+import TotalCountGraph from '../graphs/TotalCountGraph';
+import TotalScoreGraph from '../graphs/TotalScoreGraph';
+
 const GreenCheckbox = withStyles({
     root: {
-        color: green[400],
+        color: "#82ca9d",
         '&$checked': {
-            color: green[600],
+            color: "#82ca9d",
         },
     },
     checked: {},
@@ -23,15 +28,13 @@ const GreenCheckbox = withStyles({
 
 const PurpleCheckbox = withStyles({
     root: {
-        color: purple[400],
+        color: "#8884d8",
         '&$checked': {
-            color: purple[600],
+            color: "#8884d8",
         },
     },
     checked: {},
 })((props: CheckboxProps) => <Checkbox color="default" {...props} />);
-
-// TODO: add graph tag where placeholder is
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -89,8 +92,12 @@ const useStyles = makeStyles((theme: Theme) =>
             width: theme.spacing(15),
             height: theme.spacing(15),
         },
+        graphText: {
+            justifyContent: 'center',
+        }
     }),
 );
+
 
 const CodeAnalysis = () => {
     const classes = useStyles();
@@ -101,6 +108,7 @@ const CodeAnalysis = () => {
         checkedMergeRequestForGraphB: true,
     });
 
+    const {enqueueSnackbar} = useSnackbar();
     const [mergerRequestCount, setMergerRequestCount] = React.useState<number>();
     const [projectName, setProjectName] = React.useState<String>();
     const [commitCount, setCommitCount] = React.useState<number>();
@@ -172,7 +180,8 @@ const CodeAnalysis = () => {
             </div>
             <div className={classes.container3}>
                 <div className={classes.graphContainer}>
-                    <BarChart/>
+                    <p className={classes.graphText}> Daily Total of Commmit/Merge Requests by Everyone </p>
+                    <MRGraph/>
                 </div>
                 <FormGroup>
                     <FormControlLabel
@@ -187,7 +196,8 @@ const CodeAnalysis = () => {
             </div>
             <div className={classes.container3}>
                 <div className={classes.graphContainer}>
-                    <BarChart/>
+                    <p className={classes.graphText}> Daily Total Score of Commmit/Merge Requests by Everyone </p>
+                    <BarChartScore/>
                 </div>
                 <FormGroup>
                     <FormControlLabel
