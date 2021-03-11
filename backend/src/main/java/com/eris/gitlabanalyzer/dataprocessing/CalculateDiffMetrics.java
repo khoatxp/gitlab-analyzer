@@ -26,6 +26,8 @@ public class CalculateDiffMetrics {
     private final ProjectRepository projectRepository;
     private final CommitRepository commitRepository;
 
+    private final int ModifiedLineBoilerPlateLength = 1;
+
     public enum lineTypes {
         code,
         comment,
@@ -169,10 +171,10 @@ public class CalculateDiffMetrics {
     private lineTypes typeOfLine(String line, String[] commentOperator){
         for(int i = 0; i < commentOperator.length; i++){
             //Todo find better way to handle single character syntax
-            if(1+ commentOperator[i].length() > line.length()){
+            if(ModifiedLineBoilerPlateLength + commentOperator[i].length() > line.length()){
                 return lineTypes.syntax;
             }
-            String lineStartChar = line.substring(1, (1 + commentOperator[i].length()));
+            String lineStartChar = line.substring(ModifiedLineBoilerPlateLength, (ModifiedLineBoilerPlateLength + commentOperator[i].length()));
             if(lineStartChar.equals(commentOperator[i])){
                 if(i > 0){
                     return lineTypes.blockComment;
