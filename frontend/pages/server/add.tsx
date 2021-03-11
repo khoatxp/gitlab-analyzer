@@ -59,7 +59,7 @@ const AddServer = () => {
 
     return (
         <AuthView>
-            <CardLayout size="md" backLink={"/server"}>
+            <CardLayout size="md" backLink={"/server"} logoType="header">
                 <Typography align="center"  variant="h5">Add New Server</Typography>
                 <AppTextField
                     id="server-url"

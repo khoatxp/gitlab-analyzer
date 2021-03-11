@@ -45,7 +45,7 @@ const NavBar = () => {
                     Gitlab Analyzer
                 </Typography>
                 <Typography>Hello {user ? user.username : ''}</Typography>
-                <AppButton color="primary" onClick={handleLogout}>Logout</AppButton>
+                <AppButton color="primary" size="medium" onClick={handleLogout}>Logout</AppButton>
             </Toolbar>
         </AppBar>
     );

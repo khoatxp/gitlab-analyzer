@@ -61,7 +61,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable() // TODO: This will allow POST and DELETE requests to the server but left it vulnerable to CSRF attacks. Should have proper csrf configuration later on
                 .logout(logout -> logout
-                    .logoutSuccessUrl("/")
+                    .logoutSuccessUrl(FRONTEND_URL + "/login")
                     .invalidateHttpSession(true)
                 )
         ;
