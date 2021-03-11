@@ -129,7 +129,7 @@ function Popup(props){
 
         <React.Fragment>
             <Dialog open={open} onClose={close} fullWidth maxWidth="sm" classes={{paper: classes.popup}} >
-                <button className={classes.button} onClick={close}>X</button>
+                <Button variant="contained" color="grey" className={classes.button} onClick={close}>X</Button>
                 <DialogTitle id="edit-dialog-title" align="center">{"Score Profile"}</DialogTitle>
                 <DialogContent>
                     <form className={classes.root} onSubmit={handleSave}>
