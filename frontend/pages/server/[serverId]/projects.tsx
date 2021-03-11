@@ -62,7 +62,7 @@ const index = () => {
 
     return (
         <AuthView>
-            <CardLayout backLink={"/server"}>
+            <CardLayout backLink={"/server"} logoType="header">
                 {loadingBar}
                 {!isLoading && <>
                     <Autocomplete
