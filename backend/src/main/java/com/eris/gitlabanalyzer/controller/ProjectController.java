@@ -38,7 +38,6 @@ public class ProjectController {
         return projectService.getProjects();
     }
 
-    //TODO This endpoint is to check if the data is saved correctly. To be removed later on
     @PostMapping(path = "/analytics")
     public void saveAllFromGitlab(
             @RequestBody List<Long> projectIdList,
@@ -49,4 +48,16 @@ public class ProjectController {
         analyticsService.saveAllFromGitlab(projectIdList, startDateTime, endDateTime);
     }
 
+    @GetMapping(path = "/test")
+    public String test(
+    ){
+        return "Worked!";
+    }
+
+    @PostMapping(path = "/test")
+    public String zest(
+
+    ) {
+        return "Worked!";
+    }
 }

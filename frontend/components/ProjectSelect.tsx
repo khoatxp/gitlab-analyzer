@@ -7,7 +7,7 @@ import AppButton from "./app/AppButton";
 
 type ProjectSelectProps = {
     projects: GitLabProject[]
-    onAnalyzeClick: (projectId: number, startDateTime: Date, endDateTime: Date) => void
+    onAnalyzeClick: (projectIds: number[], startDateTime: Date, endDateTime: Date) => void
 }
 
 const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
@@ -57,7 +57,7 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
                 <AppButton
                     color="primary"
                     disabled={selectedProjectId === 0}
-                    onClick={() => onAnalyzeClick(selectedProjectId, startDateTime, endDateTime)}
+                    onClick={() => onAnalyzeClick([selectedProjectId], startDateTime, endDateTime)}
                 >
                     Analyze
                 </AppButton>
