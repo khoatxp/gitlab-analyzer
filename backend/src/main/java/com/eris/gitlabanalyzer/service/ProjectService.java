@@ -46,24 +46,29 @@ public class ProjectService {
         }
 
         var gitLabProject = gitLabService.getProject(projectId).block();
+        Server server = serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken);
 
         project = new Project(
                 projectId,
                 gitLabProject.getName(),
                 gitLabProject.getNameWithNamespace(),
                 gitLabProject.getWebUrl(),
-                serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken)
+                server
         );
 
         Optional<UserServer> userServer = userServerRepository.findUserServerByAccessToken(accessToken);
+        User user;
 
         if (userServer.isPresent()) {
+            user = userServer.get().getUser();
             UserProjectPermission userProjectPermission = new UserProjectPermission(
-                    userServer.get().getUser(),
+                    user,
                     project,
-                    serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken)
+                    server
             );
             project.addUserProjectPermission(userProjectPermission);
+            server.addUserProjectPermission(userProjectPermission);
+            user.addProjectPermission(userProjectPermission);
         }
 
         return projectRepository.save(project);
