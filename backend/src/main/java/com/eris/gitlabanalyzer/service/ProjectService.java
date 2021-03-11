@@ -69,6 +69,9 @@ public class ProjectService {
             project.addUserProjectPermission(userProjectPermission);
             server.addUserProjectPermission(userProjectPermission);
             user.addProjectPermission(userProjectPermission);
+        } else {
+            // The UserServer does not exist. We don't know who's project is this.
+            // Todo: What should we do when this kind of error ever happen?
         }
 
         return projectRepository.save(project);
