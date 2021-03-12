@@ -38,7 +38,7 @@ public class DefaultUserConfig {
                 server = serverRepository.save(server);
 
                 Optional<User> userOptional = userRepository.findUserByUsername(username);
-                if(!userOptional.isPresent()){
+                if(userOptional.isEmpty()){
                     User user = new User(username);
                     user.addServer(server, accessToken);
                     userRepository.save(user);
