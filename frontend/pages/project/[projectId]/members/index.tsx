@@ -18,7 +18,7 @@ const index = () => {
     return (
         <AuthView>
             <NavBar/>
-            <Box className={classes.contentContainer}>
+            <Box display="flex">
                 <MemberMapping/>
             </Box>
         </AuthView>
