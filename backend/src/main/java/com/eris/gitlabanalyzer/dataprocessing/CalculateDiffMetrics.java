@@ -10,6 +10,7 @@ import com.eris.gitlabanalyzer.repository.FileScoreRepository;
 import com.eris.gitlabanalyzer.repository.MergeRequestRepository;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import com.eris.gitlabanalyzer.service.GitLabService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -20,13 +21,19 @@ public class CalculateDiffMetrics {
 
     private final Map<String, String[]> commentCharacters = new HashMap<>();
 
-    private final GitLabService gitLabService;
     private final FileScoreRepository fileScoreRepository;
     private final MergeRequestRepository mergeRequestRepository;
     private final ProjectRepository projectRepository;
     private final CommitRepository commitRepository;
 
-    private final int ModifiedLineBoilerPlateLength = 1;
+
+    // TODO Remove after server info is correctly retrieved based on internal projectId
+    @Value("${gitlab.SERVER_URL}")
+    String serverUrl;
+
+    // TODO Remove after server info is correctly retrieved based on internal projectId
+    @Value("${gitlab.ACCESS_TOKEN}")
+    String accessToken;
 
     public enum lineTypes {
         code,
@@ -36,11 +43,10 @@ public class CalculateDiffMetrics {
         removed,
     }
 
-    public CalculateDiffMetrics(GitLabService gitLabService, FileScoreRepository fileScoreRepository,
+    public CalculateDiffMetrics(FileScoreRepository fileScoreRepository,
                                 MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository,
                                 CommitRepository commitRepository){
         initializeCommentCharacters();
-        this.gitLabService = gitLabService;
         this.fileScoreRepository = fileScoreRepository;
         this.mergeRequestRepository = mergeRequestRepository;
         this.projectRepository = projectRepository;
@@ -58,22 +64,21 @@ public class CalculateDiffMetrics {
     }
 
     public void storeMetricsCommit(long projectId, long commitId){
-
+        var gitLabService = new GitLabService(serverUrl, accessToken);
         if(fileScoreRepository.findByCommitId(commitId).isEmpty()){
+
             Commit commit = commitRepository.findById(commitId).orElse(null);
             Project project = projectRepository.findById(projectId).orElse(null);
             if(commit != null && project != null ){
                 Iterable<GitLabFileChange> commitDiff = gitLabService.getCommitDiff(project.getGitLabProjectId(), commit.getSha()).toIterable();
 
-                if(commitDiff.iterator().hasNext()){
-                    for(GitLabFileChange file : commitDiff){
-                        String fileType = findFileType(file);
-                        Map<lineTypes, Integer> fileCount = countLineTypes(file.getDiff(), fileType);
-                        FileScore fileScore = new FileScore(commit, fileType, file.getNewPath(),
-                                fileCount.getOrDefault(lineTypes.code, 0), fileCount.getOrDefault(lineTypes.syntax,0),
-                                fileCount.getOrDefault(lineTypes.comment,0), fileCount.getOrDefault(lineTypes.removed,0));
-                        fileScoreRepository.save(fileScore);
-                    }
+                for(GitLabFileChange file : commitDiff){
+                    String fileType = findFileType(file);
+                    Map<lineTypes, Integer> fileCount = countLineTypes(file.getDiff(), fileType);
+                    FileScore fileScore = new FileScore(commit, fileType, file.getNewPath(),
+                            fileCount.getOrDefault(lineTypes.code, 0), fileCount.getOrDefault(lineTypes.syntax,0),
+                            fileCount.getOrDefault(lineTypes.comment,0), fileCount.getOrDefault(lineTypes.removed,0));
+                    fileScoreRepository.save(fileScore);
                 }
             }
         }
@@ -81,24 +86,22 @@ public class CalculateDiffMetrics {
 
     public void storeMetricsMerge(long projectId, long mergeId){
         if(fileScoreRepository.findByMergeId(mergeId).isEmpty()){
-
+            var gitLabService = new GitLabService(serverUrl, accessToken);
             MergeRequest mergeRequest = mergeRequestRepository.findById(mergeId).orElse(null);
             Project project = projectRepository.findById(projectId).orElse(null);
 
             if(mergeRequest != null && project != null){
                 Iterable<GitLabFileChange> merge = gitLabService.getMergeRequestDiff(project.getGitLabProjectId(), mergeRequest.getIid()).toIterable();
 
-                if(merge.iterator().hasNext()){
-                    for(GitLabFileChange file : merge){
-                        String fileType = findFileType(file);
-                        Map<lineTypes, Integer> fileCount = countLineTypes(file.getDiff(), fileType);
+                for(GitLabFileChange file : merge){
+                    String fileType = findFileType(file);
+                    Map<lineTypes, Integer> fileCount = countLineTypes(file.getDiff(), fileType);
 
-                        FileScore fileScore = new FileScore(mergeRequest, fileType, file.getNewPath(),
-                                fileCount.getOrDefault(lineTypes.code, 0), fileCount.getOrDefault(lineTypes.syntax,0),
-                                fileCount.getOrDefault(lineTypes.comment,0), fileCount.getOrDefault(lineTypes.removed,0));
+                    FileScore fileScore = new FileScore(mergeRequest, fileType, file.getNewPath(),
+                            fileCount.getOrDefault(lineTypes.code, 0), fileCount.getOrDefault(lineTypes.syntax,0),
+                            fileCount.getOrDefault(lineTypes.comment,0), fileCount.getOrDefault(lineTypes.removed,0));
 
-                        fileScoreRepository.save(fileScore);
-                    }
+                    fileScoreRepository.save(fileScore);
                 }
             }
         }
@@ -169,6 +172,7 @@ public class CalculateDiffMetrics {
     }
 
     private lineTypes typeOfLine(String line, String[] commentOperator){
+        int ModifiedLineBoilerPlateLength = 1;
         for(int i = 0; i < commentOperator.length; i++){
             //Todo find better way to handle single character syntax
             if(ModifiedLineBoilerPlateLength + commentOperator[i].length() > line.length()){

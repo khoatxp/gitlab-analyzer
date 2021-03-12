@@ -9,6 +9,7 @@ import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
 import com.eris.gitlabanalyzer.repository.CommitRepository;
 import com.eris.gitlabanalyzer.repository.MergeRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -16,21 +17,29 @@ import java.time.OffsetDateTime;
 @Service
 public class ScoreService {
 
-    private final GitLabService gitLabService;
+    private GitLabService gitLabService;
     private final DiffScoreCalculator diffScoreCalculator;
     private final CalculateDiffMetrics calculateDiffMetrics;
     private final MergeRequestRepository mergeRequestRepository;
     private final CommitRepository commitRepository;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
+    @Value("${gitlab.SERVER_URL}")
+    String serverUrl;
+
+    // TODO Remove after server info is correctly retrieved based on internal projectId
+    @Value("${gitlab.ACCESS_TOKEN}")
+    String accessToken;
+
     @Autowired
-    public ScoreService(GitLabService gitLabService, DiffScoreCalculator diffScoreCalculator,
+    public ScoreService(DiffScoreCalculator diffScoreCalculator,
                         CalculateDiffMetrics calculateDiffMetrics, MergeRequestRepository mergeRequestRepository,
                         CommitRepository commitRepository){
         this.diffScoreCalculator = diffScoreCalculator;
-        this.gitLabService = gitLabService;
         this.calculateDiffMetrics = calculateDiffMetrics;
         this.mergeRequestRepository = mergeRequestRepository;
         this.commitRepository = commitRepository;
+        gitLabService = new GitLabService(serverUrl, accessToken);
     }
 
     // This will most likely change as we update how we retrieve diff's

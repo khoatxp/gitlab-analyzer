@@ -37,12 +37,14 @@ class ScoreCalculationTests {
     private DiffScoreCalculator diffScoreCalculator;
     @Autowired
     private CalculateDiffMetrics calculateDiffMetrics;
-    @Autowired
-    private GitLabService gitLabService;
 
+    private GitLabService gitLabService;
 
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
+
+    @Value("${gitlab.ACCESS_TOKEN}")
+    String accessToken;
 
     private final ZoneOffset zoneId = ZoneOffset.UTC;
     private final OffsetDateTime startTime = OffsetDateTime.of(2015, 1, 1, 1, 1, 1, 1, zoneId);
@@ -50,6 +52,7 @@ class ScoreCalculationTests {
     private Server server;
     private GitManagementUser gitManagementUser;
     private Project project;
+
 
     private final long projectId = 2L;
     private final String diff = "+ code line 1 -2\n" +
@@ -65,13 +68,18 @@ class ScoreCalculationTests {
             "+ }";
     @BeforeAll
      void setup(){
-        server = new Server(serverUrl);
-        serverRepository.save(server);
+        server = serverRepository.findByServerUrl(serverUrl).orElse(null);
+        if(server == null){
+            server = new Server(serverUrl);
+            serverRepository.save(server);
+        }
         gitManagementUser= new GitManagementUser(1L, "testUsername", "testName", server);
         gitManagementUserRepository.save(gitManagementUser);
 
         project = new Project(projectId, "Test", "TestNameSpace", "webURl", server);
         projectRepository.save(project);
+        gitLabService =  new GitLabService(serverUrl, accessToken);
+
 
     }
 
@@ -90,9 +98,9 @@ class ScoreCalculationTests {
 
     @Test
     void check_CommitDiff()  {
-
-        Iterable<GitLabCommit> commits = gitLabService.getCommits(projectId, startTime, endTime).toIterable();
-        String sha = commits.iterator().next().getSha();
+        String sha = gitLabService.getCommits(projectId, startTime, endTime).toIterable().iterator().next().getSha();
+        System.out.println("sha");
+        System.out.println(sha);
         Commit commit = new Commit(sha, "testTitle", "Author", "email", startTime, "weburl", project);
         commitRepository.save(commit);
 
