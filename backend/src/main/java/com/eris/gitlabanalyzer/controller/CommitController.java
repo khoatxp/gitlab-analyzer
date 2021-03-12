@@ -21,7 +21,7 @@ public class CommitController {
     public List<CommitAuthorView> getCommitAuthors(
             @PathVariable("projectId") Long projectId,
             @RequestParam(required = false) String state){
-        if (state == "unmapped") {
+        if (state.equals("unmapped")) {
             return commitService.getUnmappedCommitAuthors(projectId);
         }
         return commitService.getCommitAuthors(projectId);
