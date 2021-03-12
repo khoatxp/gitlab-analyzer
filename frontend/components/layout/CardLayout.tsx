@@ -1,16 +1,34 @@
-import {Box, Typography} from "@material-ui/core";
+import {Box, Typography, Link, Icon} from "@material-ui/core";
 import React from "react";
 import Image from "next/image";
 import AppGradientBackground from "../app/AppGradientBackground";
 import ChildrenProps from "../../interfaces/ChildrenProps";
+import NextLink from 'next/link'
+import {makeStyles} from "@material-ui/styles";
 
-type CardLayoutProps =  ChildrenProps & {size?: "sm" | "md"}
+type CardLayoutProps =  ChildrenProps & {
+    size?: "sm" | "md"
+    logoType?: "center" | "header"
+    backLink?: string
+    backLabel?: string
+}
 
-const CardLayout = ({children, size}: CardLayoutProps) => {
+const useStyles = makeStyles({
+    linkBack: {
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap'
+    }
+})
+
+const CardLayout = ({children, size, logoType = "center", backLink, backLabel}: CardLayoutProps) => {
     // Change card width based on size prop
     let width = "60vw";
     width = size == "sm" ? "20vw": width;
     width = size == "md" ? "60vw": width;
+
+    let logoSize = logoType === "center" ? "120" : "80" ;
+    const classes = useStyles();
 
     return (
         <AppGradientBackground>
@@ -31,12 +49,31 @@ const CardLayout = ({children, size}: CardLayoutProps) => {
                     <Image
                         src="/gitlab.svg"
                         alt="The Gitlab Logo"
-                        width="125px"
-                        height="125px"
+                        width={logoSize}
+                        height={logoSize}
                     />
-                    <Typography variant="h6" gutterBottom>GitLab<br/>Analyzer</Typography>
+                    <Typography variant="h6">
+                        Gitlab Analyzer
+                    </Typography>
                 </Box>
-                {children}
+                <Box
+                    flex= {logoType === "center" ? "none" : 1}
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                >
+                    {children}
+                </Box>
+                {backLink &&
+                    <Box>
+                        <NextLink href={backLink} passHref>
+                            <Link classes={{root:classes.linkBack}}>
+                                <Icon fontSize="small">arrow_back</Icon>
+                                <Typography variant="button"> {backLabel ? backLabel : 'back' }</Typography>
+                            </Link>
+                        </NextLink>
+                    </Box>
+                }
             </Box>
         </AppGradientBackground>
     );

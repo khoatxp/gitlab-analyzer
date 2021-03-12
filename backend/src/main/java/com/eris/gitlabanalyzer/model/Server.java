@@ -28,7 +28,8 @@ public class Server {
     private Long id;
 
     @Column(
-            name = "server_url"
+            name = "server_url",
+            unique = true
     )
     private String serverUrl;
 
