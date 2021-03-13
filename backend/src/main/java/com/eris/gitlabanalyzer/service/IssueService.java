@@ -11,17 +11,20 @@ import java.time.OffsetDateTime;
 
 @Service
 public class IssueService {
-    GitLabService gitLabService;
     IssueRepository issueRepository;
     IssueCommentRepository issueCommentRepository;
     ProjectRepository projectRepository;
     GitManagementUserRepository gitManagementUserRepository;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
 
-    public IssueService(GitLabService gitLabService, IssueRepository issueRepository, IssueCommentRepository issueCommentRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository) {
-        this.gitLabService = gitLabService;
+    // TODO Remove after server info is correctly retrieved based on internal projectId
+    @Value("${gitlab.ACCESS_TOKEN}")
+    String accessToken;
+
+    public IssueService(IssueRepository issueRepository, IssueCommentRepository issueCommentRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository) {
         this.issueRepository = issueRepository;
         this.issueCommentRepository = issueCommentRepository;
         this.projectRepository = projectRepository;
@@ -29,6 +32,8 @@ public class IssueService {
     }
 
     public void saveIssueInfo(Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
         var gitLabIssues = gitLabService.getIssues(project.getGitLabProjectId(), startDateTime, endDateTime);
         var gitLabIssueList = gitLabIssues.collectList().block();
 
@@ -53,6 +58,8 @@ public class IssueService {
     }
 
     public void saveIssueComments (Project project, Issue issue){
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
         var gitLabIssueComments = gitLabService.getIssueNotes(project.getGitLabProjectId(), issue.getIid());
         var gitLabIssueCommentList = gitLabIssueComments.collectList().block();
 

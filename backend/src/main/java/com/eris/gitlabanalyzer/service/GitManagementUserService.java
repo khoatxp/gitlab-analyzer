@@ -15,22 +15,25 @@ public class GitManagementUserService {
     private final GitManagementUserRepository gitManagementUserRepository;
     private final ProjectRepository projectRepository;
     private final ServerRepository serverRepository;
-    private final GitLabService gitLabService;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public GitManagementUserService(GitManagementUserRepository gitManagementUserRepository, ProjectRepository projectRepository, ServerRepository serverRepository, GitLabService gitLabService) {
+    public GitManagementUserService(GitManagementUserRepository gitManagementUserRepository, ProjectRepository projectRepository, ServerRepository serverRepository) {
         this.gitManagementUserRepository = gitManagementUserRepository;
         this.projectRepository = projectRepository;
         this.serverRepository = serverRepository;
-        this.gitLabService = gitLabService;
     }
 
     public void saveGitManagementUserInfo(Project project){
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
+
         var gitLabMembers = gitLabService.getMembers(project.getGitLabProjectId());
         var gitLabMemberList= gitLabMembers.collectList().block();
         gitLabMemberList.forEach(gitLabMember -> {

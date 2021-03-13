@@ -28,7 +28,7 @@ const index = () => {
         // when that information is available in db
         setItemBeingLoaded("Projects");
         axios
-            .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects`, getAxiosAuthConfig())
+            .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/${serverId}/projects`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
                 setProjects(resp.data);
                 setIsLoading(false);
@@ -45,11 +45,11 @@ const index = () => {
         // Make callout and redirect after it is done. Note that the API call may take a while.
         const start = formatISO(startDateTime);
         const end = formatISO(endDateTime);
-        const dateQuery = `?startDateTime=${start}&endDateTime=${end}`;
+        const dateQuery = `startDateTime=${start}&endDateTime=${end}`;
         axios
-            .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics${dateQuery}`, projectIds, getAxiosAuthConfig())
+            .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
             .then(() => {
-                router.push(`/project/${projectIds[0]}/overview?startDateTime=${start}&endDateTime=${end}`);
+                router.push(`/project/${projectIds[0]}/overview?${dateQuery}`);
             }).catch(() => {
             enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});
         });
@@ -57,11 +57,12 @@ const index = () => {
 
     return (
         <AuthView>
-            <CardLayout>
+            <CardLayout backLink={"/server"} logoType="header">
                 {isLoading && <LoadingBar itemBeingLoaded={itemBeingLoaded}/>}
                 {!isLoading && <ProjectSelect projects={projects} onAnalyzeClick={handleAnalyze}/>}
             </CardLayout>
         </AuthView>
     );
 };
+
 export default index;
