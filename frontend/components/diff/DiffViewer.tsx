@@ -1,11 +1,9 @@
-import 'react-diff-view/style/index.css';
 import {FileChange} from "../../interfaces/GitLabFileChange";
 import {parseFileChangesForDiffViewer} from "./FileChangeParser";
 import {ParsedFileChange} from "../../interfaces/ParsedFileChange";
 import React, {useMemo} from "react";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {Box} from "@material-ui/core";
-import "prism-themes/themes/prism-vs.css";
 import {Tokenize} from "./Tokenize";
 // @ts-ignore (Doesn't have typescript types)
 import {Decoration, Diff, Hunk} from 'react-diff-view';

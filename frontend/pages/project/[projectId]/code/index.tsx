@@ -47,7 +47,6 @@ const index = () => {
     }, [selectedMergeRequest]);
 
     const handleSelectMergeRequest = (mergeRequest: MergeRequest) => {
-        console.log("HANDLING SELECTION")
         setSelectedMergeRequest(mergeRequest);
     }
 

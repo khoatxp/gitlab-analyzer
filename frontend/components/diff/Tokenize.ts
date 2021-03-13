@@ -5,6 +5,7 @@ import {tokenize} from 'react-diff-view';
 import * as refractor from 'refractor';
 
 // Required for react-diff-view for syntax highlighting
+// Note there are multiple highlighting styles you can use
 export const Tokenize = (change: ParsedFileChange) => {
     if (!change.hunks) {
         return undefined;
