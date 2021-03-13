@@ -2,15 +2,7 @@
 import { parseDiff } from 'react-diff-view';
 import { FileChange } from "../../interfaces/GitLabFileChange";
 import assert from "assert";
-
-type ParsedFileChange = {
-    oldPath: string,
-    newPath: string,
-    oldRevision: string,
-    newRevision: string,
-    type: string,
-    hunks: any[]
-}
+import {ParsedFileChange} from "../../interfaces/ParsedFileChange";
 
 export const parseFileChangesForDiffViewer = (fileChanges: FileChange[]): ParsedFileChange[] => {
     let allFilesToRender: any[] = [];
