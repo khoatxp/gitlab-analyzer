@@ -4,9 +4,11 @@ import {parseFileChangesForDiffViewer} from "./FileChangeParser";
 import {ParsedFileChange} from "../../interfaces/ParsedFileChange";
 // @ts-ignore (Doesn't have typescript types)
 import {Decoration, Diff, Hunk} from 'react-diff-view';
-import React from "react";
+import React, {useMemo} from "react";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {Box} from "@material-ui/core";
+import "prism-themes/themes/prism-vs.css";
+import {Tokenize} from "./Tokenize";
 
 type DiffViewerProps = { fileChanges: FileChange[] };
 const DiffViewer = ({fileChanges}: DiffViewerProps) => {
@@ -28,11 +30,12 @@ const DiffViewer = ({fileChanges}: DiffViewerProps) => {
 type FileDiffViewProps = { change: ParsedFileChange }
 const FileDiffView = ({change}: FileDiffViewProps) => {
     const styles = useStyles();
+    const tokens = useMemo(() => Tokenize(change), [change]);
 
     return (
         <div className={styles.fileDiff}>
             <header className={styles.diffHeader}>{getChangeHeader(change)}</header>
-            <Diff viewType="unified" diffType={change.type} hunks={change.hunks}>
+            <Diff viewType="unified" diffType={change.type} hunks={change.hunks} tokens={tokens}>
                 {(hunks: any[]) =>
                     hunks.map(hunk => [
                         <Decoration key={'deco-' + hunk.content}>

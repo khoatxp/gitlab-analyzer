@@ -20,11 +20,13 @@
     "memoize-one": "^5.1.1",
     "next": "10.0.5",
     "notistack": "^1.0.3",
+    "prism-themes": "^1.5.0",
     "react": "17.0.1",
     "react-diff-view": "^2.4.7",
     "react-dom": "^17.0.1",
     "react-virtualized-auto-sizer": "^1.0.4",
     "react-window": "^1.8.6",
+    "refractor": "^3.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.11",
