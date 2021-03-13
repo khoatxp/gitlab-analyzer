@@ -1,33 +1,54 @@
-import React from 'react';
+import React, {useState} from 'react';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import {MergeRequest} from "../../interfaces/GitLabMergeRequest";
-import {Box, Typography} from "@material-ui/core";
+import {Avatar, Card, Divider, ListItemIcon, ListSubheader} from "@material-ui/core";
+import formatDate from "../../interfaces/dateFormatter";
 
 type MergeRequestListProps = {
     mergeRequests: MergeRequest[]
     handleSelectMergeRequest: (mergeRequest: MergeRequest) => void;
 }
 
-const MergeRequestList = ( {mergeRequests, handleSelectMergeRequest}: MergeRequestListProps) => {
+const MergeRequestList = ({mergeRequests, handleSelectMergeRequest}: MergeRequestListProps) => {
+    const [selectedIndex, setSelectedIndex] = useState(-1);
+
     return (
-        <Box border={1} borderColor={'lightGray'} mb={1}>
-            <Typography variant="h3" align="center">Merge requests: </Typography>
-            <List component="nav">
+        <Card>
+            <List
+                component="nav"
+                disablePadding
+                subheader={
+                    <ListSubheader>Merge Requests</ListSubheader>
+                }
+            >
+                <Divider/>
                 {
-                    mergeRequests.map((mergeRequest) => (
+                    mergeRequests.map((mergeRequest, i) => (
                         <ListItem
                             key={`${mergeRequest.id}-${mergeRequest.iid}`}
                             button
-                            onClick={() => handleSelectMergeRequest(mergeRequest)}
+                            divider={i != mergeRequests.length - 1} // Do not add a divider for the last item
+                            onClick={() => {
+                                setSelectedIndex(i);
+                                handleSelectMergeRequest(mergeRequest);
+                            }}
+                            selected={selectedIndex == i}
                         >
-                            <ListItemText primary={mergeRequest.title} />
+                            <ListItemIcon>
+                                <Avatar alt={`Author: ${mergeRequest.author.name}`}
+                                        src={mergeRequest.author.avatar_url || ''}/>
+                            </ListItemIcon>
+                            <ListItemText
+                                primary={mergeRequest.title}
+                                secondary={`#${mergeRequest.iid} · opened ${formatDate(mergeRequest.created_at)} by ${mergeRequest.author.name}`}
+                            />
                         </ListItem>
                     ))
                 }
             </List>
-        </Box>
+        </Card>
     );
 }
 
