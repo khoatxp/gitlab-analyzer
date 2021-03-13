@@ -49,7 +49,7 @@ const NavBar = () => {
     }
 
     return (
-        <AppBar className={classes.root} position="static" color="default">
+        <AppBar className={classes.root} position="sticky" color="default">
             <Toolbar>
                 <Icon>
                     <Image
