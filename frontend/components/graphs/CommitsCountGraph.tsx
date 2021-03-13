@@ -15,28 +15,6 @@ import {AuthContext} from "../../components/AuthContext";
 import AuthView from "../../components/AuthView";
 import {useSnackbar} from "notistack";
 
-const ChartData = () => {
-    const {enqueueSnackbar} = useSnackbar();
-    const [date, setDate] = React.useState<[]>();
-    const [commitCount, setCommitCount] = React.useState<[]>([]);
-
-    const {getAxiosAuthConfig} = React.useContext(AuthContext);
-    const router = useRouter();
-    const { projectId, startDateTime, endDateTime } =  router.query;
-
-    useEffect(() => {
-        if (router.isReady) {
-            axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commits?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
-                .then((resp: AxiosResponse) => {
-                    setCommitCount(resp.data.length);
-                }).catch(() => {
-                    enqueueSnackbar('Failed to get commits count.', {variant: 'error',});
-            });
-        }
-    }, [projectId]);
-}
-
 const data = [
     { date: "Jan 10", commits: 100},
     { date: "Feb 12", commits: 140},

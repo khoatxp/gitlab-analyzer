@@ -15,36 +15,6 @@ import {AuthContext} from "../../components/AuthContext";
 import AuthView from "../../components/AuthView";
 import {useSnackbar} from "notistack";
 
-const ChartData = () => {
-    const {enqueueSnackbar} = useSnackbar();
-    const [date, setDate] = React.useState<[]>();
-    const [mergeRequestScore, setMergeRequestScore] = React.useState<number>();
-    const [commitScore, setCommitScore] = React.useState<number>();
-
-    const {getAxiosAuthConfig} = React.useContext(AuthContext);
-    const router = useRouter();
-    const { projectId, startDateTime, endDateTime } =  router.query;
-
-    useEffect(() => {
-        if (router.isReady) {
-            axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_requests/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
-                .then((resp: AxiosResponse) => {
-                    setMergeRequestScore(resp.data);
-                }).catch(() => {
-                    enqueueSnackbar('Failed to get merge request score.', {variant: 'error',});
-            });
-            axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/commits/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
-                .then((resp: AxiosResponse) => {
-                    setCommitScore(resp.data);
-                }).catch(() => {
-                    enqueueSnackbar('Failed to get commits score.', {variant: 'error',});
-            });
-        }
-    }, [projectId]);
-}
-
 const data = [
     { date: "Jan 10", commitScore: 40, mergeRequestScore: 4},
     { date: "Feb 12", commitScore: 30, mergeRequestScore: 40},

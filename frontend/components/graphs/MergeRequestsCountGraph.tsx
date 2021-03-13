@@ -15,28 +15,6 @@ import {AuthContext} from "../../components/AuthContext";
 import AuthView from "../../components/AuthView";
 import {useSnackbar} from "notistack";
 
-const ChartData = () => {
-    const {enqueueSnackbar} = useSnackbar();
-    const [date, setDate] = React.useState<[]>();
-    const [mergerRequestCount, setMergerRequestCount] = React.useState<number>();
-
-    const {getAxiosAuthConfig} = React.useContext(AuthContext);
-    const router = useRouter();
-    const { projectId, startDateTime, endDateTime } =  router.query;
-
-    useEffect(() => {
-        if (router.isReady) {
-            axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_requests?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
-                .then((resp: AxiosResponse) => {
-                    setMergerRequestCount(resp.data.length);
-                }).catch(() => {
-                    enqueueSnackbar('Failed to get merge request count.', {variant: 'error',});
-            });
-        }
-    }, [projectId]);
-}
-
 const data = [
     { date: "Jan 10", mergeRequests: 200},
     { date: "Feb 12", mergeRequests: 30},
