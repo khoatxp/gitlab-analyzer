@@ -9,7 +9,6 @@ import {
   Tooltip,
   Legend
 } from "recharts";
-import AxisLabel from "./AxisLabel";
 import {useRouter} from "next/router";
 import {AuthContext} from "../../components/AuthContext";
 import AuthView from "../../components/AuthView";
@@ -44,7 +43,7 @@ class Chart extends React.Component {
             >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" label={{ value: "Date", position: "middle", dy: 10}} />
-                <YAxis label={<AxisLabel axisType="yAxis">Total Count</AxisLabel>} />
+                <YAxis label={{ value: 'Total Count', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />
                 <Bar dataKey="mergeRequests" fill="#8884d8" barSize={15} />
             </BarChart>
