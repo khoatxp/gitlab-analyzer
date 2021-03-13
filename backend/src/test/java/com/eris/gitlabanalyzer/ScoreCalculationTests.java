@@ -99,8 +99,6 @@ class ScoreCalculationTests {
     @Test
     void check_CommitDiff()  {
         String sha = gitLabService.getCommits(projectId, startTime, endTime).toIterable().iterator().next().getSha();
-        System.out.println("sha");
-        System.out.println(sha);
         Commit commit = new Commit(sha, "testTitle", "Author", "email", startTime, "weburl", project);
         commitRepository.save(commit);
 

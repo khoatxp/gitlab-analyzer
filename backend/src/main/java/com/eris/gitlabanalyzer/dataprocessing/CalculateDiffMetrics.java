@@ -15,11 +15,13 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class CalculateDiffMetrics {
 
-    private final Map<String, String[]> commentCharacters = new HashMap<>();
+    private final Map<String, CommentCharacter> commentCharacters = new HashMap<>();
 
     private final FileScoreRepository fileScoreRepository;
     private final MergeRequestRepository mergeRequestRepository;
@@ -54,13 +56,13 @@ public class CalculateDiffMetrics {
     }
 
     private void initializeCommentCharacters(){
-        commentCharacters.put("java", new String[]{"//", "/*", "*/"});
-        commentCharacters.put("ts", new String[]{"//", "/*", "*/"});
-        commentCharacters.put("js", new String[]{"//", "/*", "*/"});
-        commentCharacters.put("tsx", new String[]{"//", "/*", "*/"});
-        commentCharacters.put("c", new String[]{"//", "/*", "*/"});
-        commentCharacters.put("cpp", new String[]{"//", "/*", "*/"});
-        commentCharacters.put("py", new String[]{"#", "\"\"\""});
+        commentCharacters.put("java", new CommentCharacter("//", "/*", "*/"));
+        commentCharacters.put("ts", new CommentCharacter("//", "/*", "*/"));
+        commentCharacters.put("js", new CommentCharacter("//", "/*", "*/"));
+        commentCharacters.put("tsx", new CommentCharacter("//", "/*", "*/"));
+        commentCharacters.put("c", new CommentCharacter("//", "/*", "*/"));
+        commentCharacters.put("cpp", new CommentCharacter("//", "/*", "*/"));
+        commentCharacters.put("py", new CommentCharacter("#", "\"\"\"", "\"\"\""));
     }
 
     public void storeMetricsCommit(long projectId, long commitId){
@@ -72,6 +74,7 @@ public class CalculateDiffMetrics {
             if(commit != null && project != null ){
                 Iterable<GitLabFileChange> commitDiff = gitLabService.getCommitDiff(project.getGitLabProjectId(), commit.getSha()).toIterable();
 
+                // todo find a way to simpilfy this
                 for(GitLabFileChange file : commitDiff){
                     String fileType = findFileType(file);
                     Map<lineTypes, Integer> fileCount = countLineTypes(file.getDiff(), fileType);
@@ -132,37 +135,42 @@ public class CalculateDiffMetrics {
 
     private Map<lineTypes, Integer> countLineTypes(String diff, String fileType){
         Map<lineTypes, Integer> lineTotals = new HashMap<>();
-        boolean inCommentBlock = false;
         String[] lines = diff.split("\n");
-        String[] commentOperator = commentCharacters.getOrDefault(fileType, new String[]{" ", " "});
-        String commentTerminator = commentOperator[commentOperator.length - 1];
 
-        for(String line : lines){
-            // remove whitespace
-            line = line.replaceAll("\\s+","");
-            if(inCommentBlock){
-                lineTotals.put(lineTypes.comment, lineTotals.get(lineTypes.comment) + 1);
-                if(line.contains(commentTerminator)){
-                    inCommentBlock = false;
-                }
-            }else if(line.length() > 1 && !line.equals("\\Nonewlineatendoffile")){
-                if(line.charAt(0) == '+'){
-                    switch (typeOfLine(line, commentOperator)){
+        // if no commentCharacter info exists defaults to nothing
+        CommentCharacter commentOperator = commentCharacters.getOrDefault(fileType, new CommentCharacter("","",""));
+
+        for(int lineNumber = 0; lineNumber < lines.length; lineNumber++){
+            String line = lines[lineNumber].replaceAll("\\s+","");
+            if(line.length() > 1 && !line.equals("\\Nonewlineatendoffile")) {
+
+                if (line.charAt(0) == '+') {
+                    line = line.substring(1);
+                    switch (typeOfLine(line, commentOperator)) {
                         case code:
                             lineTotals.put(lineTypes.code, lineTotals.getOrDefault(lineTypes.code, 0) + 1);
+                            //todo check if comment after code
                             break;
                         case comment:
                             lineTotals.put(lineTypes.comment, lineTotals.getOrDefault(lineTypes.comment, 0) + 1);
                             break;
                         case blockComment:
+                            // todo check if just comment char on line
                             lineTotals.put(lineTypes.comment, lineTotals.getOrDefault(lineTypes.comment, 0) + 1);
-                            inCommentBlock = true;
+                            while (!line.contains(commentOperator.getBlockCommentEnd())) {
+                                lineNumber++;
+                                line = lines[lineNumber].replaceAll("\\s+","");
+                                lineTotals.put(lineTypes.comment, lineTotals.get(lineTypes.comment) + 1);
+                            }
+                            //todo check if just comment char on line
+                            //todo check if code after comment
                             break;
                         case syntax:
                             lineTotals.put(lineTypes.syntax, lineTotals.getOrDefault(lineTypes.syntax, 0) + 1);
                             break;
                     }
-                } else if(line.charAt(0) == '-'){
+
+                } else if (line.charAt(0) == '-') {
                     //TODO give proper weight to removing line
                     lineTotals.put(lineTypes.removed, lineTotals.getOrDefault(lineTypes.removed, 0) + 1);
                 }
@@ -171,21 +179,37 @@ public class CalculateDiffMetrics {
         return lineTotals;
     }
 
-    private lineTypes typeOfLine(String line, String[] commentOperator){
-        int ModifiedLineBoilerPlateLength = 1;
-        for(int i = 0; i < commentOperator.length; i++){
-            //Todo find better way to handle single character syntax
-            if(ModifiedLineBoilerPlateLength + commentOperator[i].length() > line.length()){
-                return lineTypes.syntax;
-            }
-            String lineStartChar = line.substring(ModifiedLineBoilerPlateLength, (ModifiedLineBoilerPlateLength + commentOperator[i].length()));
-            if(lineStartChar.equals(commentOperator[i])){
-                if(i > 0){
-                    return lineTypes.blockComment;
-                }
-                return lineTypes.comment;
-            }
+    private lineTypes typeOfLine(String line, CommentCharacter commentOperator){
+        if(isComment(line, commentOperator.getSingleLineComment())){
+            return lineTypes.comment;
+        }
+        if(isComment(line, commentOperator.getBlockCommentStart())){
+            return lineTypes.blockComment;
+        }
+        if(isSyntax(line)){
+            return lineTypes.syntax;
         }
         return lineTypes.code;
+    }
+
+    private boolean isComment(String line, String operator){
+        // handle edge case to avoid index out of bound exception
+        if(line.length() >= operator.length()){
+            String lineStartChar = line.substring(0, operator.length());
+            if(lineStartChar.equals(operator)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //Makes assumption that every syntax doesn't contains alphanumeric chars
+    private boolean isSyntax(String line){
+        Pattern pattern = Pattern.compile("[a-zA-Z0-9]");
+        Matcher matcher = pattern.matcher(line);
+        if(matcher.find()){
+            return false;
+        }
+        return true;
     }
 }
