@@ -5,7 +5,7 @@ import {ParsedFileChange} from "../../interfaces/ParsedFileChange";
 // @ts-ignore (Doesn't have typescript types)
 import {Decoration, Diff, Hunk} from 'react-diff-view';
 import React from "react";
-import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
+import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {Box} from "@material-ui/core";
 
 type DiffViewerProps = { fileChanges: FileChange[] };
@@ -19,15 +19,16 @@ const DiffViewer = ({fileChanges}: DiffViewerProps) => {
             overflow="auto"
             p={2}
         >
-            {parsedFileChanges.map((change) => <FileDiffView key={change.newPath + '-' + change.newRevision} change={change}/>)}
+            {parsedFileChanges.map((change) => <FileDiffView key={change.newPath + '-' + change.newRevision}
+                                                             change={change}/>)}
         </Box>
     )
 }
 
-type FileDiffViewProps = {change: ParsedFileChange}
+type FileDiffViewProps = { change: ParsedFileChange }
 const FileDiffView = ({change}: FileDiffViewProps) => {
     const styles = useStyles();
-    console.log(" THE CHANGE", change);
+
     return (
         <div className={styles.fileDiff}>
             <header className={styles.diffHeader}>{getChangeHeader(change)}</header>
