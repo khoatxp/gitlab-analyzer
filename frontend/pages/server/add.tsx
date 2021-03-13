@@ -25,10 +25,7 @@ const AddServer = () => {
         return false;
     }
     const validateToken = (token:string) => {
-        if (token.length >= 20){
-            return true;
-        }
-        return false;
+        return token.length >= 20
     }
     const saveServer = () => {
         let trimmedUrl = serverUrl.trim();
@@ -59,7 +56,7 @@ const AddServer = () => {
 
     return (
         <AuthView>
-            <CardLayout size="md" backLink={"/server"}>
+            <CardLayout size="md" backLink={"/server"} logoType="header">
                 <Typography align="center"  variant="h5">Add New Server</Typography>
                 <AppTextField
                     id="server-url"

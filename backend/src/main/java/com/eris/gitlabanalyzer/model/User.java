@@ -1,6 +1,5 @@
 package com.eris.gitlabanalyzer.model;
 
-import lombok.AllArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.util.ArrayList;

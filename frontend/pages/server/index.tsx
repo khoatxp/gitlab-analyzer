@@ -43,7 +43,7 @@ const Server = () => {
 
     return (
         <AuthView>
-            {!isLoading && <CardLayout size="md">
+            {!isLoading && <CardLayout size="md" logoType="header">
                 <Typography align="center" variant="h5">Manage Servers</Typography>
                 <List>
                     {servers.map((server) => {

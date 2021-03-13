@@ -2,7 +2,7 @@ package com.eris.gitlabanalyzer.controller;
 
 import com.eris.gitlabanalyzer.model.gitlabresponse.*;
 
-import com.eris.gitlabanalyzer.repository.UserRepository;
+import com.eris.gitlabanalyzer.service.AuthService;
 import com.eris.gitlabanalyzer.service.GitLabService;
 import com.eris.gitlabanalyzer.service.UserServerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +21,8 @@ import java.time.OffsetDateTime;
 @RequestMapping(path = "/api/v1/gitlab")
 public class GitLabController {
 
+    private final AuthService authService;
     private final UserServerService userServerService;
-    private final UserRepository userRepository;
 
     // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
@@ -33,27 +33,23 @@ public class GitLabController {
     String accessToken;
 
     @Autowired
-    public GitLabController(UserServerService userServerService, UserRepository userRepository) {
+    public GitLabController(AuthService authService, UserServerService userServerService) {
+        this.authService = authService;
         this.userServerService = userServerService;
-        this.userRepository = userRepository;
     }
 
     @GetMapping(path ="{serverId}/projects")
     public Flux<GitLabProject> getProjects(Principal principal, @PathVariable("serverId") Long id) {
-        //TODO get logged in user based on SSO session params
-        var username = principal.getName();
-        var user = this.userRepository.findUserByUsername(username);
+        var user = authService.getLoggedInUser(principal);
 
-        var userServer = userServerService.getUserServer(user.get(), id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find server."));
+        var userServer = userServerService.getUserServer(user, id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find server."));
         var gitLabService = new GitLabService(userServer.getServer().getServerUrl(), userServer.getAccessToken());
         return gitLabService.getProjects();
     }
 
     // Used in notes page for now
     @GetMapping(path ="/projects/{projectId}")
-    public Mono<GitLabProject> getProject(
-            @PathVariable("projectId") Long projectId
-    ) {
+    public Mono<GitLabProject> getProject(@PathVariable("projectId") Long projectId) {
         // TODO this endpoint needs to be removed or use an internal projectId to find the correct server that user owns
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getProject(projectId);

@@ -3,13 +3,13 @@ package com.eris.gitlabanalyzer.service;
 import com.eris.gitlabanalyzer.model.User;
 import com.eris.gitlabanalyzer.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 import java.util.Optional;
 
@@ -34,7 +34,7 @@ public class AuthService implements UserDetailsService {
                 AuthorityUtils.createAuthorityList()
         );
     }
-    public User getLoggedInUser(Principal principle) throws AccessDeniedException {
+    public User getLoggedInUser(Principal principle) {
         if (principle == null) {
             throw new AccessDeniedException("User not logged in.");
         }

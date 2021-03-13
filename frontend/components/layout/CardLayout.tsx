@@ -8,7 +8,7 @@ import {makeStyles} from "@material-ui/styles";
 
 type CardLayoutProps =  ChildrenProps & {
     size?: "sm" | "md"
-    smLogo?: boolean
+    logoType?: "center" | "header"
     backLink?: string
     backLabel?: string
 }
@@ -21,13 +21,13 @@ const useStyles = makeStyles({
     }
 })
 
-const CardLayout = ({children, size, smLogo, backLink, backLabel}: CardLayoutProps) => {
+const CardLayout = ({children, size, logoType = "center", backLink, backLabel}: CardLayoutProps) => {
     // Change card width based on size prop
     let width = "60vw";
     width = size == "sm" ? "20vw": width;
     width = size == "md" ? "60vw": width;
 
-    let logoSize = smLogo ? "50": "80";
+    let logoSize = logoType === "center" ? "120" : "80" ;
     const classes = useStyles();
 
     return (
@@ -57,7 +57,7 @@ const CardLayout = ({children, size, smLogo, backLink, backLabel}: CardLayoutPro
                     </Typography>
                 </Box>
                 <Box
-                    flex="1"
+                    flex= {logoType === "center" ? "none" : 1}
                     display="flex"
                     flexDirection="column"
                     justifyContent="center"
