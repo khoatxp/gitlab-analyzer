@@ -8,13 +8,14 @@ import {useRouter} from "next/router";
 import {MergeRequest} from "../../../../interfaces/GitLabMergeRequest";
 import {useSnackbar} from "notistack";
 import DiffViewer from "../../../../components/diff/DiffViewer";
+import {FileChange} from "../../../../interfaces/GitLabFileChange";
 
 const index = () => {
     const router = useRouter();
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const [mergeRequests, setMergeRequests] = React.useState<MergeRequest[]>([]);
-    const [diffText, setDiffText] = React.useState<String>('');
+    const [fileChanges, setFileChanges] = React.useState<FileChange[]>([]);
     const { projectId, startDateTime, endDateTime } =  router.query;
 
     useEffect(() => {
@@ -36,7 +37,7 @@ const index = () => {
         axios
             .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${mergeRequests[0].iid}/diff`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
-                setDiffText(resp.data[1].diff);
+                setFileChanges(resp.data);
                 // console.log(resp.data[1].diff);
             }).catch(() => {
                 enqueueSnackbar("Failed to load data", {variant: 'error'});
@@ -46,7 +47,7 @@ const index = () => {
     return (
         <AuthView>
             <MenuLayout tabSelected={1}>
-                {diffText && <DiffViewer diffText={diffText}/>}
+                {fileChanges.length > 0 && <DiffViewer fileChanges={fileChanges}/>}
             </MenuLayout>
         </AuthView>
     );
