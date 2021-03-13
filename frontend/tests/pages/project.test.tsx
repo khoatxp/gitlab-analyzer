@@ -12,7 +12,7 @@ describe("Project Folder", () =>{
 
     beforeAll(async () =>{
         mockEnqueue.mockImplementation(() => {return {enqueueSnackbar}});
-        useRouter.mockImplementationOnce(() => ({
+        useRouter.mockImplementation(() => ({
             query: { serverId: 'TestId' },
         }));
         rend = mount(<Index />);
