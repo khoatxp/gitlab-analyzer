@@ -28,7 +28,7 @@ const index = () => {
         // when that information is available in db
         setItemBeingLoaded("Projects");
         axios
-            .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects`, getAxiosAuthConfig())
+            .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/${serverId}/projects`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
                 setProjects(resp.data);
                 setIsLoading(false);
@@ -57,11 +57,12 @@ const index = () => {
 
     return (
         <AuthView>
-            <CardLayout>
+            <CardLayout backLink={"/server"} logoType="header">
                 {isLoading && <LoadingBar itemBeingLoaded={itemBeingLoaded}/>}
                 {!isLoading && <ProjectSelect projects={projects} onAnalyzeClick={handleAnalyze}/>}
             </CardLayout>
         </AuthView>
     );
 };
+
 export default index;

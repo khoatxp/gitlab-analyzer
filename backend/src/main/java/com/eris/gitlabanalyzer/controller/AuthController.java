@@ -1,28 +1,24 @@
 package com.eris.gitlabanalyzer.controller;
 
 import com.eris.gitlabanalyzer.model.User;
-import com.eris.gitlabanalyzer.repository.UserRepository;
 import com.eris.gitlabanalyzer.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 
 @RestController
 public class AuthController {
 
-    private final UserRepository userRepository;
     private final AuthService authService;
 
     @Value("${FRONTEND_URL}")
     private String FRONTEND_URL;
 
     @Autowired
-    public AuthController(UserRepository userRepository, AuthService authService){
-        this.userRepository = userRepository;
+    public AuthController(AuthService authService){
         this.authService = authService;
     }
 
@@ -34,7 +30,7 @@ public class AuthController {
     }
 
     @GetMapping("/api/v1/user")
-    public User getLoggedInUser(Principal currentUser) throws AccessDeniedException {
+    public User getLoggedInUser(Principal currentUser) {
         return authService.getLoggedInUser(currentUser);
     }
 }

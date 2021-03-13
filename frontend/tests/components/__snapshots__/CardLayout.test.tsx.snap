@@ -5,14 +5,14 @@ exports[`Cardlayout Snapshot CardLayout 1`] = `
   <AppGradientBackground>
     <Styled(MuiBox)
       alignItems="center"
-      className="makeStyles-backgroundGradient-1"
+      className="makeStyles-backgroundGradient-2"
       display="flex"
       height="100vh"
       justifyContent="center"
       width="100vw"
     >
       <div
-        className="MuiBox-root MuiBox-root-3 makeStyles-backgroundGradient-1"
+        className="MuiBox-root MuiBox-root-4 makeStyles-backgroundGradient-2"
       >
         <Styled(MuiBox)
           bgcolor="primary.contrastText"
@@ -28,7 +28,7 @@ exports[`Cardlayout Snapshot CardLayout 1`] = `
           width="60vw"
         >
           <div
-            className="MuiBox-root MuiBox-root-4"
+            className="MuiBox-root MuiBox-root-5"
           >
             <Styled(MuiBox)
               id="card-header"
@@ -36,14 +36,14 @@ exports[`Cardlayout Snapshot CardLayout 1`] = `
               textAlign="center"
             >
               <div
-                className="MuiBox-root MuiBox-root-5"
+                className="MuiBox-root MuiBox-root-6"
                 id="card-header"
               >
                 <Image
                   alt="The Gitlab Logo"
-                  height="125px"
+                  height="120"
                   src="/gitlab.svg"
-                  width="125px"
+                  width="120"
                 >
                   <div
                     style={
@@ -70,7 +70,7 @@ exports[`Cardlayout Snapshot CardLayout 1`] = `
                         alt=""
                         aria-hidden={true}
                         role="presentation"
-                        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI1IiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiLz4="
+                        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiLz4="
                         style={
                           Object {
                             "border": "none",
@@ -113,7 +113,6 @@ exports[`Cardlayout Snapshot CardLayout 1`] = `
                   </div>
                 </Image>
                 <WithStyles(ForwardRef(Typography))
-                  gutterBottom={true}
                   variant="h6"
                 >
                   <ForwardRef(Typography)
@@ -151,21 +150,29 @@ exports[`Cardlayout Snapshot CardLayout 1`] = `
                         "subtitle2": "MuiTypography-subtitle2",
                       }
                     }
-                    gutterBottom={true}
                     variant="h6"
                   >
                     <h6
-                      className="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom"
+                      className="MuiTypography-root MuiTypography-h6"
                     >
-                      GitLab
-                      <br />
-                      Analyzer
+                      Gitlab Analyzer
                     </h6>
                   </ForwardRef(Typography)>
                 </WithStyles(ForwardRef(Typography))>
               </div>
             </Styled(MuiBox)>
-            <div />
+            <Styled(MuiBox)
+              display="flex"
+              flex="none"
+              flexDirection="column"
+              justifyContent="center"
+            >
+              <div
+                className="MuiBox-root MuiBox-root-7"
+              >
+                <div />
+              </div>
+            </Styled(MuiBox)>
           </div>
         </Styled(MuiBox)>
       </div>

@@ -1,0 +1,30 @@
+stages:
+  - test
+GitAnalyzer-FrontendTests:
+  only:
+    - master
+    - merge_requests
+  image: node:12.18.4
+  stage: test
+
+  before_script:
+    - 'cd ./frontend'
+    - 'npm install -frozen-lockfile'
+
+  script:
+    - 'npm test'
+    - 'cd ..'
+
+GitAnalyzer-BackendTests:
+  only:
+    - master
+    - merge_requests
+  image: maven:3.6.3-openjdk-15
+
+  before_script:
+    - 'cd ./backend'
+    - 'mvn install -B'
+
+  script:
+    - 'mvn clean test'
+    - 'cd ..'

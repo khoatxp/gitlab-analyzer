@@ -17,14 +17,6 @@ module.exports = {
         '^.+\\.(ts|tsx)?$': 'ts-jest'
     },
     collectCoverage: true,
-    coverageThreshold: {
-        global: {
-            branches: 50,
-            functions: 44,
-            lines: 80,
-            statements: 80,
-        }
-    },
     "snapshotSerializers": ["enzyme-to-json/serializer"],
   // https://github.com/zeit/next.js/issues/8663#issue-490553899
     globals: {
