@@ -79,44 +79,44 @@ const useStyles = makeStyles((theme: Theme) =>
             margin: '0px 0px',
             textAlign: 'right'
         },
-        container3: {
-            display: 'flex',
-            justifyContent: 'space-around',
-            margin: '24px 0px',
-        },
         graphContainer: {
             display: 'flex',
             justifyContent: 'space-around',
-            flexDirection: 'column',
+            margin: '10px 10px',
         },
         avatarSize: {
             width: theme.spacing(15),
             height: theme.spacing(15),
         },
-        graphText: {
+        graphTitleText: {
+            textAlign: 'center',
+            fontSize: '1.2em',
+        },
+        checkboxContainer: {
             justifyContent: 'center',
-        }
+        },
     }),
 );
 
 const CodeAnalysis = () => {
     const classes = useStyles();
+    const router = useRouter();
+    const {getAxiosAuthConfig} = React.useContext(AuthContext);
+    const {enqueueSnackbar} = useSnackbar();
+    const { projectId, startDateTime, endDateTime } =  router.query;
+
+    const [projectName, setProjectName] = React.useState<String>();
+    const [mergerRequestCount, setMergerRequestCount] = React.useState<number>();
+    const [commitCount, setCommitCount] = React.useState<number>();
+    const [mergeRequestScore, setMergeRequestScore] = React.useState<number>();
+    const [commitScore, setCommitScore] = React.useState<number>();
+
     const [checkboxState, setCheckboxState] = React.useState({
         checkedCommitForGraphA: true,
         checkedMergeRequestForGraphA: true,
         checkedCommitForGraphB: true,
         checkedMergeRequestForGraphB: true,
     });
-
-    const {enqueueSnackbar} = useSnackbar();
-    const [mergerRequestCount, setMergerRequestCount] = React.useState<number>();
-    const [projectName, setProjectName] = React.useState<String>();
-    const [commitCount, setCommitCount] = React.useState<number>();
-    const [mergeRequestScore, setMergeRequestScore] = React.useState<number>();
-    const [commitScore, setCommitScore] = React.useState<number>();
-    const {getAxiosAuthConfig} = React.useContext(AuthContext);
-    const router = useRouter();
-    const { projectId, startDateTime, endDateTime } =  router.query;
 
     useEffect(() => {
         if (router.isReady) {
@@ -196,55 +196,53 @@ const CodeAnalysis = () => {
     }
 
     return (
-    <>
-        <div className={classes.outerContainer}>
-            <div className={classes.container1}>
-                <div className={classes.container2}>
-                    <Avatar className={classes.avatarSize} variant='square'>R</Avatar>
-                    <div className={classes.textContainer1}>
-                        <h1 className={classes.repoNameText}>{projectName}</h1>
-                        <p className={classes.smallTextColor}>- {commitCount} Commits - {mergerRequestCount} Merge Request -</p>
+        <>
+            <div className={classes.outerContainer}>
+                <div className={classes.container1}>
+                    <div className={classes.container2}>
+                        <Avatar className={classes.avatarSize} variant='square'>R</Avatar>
+                        <div className={classes.textContainer1}>
+                            <h1 className={classes.repoNameText}>{projectName}</h1>
+                            <p className={classes.smallTextColor}>- {commitCount} Commits - {mergerRequestCount} Merge Request -</p>
+                        </div>
+                    </div>
+                    <div className={classes.textContainer2}>
+                        <p className={classes.mrScoreText}>Merge Request Score: {mergeRequestScore}</p>
+                        <p className={classes.commitScoreText}>Commit Score: {commitScore}</p>
                     </div>
                 </div>
-                <div className={classes.textContainer2}>
-                    <p className={classes.mrScoreText}>Merge Request Score: {mergeRequestScore}</p>
-                    <p className={classes.commitScoreText}>Commit Score: {commitScore}</p>
-                </div>
-            </div>
-            <div className={classes.container3}>
-                <p className={classes.graphText}>
-                    {graphATitle}
+                <p className={classes.graphTitleText}>{graphATitle}</p>
+                <div className={classes.graphContainer}>
                     {graphA}
-                </p>
-                <FormGroup>
-                    <FormControlLabel
-                        control={<GreenCheckbox checked={checkboxState.checkedCommitForGraphA} onChange={handleChange} name="checkedCommitForGraphA"/>}
-                        label="Commits"
-                    />
-                    <FormControlLabel
-                        control={<PurpleCheckbox checked={checkboxState.checkedMergeRequestForGraphA} onChange={handleChange} name="checkedMergeRequestForGraphA"/>}
-                        label="Merge Requests"
-                    />
-                </FormGroup>
-            </div>
-            <div className={classes.container3}>
-                <div>
-                    {graphBTitle}
-                    {graphB}
+                    <div className={classes.checkboxContainer}>
+                        <FormGroup>
+                            <FormControlLabel
+                                control={<GreenCheckbox checked={checkboxState.checkedCommitForGraphA} onChange={handleChange} name="checkedCommitForGraphA"/>}
+                                label="Commits"
+                            />
+                            <FormControlLabel
+                                control={<PurpleCheckbox checked={checkboxState.checkedMergeRequestForGraphA} onChange={handleChange} name="checkedMergeRequestForGraphA"/>}
+                                label="Merge Requests"
+                            />
+                        </FormGroup>
+                    </div>
                 </div>
-                <FormGroup>
-                    <FormControlLabel
-                        control={<GreenCheckbox checked={checkboxState.checkedCommitForGraphB} onChange={handleChange} name="checkedCommitForGraphB"/>}
-                        label="Commits"
-                    />
-                    <FormControlLabel
-                        control={<PurpleCheckbox checked={checkboxState.checkedMergeRequestForGraphB} onChange={handleChange} name="checkedMergeRequestForGraphB"/>}
-                        label="Merge Requests"
-                    />
-                </FormGroup>
+                <p className={classes.graphTitleText}>{graphBTitle}</p>
+                <div className={classes.graphContainer}>
+                    {graphB}
+                    <FormGroup>
+                        <FormControlLabel
+                            control={<GreenCheckbox checked={checkboxState.checkedCommitForGraphB} onChange={handleChange} name="checkedCommitForGraphB"/>}
+                            label="Commits"
+                        />
+                        <FormControlLabel
+                            control={<PurpleCheckbox checked={checkboxState.checkedMergeRequestForGraphB} onChange={handleChange} name="checkedMergeRequestForGraphB"/>}
+                            label="Merge Requests"
+                        />
+                    </FormGroup>
+                </div>
             </div>
-        </div>
-    </>
+        </>
     );
 };
 
