@@ -45,11 +45,11 @@ const index = () => {
         // Make callout and redirect after it is done. Note that the API call may take a while.
         const start = formatISO(startDateTime);
         const end = formatISO(endDateTime);
-        const dateQuery = `?startDateTime=${start}&endDateTime=${end}`;
+        const dateQuery = `startDateTime=${start}&endDateTime=${end}`;
         axios
-            .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics${dateQuery}`, projectIds, getAxiosAuthConfig())
+            .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
             .then(() => {
-                router.push(`/project/${projectIds[0]}/overview?startDateTime=${start}&endDateTime=${end}`);
+                router.push(`/project/${projectIds[0]}/overview?${dateQuery}`);
             }).catch(() => {
             enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});
         });
