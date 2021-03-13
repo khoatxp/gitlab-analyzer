@@ -5,6 +5,7 @@ import assert from "assert";
 import {ParsedFileChange} from "../../interfaces/ParsedFileChange";
 
 export const parseFileChangesForDiffViewer = (fileChanges: FileChange[]): ParsedFileChange[] => {
+    // Function to help parse our GitLab file changes to a format react-diff-view expects
     let allFilesToRender: any[] = [];
     for (const fileChange of fileChanges) {
         const fileToRender = parseFileChange(fileChange);
@@ -29,6 +30,7 @@ const addRequiredLinesForParsing = (diffText: string, fileChange: FileChange) =>
     // Cannot have extra lines if file change is empty
     if (diffText.length == 0) { return diffText; }
 
+    // The library expects these lines to begin the diff but GitLab does not include them
     return `--- ${fileChange.old_path}\n` +
         `+++ ${fileChange.new_path}\n` +
         diffText;

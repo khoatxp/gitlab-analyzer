@@ -2,13 +2,13 @@ import 'react-diff-view/style/index.css';
 import {FileChange} from "../../interfaces/GitLabFileChange";
 import {parseFileChangesForDiffViewer} from "./FileChangeParser";
 import {ParsedFileChange} from "../../interfaces/ParsedFileChange";
-// @ts-ignore (Doesn't have typescript types)
-import {Decoration, Diff, Hunk} from 'react-diff-view';
 import React, {useMemo} from "react";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {Box} from "@material-ui/core";
 import "prism-themes/themes/prism-vs.css";
 import {Tokenize} from "./Tokenize";
+// @ts-ignore (Doesn't have typescript types)
+import {Decoration, Diff, Hunk} from 'react-diff-view';
 
 type DiffViewerProps = { fileChanges: FileChange[] };
 const DiffViewer = ({fileChanges}: DiffViewerProps) => {
@@ -30,11 +30,11 @@ const DiffViewer = ({fileChanges}: DiffViewerProps) => {
 type FileDiffViewProps = { change: ParsedFileChange }
 const FileDiffView = ({change}: FileDiffViewProps) => {
     const styles = useStyles();
-    const tokens = useMemo(() => Tokenize(change), [change]);
+    const tokens = useMemo(() => Tokenize(change), [change]);   // Used for syntax highlighting
 
     return (
         <div className={styles.fileDiff}>
-            <header className={styles.diffHeader}>{getChangeHeader(change)}</header>
+            <header className={styles.diffHeader}>{getFileChangeHeader(change)}</header>
             <Diff viewType="unified" diffType={change.type} hunks={change.hunks} tokens={tokens}>
                 {(hunks: any[]) =>
                     hunks.map(hunk => [
@@ -49,6 +49,15 @@ const FileDiffView = ({change}: FileDiffViewProps) => {
     )
 }
 
+const getFileChangeHeader = (parsedFileChange: ParsedFileChange): string => {
+    if (parsedFileChange.oldPath === parsedFileChange.newPath) {
+        return parsedFileChange.oldPath;
+    } else {
+        return `${parsedFileChange.oldPath} -> ${parsedFileChange.newPath}`
+    }
+}
+
+// Styling adapted from https://codesandbox.io/s/149oz0nw1q
 const borderRadius = '10px';
 const useStyles = makeStyles(() =>
     createStyles({
@@ -70,13 +79,5 @@ const useStyles = makeStyles(() =>
         },
     }),
 );
-
-const getChangeHeader = (parsedFileChange: ParsedFileChange): string => {
-    if (parsedFileChange.oldPath === parsedFileChange.newPath) {
-        return parsedFileChange.oldPath;
-    } else {
-        return `${parsedFileChange.oldPath} -> ${parsedFileChange.newPath}`
-    }
-}
 
 export default DiffViewer;

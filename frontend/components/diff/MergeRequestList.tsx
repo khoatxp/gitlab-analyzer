@@ -5,11 +5,11 @@ import ListItemText from '@material-ui/core/ListItemText';
 import {MergeRequest} from "../../interfaces/GitLabMergeRequest";
 import {Box, Typography} from "@material-ui/core";
 
-
 type MergeRequestListProps = {
     mergeRequests: MergeRequest[]
     handleSelectMergeRequest: (mergeRequest: MergeRequest) => void;
 }
+
 const MergeRequestList = ( {mergeRequests, handleSelectMergeRequest}: MergeRequestListProps) => {
     return (
         <Box border={1} borderColor={'lightGray'} mb={1}>

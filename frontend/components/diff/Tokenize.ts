@@ -4,6 +4,7 @@ import {tokenize} from 'react-diff-view';
 // @ts-ignore (Doesn't have typescript types)
 import * as refractor from 'refractor';
 
+// Required for react-diff-view for syntax highlighting
 export const Tokenize = (change: ParsedFileChange) => {
     if (!change.hunks) {
         return undefined;
@@ -22,6 +23,7 @@ export const Tokenize = (change: ParsedFileChange) => {
     }
 }
 
+// Get file extension so react-diff-view knows what language syntax to use
 const getExtensionFromFilePath = (path: string): string => {
     // Get everything after the last period
     return path.substr(path.lastIndexOf(".") + 1);
