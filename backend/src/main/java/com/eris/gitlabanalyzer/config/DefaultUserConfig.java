@@ -31,11 +31,8 @@ public class DefaultUserConfig {
             if (serverUrl != null && !serverUrl.isBlank() &&
                     accessToken != null && !accessToken.isBlank() &&
                     username != null && !username.isBlank()) {
-                Server server = serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken);
-                if(server == null){
-                    server = new Server(serverUrl);
-                }
-                server = serverRepository.save(server);
+                Optional<Server> serverOptional = serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken);
+                Server server = serverOptional.orElseGet(()-> serverRepository.save(new Server(serverUrl)));
 
                 Optional<User> userOptional = userRepository.findUserByUsername(username);
                 if(userOptional.isEmpty()){

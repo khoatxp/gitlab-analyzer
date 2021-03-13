@@ -74,7 +74,7 @@ class ModelTests {
     @Test
     void serverModel() {
         Server queryResult = serverRepository.findByServerUrlAndAccessToken(SERVER_URL,
-                ACCESS_TOKEN);
+                ACCESS_TOKEN).get();
         assertNotNull(queryResult);
         assertEquals(queryResult.getServerUrl(), SERVER_URL);
     }
