@@ -4,10 +4,9 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Image from "next/image";
-import {Icon} from "@material-ui/core";
-import {useRouter} from "next/router";
-import {AuthContext, defaultUserCredential} from "./AuthContext";
-import AppButton from "./app/AppButton";
+import {Button, Icon, Link, Menu, MenuItem} from "@material-ui/core";
+import {AuthContext } from "./AuthContext";
+import NextLink from "next/link";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -15,22 +14,38 @@ const useStyles = makeStyles((theme) => ({
         height: '7vh', // TODO: store in variable
     },
     menuButton: {
-        marginRight: theme.spacing(2),
+        marginRight: theme.spacing(3),
     },
     title: {
         paddingLeft: "0.75em",
         flexGrow: 1,
     },
+    user: {
+        display: "flex",
+        alignItems: "center"
+    },
+    userIcon: {
+        marginRight: "5px",
+    }
 }));
 
 const NavBar = () => {
-    const router = useRouter();
-    const {setUserCredential} = React.useContext(AuthContext);
+    const {user} = React.useContext(AuthContext);
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
     const classes = useStyles();
 
+    const handleClickMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+
     const handleLogout = () => {
-        setUserCredential(defaultUserCredential);
-        router.push('/login');
+        location.assign(`${process.env.NEXT_PUBLIC_BACKEND_URL}/logout`);
     }
 
     return (
@@ -47,7 +62,35 @@ const NavBar = () => {
                 <Typography variant="h6" className={classes.title}>
                     Gitlab Analyzer
                 </Typography>
-                <AppButton color="primary" onClick={handleLogout}>Logout</AppButton>
+                <Typography className={classes.user} variant="h6">
+                    <Icon className={classes.userIcon}>account_circle</Icon>
+                    {user ? user.username : ''}
+                </Typography>
+                <div>
+                    <Button aria-controls="config-menu" aria-haspopup="true" onClick={handleClickMenu}>
+                        <Icon>settings</Icon>
+                    </Button>
+                    <Menu
+                        id="setting-menu"
+                        anchorEl={anchorEl}
+                        getContentAnchorEl={null}
+                        keepMounted
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                        transformOrigin={{ vertical: "top", horizontal: "center" }}
+                    >
+                        <MenuItem onClick={handleClose}>
+                            <NextLink href="/server" passHref>
+                                <Link>
+                                    Servers
+                                </Link>
+                            </NextLink>
+                        </MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                    </Menu>
+                </div>
+                {/*<AppButton color="primary" size="medium" onClick={handleLogout}>Logout</AppButton>*/}
             </Toolbar>
         </AppBar>
     );

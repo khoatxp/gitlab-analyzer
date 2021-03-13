@@ -1,9 +1,7 @@
 package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.gitlabresponse.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -13,19 +11,16 @@ import reactor.core.publisher.Mono;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 
-@Service
 public class GitLabService {
     private final WebClient webClient;
     private final String projectPath = "api/v4/projects/";
+    private String serverUrl;
+    private String accessToken;
 
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
-
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
-
-    public GitLabService() {
+    public GitLabService(String serverUrl, String accessToken) {
         this.webClient = WebClient.create();
+        this.serverUrl = serverUrl;
+        this.accessToken = accessToken;
     }
 
     public Flux<GitLabProject> getProjects(){
@@ -127,6 +122,18 @@ public class GitLabService {
                 .toString();
 
         return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabFileChange.class));
+    }
+
+    public Flux<GitLabCommitComment> getCommitComments(Long projectId, String sha) {
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/repository/commits/" + sha + "/comments")
+                .queryParam("per_page", 100)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+
+        return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabCommitComment.class));
     }
 
     public Flux<GitLabFileChange> getMergeRequestDiff(Long projectId, Long mergeRequestIid) {

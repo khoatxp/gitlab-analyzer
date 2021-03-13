@@ -1,6 +1,7 @@
 import React from "react";
 import ChildrenProps from "../interfaces/ChildrenProps";
 import { makeStyles } from "@material-ui/core/styles";
+import {Typography} from "@material-ui/core";
 
 const useStyles = makeStyles({
     progress_done: {
@@ -8,7 +9,6 @@ const useStyles = makeStyles({
     },
     progress_dots: {
         margin: 0,
-        fontSize: '8px',
         '&::after': {
             content: '"......."', // Need double quotes to display
             animation: '$dots 1s steps(5, end) infinite',
@@ -30,9 +30,9 @@ type AnimatedProgressTextProps = {progress: number} & ChildrenProps
 const AnimatedProgressText = ({children, progress}: AnimatedProgressTextProps) => {
     const classes = useStyles();
     return (
-        <p className={`${classes.progress_dots} ${progress === 100 && classes.progress_done}`}>
+        <Typography variant="h6" className={`${classes.progress_dots} ${progress === 100 && classes.progress_done}`}>
             {children}
-        </p>
+        </Typography>
     )
 }
 

@@ -24,25 +24,28 @@ import java.util.stream.Collectors;
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final ServerRepository serverRepository;
-    private final GitLabService gitLabService;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public ProjectService(ProjectRepository projectRepository, ServerRepository serverRepository, GitLabService gitLabService) {
+    public ProjectService(ProjectRepository projectRepository, ServerRepository serverRepository) {
         this.projectRepository = projectRepository;
         this.serverRepository = serverRepository;
-        this.gitLabService = gitLabService;
     }
 
 
-    public void saveProjectInfo(Long projectId) {
+    public Project saveProjectInfo(Long projectId) {
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
+
         Project project = projectRepository.findByGitlabProjectIdAndServerUrl(projectId,serverUrl);
         if(project != null){
-            return;
+            return project;
         }
 
         var gitLabProject = gitLabService.getProject(projectId).block();
@@ -55,10 +58,12 @@ public class ProjectService {
                 serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken)
         );
 
-        projectRepository.save(project);
+        return projectRepository.save(project);
     }
 
     public RawTimeLineProjectData getTimeLineProjectData(Long gitLabProjectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
         var mergeRequests = gitLabService.getMergeRequests(gitLabProjectId, startDateTime, endDateTime);
 
         // for all items in mergeRequests call get commits
@@ -67,7 +72,7 @@ public class ProjectService {
         var rawMergeRequestData = mergeRequests
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
-                .map((mergeRequest) -> getRawMergeRequestData(mergeRequest, gitLabProjectId))
+                .map((mergeRequest) -> getRawMergeRequestData(gitLabService, mergeRequest, gitLabProjectId))
                 .sorted((mr1, mr2) -> (int)(mr1.getGitLabMergeRequest().getIid() - mr2.getGitLabMergeRequest().getIid()));
 
 
@@ -78,7 +83,7 @@ public class ProjectService {
         var rawOrphanCommitData = orphanCommits
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
-                .map((commit) -> getRawCommitData(commit, gitLabProjectId))
+                .map((commit) -> getRawCommitData(gitLabService, commit, gitLabProjectId))
                 .sorted(Comparator.comparing(c -> c.getGitLabCommit().getCreatedAt()));
 
         var rawProjectData = new RawTimeLineProjectData(gitLabProjectId, startDateTime, endDateTime, rawMergeRequestData, rawOrphanCommitData);
@@ -87,12 +92,12 @@ public class ProjectService {
     }
 
 
-    private RawMergeRequestData getRawMergeRequestData(GitLabMergeRequest mergeRequest, Long gitLabProjectId) {
+    private RawMergeRequestData getRawMergeRequestData(GitLabService gitLabService, GitLabMergeRequest mergeRequest, Long gitLabProjectId) {
         var gitLabCommits = gitLabService.getMergeRequestCommits(gitLabProjectId, mergeRequest.getIid());
         var rawCommitData = gitLabCommits
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
-                .map((commit) -> getRawCommitData(commit, gitLabProjectId))
+                .map((commit) -> getRawCommitData(gitLabService, commit, gitLabProjectId))
                 .sorted(Comparator.comparing(c -> c.getGitLabCommit().getCreatedAt()));
 
         var gitLabDiff = gitLabService.getMergeRequestDiff(gitLabProjectId, mergeRequest.getIid());
@@ -101,7 +106,7 @@ public class ProjectService {
         return rawMergeRequestData;
     }
 
-    private RawCommitData getRawCommitData(GitLabCommit commit, Long gitLabProjectId) {
+    private RawCommitData getRawCommitData(GitLabService gitLabService, GitLabCommit commit, Long gitLabProjectId) {
         var changes = gitLabService.getCommitDiff(gitLabProjectId, commit.getSha());
         var rawCommitData = new RawCommitData(commit, changes);
         return rawCommitData;

@@ -1,21 +1,23 @@
 import React from 'react';
-
 import Index from '../../pages';
-import {render} from "@testing-library/react";
+import {mount, ReactWrapper} from "enzyme";
 
 describe("Pages Root", () =>{
     const mockEnqueue = jest.spyOn(require('notistack'), "useSnackbar");
     let enqueueSnackbar = jest.fn();
+    const pushRouter = jest.spyOn(require('next/router'), 'useRouter');
+    let push = jest.fn();
+    let rend:ReactWrapper;
 
-    beforeAll(() =>{
+    beforeAll(async () =>{
         mockEnqueue.mockImplementation(() => {return {enqueueSnackbar}});
+        pushRouter.mockImplementation(() => {return {push}})
+        rend = mount(<Index/>);
+        await Promise.resolve();
     })
 
     it("Snapshot Index", () => {
-        const { container } = render(
-            <Index />
-        )
-        expect(container).toMatchSnapshot();
+        expect(rend).toMatchSnapshot();
 
     })
 

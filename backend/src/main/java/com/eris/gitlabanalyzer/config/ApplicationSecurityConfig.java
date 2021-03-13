@@ -1,11 +1,21 @@
 package com.eris.gitlabanalyzer.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.cas.ServiceProperties;
+import org.springframework.security.cas.authentication.CasAuthenticationProvider;
+import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -18,6 +28,19 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${FRONTEND_URL}")
     private String FRONTEND_URL;
 
+    @Value("${SFU_CAS_URL}")
+    String sfuCasUrl;
+
+    private CasAuthenticationProvider casAuthenticationProvider;
+    private ServiceProperties serviceProperties;
+
+    @Autowired
+    public ApplicationSecurityConfig(CasAuthenticationProvider casAuthenticationProvider,
+                                     ServiceProperties serviceProperties) {
+        this.casAuthenticationProvider = casAuthenticationProvider;
+        this.serviceProperties = serviceProperties;
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // Configures app to require authentication for every request
@@ -25,23 +48,29 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .authorizeRequests()
-//                .antMatchers("**") // TODO: This pattern will permit all routes to skip authentication. Uncomment for easier route testing
+                .antMatchers("/api/**")
+                //uncomment 2 lines below for testing endpoints
 //                .permitAll()
-                .antMatchers("/")
-                .permitAll()
-                .anyRequest()
+//                .anyRequest()
                 .authenticated()
                 .and()
-                .httpBasic()
-                .and()
+                // if uncommented, auto-redirect to CAS login if accessing an authenticated
+//                .exceptionHandling()
+//                .authenticationEntryPoint(authenticationEntryPoint())
+//                .and()
                 .csrf()
                 .disable() // TODO: This will allow POST and DELETE requests to the server but left it vulnerable to CSRF attacks. Should have proper csrf configuration later on
+                .logout(logout -> logout
+                    .logoutSuccessUrl(FRONTEND_URL + "/login")
+                    .invalidateHttpSession(true)
+                )
         ;
     }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowCredentials(true);
         configuration.setAllowedOrigins(Collections.singletonList(FRONTEND_URL));
         configuration.setAllowedMethods(Collections.singletonList("*"));
         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -50,4 +79,31 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         return source;
     }
 
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(casAuthenticationProvider);
+    }
+
+    @Bean
+    public CookieSerializer cookieSerializer() {
+        DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+        if (FRONTEND_URL.startsWith("https")) {
+            serializer.setSameSite("none");
+        }
+        return serializer;
+    }
+
+    @Bean
+    @Override
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return new ProviderManager(Collections.singletonList(casAuthenticationProvider));
+    }
+
+
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        CasAuthenticationEntryPoint entryPoint = new CasAuthenticationEntryPoint();
+        entryPoint.setLoginUrl(sfuCasUrl + "/login");
+        entryPoint.setServiceProperties(serviceProperties);
+        return entryPoint;
+    }
 }

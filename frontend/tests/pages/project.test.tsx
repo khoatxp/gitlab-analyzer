@@ -1,27 +1,29 @@
 import React from 'react';
-import {render} from '@testing-library/react';
-import Index from '../../pages/server/[serverId]/projects';
+import Index from "../../pages/server/[serverId]/projects";
+import {mount, ReactWrapper} from "enzyme";
 
 describe("Project Folder", () =>{
     const useRouter = jest.spyOn(require('next/router'), 'useRouter');
     const mockUseEffect = jest.spyOn(React, 'useEffect')
     const mockAxios = jest.spyOn(require('axios'), 'get');
+    const mockEnqueue = jest.spyOn(require('notistack'), "useSnackbar");
+    let enqueueSnackbar = jest.fn();
+    let rend:ReactWrapper;
 
-    it("Snapshot serverId", () => {
-        useRouter.mockImplementationOnce(() => ({
+    beforeAll(async () =>{
+        mockEnqueue.mockImplementation(() => {return {enqueueSnackbar}});
+        useRouter.mockImplementation(() => ({
             query: { serverId: 'TestId' },
         }));
-        const { container } = render(
-            <Index />
-        )
-        expect(container).toMatchSnapshot();
-
+        rend = mount(<Index />);
+        await Promise.resolve();
     })
-    it("Test useEffect", ()=>{
-        useRouter.mockImplementationOnce(() => ({
-            query: { serverId: 'TestId' },
-        }));
-        render(<Index />);
+
+    it("Snapshot serverId", async () => {
+        expect(rend).toMatchSnapshot();
+    })
+    it("Test useEffect", async()=>{
+
         expect(mockUseEffect).toBeCalled();
 
     })
@@ -31,14 +33,14 @@ describe("Project Folder", () =>{
             query: { serverId: 'TestId' },
             isReady: true,
         }));
-        render(<Index />);
-        expect(mockAxios).toHaveBeenCalledTimes(1);
+        mount(<Index />);
+        expect(mockAxios).toHaveBeenCalled();
         useRouter.mockImplementationOnce(() => ({
             query: { serverId: 'TestId' },
             isReady: false,
         }));
-        render(<Index />);
-        expect(mockAxios).toHaveBeenCalledTimes(1);
+        mount(<Index />);
+        expect(mockAxios).toHaveBeenCalled();
     })
 
 
