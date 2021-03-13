@@ -22,11 +22,12 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 import {AuthContext} from "./AuthContext";
 import AppTextField from "./app/AppTextField";
 import AppButton from "./app/AppButton";
+import {useSnackbar} from 'notistack';
 
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
-        minWidth: 150,
+        minWidth: 200,
         marginBottom: "15px"
     },
     popup:{
@@ -43,32 +44,40 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface Props {
-    profile: ScoreProfile
+    profile: ScoreProfile 
     setProfile: (x:ScoreProfile) => void
 }
 
-function Popup(props){
+const Popup = (props) => {
     const classes = useStyles();
     const router = useRouter();
-    const { open, handleClose, scoreProfile } = props;
-    const [extensionList, setExtensionList] = useState([{extension: "", weight: ""}]);
-    const [commentsWeight, setCommentsWeight] = useState<number>();
-    const [id, setId] = useState<number>();
-    const [lineWeight, setLineWeight] = useState<number>();
-    const [deleteWeight, setDeleteWeight] = useState<number>();
-    const [name, setName] = useState<string>("") ;
-    const [syntaxWeight, setSyntaxWeight] = useState<number>();
-    const [update, setUpdate] = useState(false);
+    const { open, handleClose, id, name, lineWeight, commentsWeight, deleteWeight, extensionWeights, syntaxWeight, } = props;
+    const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
+    const [extensionList, setExtensionList] = useState<string,number[]>([{extension: "", weight: 0}]);
+    const [newSyntaxWeight, setNewSyntaxWeight] = useState<number>()
+    const [newCommentsWeight, setNewCommentsWeight] = useState<number>();
+    const [newName, setNewName] = useState<string>(name);
+    const [newLineWeight, setNewLineWeight] = useState<number>();
+    const [newDeleteWeight, setNewDeleteWeight] = useState<number>();
+    
+    useEffect(() => {
+        setNewName(name);
+        setNewCommentsWeight(commentsWeight);
+        setNewDeleteWeight(deleteWeight);
+        setNewLineWeight(lineWeight);
+        setNewSyntaxWeight(syntaxWeight);
+        setExtensionList(extensionWeights);
+    },[open])
 
 
     const close = () => {
-        handleClose(update);
+        handleClose();
     };
 
     const handleAddExtension = () => {
-        setExtensionList([...extensionList, { extension: "", weight: "" }]);
+        setExtensionList([...extensionList, { extension: "", weight: 0 }]);
     };
 
     const handleRemoveExtension = index => {
@@ -78,9 +87,9 @@ function Popup(props){
     };
 
     const handleExtensionChange = (e, index) => {
-        const { extension, weight } = e.target.value;
+        const {object, value} = e.target;
         const list = [...extensionList];
-        list[index][extension] = weight;
+        list[index][object] = value;
         setExtensionList(list);
     };
 
@@ -88,42 +97,43 @@ function Popup(props){
 
         if (router.isReady) {
 
+            const ExtensionsMap = new Map();
+           // extensionList.map(element => {
+           //     ExtensionsMap.set(element.extension, element.weight)
+           // });
+
             const newProfile = {
-                name: name,
-                lineWeight: lineWeight,
-                deleteWeight: deleteWeight,
-                syntaxWeight: syntaxWeight,
-                commentsWeight: commentsWeight,
-                extensionWeights: extensionList
+                name: newName,
+                lineWeight: newLineWeight,
+                deleteWeight: newDeleteWeight,
+                syntaxWeight: newSyntaxWeight,
+                commentsWeight: newCommentsWeight,
+                extensionWeights: ExtensionsMap
             }
 
-            if (id == null) {
+            if (id != 0) {
                 axios
-                    .put(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scoreprofile`, newProfile, getAxiosAuthConfig())
-                    .then((resp: AxiosResponse) => {
-                        console.log(resp.data);
-                    });
+                .put(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile/${id}` , newProfile, getAxiosAuthConfig())
+                .then((resp: AxiosResponse) => {
+                    enqueueSnackbar('Successfully saved score profile', {variant: 'success',});
+                }).catch(() => {
+                    enqueueSnackbar('Failed to save score profile', {variant: 'error',});
+                })
+                close();
             } else {
                 axios
-                    .post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scoreprofile/${id}` , newProfile, getAxiosAuthConfig())
-                    .then((resp: AxiosResponse) => {
-                        console.log(resp.data);
-                    });
+                .post(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile` , newProfile, getAxiosAuthConfig())
+                .then((resp: AxiosResponse) => {
+                    enqueueSnackbar('Successfully saved score profile', {variant: 'success',});
+                }).catch(() => {
+                    enqueueSnackbar('Failed to save score profile', {variant: 'error',});
+                })
+                close();
             }
-            setUpdate(true)
         }
 
     };
-
-    if( scoreProfile!= null){
-        setName(scoreProfile.name);
-        setDeleteWeight(scoreProfile.deleteWeight);
-        setCommentsWeight(scoreProfile.commentsWeight);
-        setSyntaxWeight(scoreProfile.syntaxWeight);
-        setExtensionList(scoreProfile.extensionWeights);
-        setLineWeight(scoreProfile.lineWeight);
-        setId(scoreProfile.id);
-    }
+    
 
     return (
 
@@ -135,21 +145,21 @@ function Popup(props){
                     <form className={classes.root} onSubmit={handleSave}>
                         <div marginLeft={2} align="right">
                             <Box width={150}>
-                                <AppTextField label="name" value={name} onChange={(e) => setName(e.target.value)}/>
+                                <AppTextField label="name" value={newName} onChange={(e) => setNewName( e.target.value)}/>
                             </Box>
                         </div>
                         <Box display="flex" flexDirection="row" justifyContent="center" >
                             <Box marginLeft={1} marginRight={1}>
-                                <AppTextField label="New Line" placeholder="Weight" value={lineWeight} onChange={(e) => setLineWeight(e.target.value)}/>
+                                <AppTextField label="New Line" placeholder="Weight" type="number" value={newLineWeight} onChange={(e) => setNewLineWeight(e.target.value)}/>
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
-                                <AppTextField label="Deleting" placeholder="Weight" value={deleteWeight} onChange={(e) => setDeleteWeight(e.target.value)}/>
+                                <AppTextField label="Deleting" placeholder="Weight" type="number" value={newDeleteWeight} onChange={(e) => setNewDeleteWeight(e.target.value)}/>
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
-                                <AppTextField label="Syntax(e.g '}')" placeholder="Weight" value={syntaxWeight} onChange={(e) => setSyntaxWeight(e.target.value)}/>
+                                <AppTextField label="Syntax(e.g '}')" placeholder="Weight" type="number" value={newSyntaxWeight} onChange={(e) => setNewSyntaxWeight(e.target.value)}/>
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
-                                <AppTextField label="Comments" placeholder="Weight" value={commentsWeight} onChange={(e) => setCommentsWeight(e.target.value)}/>
+                                <AppTextField label="Comments" placeholder="Weight" type="number" value={newCommentsWeight} onChange={(e) => setNewCommentsWeight(e.target.value)}/>
                             </Box>
                         </Box>
                         <DialogTitle id="extension-dialog-title" align="center">{"Extensions"}</DialogTitle>
@@ -166,8 +176,8 @@ function Popup(props){
                                         justifyContent="column"
                                         alignItems="center"
                                     >
-                                        <AppTextField label="extension" value={x.extension} onChange={(e) => handleExtensionChange(e.target.value, i)}/>
-                                        <AppTextField label="weight" value={x.weight} onChange={(e) => handleExtensionChange(e.target.value, i)}/>
+                                        <AppTextField label="extension" value={x.extension} onChange={e => handleExtensionChange(e, i)}/>
+                                        <AppTextField label="weight" value={x.weight} onChange={e => handleExtensionChange(e, i)}/>
                                         <div>
                                             {extensionList.length !== 1 &&
                                             <IconButton edge="center" aria-label="deleteextension" onClick={()=>handleRemoveExtension(i)}>
@@ -198,70 +208,72 @@ function Popup(props){
 const ScoreProfileSelector = ({profile, setProfile}:Props) => {
 
     const classes = useStyles();
-    const[profiles, setProfiles] =  useState<ScoreProfile[]>([]);
+    const [profiles, setProfiles] =  useState<ScoreProfile[]>([]);
     const [isIconVisible, setIconVisible] = useState(false);
-    const[selectedProfile, setSelectedProfile] = useState<ScoreProfile | null>()
     const [open, setOpen] = useState(false);
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const router = useRouter();
-      
+    const {enqueueSnackbar} = useSnackbar();
+
+    const [id,setId] = useState<number>()
+    const [extensionWeights, setExtensionWeights] = useState<string,number[]>([{extension: "", weight: 0}]);
+    const [syntaxWeight, setSyntaxWeight] = useState<number>()
+    const [commentsWeight, setCommentsWeight] = useState<number>();
+    const [name, setName] = useState<string>()
+    const [lineWeight, setLineWeight] = useState<number>();
+    const [deleteWeight, setDeleteWeight] = useState<number>();
 
     useEffect(() => {
         if (router.isReady) {
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scoreprofile`, getAxiosAuthConfig())
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setProfiles(resp.data);
-                });
-            ;
+                }).catch(() => {
+                    enqueueSnackbar('Failed to delete score profile', {variant: 'error',});
+                })
         }
     });
 
-    const update= () =>{
-        if (router.isReady) {
-            axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scoreprofile`, getAxiosAuthConfig())
-                .then((resp: AxiosResponse) => {
-                    setProfiles(resp.data);
-                });
-        }
-    }
-
-
-    const onProfileSelect = (_event: any, value: ScoreProfile) => {
-        setSelectedProfile(value);
-    }
-
-    const handleOpen = () => {
+    const handleNew = () => {
+        setId(0);
+        setName("");
+        setCommentsWeight();
+        setDeleteWeight();
+        setLineWeight();
+        setSyntaxWeight();
+        setExtensionWeights([{extension: "", weight: 0}]);
         setOpen(true);
     };
 
-    const handleEdit = (selected) => {
+    const handleEdit = (Profile) => {
+        setId(Profile.id)
+        setName(Profile.name);
+        setCommentsWeight(Profile.commentsWeight);
+        setDeleteWeight(Profile.deleteWeight);
+        setLineWeight(Profile.lineWeight);
+        setSyntaxWeight(Profile.syntaxWeight);
+        setExtensionWeights(...Profile.extensionWeights, {extension: "", weight: 0})
         setOpen(true);
-        setSelectedProfile(selected);
     };
 
-    const handleClose = (update) => {
+    const handleClose = () => {
         setOpen(false);
-        if(selectedProfile != null) {
-            setSelectedProfile(null);
-            if(update == true) {
-                update();
-            }
-        }
     };
 
     const handleDelete = (id) =>{
         if (router.isReady) {
-            axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scoreprofile/${id}`, getAxiosAuthConfig())
+            axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile/${id}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     console.log(resp.data);
-                });
+                }).catch(() => {
+                    enqueueSnackbar('Failed to delete score profile', {variant: 'error',});
+                })
         }
     };
 
     return (
-        <Box display="flex" flexDirection="row" justifyContent="row" marginLeft={5}>
+        <Box display="flex" flexDirection="row" justifyContent="row" marginLeft={4}>
         <FormControl className={classes.formControl}>
                 <InputLabel id="score-options">Score Options</InputLabel>
                 <Select
@@ -270,6 +282,8 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                     onClose={() => setIconVisible(false)}
                     value={profile}
                     onChange={setProfile}
+                    isLoading= "...loading"
+                    max-height={20}
                     MenuProps={{
                         getContentAnchorEl: null,
                         anchorOrigin: {
@@ -278,16 +292,16 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                         }
                     }}
                 >
-                    {profiles.map(p => (
-                        <MenuItem value={p}>  //value{p.name}=
-                            {p.name}
+                    {profiles.map(profile => (
+                        <MenuItem value={profile} key={profile.id}>  
+                            {profile.name}
                             {isIconVisible ? (
                                 <ListItemSecondaryAction variant="outlined">
-                                    <IconButton edge="end" aria-label="edit" onClick={() => { handleEdit(p);}} >
+                                    <IconButton edge="end" aria-label="edit" onClick={() => { handleEdit(profile);}} >
                                         <EditIcon style={{ fontSize: "25px", color: "grey" }} />
                                     </IconButton>
-                                    <Popup  open={open} handleClose={handleClose} scoreProfile={selectedProfile}/>
-                                    <IconButton edge="end" aria-label="delete"  onClick={() => { handleDelete(p.id);}}>
+                                    <Popup  open={open} handleClose={handleClose} name={name} deleteWeight={deleteWeight} commentsWeight={commentsWeight} syntaxWeight={syntaxWeight} extensionWeights={extensionWeights} id={id} lineWeight={lineWeight}/>             
+                                    <IconButton edge="end" aria-label="delete"  onClick={() => { handleDelete(profile.id);}}>
                                         <DeleteIcon style={{ fontSize: "25px", color: "#CC160B" }}/>
                                     </IconButton>
                                 </ListItemSecondaryAction>
@@ -296,10 +310,10 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                     ))}
                 </Select>
             </FormControl> 
-            <IconButton aria-label="add" onClick={handleOpen} marginTop={5}>
+            <IconButton aria-label="add" onClick={handleNew} marginTop={5}>
                     <AddBoxIcon style={{ fontSize: "25px", color: "green" }}/>
             </IconButton>
-            <Popup  open={open} handleClose={handleClose} scoreProfile={selectedProfile}/>             
+            <Popup  open={open} handleClose={handleClose} name={name} deleteWeight={deleteWeight} commentsWeight={commentsWeight} syntaxWeight={syntaxWeight} extensionWeights={extensionWeights} id={id} lineWeight={lineWeight}/>             
   
         </Box>
     );
