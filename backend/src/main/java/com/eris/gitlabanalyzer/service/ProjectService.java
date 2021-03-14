@@ -45,6 +45,7 @@ public class ProjectService {
 
         Project project = projectRepository.findByGitlabProjectIdAndServerUrl(projectId,serverUrl);
         if(project != null){
+            System.out.println("Found!");
             return project;
         }
 
