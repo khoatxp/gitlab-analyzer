@@ -12,6 +12,7 @@ import {FileChange} from "../../../../interfaces/GitLabFileChange";
 import MergeRequestList from "../../../../components/diff/MergeRequestList";
 import CommitList from "../../../../components/diff/CommitList";
 import {Commit} from "../../../../interfaces/GitLabCommit";
+import {Grid} from "@material-ui/core";
 
 const index = () => {
     const router = useRouter();
@@ -67,13 +68,19 @@ const index = () => {
     return (
         <AuthView>
             <MenuLayout tabSelected={1}>
-                <MergeRequestList
-                    mergeRequests={mergeRequests}
-                    handleSelectMergeRequest={handleSelectMergeRequest}
-                />
+                <Grid container spacing={3}>
+                    <Grid item xs={3}>
+                        <MergeRequestList
+                            mergeRequests={mergeRequests}
+                            handleSelectMergeRequest={handleSelectMergeRequest}
+                        />
+                        <CommitList commits={commits} handleSelectCommit={handleSelectCommit}/>
+                    </Grid>
 
-                <CommitList commits={commits} handleSelectCommit={handleSelectCommit}/>
-                {fileChanges.length > 0 && <DiffViewer fileChanges={fileChanges}/>}
+                    <Grid item xs={9}>
+                        <DiffViewer fileChanges={fileChanges}/>
+                    </Grid>
+                </Grid>
             </MenuLayout>
         </AuthView>
     );

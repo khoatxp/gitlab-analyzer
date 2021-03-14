@@ -3,7 +3,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import {MergeRequest} from "../../interfaces/GitLabMergeRequest";
-import {Avatar, Card, Divider, ListItemIcon, ListSubheader} from "@material-ui/core";
+import {Avatar, Box, Card, Divider, ListItemIcon, ListSubheader} from "@material-ui/core";
 import formatDate from "../../interfaces/dateFormatter";
 
 type MergeRequestListProps = {
@@ -15,7 +15,7 @@ const MergeRequestList = ({mergeRequests, handleSelectMergeRequest}: MergeReques
     const [selectedIndex, setSelectedIndex] = useState(-1);
 
     return (
-        <Card>
+        <Card style={{'marginBottom': '1em'}}>
             <List
                 component="nav"
                 disablePadding
@@ -23,7 +23,9 @@ const MergeRequestList = ({mergeRequests, handleSelectMergeRequest}: MergeReques
                     <ListSubheader>Merge Requests</ListSubheader>
                 }
             >
+
                 <Divider/>
+                <Box height="34vh" overflow="auto">
                 {
                     mergeRequests.map((mergeRequest, i) => (
                         <ListItem
@@ -47,6 +49,7 @@ const MergeRequestList = ({mergeRequests, handleSelectMergeRequest}: MergeReques
                         </ListItem>
                     ))
                 }
+                </Box>
             </List>
         </Card>
     );

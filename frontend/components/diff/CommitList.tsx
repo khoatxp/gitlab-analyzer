@@ -3,7 +3,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import {MergeRequest} from "../../interfaces/GitLabMergeRequest";
-import {Avatar, Card, Divider, ListItemIcon, ListSubheader} from "@material-ui/core";
+import {Avatar, Box, Card, Divider, ListItemIcon, ListSubheader} from "@material-ui/core";
 import formatDate from "../../interfaces/dateFormatter";
 import {Commit} from "../../interfaces/GitLabCommit";
 
@@ -21,10 +21,12 @@ const CommitList = ({commits, handleSelectCommit}: CommitListProps) => {
                 component="nav"
                 disablePadding
                 subheader={
-                    <ListSubheader>Commits</ListSubheader>
+                    <ListSubheader>{commits.length.toString()} Commits</ListSubheader>
                 }
             >
                 <Divider/>
+                <Box height="34vh" overflow="auto">
+
                 {
                     commits.map((commit, i) => (
                         <ListItem
@@ -44,6 +46,7 @@ const CommitList = ({commits, handleSelectCommit}: CommitListProps) => {
                         </ListItem>
                     ))
                 }
+                </Box>
             </List>
         </Card>
     );

@@ -22,7 +22,7 @@ const DiffViewer = ({fileChanges}: DiffViewerProps) => {
                 }
             >
                 <Divider/>
-                <Box p={2} maxHeight="50vh" overflow="auto">
+                <Box p={2} height="75vh" overflow="auto">
                     {
                         parsedFileChanges.map((change) => (
                             <FileDiffView
