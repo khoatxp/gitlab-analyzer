@@ -100,7 +100,7 @@ class ScoreCalculationTests {
         mergeRequestRepository.save(mergeRequest);
 
         calculateDiffMetrics.storeMetricsMerge(mergeRequest);
-        double results = diffScoreCalculator.calculateScoreMerge(mergeRequest.getId());
+        double results = diffScoreCalculator.calculateScoreMerge(mergeRequest.getId(), 0L);
         assertTrue((results > 0));
 
     }
@@ -113,7 +113,7 @@ class ScoreCalculationTests {
 
 
         calculateDiffMetrics.storeMetricsCommit(commit);
-        double results = diffScoreCalculator.calculateScoreCommit(commit.getId());
+        double results = diffScoreCalculator.calculateScoreCommit(commit.getId(), 0L);
         assertTrue((results > 0));
 
     }
@@ -131,7 +131,7 @@ class ScoreCalculationTests {
         mergeRequestRepository.save(mergeRequest);
 
         calculateDiffMetrics.testCalculateLines(diff, "java", mergeRequest);
-        double results = diffScoreCalculator.calculateScoreMerge(mergeRequest.getId());
+        double results = diffScoreCalculator.calculateScoreMerge(mergeRequest.getId(), 0L);
         double expectedValue = codeValue * 5;
         expectedValue += commentValue * 7;
         expectedValue += syntaxValue * 2;
@@ -146,9 +146,8 @@ class ScoreCalculationTests {
         scoreProfile.addExtension(extensions);
         scoreProfileRepository.save(scoreProfile);
 
-        diffScoreCalculator.loadProfile(profileName);
-        results = diffScoreCalculator.calculateScoreMerge(mergeRequest.getId());
-        expectedValue *= 2;
+        results = diffScoreCalculator.calculateScoreMerge(mergeRequest.getId(), scoreProfile.getId());
+        expectedValue += codeValue * 5;
         assertEquals(expectedValue, results);
     }
 

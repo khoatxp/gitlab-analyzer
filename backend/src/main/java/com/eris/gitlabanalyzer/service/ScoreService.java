@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -42,28 +43,29 @@ public class ScoreService {
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public double getMergeDiffScore( Long mergeRequestId){
-        return diffScoreCalculator.calculateScoreMerge(mergeRequestId);
+    public double getMergeDiffScore( Long mergeRequestId, Long scoreProfileId){
+        return diffScoreCalculator.calculateScoreMerge(mergeRequestId, scoreProfileId);
     }
 
     public void saveMergeDiffMetrics(MergeRequest mergeRequest){
         calculateDiffMetrics.storeMetricsMerge(mergeRequest);
     }
 
-    public double getTotalMergeDiffScore(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
-        List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
+    public double getTotalMergeDiffScore(Long projectId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByProjectIdAndDateRange(projectId,
+                startDateTime.withOffsetSameInstant(ZoneOffset.UTC), endDateTime.withOffsetSameInstant(ZoneOffset.UTC));
         double totalScore = 0;
         for( MergeRequest mr : mergeRequests){
-            totalScore += diffScoreCalculator.calculateScoreMerge(mr.getId());
+            totalScore += diffScoreCalculator.calculateScoreMerge(mr.getId(), scoreProfileId);
         }
 
         return totalScore;
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public double getCommitDiffScore(Long commitId){
+    public double getCommitDiffScore(Long commitId, Long scoreProfileId){
 
-        return diffScoreCalculator.calculateScoreCommit(commitId);
+        return diffScoreCalculator.calculateScoreCommit(commitId, scoreProfileId);
     }
 
     public void saveCommitDiffMetrics(Commit commit){
@@ -72,11 +74,17 @@ public class ScoreService {
 
 
     // This will most likely change as we update how we retrieve diff's
-    public double getTotalCommitDiffScore(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        List<Commit> commits = commitRepository.findAllByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
+    public double getTotalCommitDiffScore(Long projectId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        List<Commit> commits = commitRepository.findAllByProjectIdAndDateRange(projectId,
+                startDateTime.withOffsetSameInstant(ZoneOffset.UTC), endDateTime.withOffsetSameInstant(ZoneOffset.UTC));
         double totalScore = 0;
         for (Commit commit : commits) {
-            totalScore += diffScoreCalculator.calculateScoreCommit(commit.getId());
+            totalScore += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
+        }
+        commits = commitRepository.findAllOrphanByProjectIdAndDateRange(projectId,
+                startDateTime.withOffsetSameInstant(ZoneOffset.UTC), endDateTime.withOffsetSameInstant(ZoneOffset.UTC));
+        for (Commit commit : commits) {
+            totalScore += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
         }
         return totalScore;
     }

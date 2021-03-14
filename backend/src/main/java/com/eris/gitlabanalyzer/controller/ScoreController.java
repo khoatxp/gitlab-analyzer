@@ -9,7 +9,7 @@ import java.time.OffsetDateTime;
 
 
 @RestController
-@RequestMapping(path = "/api/v1/data")
+@RequestMapping(path = "/api/v1/data/projects")
 public class ScoreController {
 
     private final ScoreService scoreService;
@@ -19,29 +19,60 @@ public class ScoreController {
         this.scoreService = scoreService;
     }
 
-    @GetMapping(path ="/projects/merge_request/{merge_request_id}/diff/score")
+    @GetMapping(path ="/merge_request/{merge_request_id}/diff/score")
     public double getMergeDiffScore (@PathVariable("merge_request_id") Long merge_request_id){
-        return scoreService.getMergeDiffScore(merge_request_id);
+        return scoreService.getMergeDiffScore(merge_request_id, 0L);
     }
-    @GetMapping(path ="/projects/{projectId}/merge_requests/score")
+    @GetMapping(path ="/{projectId}/merge_requests/score")
     public double getTotalMergeDiffScore (@PathVariable("projectId") Long projectId,
                                        @RequestParam("startDateTime")
                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
                                        @RequestParam("endDateTime")
                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
-        return scoreService.getTotalMergeDiffScore(projectId, startDateTime, endDateTime);
+        return scoreService.getTotalMergeDiffScore(projectId, 0L, startDateTime, endDateTime);
     }
 
-    @GetMapping(path ="/projects/commit/{commitId}/diff/score")
-    public double getCommitDiffScore (@PathVariable("commitId") Long commitId){
-        return scoreService.getCommitDiffScore(commitId);
+    @GetMapping(path ="/merge_request/{merge_request_id}/diff/score/{scoreProfileId}")
+    public double getMergeDiffScore (@PathVariable("merge_request_id") Long merge_request_id,
+                                     @PathVariable("scoreProfileId") Long scoreProfileId){
+        return scoreService.getMergeDiffScore(merge_request_id, scoreProfileId);
     }
-    @GetMapping(path ="/projects/{projectId}/commits/score")
+
+    @GetMapping(path ="/{projectId}/merge_requests/score/{scoreProfileId}")
+    public double getTotalMergeDiffScore (@PathVariable("projectId") Long projectId,
+                                       @PathVariable("scoreProfileId") Long scoreProfileId,
+                                       @RequestParam("startDateTime")
+                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
+                                       @RequestParam("endDateTime")
+                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
+        return scoreService.getTotalMergeDiffScore(projectId, scoreProfileId, startDateTime, endDateTime);
+    }
+
+    @GetMapping(path ="/commit/{commitId}/diff/score")
+    public double getCommitDiffScore (@PathVariable("commitId") Long commitId){
+        return scoreService.getCommitDiffScore(commitId, 0L);
+    }
+    @GetMapping(path ="/{projectId}/commits/score")
     public double getTotalCommitDiffScore (@PathVariable("projectId") Long projectId,
                                        @RequestParam("startDateTime")
                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
                                        @RequestParam("endDateTime")
                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
-        return scoreService.getTotalCommitDiffScore(projectId, startDateTime, endDateTime);
+        return scoreService.getTotalCommitDiffScore(projectId, 0L, startDateTime, endDateTime);
+    }
+
+    @GetMapping(path ="/commit/{commitId}/diff/score/{scoreProfileId}")
+    public double getCommitDiffScore (@PathVariable("commitId") Long commitId,
+                                      @PathVariable("scoreProfileId") Long scoreProfileId){
+        return scoreService.getCommitDiffScore(commitId, scoreProfileId);
+    }
+    @GetMapping(path ="/{projectId}/commits/score/{scoreProfileId}")
+    public double getTotalCommitDiffScore (@PathVariable("projectId") Long projectId,
+                                       @PathVariable("scoreProfileId") Long scoreProfileId,
+                                       @RequestParam("startDateTime")
+                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
+                                       @RequestParam("endDateTime")
+                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
+        return scoreService.getTotalCommitDiffScore(projectId, scoreProfileId, startDateTime, endDateTime);
     }
 }

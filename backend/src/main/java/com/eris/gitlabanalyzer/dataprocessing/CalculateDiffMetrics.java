@@ -75,7 +75,7 @@ public class CalculateDiffMetrics {
         var gitLabService = new GitLabService(serverUrl, accessToken);
         if(fileScoreRepository.findByCommitId(commit.getId()).isEmpty()){
             Project project = projectRepository.findById(commit.getProject().getId()).orElse(null);
-            if(commit != null && project != null ){
+            if(project != null ){
                 Iterable<GitLabFileChange> commitDiff = gitLabService.getCommitDiff(project.getGitLabProjectId(), commit.getSha()).toIterable();
 
                 // todo find a way to simpilfy this
@@ -96,7 +96,7 @@ public class CalculateDiffMetrics {
             var gitLabService = new GitLabService(serverUrl, accessToken);
             Project project = mergeRequest.getProject();
 
-            if(mergeRequest != null && project != null){
+            if(project != null){
                 Iterable<GitLabFileChange> merge = gitLabService.getMergeRequestDiff(project.getGitLabProjectId(), mergeRequest.getIid()).toIterable();
 
                 for(GitLabFileChange file : merge){
@@ -223,10 +223,10 @@ public class CalculateDiffMetrics {
     }
 
     private lineTypes typeOfLine(String line, CommentCharacter commentOperator){
-        if(isComment(line, commentOperator.getSingleLineComment())){
+        if(isCommentofOperator(line, commentOperator.getSingleLineComment())){
             return lineTypes.comment;
         }
-        if(isComment(line, commentOperator.getBlockCommentStart())){
+        if(isCommentofOperator(line, commentOperator.getBlockCommentStart())){
             return lineTypes.blockComment;
         }
         if(isSyntax(line)){
@@ -235,7 +235,7 @@ public class CalculateDiffMetrics {
         return lineTypes.code;
     }
 
-    private boolean isComment(String line, String operator){
+    private boolean isCommentofOperator(String line, String operator){
         // handle edge case to avoid index out of bound exception
         if(line.length() >= operator.length()){
             String lineStartChar = line.substring(0, operator.length());

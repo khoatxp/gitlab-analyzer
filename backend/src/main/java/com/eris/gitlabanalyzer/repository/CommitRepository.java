@@ -19,4 +19,7 @@ public interface CommitRepository extends JpaRepository<Commit,Long> {
     @Query("select c from Commit c where c.project.id = ?1 and c.mergedAt >= ?2 and c.mergedAt <= ?3")
     List<Commit> findAllByProjectIdAndDateRange(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
 
+    @Query("select c from Commit c where c.project.id = ?1 and c.createdAt >= ?2 and c.createdAt <= ?3 and c.mergeRequest  IS NULL")
+    List<Commit> findAllOrphanByProjectIdAndDateRange(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
+
 }

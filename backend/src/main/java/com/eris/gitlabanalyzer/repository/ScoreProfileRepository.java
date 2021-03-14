@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface ScoreProfileRepository extends JpaRepository<ScoreProfile, Long> {
-    Optional<ScoreProfile> findScoreProfileByName(String name);
+    Optional<ScoreProfile> findScoreProfileById(Long Id);
 }
