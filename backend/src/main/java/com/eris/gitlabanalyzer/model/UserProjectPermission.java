@@ -9,7 +9,8 @@ import lombok.*;
 @ToString
 @Builder
 @Entity(name = "UserProjectPermission")
-@Table(name = "user_project_permission")
+@Table(name = "user_project_permission",
+        uniqueConstraints=@UniqueConstraint(columnNames={"user_id", "project_id", "server_id"}))
 public class UserProjectPermission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
