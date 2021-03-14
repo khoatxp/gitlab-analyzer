@@ -51,135 +51,38 @@ class Chart extends React.Component {
     };
 
     render() {
-        if (this.state.commitCheckboxChecked===true && this.state.mergeCheckboxChecked===true) {
-            return (
-                <div style={{display: "flex", flexDirection: "column"}}>
-                    <p style={{textAlign: "center"}}>Daily Total Score for Commits and Merge Requests Made By Everyone</p>
-                    <div style={{display: "flex"}}>
-                        <ResponsiveContainer width="100%" height={400} minWidth="0">
-                        <BarChart
-                           width={1000}
-                           height={350}
-                           data={data}
-                           margin={{ top: 8, right: 30, left: 20, bottom: 8 }}
-                        >
-                           <CartesianGrid strokeDasharray="3 3" />
-                           <XAxis dataKey="date" label={{ value: "Date", position: "middle", dy: 10}} />
-                           <YAxis label={{ value: 'Total Score', angle: -90, position: 'insideLeft' }} />
-                           <Tooltip />
-                           <Bar dataKey="commitScore" fill="#82ca9d" barSize={15}/>
-                           <Bar dataKey="mergeRequestScore" fill="#8884d8" barSize={15}/>
-                        </BarChart>
-                        </ResponsiveContainer>
-                        <FormGroup>
-                            <FormControlLabel
-                               control={<Checkbox checked={this.state.commitCheckboxChecked} onChange={this.commitHandleChange} style ={{color: "#82ca9d",}} name="checkedCommitForGraphA"/>}
-                               label="Commits"
-                            />
-                            <FormControlLabel
-                               control={<Checkbox checked={this.state.mergeCheckboxChecked} onChange={this.mergeHandleChange} style ={{color: "#8884d8",}} name="checkedMergeRequestForGraphA"/>}
-                               label="Merge Requests"
-                            />
-                        </FormGroup>
-                    </div>
+        return (
+            <div style={{display: "flex", flexDirection: "column"}}>
+                <p style={{textAlign: "center"}}>Daily Total Score for Commits and Merge Requests Made By Everyone</p>
+                <div style={{display: "flex"}}>
+                    <ResponsiveContainer width="100%" height={400} minWidth="0">
+                    <BarChart
+                       width={1000}
+                       height={350}
+                       data={data}
+                       margin={{ top: 8, right: 30, left: 20, bottom: 8 }}
+                    >
+                       <CartesianGrid strokeDasharray="3 3" />
+                       <XAxis dataKey="date" label={{ value: "Date", position: "middle", dy: 10}} />
+                       <YAxis label={{ value: 'Total Score', angle: -90, position: 'insideLeft' }} />
+                       <Tooltip />
+                       <Bar dataKey="commitScore" fill="#82ca9d" barSize={15}/>
+                       <Bar dataKey="mergeRequestScore" fill="#8884d8" barSize={15}/>
+                    </BarChart>
+                    </ResponsiveContainer>
+                    <FormGroup>
+                        <FormControlLabel
+                           control={<Checkbox checked={this.state.commitCheckboxChecked} onChange={this.commitHandleChange} style ={{color: "#82ca9d",}} name="checkedCommitForGraphA"/>}
+                           label="Commits"
+                        />
+                        <FormControlLabel
+                           control={<Checkbox checked={this.state.mergeCheckboxChecked} onChange={this.mergeHandleChange} style ={{color: "#8884d8",}} name="checkedMergeRequestForGraphA"/>}
+                           label="Merge Requests"
+                        />
+                    </FormGroup>
                 </div>
-            );
-        }  else if (this.state.commitCheckboxChecked===true && this.state.mergeCheckboxChecked===false){
-            return(
-                <div style={{display: "flex", flexDirection: "column"}}>
-                    <p style={{textAlign: "center"}}>Daily Total Score for Commits Made By Everyone</p>
-                    <div style={{display: "flex"}}>
-                        <ResponsiveContainer width="100%" height={400} minWidth="0">
-                            <BarChart
-                                width={1000}
-                                height={350}
-                                data={data}
-                                margin={{ top: 8, right: 30, left: 20, bottom: 8 }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="date" label={{ value: "Date", position: "middle", dy: 10}} />
-                                <YAxis label={{ value: 'Total Score', angle: -90, position: 'insideLeft' }} />
-                                <Tooltip />
-                                <Bar dataKey="commitScore" fill="#82ca9d" barSize={15}/>
-                            </BarChart>
-                        </ResponsiveContainer>
-                        <FormGroup>
-                            <FormControlLabel
-                                control={<Checkbox checked={this.state.commitCheckboxChecked} onChange={this.commitHandleChange} style ={{color: "#82ca9d",}} name="checkedCommitForGraphA"/>}
-                                label="Commits"
-                            />
-                            <FormControlLabel
-                                control={<Checkbox checked={this.state.mergeCheckboxChecked} onChange={this.mergeHandleChange} style ={{color: "#8884d8",}} name="checkedMergeRequestForGraphA"/>}
-                                label="Merge Requests"
-                            />
-                        </FormGroup>
-                    </div>
-                </div>
-            );
-        } else if (this.state.commitCheckboxChecked===false && this.state.mergeCheckboxChecked===true){
-            return(
-                <div style={{display: "flex", flexDirection: "column"}}>
-                    <p style={{textAlign: "center"}}>Daily Total Score for Merge Requests Made By Everyone</p>
-                    <div style={{display: "flex"}}>
-                        <ResponsiveContainer width="100%" height={400} minWidth="0">
-                            <BarChart
-                                width={1000}
-                                height={350}
-                                data={data}
-                                margin={{ top: 8, right: 30, left: 20, bottom: 8 }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="date" label={{ value: "Date", position: "middle", dy: 10}} />
-                                <YAxis label={{ value: 'Total Score', angle: -90, position: 'insideLeft' }} />
-                                <Tooltip />
-                                <Bar dataKey="mergeRequestScore" fill="#8884d8" barSize={15} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                        <FormGroup>
-                            <FormControlLabel
-                                control={<Checkbox checked={this.state.commitCheckboxChecked} onChange={this.commitHandleChange} style ={{color: "#82ca9d",}} name="checkedCommitForGraphA"/>}
-                                label="Commits"
-                            />
-                            <FormControlLabel
-                                control={<Checkbox checked={this.state.mergeCheckboxChecked} onChange={this.mergeHandleChange} style ={{color: "#8884d8",}} name="checkedMergeRequestForGraphA"/>}
-                                label="Merge Requests"
-                            />
-                        </FormGroup>
-                    </div>
-                </div>
-            );
-        } else if (this.state.commitCheckboxChecked===false && this.state.mergeCheckboxChecked===false){
-            return(
-                <div style={{display: "flex", flexDirection: "column"}}>
-                    <p style={{textAlign: "center"}}>Daily Total Score for Commits and Merge Requests Made By Everyone</p>
-                    <div style={{display: "flex"}}>
-                        <ResponsiveContainer width="100%" height={400} minWidth="0">
-                            <BarChart
-                                width={1000}
-                                height={350}
-                                data={data}
-                                margin={{ top: 8, right: 30, left: 20, bottom: 8 }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="date" label={{ value: "Date", position: "middle", dy: 10}} />
-                                <YAxis label={{ value: 'Total Score', angle: -90, position: 'insideLeft' }} />
-                                <Tooltip />
-                            </BarChart>
-                        </ResponsiveContainer>
-                        <FormGroup>
-                            <FormControlLabel
-                                control={<Checkbox checked={this.state.commitCheckboxChecked} onChange={this.commitHandleChange} style ={{color: "#82ca9d",}} name="checkedCommitForGraphA"/>}
-                                label="Commits"
-                            />
-                            <FormControlLabel
-                                control={<Checkbox checked={this.state.mergeCheckboxChecked} onChange={this.mergeHandleChange} style ={{color: "#8884d8",}} name="checkedMergeRequestForGraphA"/>}
-                                label="Merge Requests"
-                            />
-                        </FormGroup>
-                    </div>
-                </div>
-            );
-        }
+            </div>
+        );
     }
 }
 
