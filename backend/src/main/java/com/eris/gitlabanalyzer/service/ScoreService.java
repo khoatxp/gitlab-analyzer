@@ -76,7 +76,7 @@ public class ScoreService {
         List<Commit> commits = commitRepository.findAllByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
         double totalScore = 0;
         for (Commit commit : commits) {
-            totalScore += diffScoreCalculator.calculateScoreMerge(commit.getId());
+            totalScore += diffScoreCalculator.calculateScoreCommit(commit.getId());
         }
         return totalScore;
     }

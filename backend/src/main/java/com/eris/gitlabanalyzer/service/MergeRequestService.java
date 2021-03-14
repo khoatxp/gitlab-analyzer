@@ -53,7 +53,7 @@ public class MergeRequestService {
                                 gitLabMergeRequest.getIid(),
                                 gitLabMergeRequest.getAuthor().getUsername(),
                                 gitLabMergeRequest.getTitle(),
-                                gitLabMergeRequest.getCreatedAt().withOffsetSameInstant(ZoneOffset.UTC),
+                                gitLabMergeRequest.getCreatedAt(),
                                 gitLabMergeRequest.getMergedAt(),
                                 gitLabMergeRequest.getWebUrl(),
                                 project,
