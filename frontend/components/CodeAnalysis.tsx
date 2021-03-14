@@ -1,11 +1,10 @@
 import React, {useEffect} from "react";
-import { makeStyles, withStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import axios, {AxiosResponse} from "axios";
 import {useRouter} from "next/router";
 import {useSnackbar} from "notistack";
 import {AuthContext} from "./AuthContext";
-
 import CountGraph from "../components/graphs/CountGraph";
 import ScoreGraph from "../components/graphs/ScoreGraph";
 
