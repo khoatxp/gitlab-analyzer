@@ -100,7 +100,7 @@ const MemberMapping = () => {
             .then((resp: AxiosResponse) => {
                 enqueueSnackbar("Saved changes successfully!", {variant: 'success',});
             }).catch((err: AxiosError) => {
-            enqueueSnackbar(`Save changes failed: ${err.message}`, {variant: 'error',});
+            enqueueSnackbar(`Failed to save changes: ${err.message}`, {variant: 'error',});
         })
     }
 

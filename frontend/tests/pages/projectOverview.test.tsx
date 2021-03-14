@@ -1,15 +1,36 @@
 import React from 'react';
 import Index from '../../pages/project/[projectId]/overview/index';
-import {mount} from "enzyme";
+import {mount, ReactWrapper} from "enzyme";
 
 describe("Overview", () =>{
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter');
+    const mockUseEffect = jest.spyOn(React, 'useEffect')
+    const mockAxios = jest.spyOn(require('axios'), 'get');
+    const mockEnqueue = jest.spyOn(require('notistack'), "useSnackbar");
+    let enqueueSnackbar = jest.fn();
+    let rend:ReactWrapper
 
-    it("Snapshot Overview", async () => {
-        const render = mount(
-            <Index/>
-        )
+    beforeEach(async()=>{
+        mockEnqueue.mockImplementation(() => {return {enqueueSnackbar}});
+        useRouter.mockImplementationOnce(() => ({
+            query: { projectId: 'TestId' }, isReady: true
+        }));
+        rend = mount(
+            <Index />
+        );
         await Promise.resolve();
-        expect(render).toMatchSnapshot();
-    });
+    })
+
+    it("Snapshot projectId", () => {
+        expect(rend).toMatchSnapshot();
+    })
+
+    it("Test useEffect", ()=>{
+        expect(mockUseEffect).toBeCalled();
+    })
+
+    it('Test axios',()=>{
+        expect(mockAxios).toBeCalled();
+    })
 
 })
