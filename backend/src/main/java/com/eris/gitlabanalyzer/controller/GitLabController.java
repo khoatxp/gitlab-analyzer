@@ -125,37 +125,40 @@ public class GitLabController {
     // Used in notes page for now
     @GetMapping(path = "/projects/{projectId}/merge_requests/{merge_request_iid}/notes")
     public Flux<GitLabMergeRequestNote> getMergeRequestNotes(
-            @PathVariable("projectId") Long projectId,
+            @PathVariable("projectId") Long internalProjectId,
             @PathVariable("merge_request_iid") Long merge_request_iid) {
 
-        // TODO this endpoint needs to be removed or use an internal projectId to find the correct server that user owns
+        // TODO validate that the user has permissions for the server
+        var project = projectService.getProjectById(internalProjectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
-        return gitLabService.getMergeRequestNotes(projectId, merge_request_iid);
+        return gitLabService.getMergeRequestNotes(project.getGitLabProjectId(), merge_request_iid);
     }
 
     // Used in notes page for now
     @GetMapping(path = "/projects/{projectId}/issues")
     public Flux<GitLabIssue> getIssues(
-            @PathVariable("projectId") Long projectId,
+            @PathVariable("projectId") Long internalProjectId,
             @RequestParam("startDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
-        // TODO this endpoint needs to be removed or use an internal projectId to find the correct server that user owns
+        // TODO validate that the user has permissions for the server
+        var project = projectService.getProjectById(internalProjectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
-        return gitLabService.getIssues(projectId, startDateTime, endDateTime);
+        return gitLabService.getIssues(project.getGitLabProjectId(), startDateTime, endDateTime);
     }
 
     // Used in notes page for now
     @GetMapping(path = "/projects/{projectId}/issues/{issue_iid}/notes")
     public Flux<GitLabIssueNote> getIssueNotes(
-            @PathVariable("projectId") Long projectId,
+            @PathVariable("projectId") Long internalProjectId,
             @PathVariable("issue_iid") Long issue_iid) {
 
-        // TODO this endpoint needs to be removed or use an internal projectId to find the correct server that user owns
+        // TODO validate that the user has permissions for the server
+        var project = projectService.getProjectById(internalProjectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
-        return gitLabService.getIssueNotes(projectId, issue_iid);
+        return gitLabService.getIssueNotes(project.getGitLabProjectId(), issue_iid);
     }
     @GetMapping(path ="/projects/{projectId}/members")
     public Flux<GitLabMember> getMembers(

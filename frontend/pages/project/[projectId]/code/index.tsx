@@ -57,11 +57,11 @@ const index = () => {
 
     const handleSelectMergeRequest = (mergeRequest: MergeRequest) => {
         fetchCommitData(mergeRequest);
-        // fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${mergeRequest.iid}/diff`);
+        fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${mergeRequest.iid}/diff`);
     };
 
     const handleSelectCommit = (commit: Commit) => {
-        fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${commit.id}/diff`);
+        fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commit/${commit.id}/diff`);
     };
 
     return (
