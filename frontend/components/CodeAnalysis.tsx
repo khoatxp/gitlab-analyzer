@@ -9,33 +9,8 @@ import {useRouter} from "next/router";
 import {useSnackbar} from "notistack";
 import {AuthContext} from "./AuthContext";
 
-import CommitsCountGraph from "../components/graphs/CommitsCountGraph";
-import CommitsScoreGraph from "../components/graphs/CommitsScoreGraph";
-import MergeRequestsCountGraph from "../components/graphs/MergeRequestsCountGraph";
-import MergeRequestsScoreGraph from "../components/graphs/MergeRequestsScoreGraph";
-import TotalCountGraph from "../components/graphs/TotalCountGraph";
-import TotalScoreGraph from "../components/graphs/TotalScoreGraph";
-import EmptyGraph from "../components/graphs/EmptyGraph";
-
-const GreenCheckbox = withStyles({
-    root: {
-        color: "#82ca9d",
-        '&$checked': {
-            color: "#82ca9d",
-        },
-    },
-    checked: {},
-})((props: CheckboxProps) => <Checkbox color="default" {...props} />);
-
-const PurpleCheckbox = withStyles({
-    root: {
-        color: "#8884d8",
-        '&$checked': {
-            color: "#8884d8",
-        },
-    },
-    checked: {},
-})((props: CheckboxProps) => <Checkbox color="default" {...props} />);
+import CountGraph from "../components/graphs/CountGraph";
+import ScoreGraph from "../components/graphs/ScoreGraph";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -86,10 +61,6 @@ const useStyles = makeStyles((theme: Theme) =>
             width: theme.spacing(15),
             height: theme.spacing(15),
         },
-        graphTitleText: {
-            textAlign: 'center',
-            fontSize: '1.2em',
-        },
     }),
 );
 
@@ -105,13 +76,6 @@ const CodeAnalysis = () => {
     const [commitCount, setCommitCount] = React.useState<number>();
     const [mergeRequestScore, setMergeRequestScore] = React.useState<number>();
     const [commitScore, setCommitScore] = React.useState<number>();
-
-    const [checkboxState, setCheckboxState] = React.useState({
-        checkedCommitForGraphA: true,
-        checkedMergeRequestForGraphA: true,
-        checkedCommitForGraphB: true,
-        checkedMergeRequestForGraphB: true,
-    });
 
     useEffect(() => {
         if (router.isReady) {
@@ -153,43 +117,6 @@ const CodeAnalysis = () => {
         }
     }, [projectId]);
 
-    let graphA;
-    let graphB;
-    let graphATitle;
-    let graphBTitle;
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setCheckboxState({ ...checkboxState, [event.target.name]: event.target.checked });
-    };
-
-    if (checkboxState.checkedCommitForGraphA === true && checkboxState.checkedMergeRequestForGraphA === true) {
-        graphATitle = "Daily Total Commits & Merge Requests Made By Everyone";
-        graphA = <TotalCountGraph/>;
-    } else if (checkboxState.checkedCommitForGraphA === true && checkboxState.checkedMergeRequestForGraphA === false) {
-        graphATitle = "Daily Total Commits Made By Everyone";
-        graphA = <CommitsCountGraph/>;
-    } else if (checkboxState.checkedCommitForGraphA === false && checkboxState.checkedMergeRequestForGraphA === true) {
-        graphATitle = "Daily Total Merge Requests Made By Everyone";
-        graphA = <MergeRequestsCountGraph/>;
-    } else if (checkboxState.checkedCommitForGraphA === false && checkboxState.checkedMergeRequestForGraphA === false){
-        graphATitle = "Daily Total for Commits & Merge Requests Made By Everyone";
-        graphA = <EmptyGraph/>;
-    }
-
-    if (checkboxState.checkedCommitForGraphB === true && checkboxState.checkedMergeRequestForGraphB === true) {
-        graphBTitle = "Daily Total Score for Commits & Merge Requests Made By Everyone";
-        graphB = <TotalScoreGraph/>;
-    } else if (checkboxState.checkedCommitForGraphB === true && checkboxState.checkedMergeRequestForGraphB === false) {
-        graphBTitle = "Daily Total Score for Commits Made By Everyone";
-        graphB = <CommitsScoreGraph/>;
-    } else if (checkboxState.checkedCommitForGraphB === false && checkboxState.checkedMergeRequestForGraphB === true) {
-        graphBTitle = "Daily Total Score for Merge Requests Made By Everyone";
-        graphB = <MergeRequestsScoreGraph/>;
-    } else if (checkboxState.checkedCommitForGraphB === false && checkboxState.checkedMergeRequestForGraphB === false){
-        graphBTitle = "Daily Total Score for Commits & Merge Requests Made By Everyone";
-        graphB = <EmptyGraph/>;
-    }
-
     return (
         <>
             <div className={classes.outerContainer}>
@@ -206,33 +133,11 @@ const CodeAnalysis = () => {
                         <p className={classes.commitScoreText}>Commit Score: {commitScore}</p>
                     </div>
                 </div>
-                <p className={classes.graphTitleText}>{graphATitle}</p>
                 <div className={classes.graphContainer}>
-                    {graphA}
-                    <FormGroup>
-                        <FormControlLabel
-                            control={<GreenCheckbox checked={checkboxState.checkedCommitForGraphA} onChange={handleChange} name="checkedCommitForGraphA"/>}
-                            label="Commits"
-                        />
-                        <FormControlLabel
-                            control={<PurpleCheckbox checked={checkboxState.checkedMergeRequestForGraphA} onChange={handleChange} name="checkedMergeRequestForGraphA"/>}
-                            label="Merge Requests"
-                        />
-                    </FormGroup>
+                    <CountGraph/>
                 </div>
-                <p className={classes.graphTitleText}>{graphBTitle}</p>
                 <div className={classes.graphContainer}>
-                    {graphB}
-                    <FormGroup>
-                        <FormControlLabel
-                            control={<GreenCheckbox checked={checkboxState.checkedCommitForGraphB} onChange={handleChange} name="checkedCommitForGraphB"/>}
-                            label="Commits"
-                        />
-                        <FormControlLabel
-                            control={<PurpleCheckbox checked={checkboxState.checkedMergeRequestForGraphB} onChange={handleChange} name="checkedMergeRequestForGraphB"/>}
-                            label="Merge Requests"
-                        />
-                    </FormGroup>
+                    <ScoreGraph/>
                 </div>
             </div>
         </>
