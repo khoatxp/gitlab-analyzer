@@ -144,4 +144,8 @@ public class ProjectService {
     public List<Project> getProjects() {
         return projectRepository.findAll();
     }
+
+    public Optional<Project> getProject(Long projectId) {
+        return projectRepository.findById(projectId);
+    }
 }

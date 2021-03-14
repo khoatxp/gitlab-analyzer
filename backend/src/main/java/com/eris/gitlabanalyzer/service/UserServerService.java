@@ -1,9 +1,10 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.model.*;
+import com.eris.gitlabanalyzer.model.Server;
+import com.eris.gitlabanalyzer.model.User;
+import com.eris.gitlabanalyzer.model.UserServer;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
 import com.eris.gitlabanalyzer.repository.UserServerRepository;
-import com.eris.gitlabanalyzer.viewmodel.UserServerRequestBody;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
