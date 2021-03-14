@@ -12,33 +12,11 @@ import {
 } from "recharts";
 import {useRouter} from "next/router";
 import {AuthContext} from "../../components/AuthContext";
-import AuthView from "../../components/AuthView";
 import {useSnackbar} from "notistack";
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
 import { withStyles } from '@material-ui/core/styles';
-
-const GreenCheckbox = withStyles({
-    root: {
-        color: "#82ca9d",
-        '&$checked': {
-            color: "#82ca9d",
-        },
-    },
-    checked: {},
-})((props: CheckboxProps) => <Checkbox color="default" {...props} />);
-
-const PurpleCheckbox = withStyles({
-    root: {
-        color: "#8884d8",
-        '&$checked': {
-            color: "#8884d8",
-        },
-    },
-    checked: {},
-})((props: CheckboxProps) => <Checkbox color="default" {...props} />);
-
 
 // TODO: Get graph data (commit count, mr count on a given date) from endpoints
 const data = [
@@ -65,19 +43,11 @@ class Chart extends React.Component {
     }
 
     commitHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-         if(this.state.commitCheckboxChecked === true) {
-            this.setState({commitCheckboxChecked: false});
-         } else if(this.state.commitCheckboxChecked === false) {
-            this.setState({commitCheckboxChecked:true});
-         }
+         this.setState({commitCheckboxChecked: !this.state.commitCheckboxChecked})
     };
 
     mergeHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if(this.state.mergeCheckboxChecked === true) {
-            this.setState({mergeCheckboxChecked: false});
-        } else if(this.state.mergeCheckboxChecked === false) {
-            this.setState({mergeCheckboxChecked:true});
-        }
+        this.setState({mergeCheckboxChecked: !this.state.mergeCheckboxChecked})
     };
 
     render() {
@@ -104,11 +74,11 @@ class Chart extends React.Component {
                         </ResponsiveContainer>
                         <FormGroup>
                             <FormControlLabel
-                               control={<GreenCheckbox checked={this.state.commitCheckboxChecked} onChange={this.commitHandleChange} name="checkedCommitForGraphA"/>}
+                               control={<Checkbox checked={this.state.commitCheckboxChecked} onChange={this.commitHandleChange} style ={{color: "#82ca9d",}} name="checkedCommitForGraphA"/>}
                                label="Commits"
                             />
                             <FormControlLabel
-                               control={<PurpleCheckbox checked={this.state.mergeCheckboxChecked} onChange={this.mergeHandleChange} name="checkedMergeRequestForGraphA"/>}
+                               control={<Checkbox checked={this.state.mergeCheckboxChecked} onChange={this.mergeHandleChange} style ={{color: "#8884d8",}} name="checkedMergeRequestForGraphA"/>}
                                label="Merge Requests"
                             />
                         </FormGroup>
@@ -136,11 +106,11 @@ class Chart extends React.Component {
                         </ResponsiveContainer>
                         <FormGroup>
                             <FormControlLabel
-                                control={<GreenCheckbox checked={this.state.commitCheckboxChecked} onChange={this.commitHandleChange} name="checkedCommitForGraphA"/>}
+                                control={<Checkbox checked={this.state.commitCheckboxChecked} onChange={this.commitHandleChange} style ={{color: "#82ca9d",}} name="checkedCommitForGraphA"/>}
                                 label="Commits"
                             />
                             <FormControlLabel
-                                control={<PurpleCheckbox checked={this.state.mergeCheckboxChecked} onChange={this.mergeHandleChange} name="checkedMergeRequestForGraphA"/>}
+                                control={<Checkbox checked={this.state.mergeCheckboxChecked} onChange={this.mergeHandleChange} style ={{color: "#8884d8",}} name="checkedMergeRequestForGraphA"/>}
                                 label="Merge Requests"
                             />
                         </FormGroup>
@@ -168,11 +138,11 @@ class Chart extends React.Component {
                         </ResponsiveContainer>
                         <FormGroup>
                             <FormControlLabel
-                                control={<GreenCheckbox checked={this.state.commitCheckboxChecked} onChange={this.commitHandleChange} name="checkedCommitForGraphA"/>}
+                                control={<Checkbox checked={this.state.commitCheckboxChecked} onChange={this.commitHandleChange} style ={{color: "#82ca9d",}} name="checkedCommitForGraphA"/>}
                                 label="Commits"
                             />
                             <FormControlLabel
-                                control={<PurpleCheckbox checked={this.state.mergeCheckboxChecked} onChange={this.mergeHandleChange} name="checkedMergeRequestForGraphA"/>}
+                                control={<Checkbox checked={this.state.mergeCheckboxChecked} onChange={this.mergeHandleChange} style ={{color: "#8884d8",}} name="checkedMergeRequestForGraphA"/>}
                                 label="Merge Requests"
                             />
                         </FormGroup>
@@ -199,11 +169,11 @@ class Chart extends React.Component {
                         </ResponsiveContainer>
                         <FormGroup>
                             <FormControlLabel
-                                control={<GreenCheckbox checked={this.state.commitCheckboxChecked} onChange={this.commitHandleChange} name="checkedCommitForGraphA"/>}
+                                control={<Checkbox checked={this.state.commitCheckboxChecked} onChange={this.commitHandleChange} style ={{color: "#82ca9d",}} name="checkedCommitForGraphA"/>}
                                 label="Commits"
                             />
                             <FormControlLabel
-                                control={<PurpleCheckbox checked={this.state.mergeCheckboxChecked} onChange={this.mergeHandleChange} name="checkedMergeRequestForGraphA"/>}
+                                control={<Checkbox checked={this.state.mergeCheckboxChecked} onChange={this.mergeHandleChange} style ={{color: "#8884d8",}} name="checkedMergeRequestForGraphA"/>}
                                 label="Merge Requests"
                             />
                         </FormGroup>
