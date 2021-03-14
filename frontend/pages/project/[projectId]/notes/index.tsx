@@ -56,6 +56,7 @@ const NotesPage = () => {
     const {projectId, startDateTime, endDateTime} = router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`;
 
+    const [selectedItem, setSelectedItem] = useState(0);
     const [mergeRequests, setMergeRequests] = useState<MergeRequest[]>([]);
     const [issues, setIssues] = useState<Issue[]>([]);
     const [notes, setNotes] = useState<Note[]>([]);
@@ -70,7 +71,6 @@ const NotesPage = () => {
         handleSelectItem(0);
     }, [noteType]);
 
-    const [selectedItem, setSelectedItem] = useState(0);
 
     const getMergeRequestNotes = (mergeRequestIid: number) => {
         axios

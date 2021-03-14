@@ -3,25 +3,45 @@ import {parseFileChangesForDiffViewer} from "./FileChangeParser";
 import {ParsedFileChange} from "../../interfaces/ParsedFileChange";
 import React, {useMemo} from "react";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
-import {Box} from "@material-ui/core";
+import {Box, Card, Divider, ListSubheader, Typography} from "@material-ui/core";
 import {Tokenize} from "./Tokenize";
 // @ts-ignore (Doesn't have typescript types)
 import {Decoration, Diff, Hunk} from 'react-diff-view';
+import List from "@material-ui/core/List";
 
 type DiffViewerProps = { fileChanges: FileChange[] };
 const DiffViewer = ({fileChanges}: DiffViewerProps) => {
     const parsedFileChanges = parseFileChangesForDiffViewer(fileChanges);
     return (
-        <Box
-            border={1}
-            borderColor={'lightGray'}
-            maxHeight="50vh"
-            overflow="auto"
-            p={2}
-        >
-            {parsedFileChanges.map((change) => <FileDiffView key={change.newPath + '-' + change.newRevision}
-                                                             change={change}/>)}
-        </Box>
+        <Card>
+            <List
+                component="nav"
+                disablePadding
+                subheader={
+                    <ListSubheader>Diff</ListSubheader>
+                }
+            >
+                <Divider/>
+                <Box p={2} height="75vh" overflow="auto">
+                    {
+                        // Display text if no diff data present
+                        parsedFileChanges.length == 0 &&
+                        <Box width="100%" height="100%" display="flex" alignItems="center" justifyContent="center">
+                            <Typography variant="h5">
+                                Please select a merge request or commit to view diffs from.
+                            </Typography>
+                        </Box>
+                    }
+                    {
+                        parsedFileChanges.map((change) => (
+                            <FileDiffView
+                                key={change.newPath + '-' + change.newRevision}
+                                change={change}/>
+                        ))
+                    }
+                </Box>
+            </List>
+        </Card>
     )
 }
 
@@ -31,8 +51,8 @@ const FileDiffView = ({change}: FileDiffViewProps) => {
     const tokens = useMemo(() => Tokenize(change), [change]);   // Used for syntax highlighting
 
     return (
-        <div className={styles.fileDiff}>
-            <header className={styles.diffHeader}>{getFileChangeHeader(change)}</header>
+        <Card raised className={styles.fileDiff}>
+            <Typography className={styles.diffHeader}>{getFileChangeHeader(change)}</Typography>
             <Diff viewType="unified" diffType={change.type} hunks={change.hunks} tokens={tokens}>
                 {(hunks: any[]) =>
                     hunks.map(hunk => [
@@ -43,7 +63,7 @@ const FileDiffView = ({change}: FileDiffViewProps) => {
                     ])
                 }
             </Diff>
-        </div>
+        </Card>
     )
 }
 
@@ -56,19 +76,16 @@ const getFileChangeHeader = (parsedFileChange: ParsedFileChange): string => {
 }
 
 // Styling adapted from https://codesandbox.io/s/149oz0nw1q
-const borderRadius = '10px';
 const useStyles = makeStyles(() =>
     createStyles({
         fileDiff: {
-            border: '1px solid lightgray',
             marginBottom: '1em',
-            borderRadius: borderRadius,
+            borderRadius: '10px',
+            boxShadow: '20px',
         },
         diffHeader: {
-            backgroundColor: 'white',
-            padding: '1em',
+            padding: '0.75em',
             borderBottom: '1px solid lightgray',
-            borderRadius: `${borderRadius} ${borderRadius} 0 0 `,
         },
         hunkHeader: {
             backgroundColor: '#f0f8ff',
