@@ -88,8 +88,8 @@ const NavBar = () => {
                     keepMounted
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
-                    anchorOrigin={{vertical: "bottom", horizontal: "center"}}
-                    transformOrigin={{vertical: "top", horizontal: "center"}}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    transformOrigin={{ vertical: "top", horizontal: "center" }}
                 >
                     <MenuItem onClick={handleClose}>
                         <NextLink href="/server" passHref>
@@ -97,41 +97,19 @@ const NavBar = () => {
                                 Servers
                             </Link>
                         </NextLink>
+
                     </MenuItem>
-                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                </Menu>
-                    </Button>
-                    <Menu
-                        id="setting-menu"
-                        anchorEl={anchorEl}
-                        getContentAnchorEl={null}
-                        keepMounted
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                        transformOrigin={{ vertical: "top", horizontal: "center" }}
-                    >
+                    {projectId?
                         <MenuItem onClick={handleClose}>
-                            <NextLink href="/server" passHref>
+                            <NextLink href={`/project/${projectId}/members`}>
                                 <Link>
-                                    Servers
+                                    Members
                                 </Link>
                             </NextLink>
-
-                        </MenuItem>
-                        {projectId?
-                            <MenuItem onClick={handleClose}>
-                                <NextLink href={`/project/${projectId}/members`}>
-                                    <Link>
-                                        Members
-                                    </Link>
-                                </NextLink>
-                            </MenuItem>:''
-                        }
-                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                    </Menu>
-                </div>
-                {/*<AppButton color="primary" size="medium" onClick={handleLogout}>Logout</AppButton>*/}
+                        </MenuItem>:''
+                    }
+                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                </Menu>
             </Toolbar>
         </AppBar>
     );

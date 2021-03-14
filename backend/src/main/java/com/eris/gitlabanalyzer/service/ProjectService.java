@@ -1,9 +1,6 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.model.Project;
-import com.eris.gitlabanalyzer.model.RawCommitData;
-import com.eris.gitlabanalyzer.model.RawMergeRequestData;
-import com.eris.gitlabanalyzer.model.RawTimeLineProjectData;
+import com.eris.gitlabanalyzer.model.*;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
