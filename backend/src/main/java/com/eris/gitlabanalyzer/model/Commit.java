@@ -84,12 +84,6 @@ public class Commit {
 
     @ManyToOne
     @JoinColumn(
-            name = "git_management_user_id",
-            referencedColumnName = "git_management_user_id")
-    private GitManagementUser gitManagementUser;
-
-    @ManyToOne
-    @JoinColumn(
             name = "merge_request_id",
             referencedColumnName = "merge_request_id")
     private MergeRequest mergeRequest;
@@ -139,10 +133,6 @@ public class Commit {
         this.project = project;
     }
 
-    public void setGitManagementUser(GitManagementUser gitManagementUser) {
-        this.gitManagementUser = gitManagementUser;
-    }
-
     public void setMergeRequest(MergeRequest mergeRequest) {
         this.mergeRequest = mergeRequest;
     }
@@ -160,8 +150,6 @@ public class Commit {
                 "id=" + id +
                 ", sha='" + sha + '\'' +
                 ", title='" + title + '\'' +
-                ", authorName='" + authorName + '\'' +
-                ", authorEmail='" + authorEmail + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 ", webUrl='" + webUrl + '\'' +
                 '}';

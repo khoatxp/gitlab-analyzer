@@ -75,7 +75,7 @@ public class CommitService {
                     Commit commit = commitRepository.findByCommitShaAndProjectId(gitLabCommit.getSha(),project.getId());
                     if(commit != null){return;}
 
-                    CommitAuthor commitAuthor = saveCommitAuthor(project,gitLabCommit);
+                    saveCommitAuthor(project,gitLabCommit);
 
                     commit = new Commit(
                             gitLabCommit.getSha(),
@@ -92,9 +92,6 @@ public class CommitService {
                         mrCommitShas.add(gitLabCommit.getSha());
                     }
 
-                    if(commitAuthor.getGitManagementUser()!=null){
-                        commit.setGitManagementUser(commitAuthor.getGitManagementUser());
-                    }
 
                     commit = commitRepository.save(commit);
                     saveCommitComment(project, commit);
@@ -178,12 +175,15 @@ public class CommitService {
                     commitAuthor.getAuthorName(),
                     commitAuthor.getAuthorEmail(),
                     projectId);
-            commitRepository.updateCommitAuthors(
-                    commitAuthor.getMappedGitManagementUserId(),
-                    commitAuthor.getAuthorName(),
-                    commitAuthor.getAuthorEmail(),
-                    projectId);
         });
+    }
+
+    public List<Commit> getCommits(Long projectId){
+        return commitRepository.findAllByProjectId(projectId);
+    }
+
+    public List<Commit> getCommitsOfGitManagementUser(Long projectId, Long gitManagementUserId){
+        return commitRepository.findByProjectIdAndGitManagementUserId(projectId, gitManagementUserId);
     }
 
 }

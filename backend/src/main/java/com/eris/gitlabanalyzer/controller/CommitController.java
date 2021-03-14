@@ -1,5 +1,6 @@
 package com.eris.gitlabanalyzer.controller;
 
+import com.eris.gitlabanalyzer.model.Commit;
 import com.eris.gitlabanalyzer.service.CommitService;
 import com.eris.gitlabanalyzer.viewmodel.CommitAuthorRequestBody;
 import com.eris.gitlabanalyzer.viewmodel.CommitAuthorView;
@@ -25,6 +26,19 @@ public class CommitController {
             return commitService.getUnmappedCommitAuthors(projectId);
         }
         return commitService.getCommitAuthors(projectId);
+    }
+
+    @GetMapping("/api/v1/{projectId}/commits")
+    public List<Commit> getCommits(
+            @PathVariable("projectId") Long projectId){
+        return commitService.getCommits(projectId);
+    }
+
+    @GetMapping("/api/v1/{projectId}/commits/{gitManagementUserId}")
+    public List<Commit> getCommitsOfGitManagementUser(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("gitManagementUserId") Long gitManagementUserId){
+        return commitService.getCommitsOfGitManagementUser(projectId,(Long)gitManagementUserId);
     }
 
     @PostMapping("api/v1/{projectId}/commits/mapping")

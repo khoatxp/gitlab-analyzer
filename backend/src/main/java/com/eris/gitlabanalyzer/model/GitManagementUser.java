@@ -61,14 +61,6 @@ public class GitManagementUser {
     private List<CommitAuthor> commitAuthors = new ArrayList<>();
 
     @OneToMany(
-            mappedBy ="gitManagementUser",
-            orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            fetch = FetchType.LAZY
-    )
-    private List<Commit> commits = new ArrayList<>();
-
-    @OneToMany(
             mappedBy = "gitManagementUser",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
@@ -135,14 +127,8 @@ public class GitManagementUser {
         return username;
     }
 
-
     public String getName() {
         return name;
-    }
-
-
-    public List<Commit> getCommits() {
-        return commits;
     }
 
     public List<MergeRequest> getMergeRequests() {
@@ -185,21 +171,6 @@ public class GitManagementUser {
         if (!this.projects.contains(project)) {
             this.projects.add(project);
             project.getGitManagementUsers().add(this);
-        }
-    }
-
-
-    public void addCommitMapping(CommitAuthor commitMapping) {
-        if (!this.commitAuthors.contains(commitMapping)) {
-            this.commitAuthors.add(commitMapping);
-            commitMapping.setGitManagementUser(this);
-        }
-    }
-
-    public void addCommit(Commit commit) {
-        if (!this.commits.contains(commit)) {
-            this.commits.add(commit);
-            commit.setGitManagementUser(this);
         }
     }
 

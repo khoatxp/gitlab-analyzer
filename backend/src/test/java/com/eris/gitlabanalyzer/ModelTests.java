@@ -61,8 +61,6 @@ class ModelTests {
         testGitManagementUser.addProject(testProject);
         // Connect commit to project.
         testProject.addCommit(testCommit);
-        // Connect commit to GitManagementUser
-        testGitManagementUser.addCommit(testCommit);
         // Connect CommitComment to Commit
         testCommit.addCommitComment(testCommitComment);
         // Connect CommitComment to GitManagementUser
