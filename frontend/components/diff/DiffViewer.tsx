@@ -24,6 +24,15 @@ const DiffViewer = ({fileChanges}: DiffViewerProps) => {
                 <Divider/>
                 <Box p={2} height="75vh" overflow="auto">
                     {
+                        // Display text if no diff data present
+                        parsedFileChanges.length == 0 &&
+                        <Box width="100%" height="100%" display="flex" alignItems="center" justifyContent="center">
+                            <Typography variant="h5">
+                                Please select a merge request or commit to view diffs from.
+                            </Typography>
+                        </Box>
+                    }
+                    {
                         parsedFileChanges.map((change) => (
                             <FileDiffView
                                 key={change.newPath + '-' + change.newRevision}
