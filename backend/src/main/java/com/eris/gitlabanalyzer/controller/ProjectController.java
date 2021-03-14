@@ -74,6 +74,7 @@ public class ProjectController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
+        var analyticsService = new AnalyticsService();
         analyticsService.saveAllFromGitlab(projectIdList, startDateTime, endDateTime);
     }
 }

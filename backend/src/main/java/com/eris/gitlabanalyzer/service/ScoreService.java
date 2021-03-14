@@ -21,8 +21,6 @@ public class ScoreService {
     private final CalculateDiffMetrics calculateDiffMetrics;
     private final MergeRequestRepository mergeRequestRepository;
     private final CommitRepository commitRepository;
-    private String serverUrl;
-    private String accessToken;
 
     @Autowired
     public ScoreService(DiffScoreCalculator diffScoreCalculator, CalculateDiffMetrics calculateDiffMetrics, MergeRequestRepository mergeRequestRepository, CommitRepository commitRepository) {
@@ -41,9 +39,7 @@ public class ScoreService {
         this.calculateDiffMetrics = calculateDiffMetrics;
         this.mergeRequestRepository = mergeRequestRepository;
         this.commitRepository = commitRepository;
-        this.serverUrl = serverUrl;
-        this.accessToken = accessToken;
-        gitLabService = new GitLabService(this.serverUrl, this.accessToken);
+        gitLabService = new GitLabService(serverUrl, accessToken);
     }
 
     // This will most likely change as we update how we retrieve diff's
