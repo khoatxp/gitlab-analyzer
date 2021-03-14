@@ -17,7 +17,7 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
     const [endDateTime, setEndDateTime] = useState<Date>(now);
 
     const onProjectSelect = (_event: any, value: GitLabProject) => {
-        setSelectedProjectId(value.id);
+        setSelectedProjectId(value ? value.id: 0); // Value will be null when the clear button is pressed. Ensure we have a number
     }
 
     return (
