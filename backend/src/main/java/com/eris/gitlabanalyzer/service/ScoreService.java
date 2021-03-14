@@ -23,24 +23,22 @@ public class ScoreService {
     private final CalculateDiffMetrics calculateDiffMetrics;
     private final MergeRequestRepository mergeRequestRepository;
     private final CommitRepository commitRepository;
-
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
-
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
+    private final String serverUrl;
+    private final String accessToken;
 
     @Autowired
     public ScoreService(DiffScoreCalculator diffScoreCalculator,
                         CalculateDiffMetrics calculateDiffMetrics, MergeRequestRepository mergeRequestRepository,
-                        CommitRepository commitRepository){
+                        CommitRepository commitRepository,
+                        @Value("${gitlab.SERVER_URL}") String serverUrl, // TODO Remove after server info is correctly retrieved based on internal projectId
+                        @Value("${gitlab.ACCESS_TOKEN}") String accessToken) {
         this.diffScoreCalculator = diffScoreCalculator;
         this.calculateDiffMetrics = calculateDiffMetrics;
         this.mergeRequestRepository = mergeRequestRepository;
         this.commitRepository = commitRepository;
-        gitLabService = new GitLabService(serverUrl, accessToken);
+        this.serverUrl = serverUrl;
+        this.accessToken = accessToken;
+        gitLabService = new GitLabService(this.serverUrl, this.accessToken);
     }
 
     // This will most likely change as we update how we retrieve diff's
@@ -58,6 +56,7 @@ public class ScoreService {
         for( MergeRequest mr : mergeRequests){
             totalScore += diffScoreCalculator.calculateScoreMerge(mr.getId());
         }
+
         return totalScore;
     }
 
@@ -81,7 +80,5 @@ public class ScoreService {
         }
         return totalScore;
     }
-
-
 
 }

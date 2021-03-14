@@ -1,117 +1,68 @@
-import {Box, LinearProgress, TextField, Typography} from "@material-ui/core";
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
 import CardLayout from "../../../components/layout/CardLayout";
-import AppDateTimePicker from "../../../components/app/AppDateTimePicker";
-import AppButton from "../../../components/app/AppButton";
 import {GitLabProject} from "../../../interfaces/GitLabProject";
-import Autocomplete from "@material-ui/lab/Autocomplete";
 import AuthView from "../../../components/AuthView";
 import {AuthContext} from "../../../components/AuthContext";
 import {useSnackbar} from 'notistack';
+import ProjectSelect from "../../../components/ProjectSelect";
+import LoadingBar from "../../../components/LoadingBar";
 import {formatISO} from "date-fns";
 
 const index = () => {
+    const router = useRouter();
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
-    const now = new Date();
     const [projects, setProjects] = useState<GitLabProject[]>([]);
-    const [selectedProjectId, setSelectedProjectId] = useState<number>(0);
-    const [startDateTime, setStartDateTime] = useState<Date>(new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()));
-    const [endDateTime, setEndDateTime] = useState<Date>(now);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const router = useRouter();
+    const [itemBeingLoaded, setItemBeingLoaded] = useState<string>('');
     const {serverId} = router.query;
 
     useEffect(() => {
-        if (router.isReady) {
-            axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/${serverId}/projects`, getAxiosAuthConfig())
-                .then((resp: AxiosResponse) => {
-                    setProjects(resp.data);
-                    setIsLoading(false);
-                }).catch(() => {
-                enqueueSnackbar('Failed to get server projects.', {variant: 'error',});
-            });
-        }
+        loadProjects();
     }, [serverId]);
 
-    let loadingBar = null;
-    if (isLoading) {
-        loadingBar = <LoadingBar/>;
+    const loadProjects = () => {
+        // TODO need to pass serverId into this call to get the correct gitlab url and access code from db
+        // when that information is available in db
+        setItemBeingLoaded("Projects");
+        axios
+            .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/${serverId}/projects`, getAxiosAuthConfig())
+            .then((resp: AxiosResponse) => {
+                setProjects(resp.data);
+                setIsLoading(false);
+            }).catch(() => {
+            enqueueSnackbar('Failed to get server projects.', {variant: 'error',});
+        });
     }
 
-    const onProjectSelect = (_event: any, value: GitLabProject) => {
-        setSelectedProjectId(value.id);
-    }
+    const handleAnalyze = (projectIds: number[], startDateTime: Date, endDateTime: Date) => {
+        // Display loading bar again
+        setItemBeingLoaded("Analysis");
+        setIsLoading(true);
 
-    const onStartDateTimeSelect = (start: Date) => {
-        setStartDateTime(start);
-    }
-
-    const onEndDateTimeSelect = (end: Date) => {
-        setEndDateTime(end);
-    }
-
-    const onAnalyzeClicked = () => {
+        // Make callout and redirect after it is done. Note that the API call may take a while.
         const start = formatISO(startDateTime);
         const end = formatISO(endDateTime);
-        router.push(`/project/${selectedProjectId}/code?startDateTime=${start}&endDateTime=${end}`);
+        const dateQuery = `startDateTime=${start}&endDateTime=${end}`;
+        axios
+            .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
+            .then(() => {
+                router.push(`/project/${projectIds[0]}/overview?${dateQuery}`);
+            }).catch(() => {
+            enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});
+        });
     }
 
     return (
         <AuthView>
             <CardLayout backLink={"/server"} logoType="header">
-                {loadingBar}
-                {!isLoading && <>
-                    <Autocomplete
-                        id="project-select"
-                        onChange={onProjectSelect}
-                        options={projects}
-                        getOptionLabel={(proj) => proj.name_with_namespace}
-                        renderInput={(params) => <TextField {...params} label="Search Projects" variant="outlined"/>}
-                    />
-
-                    <Box
-                        marginLeft="5px"
-                        marginRight="5px"
-                        marginTop="10px"
-                        color="white"
-                        boxShadow={0}
-                        width="56vw"
-                        minWidth="260px"
-                        display="flex"
-                        flexDirection="column"
-                        justifyContent="column"
-                        alignItems="column"
-                    >
-                        <AppDateTimePicker
-                            onStartDateTimeChange={onStartDateTimeSelect}
-                            onEndDateTimeChange={onEndDateTimeSelect}
-                            startDateTime={startDateTime}
-                            endDateTime={endDateTime}
-                        />
-                    </Box>
-                    <Box
-                        alignSelf="center"
-                        marginTop="10px">
-                        <AppButton color="primary" disabled={selectedProjectId === 0}
-                                   onClick={onAnalyzeClicked}>Analyze</AppButton>
-                    </Box>
-                </>}
+                {isLoading && <LoadingBar itemBeingLoaded={itemBeingLoaded}/>}
+                {!isLoading && <ProjectSelect projects={projects} onAnalyzeClick={handleAnalyze}/>}
             </CardLayout>
         </AuthView>
     );
 };
-
-const LoadingBar = () => {
-    return <div>
-        <Typography variant={"body1"}>
-            Loading projects...
-        </Typography>
-        <LinearProgress/>
-    </div>;
-}
 
 export default index;
