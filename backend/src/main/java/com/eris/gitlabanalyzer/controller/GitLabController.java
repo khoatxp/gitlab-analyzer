@@ -1,9 +1,9 @@
 package com.eris.gitlabanalyzer.controller;
 
 import com.eris.gitlabanalyzer.model.gitlabresponse.*;
+import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import com.eris.gitlabanalyzer.service.AuthService;
 import com.eris.gitlabanalyzer.service.GitLabService;
-import com.eris.gitlabanalyzer.service.ProjectService;
 import com.eris.gitlabanalyzer.service.UserServerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -22,20 +22,26 @@ public class GitLabController {
 
     private final AuthService authService;
     private final UserServerService userServerService;
-    private final ProjectService projectService;
+    private final UserProjectPermissionService userProjectPermissionService;
+    private final ProjectRepository projectRepository;
 
     @Autowired
-    public GitLabController(AuthService authService, UserServerService userServerService, ProjectService projectService) {
+    public GitLabController(AuthService authService, UserServerService userServerService, UserProjectPermissionService userProjectPermissionService, ProjectRepository projectRepository) {
         this.authService = authService;
         this.userServerService = userServerService;
-        this.projectService = projectService;
+        this.userProjectPermissionService = userProjectPermissionService;
+        this.projectRepository = projectRepository;
     }
 
     public GitLabService initGitLabService(Principal principal, Long projectId) {
         var user = authService.getLoggedInUser(principal);
-        var project = projectService.getProject(projectId).orElseThrow(()
-                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find Project."));
+        var project = projectRepository.findProjectById(projectId).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find project."));
         var server = project.getServer();
+        boolean hasPermission = userProjectPermissionService.userHasPermissionToProject(user, server, project);
+        if (!hasPermission) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User don't have permission to access requested project");
+        }
         var userServer = userServerService.getUserServer(user, server.getId()).orElseThrow(()
                 -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find UserServer."));
         var gitLabService = new GitLabService(userServer.getServer().getServerUrl(), userServer.getAccessToken());
