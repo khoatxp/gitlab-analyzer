@@ -16,6 +16,7 @@ import MergeRequestsScoreGraph from "../components/graphs/MergeRequestsScoreGrap
 import TotalCountGraph from "../components/graphs/TotalCountGraph";
 import TotalScoreGraph from "../components/graphs/TotalScoreGraph";
 import EmptyGraph from "../components/graphs/EmptyGraph";
+import {ScoreDigest} from "../interfaces/ScoreDigest";
 
 const GreenCheckbox = withStyles({
     root: {
@@ -111,6 +112,8 @@ const CodeAnalysis = () => {
     const [mergeRequestScore, setMergeRequestScore] = React.useState<number>();
     const [commitScore, setCommitScore] = React.useState<number>();
 
+    const [scoreDigest, setScoreDigest] = React.useState<ScoreDigest[]>();
+
     const [checkboxState, setCheckboxState] = React.useState({
         checkedCommitForGraphA: true,
         checkedMergeRequestForGraphA: true,
@@ -154,6 +157,14 @@ const CodeAnalysis = () => {
                     setCommitScore(resp.data);
                 }).catch(() => {
                     enqueueSnackbar('Failed to get commits score.', {variant: 'error',});
+            });
+
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/score_digest/?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                .then((resp: AxiosResponse) => {
+                    setScoreDigest(resp.data);
+                }).catch(() => {
+                enqueueSnackbar('Failed to get score digest.', {variant: 'error',});
             });
         }
     }, [projectId]);

@@ -8,11 +8,16 @@ import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
 import com.eris.gitlabanalyzer.repository.CommitRepository;
 import com.eris.gitlabanalyzer.repository.MergeRequestRepository;
+import com.eris.gitlabanalyzer.viewmodel.ScoreDigest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ScoreService {
@@ -75,6 +80,33 @@ public class ScoreService {
             totalScore += diffScoreCalculator.calculateScoreMerge(commit.getId());
         }
         return totalScore;
+    }
+
+    public List<ScoreDigest> getDailyScoreDigest(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        var digests = new ArrayList<ScoreDigest>();
+
+        var start = startDateTime;
+        var end = startDateTime.truncatedTo(ChronoUnit.DAYS).plusDays(1);
+
+        while (start.isBefore(endDateTime)) {
+
+            if (end.isAfter(endDateTime)) {
+                end = endDateTime;
+            }
+
+            var utcStart = start.withOffsetSameInstant(ZoneOffset.UTC);
+            var utcEnd = end.withOffsetSameInstant(ZoneOffset.UTC);
+
+            // Get total score for one day
+            var commitScore = getTotalCommitDiffScore(projectId, utcStart, utcEnd);
+            var mergeScore = getTotalMergeDiffScore(projectId, utcStart, utcEnd);
+
+            digests.add(new ScoreDigest(Double.valueOf(commitScore), Double.valueOf(mergeScore), start.toLocalDate()));
+            start = end;
+            end = end.plusDays(1);
+        }
+
+        return digests;
     }
 
 }

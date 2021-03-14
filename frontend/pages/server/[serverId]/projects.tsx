@@ -20,7 +20,9 @@ const index = () => {
     const {serverId} = router.query;
 
     useEffect(() => {
-        loadProjects();
+        if (router.isReady) {
+            loadProjects();
+        }
     }, [serverId]);
 
     const loadProjects = () => {
