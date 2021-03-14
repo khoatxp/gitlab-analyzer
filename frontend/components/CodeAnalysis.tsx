@@ -122,7 +122,7 @@ const CodeAnalysis = () => {
             <div className={classes.outerContainer}>
                 <div className={classes.container1}>
                     <div className={classes.container2}>
-                        <Avatar className={classes.avatarSize} variant='square'>R</Avatar>
+                        <Avatar className={classes.avatarSize} variant='rounded'>R</Avatar>
                         <div className={classes.textContainer1}>
                             <h1 className={classes.repoNameText}>{projectName}</h1>
                             <p className={classes.smallTextColor}>- {commitCount} Commits - {mergerRequestCount} Merge Request -</p>
@@ -133,12 +133,8 @@ const CodeAnalysis = () => {
                         <p className={classes.commitScoreText}>Commit Score: {commitScore}</p>
                     </div>
                 </div>
-                <div className={classes.graphContainer}>
-                    <CountGraph/>
-                </div>
-                <div className={classes.graphContainer}>
-                    <ScoreGraph/>
-                </div>
+                <CountGraph/>
+                <ScoreGraph/>
             </div>
         </>
     );
