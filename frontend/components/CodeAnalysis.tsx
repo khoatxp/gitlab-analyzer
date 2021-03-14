@@ -81,8 +81,6 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         graphContainer: {
             display: 'flex',
-            justifyContent: 'space-around',
-            margin: '10px 10px',
         },
         avatarSize: {
             width: theme.spacing(15),
