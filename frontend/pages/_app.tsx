@@ -2,10 +2,12 @@ import Head from "next/head";
 import {ThemeProvider} from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import theme from "../styles/theme";
-import "../styles/globals.css";
 import type {AppProps} from "next/app";
 import {SnackbarOrigin, SnackbarProvider} from 'notistack';
 import {AuthProvider} from "../components/AuthContext";
+import "../styles/globals.css";
+import 'react-diff-view/style/index.css';
+import "prism-themes/themes/prism-vs.css";
 
 const snackBarAnchorOrigin: SnackbarOrigin = {
     vertical: 'top',
