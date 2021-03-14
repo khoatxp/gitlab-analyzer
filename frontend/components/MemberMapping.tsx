@@ -6,9 +6,9 @@ import {CommitAuthor} from "../interfaces/CommitAuthor";
 import {GitManagementUser} from "../interfaces/GitManagementUser";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {
-    FormControl,
-    InputLabel,
-    Select
+    FormControl, Icon,
+    InputLabel, Link,
+    Select, Typography
 } from "@material-ui/core";
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
@@ -21,6 +21,7 @@ import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
 import AppButton from "./app/AppButton";
 import {useSnackbar} from "notistack";
+import NextLink from "next/link";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -53,6 +54,11 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         unmappedAuthorText:{
             color: 'red'
+        },
+        linkBack: {
+            display: 'flex',
+            alignItems: 'center',
+            flexWrap: 'wrap'
         }
     }),
 );
@@ -149,7 +155,14 @@ const MemberMapping = () => {
                 </TableBody>
                 <TableFooter>
                     <TableRow>
-                        <TableCell></TableCell>
+                        <TableCell>
+                            <NextLink href={`/project/${projectId}/overview`} passHref>
+                                <Link classes={{root:classes.linkBack}}>
+                                    <Icon fontSize="small">arrow_back</Icon>
+                                    <Typography variant="button"> BACK</Typography>
+                                </Link>
+                            </NextLink>
+                        </TableCell>
                         <TableCell>
                             <AppButton color="primary" onClick={handleSave}>Save changes</AppButton>
                         </TableCell>
