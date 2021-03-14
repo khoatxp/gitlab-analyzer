@@ -5,5 +5,5 @@ export default interface ScoreProfile{
     deleteWeight: number,
     syntaxWeight: number,
     commentsWeight: number,
-    extensionWeights: [{}],
+    extensionWeights: {},
 }

@@ -55,7 +55,7 @@ const Popup = (props) => {
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
-    const[saveArray, setSaveArray] = useState<{}>({});
+    const[savedArray, setSavedArray] = useState<{}>({});
     const [extensionMap, setExtensionMap] = useState(new Map())
     const [newSyntaxWeight, setNewSyntaxWeight] = useState<number>()
     const [newCommentsWeight, setNewCommentsWeight] = useState<number>();
@@ -80,7 +80,7 @@ const Popup = (props) => {
 
     useEffect(() => {
         Array.from(extensionMap).map((x, index) => {
-            setSaveArray({...saveArray, [x[0]]:x[1]});
+            setSavedArray({...savedArray, [x[0]]:x[1]});
         })
         
     }, [extensionMap])
@@ -122,14 +122,14 @@ const Popup = (props) => {
         }
 
         if (router.isReady) {
-                    
+            
             const newProfile = {
                 name: newName,
                 lineWeight: newLineWeight,
                 deleteWeight: newDeleteWeight,
                 syntaxWeight: newSyntaxWeight,
                 commentsWeight: newCommentsWeight,
-                extensionWeights: setSaveArray,
+                extensionWeights: savedArray,
             }
 
             if (id != 0) {
@@ -166,11 +166,10 @@ const Popup = (props) => {
                     <form className={classes.root} onSubmit={handleSave}>
                         <div marginLeft={2} align="right">
                             <Box width={150}>
-                                <AppTextField label="name" value={newName} onChange={(e) => setNewName( e.target.value)} required/>
+                                <AppTextField label="Name" value={newName} onChange={(e) => setNewName( e.target.value)} required/>
                             </Box>
                         </div>
                         <Box display="flex" flexDirection="row" justifyContent="center" >
-                            {saveArray}
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="New Line" placeholder="Weight" 
                                 type="number" 
@@ -202,7 +201,8 @@ const Popup = (props) => {
                         </Box>
                         <DialogTitle id="extension-dialog-title" align="center">{"Extensions"}</DialogTitle>
                         <Box  display="flex" flexDirection="row" justifyContent="center" flexWrap="wrap">
-                            {Array.from(extensionMap).map((x, index) => {
+                            {extensionMap && extensionMap.size > 0 ?
+                            Array.from(extensionMap).map((x, index) => {
                                 return (
 
                                     <Box
@@ -232,7 +232,7 @@ const Popup = (props) => {
                                         </div>
                                     </Box>
                                 );
-                            })}
+                            }): "No extensions set for this Profile"}
                         </Box>
                         <div align="start">
                             <IconButton edge="start" aria-label="addextension" onClick={handleAddExtension}>
@@ -276,7 +276,7 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                 .then((resp: AxiosResponse) => {
                     setProfiles(resp.data);
                 }).catch(() => {
-                    enqueueSnackbar('Failed to delete score profile', {variant: 'error',});
+                    enqueueSnackbar('Failed to retrieve score profiles', {variant: 'error',});
                 })
         }
     });
@@ -299,11 +299,11 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
         setDeleteWeight(Profile.deleteWeight);
         setLineWeight(Profile.lineWeight);
         setSyntaxWeight(Profile.syntaxWeight);
-        Object.keys(Profile.extensionWeights).forEach(function(key) {
-            extensionWeights.push(key);
-            extensionWeights.push(Profile.extensionWeights[key]);
-            
-        });
+        //Object.keys(Profile.extensionWeights).forEach(function(key) {
+        //    extensionWeights.push(key);
+        //    extensionWeights.push(Profile.extensionWeights[key]);
+        //    
+        //});
         
         setOpen(true);
     };
