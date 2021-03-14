@@ -55,7 +55,8 @@ const Popup = (props) => {
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
-    const [extensionList, setExtensionList] = useState<string,number[]>([{extension: "", weight: 0}]);
+
+    const extensionMap = new Map();
     const [newSyntaxWeight, setNewSyntaxWeight] = useState<number>()
     const [newCommentsWeight, setNewCommentsWeight] = useState<number>();
     const [newName, setNewName] = useState<string>(name);
@@ -68,39 +69,44 @@ const Popup = (props) => {
         setNewDeleteWeight(deleteWeight);
         setNewLineWeight(lineWeight);
         setNewSyntaxWeight(syntaxWeight);
-        setExtensionList(extensionWeights);
+        for (let i = 0; i < extensionWeights.length; i+=2) {
+            const key = extensionWeights[i];
+            const value = extensionWeights[i+1];
+            extensionMap.set(key,value);
+        
+        }       
     },[open])
 
 
     const close = () => {
+        extensionMap.clear();
         handleClose();
     };
 
     const handleAddExtension = () => {
-        setExtensionList([...extensionList, { extension: "", weight: 0 }]);
+        extensionMap.set('','');
     };
 
-    const handleRemoveExtension = index => {
-        const list = [...extensionList];
-        list.splice(index, 1);
-        setExtensionList(list);
+    const handleRemoveExtension = (extension) => {
+       extensionMap.delete(extension)
     };
 
-    const handleExtensionChange = (e, index) => {
-        const {object, value} = e.target;
-        const list = [...extensionList];
-        list[index][object] = value;
-        setExtensionList(list);
+    const handleExtensionChange = (oldExtension, newExtension ) => {
+        var weight = extensionMap.get(oldExtension);
+        extensionMap.delete(oldExtension);
+        extensionMap.set(newExtension, weight);
+
     };
+
+    const handleWeightChange = (extension, weight) => {
+        extensionMap.set(extension,weight);
+    }
+
 
     const handleSave = () => {
 
         if (router.isReady) {
 
-            const ExtensionsMap = new Map();
-           // extensionList.map(element => {
-           //     ExtensionsMap.set(element.extension, element.weight)
-           // });
 
             const newProfile = {
                 name: newName,
@@ -108,7 +114,7 @@ const Popup = (props) => {
                 deleteWeight: newDeleteWeight,
                 syntaxWeight: newSyntaxWeight,
                 commentsWeight: newCommentsWeight,
-                extensionWeights: ExtensionsMap
+                extensionWeights: extensionMap,
             }
 
             if (id != 0) {
@@ -164,7 +170,7 @@ const Popup = (props) => {
                         </Box>
                         <DialogTitle id="extension-dialog-title" align="center">{"Extensions"}</DialogTitle>
                         <Box  display="flex" flexDirection="row" justifyContent="center" flexWrap="wrap">
-                            {extensionList.map((x, i) => {
+                            {Array.from(extensionMap).map((x, index) => {
                                 return (
 
                                     <Box
@@ -176,11 +182,11 @@ const Popup = (props) => {
                                         justifyContent="column"
                                         alignItems="center"
                                     >
-                                        <AppTextField label="extension" value={x.extension} onChange={e => handleExtensionChange(e, i)}/>
-                                        <AppTextField label="weight" value={x.weight} onChange={e => handleExtensionChange(e, i)}/>
+                                        <AppTextField label="extension" value={x[0]} onChange={(e) => handleExtensionChange(x[0], e.target.value)} inputProps={{ style: { textTransform: "lowercase" } }}/>
+                                        <AppTextField label="weight" value={x[1]} onChange={(e) => handleWeightChange(x[0], e.target.value) } type="number"/>
                                         <div>
-                                            {extensionList.length !== 1 &&
-                                            <IconButton edge="center" aria-label="deleteextension" onClick={()=>handleRemoveExtension(i)}>
+                                            {extensionMap.size !== 1 &&
+                                            <IconButton edge="center" aria-label="deleteextension" onClick={()=>handleRemoveExtension(x[0])}>
                                                 <DeleteIcon style={{ fontSize: "25px", color: "grey" }} />
                                             </IconButton>}
                                         </div>
@@ -216,7 +222,7 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
     const {enqueueSnackbar} = useSnackbar();
 
     const [id,setId] = useState<number>()
-    const [extensionWeights, setExtensionWeights] = useState<string,number[]>([{extension: "", weight: 0}]);
+    var extensionWeights = []
     const [syntaxWeight, setSyntaxWeight] = useState<number>()
     const [commentsWeight, setCommentsWeight] = useState<number>();
     const [name, setName] = useState<string>()
@@ -242,7 +248,7 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
         setDeleteWeight();
         setLineWeight();
         setSyntaxWeight();
-        setExtensionWeights([{extension: "", weight: 0}]);
+        extensionWeights.length = 0;
         setOpen(true);
     };
 
@@ -253,7 +259,12 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
         setDeleteWeight(Profile.deleteWeight);
         setLineWeight(Profile.lineWeight);
         setSyntaxWeight(Profile.syntaxWeight);
-        setExtensionWeights(...Profile.extensionWeights, {extension: "", weight: 0})
+        Object.keys(Profile.extensionWeights).forEach(function(key) {
+            extensionWeights.push(key);
+            extensionWeights.push(Profile.extensionWeights[key]);
+            
+        });
+        
         setOpen(true);
     };
 
@@ -283,13 +294,14 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                     value={profile}
                     onChange={setProfile}
                     isLoading= "...loading"
-                    max-height={20}
+                    maxMenuHeight = {200}
                     MenuProps={{
-                        getContentAnchorEl: null,
+                        getContentAnchorEl: null,                     
                         anchorOrigin: {
                           vertical: "bottom",
                           horizontal: "left",
                         }
+                        
                     }}
                 >
                     {profiles.map(profile => (
