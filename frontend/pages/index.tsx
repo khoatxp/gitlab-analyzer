@@ -1,15 +1,17 @@
-import { Typography } from "@material-ui/core";
 import React, {useEffect} from "react";
-import NavBar from "../components/NavBar";
-import AuthView from "../components/AuthView";
 import {useRouter} from "next/router";
+import {AuthContext} from "../components/AuthContext";
+import AuthView from "../components/AuthView";
 
 export default function Home() {
+    const {user} = React.useContext(AuthContext);
     // navigate to servers page because that is the start of the user flow
     const router = useRouter();
     useEffect(() => {
-        router.push(`/server`)
+        if(user !== null) {
+            router.push(`/server`)
+        }
     });
 
-    return null;
+    return <AuthView>{null}</AuthView>
 }
