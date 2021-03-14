@@ -55,8 +55,8 @@ const Popup = (props) => {
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
-
-    const extensionMap = new Map();
+    const[saveArray, setSaveArray] = useState<{}>({});
+    const [extensionMap, setExtensionMap] = useState(new Map())
     const [newSyntaxWeight, setNewSyntaxWeight] = useState<number>()
     const [newCommentsWeight, setNewCommentsWeight] = useState<number>();
     const [newName, setNewName] = useState<string>(name);
@@ -74,8 +74,16 @@ const Popup = (props) => {
             const value = extensionWeights[i+1];
             extensionMap.set(key,value);
         
-        }       
+        }
+        
     },[open])
+
+    useEffect(() => {
+        Array.from(extensionMap).map((x, index) => {
+            setSaveArray({...saveArray, [x[0]]:x[1]});
+        })
+        
+    }, [extensionMap])
 
 
     const close = () => {
@@ -84,37 +92,44 @@ const Popup = (props) => {
     };
 
     const handleAddExtension = () => {
-        extensionMap.set('','');
+        setExtensionMap(prev => new Map([...prev, ["", ""]]))
     };
 
     const handleRemoveExtension = (extension) => {
-       extensionMap.delete(extension)
+        setExtensionMap((prev) => {
+            const newMap = new Map(prev);
+            newMap.delete(extension);
+            return newMap;
+        });
     };
 
     const handleExtensionChange = (oldExtension, newExtension ) => {
         var weight = extensionMap.get(oldExtension);
-        extensionMap.delete(oldExtension);
-        extensionMap.set(newExtension, weight);
-
+        setExtensionMap(prev => new Map([...prev, [newExtension, weight]]))
+        handleRemoveExtension(oldExtension);     
     };
 
     const handleWeightChange = (extension, weight) => {
-        extensionMap.set(extension,weight);
+        setExtensionMap(prev => new Map([...prev, [extension, weight]]))
     }
 
 
     const handleSave = () => {
 
+        if(newName==""){
+            enqueueSnackbar('Profile must have a name', {variant: 'error',});
+            return;
+        }
+
         if (router.isReady) {
-
-
+                    
             const newProfile = {
                 name: newName,
                 lineWeight: newLineWeight,
                 deleteWeight: newDeleteWeight,
                 syntaxWeight: newSyntaxWeight,
                 commentsWeight: newCommentsWeight,
-                extensionWeights: extensionMap,
+                extensionWeights: setSaveArray,
             }
 
             if (id != 0) {
@@ -151,21 +166,38 @@ const Popup = (props) => {
                     <form className={classes.root} onSubmit={handleSave}>
                         <div marginLeft={2} align="right">
                             <Box width={150}>
-                                <AppTextField label="name" value={newName} onChange={(e) => setNewName( e.target.value)}/>
+                                <AppTextField label="name" value={newName} onChange={(e) => setNewName( e.target.value)} required/>
                             </Box>
                         </div>
                         <Box display="flex" flexDirection="row" justifyContent="center" >
+                            {saveArray}
                             <Box marginLeft={1} marginRight={1}>
-                                <AppTextField label="New Line" placeholder="Weight" type="number" value={newLineWeight} onChange={(e) => setNewLineWeight(e.target.value)}/>
+                                <AppTextField label="New Line" placeholder="Weight" 
+                                type="number" 
+                                value={newLineWeight} 
+                                onChange={(e) => setNewLineWeight(e.target.value)}                               
+                                />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
-                                <AppTextField label="Deleting" placeholder="Weight" type="number" value={newDeleteWeight} onChange={(e) => setNewDeleteWeight(e.target.value)}/>
+                                <AppTextField label="Deleting" placeholder="Weight" 
+                                type="number" 
+                                value={newDeleteWeight} 
+                                onChange={(e) => setNewDeleteWeight(e.target.value)} 
+                                />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
-                                <AppTextField label="Syntax(e.g '}')" placeholder="Weight" type="number" value={newSyntaxWeight} onChange={(e) => setNewSyntaxWeight(e.target.value)}/>
+                                <AppTextField label="Syntax(e.g '}')" placeholder="Weight" 
+                                type="number" 
+                                value={newSyntaxWeight} 
+                                onChange={(e) => setNewSyntaxWeight(e.target.value)} 
+                                />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
-                                <AppTextField label="Comments" placeholder="Weight" type="number" value={newCommentsWeight} onChange={(e) => setNewCommentsWeight(e.target.value)}/>
+                                <AppTextField label="Comments" placeholder="Weight" 
+                                type="number" 
+                                value={newCommentsWeight} 
+                                onChange={(e) => setNewCommentsWeight(e.target.value)} 
+                                />
                             </Box>
                         </Box>
                         <DialogTitle id="extension-dialog-title" align="center">{"Extensions"}</DialogTitle>
@@ -182,8 +214,16 @@ const Popup = (props) => {
                                         justifyContent="column"
                                         alignItems="center"
                                     >
-                                        <AppTextField label="extension" value={x[0]} onChange={(e) => handleExtensionChange(x[0], e.target.value)} inputProps={{ style: { textTransform: "lowercase" } }}/>
-                                        <AppTextField label="weight" value={x[1]} onChange={(e) => handleWeightChange(x[0], e.target.value) } type="number"/>
+                                        <AppTextField label="extension" 
+                                        value={x[0]} 
+                                        onChange={(e) => handleExtensionChange(x[0], e.target.value)} 
+                                        />
+                                        <AppTextField label="weight" 
+                                        value={x[1]} 
+                                        onChange={(e) => handleWeightChange(x[0], e.target.value) } 
+                                        type="number"
+                                        />
+
                                         <div>
                                             {extensionMap.size !== 1 &&
                                             <IconButton edge="center" aria-label="deleteextension" onClick={()=>handleRemoveExtension(x[0])}>
