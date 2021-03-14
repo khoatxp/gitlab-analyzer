@@ -2,8 +2,12 @@ package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
 import java.util.Objects;
+import lombok.*;
 
-
+@Getter
+@Setter
+@ToString
+@Builder
 @Entity(name = "UserProjectPermission")
 @Table(name = "user_project_permission")
 public class UserProjectPermission {
@@ -23,50 +27,4 @@ public class UserProjectPermission {
     @JoinColumn(name = "server_id")
     private Server server;
 
-    public UserProjectPermission() {
-    }
-
-    public UserProjectPermission(User user, Project project, Server server) {
-        this.user = user;
-        this.project = project;
-        this.server = server;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public Server getServer() {
-        return server;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    public void setServer(Server server) {
-        this.server = server;
-    }
-
-    @Override
-    public String toString() {
-        return "UserProjectPermission{" +
-                "id=" + id +
-                ", user=" + user +
-                ", project=" + project +
-                ", server=" + server +
-                '}';
-    }
 }
