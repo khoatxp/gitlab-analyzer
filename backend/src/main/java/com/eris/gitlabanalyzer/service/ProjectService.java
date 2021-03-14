@@ -31,15 +31,18 @@ public class ProjectService {
     private String accessToken;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository, ServerRepository serverRepository,
-                          UserServerRepository userServerRepository, UserProjectPermissionRepository userProjectPermissionRepository) {
+    public ProjectService(ProjectRepository projectRepository, ServerRepository serverRepository, UserServerRepository userServerRepository, UserProjectPermissionRepository userProjectPermissionRepository) {
         this.projectRepository = projectRepository;
         this.serverRepository = serverRepository;
         this.userServerRepository = userServerRepository;
         this.userProjectPermissionRepository = userProjectPermissionRepository;
     }
 
-    public void setServerUrlAndAccessToken(String serverUrl, String accessToken) {
+    public ProjectService(ProjectRepository projectRepository, ServerRepository serverRepository, UserServerRepository userServerRepository, UserProjectPermissionRepository userProjectPermissionRepository, String serverUrl, String accessToken) {
+        this.projectRepository = projectRepository;
+        this.serverRepository = serverRepository;
+        this.userServerRepository = userServerRepository;
+        this.userProjectPermissionRepository = userProjectPermissionRepository;
         this.serverUrl = serverUrl;
         this.accessToken = accessToken;
     }
@@ -47,7 +50,6 @@ public class ProjectService {
     public Project saveProjectInfo(Long projectId) {
         // TODO use an internal projectId to find the correct server
         var gitLabService = new GitLabService(serverUrl, accessToken);
-
 
         var gitLabProject = gitLabService.getProject(projectId).block();
         Server server = serverRepository.findByServerUrlAndAccessToken(serverUrl, accessToken);
@@ -70,9 +72,7 @@ public class ProjectService {
                     project,
                     server
             );
-
             user.addProjectPermission(userProjectPermission);
-
         } else {
             throw new AccessDeniedException("Corresponding UserServer row does not exist in DB.");
         }
@@ -143,9 +143,5 @@ public class ProjectService {
 
     public List<Project> getProjects() {
         return projectRepository.findAll();
-    }
-
-    public Optional<Project> getProject(Long projectId) {
-        return projectRepository.findById(projectId);
     }
 }
