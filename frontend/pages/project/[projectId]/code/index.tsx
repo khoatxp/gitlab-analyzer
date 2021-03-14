@@ -10,15 +10,17 @@ import {useSnackbar} from "notistack";
 import DiffViewer from "../../../../components/diff/DiffViewer";
 import {FileChange} from "../../../../interfaces/GitLabFileChange";
 import MergeRequestList from "../../../../components/diff/MergeRequestList";
+import CommitList from "../../../../components/diff/CommitList";
+import {Commit} from "../../../../interfaces/GitLabCommit";
 
 const index = () => {
     const router = useRouter();
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const [mergeRequests, setMergeRequests] = React.useState<MergeRequest[]>([]);
-    const [selectedMergeRequest, setSelectedMergeRequest] = React.useState<MergeRequest | null>(null);
+    const [commits, setCommits] = React.useState<Commit[]>([]);
     const [fileChanges, setFileChanges] = React.useState<FileChange[]>([]);
-    const { projectId, startDateTime, endDateTime } =  router.query;
+    const {projectId, startDateTime, endDateTime} = router.query;
 
     useEffect(() => {
         if (router.isReady) {
@@ -27,28 +29,40 @@ const index = () => {
                 .then((resp: AxiosResponse) => {
                     setMergeRequests(resp.data);
                 }).catch(() => {
-                    enqueueSnackbar("Failed to load data", {variant: 'error'});
-                });
+                enqueueSnackbar("Failed to load data", {variant: 'error'});
+            });
         }
     }, [projectId]);
 
-    useEffect(() => {
-        // Ensure merge requests exist
-        if (selectedMergeRequest === null) { return; }
-
-        console.log("GETTING NEW ONES")
+    const fetchDiffDataFromUrl = (url: string) => {
         axios
-            .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${selectedMergeRequest.iid}/diff`, getAxiosAuthConfig())
+            .get(url, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
                 setFileChanges(resp.data);
             }).catch(() => {
-                enqueueSnackbar("Failed to load data", {variant: 'error'});
-            });
-    }, [selectedMergeRequest]);
+            enqueueSnackbar("Failed to load data", {variant: 'error'});
+        });
+    };
+
+    const fetchCommitData = (mergeRequest: MergeRequest) => {
+        axios
+            .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${mergeRequest.iid}/commits`, getAxiosAuthConfig())
+            .then((resp: AxiosResponse) => {
+                console.log(resp.data);
+                setCommits(resp.data);
+            }).catch(() => {
+            enqueueSnackbar("Failed to load data", {variant: 'error'});
+        });
+    }
 
     const handleSelectMergeRequest = (mergeRequest: MergeRequest) => {
-        setSelectedMergeRequest(mergeRequest);
-    }
+        fetchCommitData(mergeRequest);
+        // fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${mergeRequest.iid}/diff`);
+    };
+
+    const handleSelectCommit = (commit: Commit) => {
+        fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${commit.id}/diff`);
+    };
 
     return (
         <AuthView>
@@ -57,6 +71,8 @@ const index = () => {
                     mergeRequests={mergeRequests}
                     handleSelectMergeRequest={handleSelectMergeRequest}
                 />
+
+                <CommitList commits={commits} handleSelectCommit={handleSelectCommit}/>
                 {fileChanges.length > 0 && <DiffViewer fileChanges={fileChanges}/>}
             </MenuLayout>
         </AuthView>
