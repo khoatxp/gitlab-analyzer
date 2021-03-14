@@ -13,5 +13,6 @@ export default function Home() {
         }
     });
 
-    return <AuthView>{null}</AuthView>
+    // Don't need to display anything, page is meant only to redirect
+    return <AuthView>{}</AuthView>
 }
