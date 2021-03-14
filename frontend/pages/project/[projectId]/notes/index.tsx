@@ -51,10 +51,6 @@ enum NoteType {
 
 const NotesPage = () => {
     const {enqueueSnackbar} = useSnackbar();
-    const router = useRouter();
-    const {getAxiosAuthConfig} = React.useContext(AuthContext);
-    const {projectId, startDateTime, endDateTime} = router.query;
-    const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`;
 
     const [mergeRequests, setMergeRequests] = useState<MergeRequest[]>([]);
     const [issues, setIssues] = useState<Issue[]>([]);
@@ -69,6 +65,11 @@ const NotesPage = () => {
     const handleSelectNoteType = (event: React.ChangeEvent<HTMLInputElement>) => {
         setNoteType(Number((event.target as HTMLInputElement).value));
     };
+
+    const {getAxiosAuthConfig} = React.useContext(AuthContext);
+    const router = useRouter();
+    const {projectId, startDateTime, endDateTime} = router.query;
+    const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`;
 
     useEffect(() => {
         handleSelectItem(0);

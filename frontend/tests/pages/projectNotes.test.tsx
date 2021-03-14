@@ -1,6 +1,7 @@
 import React from 'react';
 import Index from '../../pages/project/[projectId]/notes';
 import {mount, ReactWrapper} from "enzyme";
+import {act} from "react-dom/test-utils";
 
 describe("Project Notes", () =>{
     const useRouter = jest.spyOn(require('next/router'), 'useRouter');
@@ -12,13 +13,17 @@ describe("Project Notes", () =>{
 
     beforeEach(async()=>{
         mockEnqueue.mockImplementation(() => {return {enqueueSnackbar}});
-        useRouter.mockImplementationOnce(() => ({
+        useRouter.mockImplementation(() => ({
             query: { projectId: 'TestId', startDateTime: '2020-08-22T15:40-05:00', endDateTime:'2021-08-22T15:40-05:00' },
         }));
-        rend = mount(
-            <Index />
-        );
-        await Promise.resolve();
+       await act(async () => {
+            rend = mount(
+                <Index />
+            );
+            await Promise.resolve();
+        });
+
+
 
     })
 
