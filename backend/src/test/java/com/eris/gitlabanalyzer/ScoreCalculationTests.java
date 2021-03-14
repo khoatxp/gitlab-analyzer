@@ -3,7 +3,6 @@ package com.eris.gitlabanalyzer;
 import com.eris.gitlabanalyzer.dataprocessing.CalculateDiffMetrics;
 import com.eris.gitlabanalyzer.dataprocessing.DiffScoreCalculator;
 import com.eris.gitlabanalyzer.model.*;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
 import com.eris.gitlabanalyzer.repository.*;
 import com.eris.gitlabanalyzer.service.GitLabService;
 import org.junit.jupiter.api.BeforeAll;
@@ -97,10 +96,10 @@ class ScoreCalculationTests {
     void check_MergeDiff()  {
         long mergeId = 3L;
 
-        MergeRequest mergeRequest = new MergeRequest(mergeId, "testAuthor", "testTitle", startTime, "weburl", project, gitManagementUser);
+        MergeRequest mergeRequest = new MergeRequest(mergeId, "testAuthor", "testTitle", startTime, startTime, "weburl", project, gitManagementUser);
         mergeRequestRepository.save(mergeRequest);
 
-        calculateDiffMetrics.storeMetricsMerge(project.getId(), mergeRequest.getId());
+        calculateDiffMetrics.storeMetricsMerge(mergeRequest);
         double results = diffScoreCalculator.calculateScoreMerge(mergeRequest.getId());
         assertTrue((results > 0));
 
@@ -112,7 +111,8 @@ class ScoreCalculationTests {
         Commit commit = new Commit(sha, "testTitle", "Author", "email", startTime, "weburl", project);
         commitRepository.save(commit);
 
-        calculateDiffMetrics.storeMetricsCommit(project.getId(), commit.getId());
+
+        calculateDiffMetrics.storeMetricsCommit(commit);
         double results = diffScoreCalculator.calculateScoreCommit(commit.getId());
         assertTrue((results > 0));
 
@@ -127,7 +127,7 @@ class ScoreCalculationTests {
         double removedVale = 0.5;
         Long mergeId = 1L;
 
-        MergeRequest mergeRequest = new MergeRequest(mergeId, "testAuthor", "testTitle", startTime, "weburl", project, gitManagementUser);
+        MergeRequest mergeRequest = new MergeRequest(mergeId, "testAuthor", "testTitle", startTime, startTime, "weburl", project, gitManagementUser);
         mergeRequestRepository.save(mergeRequest);
 
         calculateDiffMetrics.testCalculateLines(diff, "java", mergeRequest);

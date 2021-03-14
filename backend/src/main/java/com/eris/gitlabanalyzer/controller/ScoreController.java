@@ -19,10 +19,9 @@ public class ScoreController {
         this.scoreService = scoreService;
     }
 
-    @GetMapping(path ="/projects/{projectId}/merge_request/{merge_request_id}/diff/score")
-    public double getMergeDiffScore (@PathVariable("projectId") Long projectId,
-                             @PathVariable("merge_request_id") Long merge_request_id){
-        return scoreService.getMergeDiffScore(projectId, merge_request_id);
+    @GetMapping(path ="/projects/merge_request/{merge_request_id}/diff/score")
+    public double getMergeDiffScore (@PathVariable("merge_request_id") Long merge_request_id){
+        return scoreService.getMergeDiffScore(merge_request_id);
     }
     @GetMapping(path ="/projects/{projectId}/merge_requests/score")
     public double getTotalMergeDiffScore (@PathVariable("projectId") Long projectId,
@@ -33,10 +32,9 @@ public class ScoreController {
         return scoreService.getTotalMergeDiffScore(projectId, startDateTime, endDateTime);
     }
 
-    @GetMapping(path ="/projects/{projectId}/commit/{commitId}/diff/score")
-    public double getCommitDiffScore (@PathVariable("projectId") Long projectId,
-                             @PathVariable("commitId") Long commitId){
-        return scoreService.getCommitDiffScore(projectId, commitId);
+    @GetMapping(path ="/projects/commit/{commitId}/diff/score")
+    public double getCommitDiffScore (@PathVariable("commitId") Long commitId){
+        return scoreService.getCommitDiffScore(commitId);
     }
     @GetMapping(path ="/projects/{projectId}/commits/score")
     public double getTotalCommitDiffScore (@PathVariable("projectId") Long projectId,

@@ -4,6 +4,8 @@ import com.eris.gitlabanalyzer.model.Commit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Repository
@@ -13,4 +15,8 @@ public interface CommitRepository extends JpaRepository<Commit,Long> {
 
     @Query("select c from Commit c where c.project.id = ?1")
     List<Commit> findAllByProjectId(Long projectId);
+
+    @Query("select c from Commit c where c.project.id = ?1 and c.mergedAt >= ?2 and c.mergedAt <= ?3")
+    List<Commit> findAllByProjectIdAndDateRange(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
+
 }

@@ -61,6 +61,12 @@ public class Commit {
     private OffsetDateTime createdAt;
 
     @Column(
+            name = "merged_at"
+
+    )
+    private OffsetDateTime mergedAt;
+
+    @Column(
             name = "web_url",
             nullable = false
 
@@ -152,6 +158,7 @@ public class Commit {
     public String getWebUrl() {
         return webUrl;
     }
+    public Project getProject(){return project;}
 
     public void setProject(Project project) {
         this.project = project;
@@ -163,6 +170,7 @@ public class Commit {
 
     public void setMergeRequest(MergeRequest mergeRequest) {
         this.mergeRequest = mergeRequest;
+        this.mergedAt = mergeRequest.getMergedAt();
     }
 
     public void addCommitComment(CommitComment commitComment) {

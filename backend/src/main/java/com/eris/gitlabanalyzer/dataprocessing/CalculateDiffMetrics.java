@@ -71,12 +71,10 @@ public class CalculateDiffMetrics {
         commentCharacters.put("py", new CommentCharacter("#", "\"\"\"", "\"\"\""));
     }
 
-    public void storeMetricsCommit(long projectId, long commitId){
+    public void storeMetricsCommit(Commit commit){
         var gitLabService = new GitLabService(serverUrl, accessToken);
-        if(fileScoreRepository.findByCommitId(commitId).isEmpty()){
-
-            Commit commit = commitRepository.findById(commitId).orElse(null);
-            Project project = projectRepository.findById(projectId).orElse(null);
+        if(fileScoreRepository.findByCommitId(commit.getId()).isEmpty()){
+            Project project = projectRepository.findById(commit.getProject().getId()).orElse(null);
             if(commit != null && project != null ){
                 Iterable<GitLabFileChange> commitDiff = gitLabService.getCommitDiff(project.getGitLabProjectId(), commit.getSha()).toIterable();
 
@@ -93,11 +91,10 @@ public class CalculateDiffMetrics {
         }
     }
 
-    public void storeMetricsMerge(long projectId, long mergeId){
-        if(fileScoreRepository.findByMergeId(mergeId).isEmpty()){
+    public void storeMetricsMerge(MergeRequest mergeRequest){
+        if(fileScoreRepository.findByMergeId(mergeRequest.getId()).isEmpty()){
             var gitLabService = new GitLabService(serverUrl, accessToken);
-            MergeRequest mergeRequest = mergeRequestRepository.findById(mergeId).orElse(null);
-            Project project = projectRepository.findById(projectId).orElse(null);
+            Project project = mergeRequest.getProject();
 
             if(mergeRequest != null && project != null){
                 Iterable<GitLabFileChange> merge = gitLabService.getMergeRequestDiff(project.getGitLabProjectId(), mergeRequest.getIid()).toIterable();
@@ -168,7 +165,8 @@ public class CalculateDiffMetrics {
                         } else{
                             updateTotal(action, lineTypes.comment, lineTotals);
                         }
-                        while (!line.contains(commentOperators.getBlockCommentEnd())) {
+                        // handle case where enters a comment but doesn't exit before end
+                        while (!line.contains(commentOperators.getBlockCommentEnd()) && lineNumber < lines.length - 1) {
                             lineNumber++;
                             line = lines[lineNumber];
                             action = getAction(line);

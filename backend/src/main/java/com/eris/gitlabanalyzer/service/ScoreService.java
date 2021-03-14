@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Service
 public class ScoreService {
@@ -43,40 +44,44 @@ public class ScoreService {
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public double getMergeDiffScore(Long projectId, Long mergeRequestId){
-        calculateDiffMetrics.storeMetricsMerge(projectId, mergeRequestId);
+    public double getMergeDiffScore( Long mergeRequestId){
         return diffScoreCalculator.calculateScoreMerge(mergeRequestId);
     }
 
-    // This will most likely change as we update how we retrieve diff's
+    public void saveMergeDiffMetrics(MergeRequest mergeRequest){
+        calculateDiffMetrics.storeMetricsMerge(mergeRequest);
+    }
+
     public double getTotalMergeDiffScore(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
-        Iterable<GitLabMergeRequest> mergeRequests = gitLabService.getMergeRequests(projectId, startDateTime, endDateTime).toIterable();
-        int totalScore = 0;
-        for( GitLabMergeRequest gitLabMergeRequest : mergeRequests){
-            MergeRequest mr = mergeRequestRepository.findByIidAndProjectId(gitLabMergeRequest.getIid(), projectId);
-            calculateDiffMetrics.storeMetricsMerge( projectId, mr.getId());
+        List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
+        double totalScore = 0;
+        for( MergeRequest mr : mergeRequests){
             totalScore += diffScoreCalculator.calculateScoreMerge(mr.getId());
         }
-
         return totalScore;
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public double getCommitDiffScore(Long projectId, Long commitId){
-        calculateDiffMetrics.storeMetricsCommit(commitId, projectId);
+    public double getCommitDiffScore(Long commitId){
+
         return diffScoreCalculator.calculateScoreCommit(commitId);
     }
 
+    public void saveCommitDiffMetrics(Commit commit){
+        calculateDiffMetrics.storeMetricsCommit(commit);
+    }
+
+
     // This will most likely change as we update how we retrieve diff's
     public double getTotalCommitDiffScore(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        Iterable<GitLabCommit> commits = gitLabService.getCommits(projectId, startDateTime, endDateTime).toIterable();
-        int totalScore = 0;
-        for (GitLabCommit gitLabCommit : commits) {
-            Commit commit = commitRepository.findByCommitShaAndProjectId(gitLabCommit.getSha(), projectId);
-            calculateDiffMetrics.storeMetricsMerge(projectId, commit.getId());
+        List<Commit> commits = commitRepository.findAllByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
+        double totalScore = 0;
+        for (Commit commit : commits) {
             totalScore += diffScoreCalculator.calculateScoreMerge(commit.getId());
         }
         return totalScore;
     }
+
+
 
 }
