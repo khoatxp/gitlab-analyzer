@@ -43,13 +43,13 @@ public class ScoreService {
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public int getMergeDiffScore(Long projectId, Long mergeRequestId){
+    public double getMergeDiffScore(Long projectId, Long mergeRequestId){
         calculateDiffMetrics.storeMetricsMerge(projectId, mergeRequestId);
         return diffScoreCalculator.calculateScoreMerge(mergeRequestId);
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public int getTotalMergeDiffScore(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+    public double getTotalMergeDiffScore(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
         Iterable<GitLabMergeRequest> mergeRequests = gitLabService.getMergeRequests(projectId, startDateTime, endDateTime).toIterable();
         int totalScore = 0;
         for( GitLabMergeRequest gitLabMergeRequest : mergeRequests){
@@ -62,13 +62,13 @@ public class ScoreService {
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public int getCommitDiffScore(Long projectId, Long commitId){
+    public double getCommitDiffScore(Long projectId, Long commitId){
         calculateDiffMetrics.storeMetricsCommit(commitId, projectId);
         return diffScoreCalculator.calculateScoreCommit(commitId);
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public int getTotalCommitDiffScore(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+    public double getTotalCommitDiffScore(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         Iterable<GitLabCommit> commits = gitLabService.getCommits(projectId, startDateTime, endDateTime).toIterable();
         int totalScore = 0;
         for (GitLabCommit gitLabCommit : commits) {

@@ -45,6 +45,12 @@ public class CalculateDiffMetrics {
         removed,
     }
 
+    public enum lineAction {
+        added,
+        removed,
+        unchanged,
+    }
+
     public CalculateDiffMetrics(FileScoreRepository fileScoreRepository,
                                 MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository,
                                 CommitRepository commitRepository){
@@ -78,7 +84,7 @@ public class CalculateDiffMetrics {
                 for(GitLabFileChange file : commitDiff){
                     String fileType = findFileType(file);
                     Map<lineTypes, Integer> fileCount = countLineTypes(file.getDiff(), fileType);
-                    FileScore fileScore = new FileScore(commit, fileType, file.getNewPath(),
+                    FileScore fileScore = new FileScore(commit, fileType.toLowerCase(), file.getNewPath(),
                             fileCount.getOrDefault(lineTypes.code, 0), fileCount.getOrDefault(lineTypes.syntax,0),
                             fileCount.getOrDefault(lineTypes.comment,0), fileCount.getOrDefault(lineTypes.removed,0));
                     fileScoreRepository.save(fileScore);
@@ -100,7 +106,7 @@ public class CalculateDiffMetrics {
                     String fileType = findFileType(file);
                     Map<lineTypes, Integer> fileCount = countLineTypes(file.getDiff(), fileType);
 
-                    FileScore fileScore = new FileScore(mergeRequest, fileType, file.getNewPath(),
+                    FileScore fileScore = new FileScore(mergeRequest, fileType.toLowerCase(), file.getNewPath(),
                             fileCount.getOrDefault(lineTypes.code, 0), fileCount.getOrDefault(lineTypes.syntax,0),
                             fileCount.getOrDefault(lineTypes.comment,0), fileCount.getOrDefault(lineTypes.removed,0));
 
@@ -137,46 +143,85 @@ public class CalculateDiffMetrics {
         Map<lineTypes, Integer> lineTotals = new HashMap<>();
         String[] lines = diff.split("\n");
 
-        // if no commentCharacter info exists defaults to nothing
-        CommentCharacter commentOperator = commentCharacters.getOrDefault(fileType, new CommentCharacter("","",""));
+        // if no commentCharacter info exists defaults to space which is trimmed at start of line parsing
+        CommentCharacter commentOperators = commentCharacters.getOrDefault(fileType, new CommentCharacter(" "," "," "));
 
         for(int lineNumber = 0; lineNumber < lines.length; lineNumber++){
-            String line = lines[lineNumber].replaceAll("\\s+","");
-            if(line.length() > 1 && !line.equals("\\Nonewlineatendoffile")) {
 
-                if (line.charAt(0) == '+') {
-                    line = line.substring(1);
-                    switch (typeOfLine(line, commentOperator)) {
-                        case code:
-                            lineTotals.put(lineTypes.code, lineTotals.getOrDefault(lineTypes.code, 0) + 1);
-                            //todo check if comment after code
-                            break;
-                        case comment:
-                            lineTotals.put(lineTypes.comment, lineTotals.getOrDefault(lineTypes.comment, 0) + 1);
-                            break;
-                        case blockComment:
-                            // todo check if just comment char on line
-                            lineTotals.put(lineTypes.comment, lineTotals.getOrDefault(lineTypes.comment, 0) + 1);
-                            while (!line.contains(commentOperator.getBlockCommentEnd())) {
-                                lineNumber++;
-                                line = lines[lineNumber].replaceAll("\\s+","");
-                                lineTotals.put(lineTypes.comment, lineTotals.get(lineTypes.comment) + 1);
-                            }
-                            //todo check if just comment char on line
-                            //todo check if code after comment
-                            break;
-                        case syntax:
-                            lineTotals.put(lineTypes.syntax, lineTotals.getOrDefault(lineTypes.syntax, 0) + 1);
-                            break;
-                    }
+            String line = lines[lineNumber];
+            lineAction action = getAction(line);
+            line = trimForEval(line, action);
 
-                } else if (line.charAt(0) == '-') {
-                    //TODO give proper weight to removing line
-                    lineTotals.put(lineTypes.removed, lineTotals.getOrDefault(lineTypes.removed, 0) + 1);
+            if(line.length() > 0 && !line.equals("\\Nonewlineatendoffile")) {
+
+                switch (typeOfLine(line, commentOperators)) {
+                    case code:
+                        updateTotal(action, lineTypes.code, lineTotals);
+                        break;
+                    case comment:
+                        updateTotal(action, lineTypes.comment, lineTotals);
+                        break;
+                    case blockComment:
+                        // handle case where line contains only comment operator
+                        if(commentOperators.getBlockCommentStart().equals(line)) {
+                            updateTotal(action, lineTypes.syntax, lineTotals);
+                        } else{
+                            updateTotal(action, lineTypes.comment, lineTotals);
+                        }
+                        while (!line.contains(commentOperators.getBlockCommentEnd())) {
+                            lineNumber++;
+                            line = lines[lineNumber];
+                            action = getAction(line);
+                            line = trimForEval(line, action);
+                            updateTotal(action, lineTypes.comment, lineTotals);
+                        }
+                        // handles case where comment operator is by itself on line
+                        if(line.startsWith(commentOperators.getBlockCommentEnd())&& action == lineAction.added) {
+                            updateTotal(action, lineTypes.syntax, lineTotals);
+                            lineTotals.put(lineTypes.comment, lineTotals.get(lineTypes.comment) - 1);
+                        }
+                        lineTypes secondType = isHybrid(line, commentOperators.getBlockCommentEnd());
+                        if(secondType != lineTypes.comment){
+                            updateTotal(action, secondType, lineTotals);
+                        }
+                        break;
+                    case syntax:
+                        updateTotal(action, lineTypes.syntax, lineTotals);
+                        break;
                 }
             }
         }
         return lineTotals;
+    }
+
+    private lineAction getAction(String line){
+        if(line.length() >= 2){
+            String startChar = line.substring(0,2);
+            if(startChar.equals("+ ")){
+                return lineAction.added;
+            } else if(startChar.equals("- ")){
+                return  lineAction.removed;
+            } else{
+                return lineAction.unchanged;
+            }
+        }
+        return  lineAction.unchanged;
+    }
+
+    private String trimForEval(String line, lineAction action){
+        line = line.replaceAll("\\s+","");
+        if(action != lineAction.unchanged){
+            line = line.substring(1);
+        }
+        return line;
+    }
+
+    private void updateTotal(lineAction action, lineTypes type,  Map<lineTypes, Integer> lineTotals){
+        if(action == lineAction.added){
+            lineTotals.put(type, lineTotals.getOrDefault(type, 0) + 1);
+        } else if(action == lineAction.removed){
+            lineTotals.put(lineTypes.removed, lineTotals.getOrDefault(lineTypes.removed, 0) + 1);
+        }
     }
 
     private lineTypes typeOfLine(String line, CommentCharacter commentOperator){
@@ -212,4 +257,18 @@ public class CalculateDiffMetrics {
         }
         return true;
     }
+
+    private lineTypes isHybrid(String line, String operator){
+        if(line.contains(operator) && !line.endsWith(operator)){
+           int commentEndIndex = line.indexOf(operator);
+           // add operator lengths so substring is exclusive of operator
+           String secondSection = line.substring(commentEndIndex + operator.length());
+           if(isSyntax(secondSection)){
+               return lineTypes.syntax;
+           }
+           return lineTypes.code;
+        }
+        return lineTypes.comment;
+    }
+
 }
