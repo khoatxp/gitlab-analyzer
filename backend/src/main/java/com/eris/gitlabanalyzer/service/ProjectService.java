@@ -9,7 +9,9 @@ import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -24,24 +26,27 @@ import java.util.stream.Collectors;
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final ServerRepository serverRepository;
-    private final GitLabService gitLabService;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
     String serverUrl;
 
+    // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public ProjectService(ProjectRepository projectRepository, ServerRepository serverRepository, GitLabService gitLabService) {
+    public ProjectService(ProjectRepository projectRepository, ServerRepository serverRepository) {
         this.projectRepository = projectRepository;
         this.serverRepository = serverRepository;
-        this.gitLabService = gitLabService;
     }
 
 
     public Project saveProjectInfo(Long projectId) {
-        Project project = projectRepository.findByGitlabProjectIdAndServerUrl(projectId,serverUrl);
-        if(project != null){
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
+
+        Project project = projectRepository.findByGitlabProjectIdAndServerUrl(projectId, serverUrl);
+        if (project != null) {
             return project;
         }
 
@@ -52,23 +57,25 @@ public class ProjectService {
                 gitLabProject.getName(),
                 gitLabProject.getNameWithNamespace(),
                 gitLabProject.getWebUrl(),
-                serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken)
+                serverRepository.findByServerUrlAndAccessToken(serverUrl, accessToken)
         );
 
         return projectRepository.save(project);
     }
 
     public RawTimeLineProjectData getTimeLineProjectData(Long gitLabProjectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
         var mergeRequests = gitLabService.getMergeRequests(gitLabProjectId, startDateTime, endDateTime);
 
         // for all items in mergeRequests call get commits
-            // for all items in commits call get diff
-            // for all items in merge request get diff
+        // for all items in commits call get diff
+        // for all items in merge request get diff
         var rawMergeRequestData = mergeRequests
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
-                .map((mergeRequest) -> getRawMergeRequestData(mergeRequest, gitLabProjectId))
-                .sorted((mr1, mr2) -> (int)(mr1.getGitLabMergeRequest().getIid() - mr2.getGitLabMergeRequest().getIid()));
+                .map((mergeRequest) -> getRawMergeRequestData(gitLabService, mergeRequest, gitLabProjectId))
+                .sorted((mr1, mr2) -> (int) (mr1.getGitLabMergeRequest().getIid() - mr2.getGitLabMergeRequest().getIid()));
 
 
         // for all commits NOT in merge commits get diff
@@ -78,7 +85,7 @@ public class ProjectService {
         var rawOrphanCommitData = orphanCommits
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
-                .map((commit) -> getRawCommitData(commit, gitLabProjectId))
+                .map((commit) -> getRawCommitData(gitLabService, commit, gitLabProjectId))
                 .sorted(Comparator.comparing(c -> c.getGitLabCommit().getCreatedAt()));
 
         var rawProjectData = new RawTimeLineProjectData(gitLabProjectId, startDateTime, endDateTime, rawMergeRequestData, rawOrphanCommitData);
@@ -87,24 +94,22 @@ public class ProjectService {
     }
 
 
-    private RawMergeRequestData getRawMergeRequestData(GitLabMergeRequest mergeRequest, Long gitLabProjectId) {
+    private RawMergeRequestData getRawMergeRequestData(GitLabService gitLabService, GitLabMergeRequest mergeRequest, Long gitLabProjectId) {
         var gitLabCommits = gitLabService.getMergeRequestCommits(gitLabProjectId, mergeRequest.getIid());
         var rawCommitData = gitLabCommits
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
-                .map((commit) -> getRawCommitData(commit, gitLabProjectId))
+                .map((commit) -> getRawCommitData(gitLabService, commit, gitLabProjectId))
                 .sorted(Comparator.comparing(c -> c.getGitLabCommit().getCreatedAt()));
 
         var gitLabDiff = gitLabService.getMergeRequestDiff(gitLabProjectId, mergeRequest.getIid());
 
-        var rawMergeRequestData = new RawMergeRequestData(rawCommitData, gitLabDiff, mergeRequest);
-        return rawMergeRequestData;
+        return new RawMergeRequestData(rawCommitData, gitLabDiff, mergeRequest);
     }
 
-    private RawCommitData getRawCommitData(GitLabCommit commit, Long gitLabProjectId) {
+    private RawCommitData getRawCommitData(GitLabService gitLabService, GitLabCommit commit, Long gitLabProjectId) {
         var changes = gitLabService.getCommitDiff(gitLabProjectId, commit.getSha());
-        var rawCommitData = new RawCommitData(commit, changes);
-        return rawCommitData;
+        return new RawCommitData(commit, changes);
     }
 
     private Mono<Set<String>> getMergeRequestCommitIds(Flux<RawMergeRequestData> mergeRequestData) {
@@ -119,5 +124,11 @@ public class ProjectService {
 
     public List<Project> getProjects() {
         return projectRepository.findAll();
+    }
+
+    public Project getProjectById(Long projectId) {
+        return projectRepository.findProjectById(projectId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found with id" + projectId)
+        );
     }
 }

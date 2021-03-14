@@ -10,7 +10,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Entity(name = "Project")
 @Table(
         name = "project",
-        uniqueConstraints={@UniqueConstraint(columnNames={"server_id", "project_id"})}
+        uniqueConstraints={@UniqueConstraint(columnNames={"server_id", "gitlab_project_id"})}
 )
 public class Project {
     @Id

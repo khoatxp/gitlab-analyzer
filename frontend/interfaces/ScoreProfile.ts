@@ -1,4 +1,4 @@
-export default interface ScoreProfile{
+export default interface ScoreProfile {
     id: number,
     name: string,
     lineWeight: number,

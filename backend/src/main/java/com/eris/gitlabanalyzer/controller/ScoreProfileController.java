@@ -18,7 +18,6 @@ public class ScoreProfileController {
         this.scoreProfileService = scoreProfileService;
     }
 
-
     @GetMapping
     public List<ScoreProfile> getScoreProfiles(){
         return scoreProfileService.getScoreProfiles();

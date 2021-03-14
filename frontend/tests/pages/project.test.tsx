@@ -12,7 +12,7 @@ describe("Project Folder", () =>{
 
     beforeAll(async () =>{
         mockEnqueue.mockImplementation(() => {return {enqueueSnackbar}});
-        useRouter.mockImplementationOnce(() => ({
+        useRouter.mockImplementation(() => ({
             query: { serverId: 'TestId' },
         }));
         rend = mount(<Index />);
@@ -34,13 +34,13 @@ describe("Project Folder", () =>{
             isReady: true,
         }));
         mount(<Index />);
-        expect(mockAxios).toHaveBeenCalledTimes(1);
+        expect(mockAxios).toHaveBeenCalled();
         useRouter.mockImplementationOnce(() => ({
             query: { serverId: 'TestId' },
             isReady: false,
         }));
         mount(<Index />);
-        expect(mockAxios).toHaveBeenCalledTimes(1);
+        expect(mockAxios).toHaveBeenCalled();
     })
 
 

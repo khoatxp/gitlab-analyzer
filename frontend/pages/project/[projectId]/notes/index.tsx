@@ -27,6 +27,8 @@ import {useRouter} from "next/router";
 import {AuthContext} from "../../../../components/AuthContext";
 import AuthView from "../../../../components/AuthView";
 import MenuLayout from "../../../../components/layout/menu/MenuLayout";
+import formatDate from "../../../../interfaces/dateFormatter";
+import {useSnackbar} from "notistack";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -48,11 +50,13 @@ enum NoteType {
 }
 
 const NotesPage = () => {
+    const {enqueueSnackbar} = useSnackbar();
     const router = useRouter();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const {projectId, startDateTime, endDateTime} = router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`;
 
+    const [selectedItem, setSelectedItem] = useState(0);
     const [mergeRequests, setMergeRequests] = useState<MergeRequest[]>([]);
     const [issues, setIssues] = useState<Issue[]>([]);
     const [notes, setNotes] = useState<Note[]>([]);
@@ -67,14 +71,15 @@ const NotesPage = () => {
         handleSelectItem(0);
     }, [noteType]);
 
-    const [selectedItem, setSelectedItem] = useState(0);
 
     const getMergeRequestNotes = (mergeRequestIid: number) => {
         axios
             .get(`${PROJECT_ID_URL}/merge_requests/${mergeRequestIid}/notes`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
                 setNotes(resp.data);
-            })
+            }).catch(() => {
+            enqueueSnackbar('Failed to get merge request notes.', {variant: 'error',});
+        });
     };
 
     const getIssueNotes = (issueIid: number) => {
@@ -82,7 +87,9 @@ const NotesPage = () => {
             .get(`${PROJECT_ID_URL}/issues/${issueIid}/notes`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
                 setNotes(resp.data);
-            });
+            }).catch(() => {
+            enqueueSnackbar('Failed to get issue notes.', {variant: 'error',});
+        });
     };
 
     const handleSelectItem = (
@@ -107,12 +114,16 @@ const NotesPage = () => {
                 .get(`${PROJECT_ID_URL}/merge_requests${dateQuery}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setMergeRequests(resp.data);
-                });
+                }).catch(() => {
+                enqueueSnackbar('Failed to get merge requests data.', {variant: 'error',});
+            });
             axios
                 .get(`${PROJECT_ID_URL}/issues${dateQuery}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setIssues(resp.data);
-                });
+                }).catch(() => {
+                enqueueSnackbar('Failed to get issues data.', {variant: 'error',});
+            });
         }
 
     }, [projectId]);
@@ -209,7 +220,7 @@ const Row = memo(({data, index, style}
         >
             <ListItemText
                 primary={item.title}
-                secondary={`#${item.iid} · opened ${item.created_at} by ${item.author.name}`}/>
+                secondary={`#${item.iid} · opened ${formatDate(item.created_at)} by ${item.author.name}`}/>
         </ListItem>
     );
 }, areEqual);
@@ -266,7 +277,7 @@ const NotesList = ({notes}: { notes: Note[] }) => {
                                     variant="body2"
                                     color="textSecondary"
                                 >
-                                    {`@${note.author.username} · ${note.created_at}`}
+                                    {`@${note.author.username} · ${formatDate(note.created_at)}`}
                                 </Typography>
                             </React.Fragment>}
                         secondary={note.body}/>
