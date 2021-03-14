@@ -1,8 +1,10 @@
 package com.eris.gitlabanalyzer.controller;
 
+import com.eris.gitlabanalyzer.model.MergeRequest;
 import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.RawTimeLineProjectData;
 import com.eris.gitlabanalyzer.service.AnalyticsService;
+import com.eris.gitlabanalyzer.service.MergeRequestService;
 import com.eris.gitlabanalyzer.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,10 +18,13 @@ import java.util.List;
 public class ProjectController {
     private final ProjectService projectService;
     private final AnalyticsService analyticsService;
+    private final MergeRequestService mergeRequestService;
+
     @Autowired
-    public ProjectController(ProjectService projectService, AnalyticsService analyticsService){
+    public ProjectController(ProjectService projectService, AnalyticsService analyticsService, MergeRequestService mergeRequestService){
         this.projectService = projectService;
         this.analyticsService = analyticsService;
+        this.mergeRequestService = mergeRequestService;
     }
 
 
@@ -39,12 +44,22 @@ public class ProjectController {
     }
 
     @PostMapping(path = "/analytics")
-    public void saveAllFromGitlab(
+    public List<Long> saveAllFromGitlab(
             @RequestBody List<Long> projectIdList,
             @RequestParam("startDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
-        analyticsService.saveAllFromGitlab(projectIdList, startDateTime, endDateTime);
+        return analyticsService.saveAllFromGitlab(projectIdList, startDateTime, endDateTime);
+    }
+
+    @GetMapping(path = "/{projectId}/merge_request")
+    public List<MergeRequest> getMergeRequestsByProjectId(
+            @PathVariable("projectId") Long projectId,
+            @RequestParam("startDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
+            @RequestParam("endDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
+        return mergeRequestService.getMergeRequestsByProjectId(projectId, startDateTime, endDateTime);
     }
 }
