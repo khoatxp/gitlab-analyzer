@@ -37,7 +37,7 @@ class Chart extends React.Component {
         return (
             <ResponsiveContainer width="100%" height={400} minWidth="0">
                 <BarChart
-                    width={900}
+                    width={1000}
                     height={350}
                     data={data}
                     margin={{ top: 8, right: 30, left: 20, bottom: 8 }}
