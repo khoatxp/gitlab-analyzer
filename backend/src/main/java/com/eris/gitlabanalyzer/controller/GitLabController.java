@@ -4,6 +4,7 @@ import com.eris.gitlabanalyzer.model.gitlabresponse.*;
 
 import com.eris.gitlabanalyzer.service.AuthService;
 import com.eris.gitlabanalyzer.service.GitLabService;
+import com.eris.gitlabanalyzer.service.ProjectService;
 import com.eris.gitlabanalyzer.service.UserServerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +24,7 @@ public class GitLabController {
 
     private final AuthService authService;
     private final UserServerService userServerService;
+    private final ProjectService projectService;
 
     // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
@@ -33,9 +35,10 @@ public class GitLabController {
     String accessToken;
 
     @Autowired
-    public GitLabController(AuthService authService, UserServerService userServerService) {
+    public GitLabController(AuthService authService, UserServerService userServerService, ProjectService projectService) {
         this.authService = authService;
         this.userServerService = userServerService;
+        this.projectService = projectService;
     }
 
     @GetMapping(path ="{serverId}/projects")
@@ -65,8 +68,10 @@ public class GitLabController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
         // TODO this endpoint needs to be removed or use an internal projectId to find the correct server that user owns
+        // TODO validate that the user has permissions for the server
+        var project = projectService.getProjectById(projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
-        return gitLabService.getMergeRequests(projectId, startDateTime, endDateTime);
+        return gitLabService.getMergeRequests(project.getGitLabProjectId(), startDateTime, endDateTime);
     }
 
     // TODO: currently there is no direct use for this endpoint, to be removed
@@ -94,26 +99,26 @@ public class GitLabController {
         return gitLabService.getCommits(projectId, startDateTime, endDateTime);
     }
 
-    // TODO: currently there is no direct use for this endpoint, to be removed
     @GetMapping(path ="/projects/{projectId}/commit/{sha}/diff")
     public Flux<GitLabFileChange> getCommitDiff(
             @PathVariable("projectId") Long projectId,
             @PathVariable("sha") String sha) {
 
-        // TODO this endpoint needs to be removed or use an internal projectId to find the correct server that user owns
+        // TODO validate that the user has permissions for the server
+        var project = projectService.getProjectById(projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
-        return gitLabService.getCommitDiff(projectId, sha);
+        return gitLabService.getCommitDiff(project.getGitLabProjectId(), sha);
     }
 
-    // TODO: currently there is no direct use for this endpoint, to be removed
     @GetMapping(path ="/projects/{projectId}/merge_request/{merge_request_iid}/diff")
     public Flux<GitLabFileChange> getMergeDiff(
             @PathVariable("projectId") Long projectId,
             @PathVariable("merge_request_iid") Long merge_request_iid) {
 
-        // TODO this endpoint needs to be removed or use an internal projectId to find the correct server that user owns
+        // TODO validate that the user has permissions for the server
+        var project = projectService.getProjectById(projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
-        return gitLabService.getMergeRequestDiff(projectId, merge_request_iid);
+        return gitLabService.getMergeRequestDiff(project.getGitLabProjectId(), merge_request_iid);
     }
 
     // Used in notes page for now

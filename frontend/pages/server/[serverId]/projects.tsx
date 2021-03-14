@@ -48,8 +48,9 @@ const index = () => {
         const dateQuery = `startDateTime=${start}&endDateTime=${end}`;
         axios
             .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
-            .then(() => {
-                router.push(`/project/${projectIds[0]}/overview?${dateQuery}`);
+            .then((res) => {
+                const analyzedInternalProjectId = res.data[0];
+                router.push(`/project/${analyzedInternalProjectId}/overview?${dateQuery}`);
             }).catch(() => {
             enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});
         });
