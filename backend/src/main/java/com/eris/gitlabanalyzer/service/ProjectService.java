@@ -8,6 +8,7 @@ import com.eris.gitlabanalyzer.repository.ServerRepository;
 import com.eris.gitlabanalyzer.repository.UserProjectPermissionRepository;
 import com.eris.gitlabanalyzer.repository.UserServerRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -72,6 +73,8 @@ public class ProjectService {
             project.addUserProjectPermission(userProjectPermission);
             server.addUserProjectPermission(userProjectPermission);
             user.addProjectPermission(userProjectPermission);
+        } else {
+            throw new AccessDeniedException("Corresponding UserServer row does not exist in DB.");
         }
 
         return projectRepository.save(project);
