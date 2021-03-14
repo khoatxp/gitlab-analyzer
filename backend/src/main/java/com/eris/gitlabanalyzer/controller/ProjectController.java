@@ -16,6 +16,7 @@ import java.util.List;
 public class ProjectController {
     private final ProjectService projectService;
     private final AnalyticsService analyticsService;
+    
     @Autowired
     public ProjectController(ProjectService projectService, AnalyticsService analyticsService){
         this.projectService = projectService;

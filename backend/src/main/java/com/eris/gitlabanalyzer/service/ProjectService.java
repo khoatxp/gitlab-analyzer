@@ -7,7 +7,7 @@ import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
 import com.eris.gitlabanalyzer.repository.UserProjectPermissionRepository;
 import com.eris.gitlabanalyzer.repository.UserServerRepository;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -27,21 +27,21 @@ public class ProjectService {
     private final ServerRepository serverRepository;
     private final UserServerRepository userServerRepository;
     private final UserProjectPermissionRepository userProjectPermissionRepository;
+    private String serverUrl;
+    private String accessToken;
 
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
-
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
-
+    @Autowired
     public ProjectService(ProjectRepository projectRepository, ServerRepository serverRepository,
                           UserServerRepository userServerRepository, UserProjectPermissionRepository userProjectPermissionRepository) {
         this.projectRepository = projectRepository;
         this.serverRepository = serverRepository;
         this.userServerRepository = userServerRepository;
         this.userProjectPermissionRepository = userProjectPermissionRepository;
+    }
+
+    public void setServerUrlAndAccessToken(String serverUrl, String accessToken) {
+        this.serverUrl = serverUrl;
+        this.accessToken = accessToken;
     }
 
     public Project saveProjectInfo(Long projectId) {

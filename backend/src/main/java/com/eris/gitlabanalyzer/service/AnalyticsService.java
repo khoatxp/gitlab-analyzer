@@ -1,6 +1,7 @@
 package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.Project;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -14,6 +15,7 @@ public class AnalyticsService {
     private final CommitService commitService;
     private final IssueService issueService;
 
+    @Autowired
     public AnalyticsService(ProjectService projectService, GitManagementUserService gitManagementUserService, MergeRequestService mergeRequestService, CommitService commitService, IssueService issueService) {
         this.projectService = projectService;
         this.gitManagementUserService = gitManagementUserService;
