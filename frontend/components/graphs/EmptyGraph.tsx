@@ -7,7 +7,8 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend
+  Legend,
+  ResponsiveContainer
 } from "recharts";
 import {useRouter} from "next/router";
 import {AuthContext} from "../../components/AuthContext";
@@ -29,25 +30,26 @@ const data = [
     { date: "Feb 22", commits: 0, mergeRequests: 0},
     { date: "Feb 23", commits: 0, mergeRequests: 0},
     { date: "Feb 24", commits: 0, mergeRequests: 0},
-    { date: "Feb 25", commits: 0, mergeRequests: 0},
 ];
 
 class Chart extends React.Component {
     render() {
         return (
-            <BarChart
-                width={1000}
-                height={350}
-                data={data}
-                margin={{ top: 8, right: 30, left: 20, bottom: 8 }}
-            >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" label={{ value: "Date", position: "middle", dy: 10}} />
-                <YAxis label={{ value: 'Total', angle: -90, position: 'insideLeft' }} />
-                <Tooltip />
-                <Bar dataKey="commits" fill="#82ca9d" barSize={15}/>
-                <Bar dataKey="mergeRequests" fill="#8884d8" barSize={15}/>
-            </BarChart>
+            <ResponsiveContainer width="100%" height={400} minWidth="0">
+                <BarChart
+                    width={900}
+                    height={350}
+                    data={data}
+                    margin={{ top: 8, right: 30, left: 20, bottom: 8 }}
+                >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" label={{ value: "Date", position: "middle", dy: 10}} />
+                    <YAxis label={{ value: 'Total', angle: -90, position: 'insideLeft' }} />
+                    <Tooltip />
+                    <Bar dataKey="commits" fill="#82ca9d" barSize={15}/>
+                    <Bar dataKey="mergeRequests" fill="#8884d8" barSize={15}/>
+                </BarChart>
+            </ResponsiveContainer>
         );
     }
 }
