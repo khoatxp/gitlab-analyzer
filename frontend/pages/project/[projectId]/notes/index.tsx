@@ -58,7 +58,7 @@ const NotesPage = () => {
 
     const [mergeRequests, setMergeRequests] = useState<MergeRequest[]>([]);
     const [issues, setIssues] = useState<Issue[]>([]);
-    const [notes, setNotes] = useState<Note[]>([]);
+    const [notes, setNotes] = useState<Note[][]>([]);
 
     const [noteType, setNoteType] = React.useState(NoteType.MergeRequest);
 
@@ -96,15 +96,15 @@ const NotesPage = () => {
         index: number,
     ) => {
         setSelectedItem(index);
-        if (noteType === NoteType.MergeRequest) {
-            if (mergeRequests?.[index]?.iid) {
-                getMergeRequestNotes(mergeRequests[index].iid);
-            }
-        } else {
-            if (issues?.[index]?.iid) {
-                getIssueNotes(issues[index].iid);
-            }
-        }
+        // if (noteType === NoteType.MergeRequest) {
+        //     if (mergeRequests?.[index]?.iid) {
+        //         getMergeRequestNotes(mergeRequests[index].iid);
+        //     }
+        // } else {
+        //     if (issues?.[index]?.iid) {
+        //         getIssueNotes(issues[index].iid);
+        //     }
+        // }
     };
 
     useEffect(() => {
@@ -130,6 +130,13 @@ const NotesPage = () => {
 
     // first item is selected on page load
     useEffect(() => {
+        axios.all(mergeRequests.map((mergeRequest) => (
+            axios
+            .get(`${PROJECT_ID_URL}/merge_requests/${mergeRequest.iid}/notes`, getAxiosAuthConfig())))
+        ).then((responses) => {
+            setNotes(responses.map((resp) => (resp.data)));
+
+        });
         handleSelectItem(0);
     }, [mergeRequests]);
 
@@ -160,7 +167,7 @@ const NotesPage = () => {
 
                         <Grid item xs={12} md={8} lg={9}>
                             <Card>
-                                <NotesList notes={notes}/>
+                                <NotesList notes={notes[selectedItem]}/>
                             </Card>
                         </Grid>
                     </Grid>
@@ -263,10 +270,10 @@ const NotesList = ({notes}: { notes: Note[] }) => {
     const classes = useStyles();
 
     return (
-        <List subheader={<ListSubheader disableSticky>{`${notes.length} Notes`}</ListSubheader>}
+        <List subheader={<ListSubheader disableSticky>{`${notes?.length} Notes`}</ListSubheader>}
               className={classes.notesList}
         >
-            {notes.map((note) => (
+            {notes?.map((note) => (
                 <ListItem key={note.id}>
                     <ListItemText
                         primary={
@@ -277,7 +284,7 @@ const NotesList = ({notes}: { notes: Note[] }) => {
                                     variant="body2"
                                     color="textSecondary"
                                 >
-                                    {`@${note.author.username} · ${formatDate(note.created_at)}`}
+                                    {`@${note.author.username} · ${formatDate(note.created_at)} · ${getNoteScore(note)} words`}
                                 </Typography>
                             </React.Fragment>}
                         secondary={note.body}/>
@@ -286,5 +293,9 @@ const NotesList = ({notes}: { notes: Note[] }) => {
         </List>
     );
 };
+
+const getNoteScore = (note : Note) => {
+    return note.body.trim().split(/\s+/).length;
+}
 
 export default NotesPage;
