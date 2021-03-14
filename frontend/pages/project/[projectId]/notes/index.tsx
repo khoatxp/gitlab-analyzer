@@ -62,20 +62,22 @@ const NotesPage = () => {
     const [mergeRequestWordCounts, setMergeRequestWordCounts] = useState<number[]>([]);
     const [issueWordCounts, setIssueWordCounts] = useState<number[]>([]);
 
-    const handleSelectNoteType = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setNoteType(Number((event.target as HTMLInputElement).value));
-    };
-
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
+
     const router = useRouter();
     const {projectId, startDateTime, endDateTime} = router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`;
 
+    const [selectedItem, setSelectedItem] = useState(0);
+
+    const handleSelectNoteType = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setNoteType(Number((event.target as HTMLInputElement).value));
+
+    };
+
     useEffect(() => {
         handleSelectItem(0);
     }, [noteType]);
-
-    const [selectedItem, setSelectedItem] = useState(0);
 
     const handleSelectItem = (
         index: number,
@@ -251,7 +253,7 @@ const Row = memo(({data, index, style}
         >
             <ListItemText
                 primary={
-                    <React.Fragment>
+                    <>
                         {`${item.title} `}
                         <Typography
                             component="span"
@@ -260,7 +262,7 @@ const Row = memo(({data, index, style}
                         >
                             {`· ${wordCounts[index] ?? "..."} words`}
                         </Typography>
-                    </React.Fragment>}
+                    </>}
                 secondary={`#${item.iid} · opened ${formatDate(item.created_at)} by ${item.author.name}`}/>
         </ListItem>
     );
@@ -315,7 +317,7 @@ const NotesList = ({notes}: { notes: Note[] }) => {
                 <ListItem key={note.id}>
                     <ListItemText
                         primary={
-                            <React.Fragment>
+                            <>
                                 {`${note.author.name} `}
                                 <Typography
                                     component="span"
@@ -324,7 +326,7 @@ const NotesList = ({notes}: { notes: Note[] }) => {
                                 >
                                     {`@${note.author.username} · ${formatDate(note.created_at)} · ${getWordCount(note.body)} words`}
                                 </Typography>
-                            </React.Fragment>}
+                            </>}
                         secondary={note.body}/>
                 </ListItem>
             ))}
