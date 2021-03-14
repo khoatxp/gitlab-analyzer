@@ -49,7 +49,6 @@ const index = () => {
         axios
             .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${mergeRequest.iid}/commits`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
-                console.log(resp.data);
                 setCommits(resp.data);
             }).catch(() => {
             enqueueSnackbar("Failed to load data", {variant: 'error'});

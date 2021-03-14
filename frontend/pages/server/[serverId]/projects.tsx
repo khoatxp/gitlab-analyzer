@@ -50,6 +50,7 @@ const index = () => {
             .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
             .then((res) => {
                 const analyizedInternalProjectId = res.data[0];
+                console.log(res.data);
                 router.push(`/project/${analyizedInternalProjectId}/overview?${dateQuery}`);
             }).catch(() => {
             enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});

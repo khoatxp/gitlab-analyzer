@@ -52,10 +52,11 @@ public class GitLabController {
 
     // Used in notes page for now
     @GetMapping(path ="/projects/{projectId}")
-    public Mono<GitLabProject> getProject(@PathVariable("projectId") Long projectId) {
-        // TODO this endpoint needs to be removed or use an internal projectId to find the correct server that user owns
+    public Mono<GitLabProject> getProject(@PathVariable("projectId") Long internalProjectId) {
+        // TODO validate that the user has permissions for the server
+        var project = projectService.getProjectById(internalProjectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
-        return gitLabService.getProject(projectId);
+        return gitLabService.getProject(project.getGitLabProjectId());
     }
 
     // TODO: currently there is no direct use for this endpoint, to be removed
@@ -67,7 +68,6 @@ public class GitLabController {
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
-        // TODO this endpoint needs to be removed or use an internal projectId to find the correct server that user owns
         // TODO validate that the user has permissions for the server
         var project = projectService.getProjectById(internalProjectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
@@ -80,7 +80,7 @@ public class GitLabController {
             @PathVariable("projectId") Long internalProjectId,
             @PathVariable("merge_request_iid") Long merge_request_iid)  {
 
-        // TODO this endpoint needs to be removed or use an internal projectId to find the correct server that user owns
+        // TODO validate that the user has permissions for the server
         var project = projectService.getProjectById(internalProjectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getMergeRequestCommits(project.getGitLabProjectId(), merge_request_iid);
@@ -89,15 +89,16 @@ public class GitLabController {
     // TODO: currently there is no direct use for this endpoint, to be removed
     @GetMapping(path ="/projects/{projectId}/commits")
     public Flux<GitLabCommit> getCommits(
-            @PathVariable("projectId") Long projectId,
+            @PathVariable("projectId") Long internalProjectId,
             @RequestParam("startDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
-        // TODO this endpoint needs to be removed or use an internal projectId to find the correct server that user owns
+        // TODO validate that the user has permissions for the server
+        var project = projectService.getProjectById(internalProjectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
-        return gitLabService.getCommits(projectId, startDateTime, endDateTime);
+        return gitLabService.getCommits(project.getGitLabProjectId(), startDateTime, endDateTime);
     }
 
     @GetMapping(path ="/projects/{projectId}/commit/{sha}/diff")
@@ -162,10 +163,11 @@ public class GitLabController {
     }
     @GetMapping(path ="/projects/{projectId}/members")
     public Flux<GitLabMember> getMembers(
-            @PathVariable("projectId") Long projectId) {
+            @PathVariable("projectId") Long internalProjectId) {
 
-        // TODO this endpoint needs to be removed or use an internal projectId to find the correct server that user owns
+        // TODO validate that the user has permissions for the server
+        var project = projectService.getProjectById(internalProjectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
-        return gitLabService.getMembers(projectId);
+        return gitLabService.getMembers(project.getGitLabProjectId());
     }
 }

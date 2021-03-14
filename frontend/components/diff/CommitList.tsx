@@ -12,7 +12,6 @@ const CommitList = ({commits, handleSelectCommit}: CommitListProps) => {
     useEffect(() => {
         // Reset selection when commits change
         setSelectedIndex(-1);
-        console.log("CHANGED")
     }, [commits])
 
     const diffItems = commits.map((commit) => {
