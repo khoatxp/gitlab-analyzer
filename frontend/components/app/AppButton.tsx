@@ -4,23 +4,23 @@ import {makeStyles} from "@material-ui/styles";
 
 const useStyles = makeStyles({
     button: {
-        borderRadius: "20px",
-        padding: "12px 30px",
+        borderRadius: "15px",
         margin: "10px",
     }
 })
 
-const AppButton = (props: ButtonProps) => {
+const AppButton = React.forwardRef((props: ButtonProps, ref) => {
     const classes = useStyles();
 
     return (
         <Button
-            {...props}
             className={classes.button}
             variant="contained"
+            size="large"
             disableElevation
+            {...props}
         />
     )
-}
+});
 
 export default AppButton;

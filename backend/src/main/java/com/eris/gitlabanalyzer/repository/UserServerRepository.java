@@ -1,13 +1,13 @@
 package com.eris.gitlabanalyzer.repository;
 
+import com.eris.gitlabanalyzer.model.Server;
 import com.eris.gitlabanalyzer.model.UserServer;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
 
-import java.util.Optional;
+import java.util.List;
 
-@Repository
 public interface UserServerRepository extends JpaRepository<UserServer, Long> {
-
-    Optional<UserServer> findUserServerByAccessToken(String accessToken);
+    List<UserServer> findUserServerByUserId(Long userId);
 }
+
