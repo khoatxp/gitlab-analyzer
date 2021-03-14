@@ -4,7 +4,6 @@ import MenuLayout from "../../../../components/layout/menu/MenuLayout";
 import {AuthContext} from "../../../../components/AuthContext";
 import axios, {AxiosResponse} from "axios";
 import {useRouter} from "next/router";
-// @ts-ignore (No types available)
 import {MergeRequest} from "../../../../interfaces/GitLabMergeRequest";
 import {useSnackbar} from "notistack";
 import DiffViewer from "../../../../components/diff/DiffViewer";
