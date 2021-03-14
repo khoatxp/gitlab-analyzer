@@ -82,7 +82,7 @@ class Chart extends React.Component {
     };
 
     render() {
-        const { classes } = this.props;
+
         if (this.state.commitCheckboxChecked===true && this.state.mergeCheckboxChecked===true) {
             return (
                 <div style={{display: "flex", flexDirection: "column"}}>
