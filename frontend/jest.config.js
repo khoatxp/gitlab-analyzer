@@ -6,29 +6,33 @@ module.exports = {
     collectCoverageFrom: [
         "**/*.{tsx,ts}",
         "!**/node_modules/**",
+        "!**/interfaces/**",
         "!**/pages/_app.tsx/**",
         "!**/pages/_document.tsx/**",
         "!**/public/**",
         "!**/styles/**",
         "!**/tests/**",
     ],
+    transform: {
+        '^.+\\.(ts|tsx)?$': 'ts-jest'
+    },
     collectCoverage: true,
     coverageThreshold: {
         global: {
-            branches: 70,
-            functions: 60,
-            lines: 88,
-            statements: 88,
+            branches: 50,
+            functions: 44,
+            lines: 80,
+            statements: 80,
         }
     },
     "snapshotSerializers": ["enzyme-to-json/serializer"],
   // https://github.com/zeit/next.js/issues/8663#issue-490553899
-    "globals": {
+    globals: {
     // we must specify a custom tsconfig for tests because we need the typescript transform
     // to transform jsx into js rather than leaving it jsx such as the next build requires. you
     // can see this setting in tsconfig.jest.json -> "jsx": "react"
     "ts-jest": {
-      "tsconfig": "<rootDir>/tsconfig.jest.json"
+      tsconfig: "<rootDir>/tsconfig.jest.json"
     }
   }
 };
