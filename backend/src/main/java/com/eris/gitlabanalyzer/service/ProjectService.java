@@ -70,9 +70,9 @@ public class ProjectService {
                     project,
                     server
             );
-            project.addUserProjectPermission(userProjectPermission);
-            server.addUserProjectPermission(userProjectPermission);
+
             user.addProjectPermission(userProjectPermission);
+
         } else {
             throw new AccessDeniedException("Corresponding UserServer row does not exist in DB.");
         }
