@@ -66,8 +66,8 @@ class Chart extends React.Component {
                        <XAxis dataKey="date" label={{ value: "Date", position: "middle", dy: 10}} />
                        <YAxis label={{ value: 'Total Score', angle: -90, position: 'insideLeft' }} />
                        <Tooltip />
-                       <Bar dataKey="commitScore" fill="#82ca9d" barSize={15}/>
-                       <Bar dataKey="mergeRequestScore" fill="#8884d8" barSize={15}/>
+                       <Bar dataKey="commitScore" fill="#82ca9d" barSize={15} hide={!this.state.commitCheckboxChecked}/>
+                       <Bar dataKey="mergeRequestScore" fill="#8884d8" barSize={15} hide={!this.state.mergeCheckboxChecked}/>
                     </BarChart>
                     </ResponsiveContainer>
                     <FormGroup>
