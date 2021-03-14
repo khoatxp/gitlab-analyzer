@@ -22,39 +22,37 @@ public class ScoreService {
     private final CalculateDiffMetrics calculateDiffMetrics;
     private final MergeRequestRepository mergeRequestRepository;
     private final CommitRepository commitRepository;
-
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
-
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
+    private final String serverUrl;
+    private final String accessToken;
 
     @Autowired
     public ScoreService(DiffScoreCalculator diffScoreCalculator,
                         CalculateDiffMetrics calculateDiffMetrics, MergeRequestRepository mergeRequestRepository,
-                        CommitRepository commitRepository){
+                        CommitRepository commitRepository,
+                        @Value("${gitlab.SERVER_URL}") String serverUrl, // TODO Remove after server info is correctly retrieved based on internal projectId
+                        @Value("${gitlab.ACCESS_TOKEN}") String accessToken) {
         this.diffScoreCalculator = diffScoreCalculator;
         this.calculateDiffMetrics = calculateDiffMetrics;
         this.mergeRequestRepository = mergeRequestRepository;
         this.commitRepository = commitRepository;
-        gitLabService = new GitLabService(serverUrl, accessToken);
+        this.serverUrl = serverUrl;
+        this.accessToken = accessToken;
+        gitLabService = new GitLabService(this.serverUrl, this.accessToken);
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public int getMergeDiffScore(Long projectId, Long mergeRequestId){
+    public int getMergeDiffScore(Long projectId, Long mergeRequestId) {
         calculateDiffMetrics.storeMetricsMerge(projectId, mergeRequestId);
         return diffScoreCalculator.calculateScoreMerge(mergeRequestId);
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public int getTotalMergeDiffScore(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+    public int getTotalMergeDiffScore(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         Iterable<GitLabMergeRequest> mergeRequests = gitLabService.getMergeRequests(projectId, startDateTime, endDateTime).toIterable();
         int totalScore = 0;
-        for( GitLabMergeRequest gitLabMergeRequest : mergeRequests){
+        for (GitLabMergeRequest gitLabMergeRequest : mergeRequests) {
             MergeRequest mr = mergeRequestRepository.findByIidAndProjectId(gitLabMergeRequest.getIid(), projectId);
-            calculateDiffMetrics.storeMetricsMerge( projectId, mr.getId());
+            calculateDiffMetrics.storeMetricsMerge(projectId, mr.getId());
             totalScore += diffScoreCalculator.calculateScoreMerge(mr.getId());
         }
 
@@ -62,7 +60,7 @@ public class ScoreService {
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public int getCommitDiffScore(Long projectId, Long commitId){
+    public int getCommitDiffScore(Long projectId, Long commitId) {
         calculateDiffMetrics.storeMetricsCommit(commitId, projectId);
         return diffScoreCalculator.calculateScoreCommit(commitId);
     }
