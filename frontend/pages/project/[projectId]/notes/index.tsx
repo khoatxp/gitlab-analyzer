@@ -61,7 +61,10 @@ const NotesPage = () => {
     const [mergeRequestNotes, setMergeRequestNotes] = useState<Note[][]>([]);
     const [issueNotes, setIssueNotes] = useState<Note[][]>([]);
 
-    const [noteType, setNoteType] = React.useState(NoteType.MergeRequest);
+    const [noteType, setNoteType] = useState(NoteType.MergeRequest);
+
+    const [mergeRequestWordCounts, setMergeRequestWordCounts] = useState<number[]>([]);
+    const [issueWordCounts, setIssueWordCounts] = useState<number[]>([]);
 
     const handleSelectNoteType = (event: React.ChangeEvent<HTMLInputElement>) => {
         setNoteType(Number((event.target as HTMLInputElement).value));
@@ -132,6 +135,24 @@ const NotesPage = () => {
         });
     };
 
+    useEffect(() => {
+        setMergeRequestWordCounts(
+            mergeRequestNotes.map(
+                (notes) =>
+                    notes.reduce((totalWords, note) => (totalWords + getWordCount(note.body)), 0)
+            )
+        )
+    }, [mergeRequestNotes]);
+
+    useEffect(() => {
+        setIssueWordCounts(
+            issueNotes.map(
+                (notes) =>
+                    notes.reduce((totalWords, note) => (totalWords + getWordCount(note.body)), 0)
+            )
+        )
+    }, [issueNotes]);
+
     const classes = useStyles();
     return (
         <AuthView>
@@ -152,7 +173,12 @@ const NotesPage = () => {
                                 <Box className={classes.taskList}>
                                     <TaskList items={noteType === NoteType.MergeRequest ? mergeRequests : issues}
                                               selectedItem={selectedItem}
-                                              handleSelectedItemChange={handleSelectItem}/>
+                                              handleSelectedItemChange={handleSelectItem}
+                                              wordCounts={
+                                                  noteType === NoteType.MergeRequest ?
+                                                      mergeRequestWordCounts : issueWordCounts
+                                              }
+                                    />
                                 </Box>
                             </Card>
                         </Grid>
@@ -206,12 +232,12 @@ const RadioGroupSelectMergeRequestsOrIssues = ({value, handleChange, numMergeReq
 
 const Row = memo(({data, index, style}
                       : {
-    data: { items: Task[], selectedItem: number, setSelectedItem: React.Dispatch<number> },
+    data: { items: Task[], selectedItem: number, setSelectedItem: React.Dispatch<number>, wordCounts: number[] },
     index: number,
     style: React.CSSProperties
 }) => {
 
-    const {items, selectedItem, setSelectedItem} = data;
+    const {items, selectedItem, setSelectedItem, wordCounts} = data;
     const item = items[index];
 
     return (
@@ -223,7 +249,17 @@ const Row = memo(({data, index, style}
             style={style}
         >
             <ListItemText
-                primary={item.title}
+                primary={
+                    <React.Fragment>
+                        {`${item.title} `}
+                        <Typography
+                            component="span"
+                            variant="body2"
+                            color="textSecondary"
+                        >
+                            {`· ${wordCounts[index] ?? "..."} words`}
+                        </Typography>
+                    </React.Fragment>}
                 secondary={`#${item.iid} · opened ${formatDate(item.created_at)} by ${item.author.name}`}/>
         </ListItem>
     );
@@ -231,21 +267,25 @@ const Row = memo(({data, index, style}
 
 const createItemData = memoize((items: Task[],
                                 selectedItem: number,
-                                setSelectedItem: React.Dispatch<number>) => ({
+                                setSelectedItem: React.Dispatch<number>,
+                                wordCounts: number[],
+) => ({
     items,
     selectedItem,
     setSelectedItem,
+    wordCounts,
 }));
 
-const TaskList = ({items, selectedItem, handleSelectedItemChange}
+const TaskList = ({items, selectedItem, handleSelectedItemChange, wordCounts}
                       : {
                       items: Task[],
                       selectedItem: number,
-                      handleSelectedItemChange: React.Dispatch<number>
+                      handleSelectedItemChange: React.Dispatch<number>,
+                      wordCounts: number[],
                   }
 ) => {
 
-    const itemData = createItemData(items, selectedItem, handleSelectedItemChange);
+    const itemData = createItemData(items, selectedItem, handleSelectedItemChange, wordCounts);
     return (
         <AutoSizer>
             {({height, width}) => (
@@ -253,7 +293,7 @@ const TaskList = ({items, selectedItem, handleSelectedItemChange}
                     height={height}
                     itemCount={items.length}
                     itemData={itemData}
-                    itemSize={100}
+                    itemSize={120}
                     width={width}
                 >
                     {Row}
@@ -267,7 +307,7 @@ const NotesList = ({notes}: { notes: Note[] }) => {
     const classes = useStyles();
 
     return (
-        <List subheader={<ListSubheader disableSticky>{`${notes?.length} Notes`}</ListSubheader>}
+        <List subheader={<ListSubheader disableSticky>{`${notes?.length ?? "..."} Notes`}</ListSubheader>}
               className={classes.notesList}
         >
             {notes?.map((note) => (
@@ -281,7 +321,7 @@ const NotesList = ({notes}: { notes: Note[] }) => {
                                     variant="body2"
                                     color="textSecondary"
                                 >
-                                    {`@${note.author.username} · ${formatDate(note.created_at)} · ${getNoteScore(note)} words`}
+                                    {`@${note.author.username} · ${formatDate(note.created_at)} · ${getWordCount(note.body)} words`}
                                 </Typography>
                             </React.Fragment>}
                         secondary={note.body}/>
@@ -291,8 +331,8 @@ const NotesList = ({notes}: { notes: Note[] }) => {
     );
 };
 
-const getNoteScore = (note: Note) => {
-    return note.body.trim().split(/\s+/).length;
+const getWordCount = (text: string) => {
+    return text.trim().split(/\s+/).length;
 }
 
 export default NotesPage;
