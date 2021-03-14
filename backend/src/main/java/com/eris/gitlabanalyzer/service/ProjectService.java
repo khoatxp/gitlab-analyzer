@@ -1,6 +1,9 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.model.*;
+import com.eris.gitlabanalyzer.model.Project;
+import com.eris.gitlabanalyzer.model.RawCommitData;
+import com.eris.gitlabanalyzer.model.RawMergeRequestData;
+import com.eris.gitlabanalyzer.model.RawTimeLineProjectData;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
@@ -70,13 +73,13 @@ public class ProjectService {
         var mergeRequests = gitLabService.getMergeRequests(gitLabProjectId, startDateTime, endDateTime);
 
         // for all items in mergeRequests call get commits
-            // for all items in commits call get diff
-            // for all items in merge request get diff
+        // for all items in commits call get diff
+        // for all items in merge request get diff
         var rawMergeRequestData = mergeRequests
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
                 .map((mergeRequest) -> getRawMergeRequestData(gitLabService, mergeRequest, gitLabProjectId))
-                .sorted((mr1, mr2) -> (int)(mr1.getGitLabMergeRequest().getIid() - mr2.getGitLabMergeRequest().getIid()));
+                .sorted((mr1, mr2) -> (int) (mr1.getGitLabMergeRequest().getIid() - mr2.getGitLabMergeRequest().getIid()));
 
 
         // for all commits NOT in merge commits get diff
@@ -105,14 +108,12 @@ public class ProjectService {
 
         var gitLabDiff = gitLabService.getMergeRequestDiff(gitLabProjectId, mergeRequest.getIid());
 
-        var rawMergeRequestData = new RawMergeRequestData(rawCommitData, gitLabDiff, mergeRequest);
-        return rawMergeRequestData;
+        return new RawMergeRequestData(rawCommitData, gitLabDiff, mergeRequest);
     }
 
     private RawCommitData getRawCommitData(GitLabService gitLabService, GitLabCommit commit, Long gitLabProjectId) {
         var changes = gitLabService.getCommitDiff(gitLabProjectId, commit.getSha());
-        var rawCommitData = new RawCommitData(commit, changes);
-        return rawCommitData;
+        return new RawCommitData(commit, changes);
     }
 
     private Mono<Set<String>> getMergeRequestCommitIds(Flux<RawMergeRequestData> mergeRequestData) {
@@ -127,5 +128,11 @@ public class ProjectService {
 
     public List<Project> getProjects() {
         return projectRepository.findAll();
+    }
+
+    public Project getProjectById(Long projectId) {
+        return projectRepository.findProjectById(projectId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found with id" + projectId)
+        );
     }
 }
