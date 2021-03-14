@@ -1,13 +1,14 @@
 package com.eris.gitlabanalyzer.model;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.*;
-import java.util.Objects;
-import lombok.*;
 
 @Getter
 @Setter
 @ToString
-@Builder
 @Entity(name = "UserProjectPermission")
 @Table(name = "user_project_permission",
         uniqueConstraints=@UniqueConstraint(columnNames={"user_id", "project_id", "server_id"}))
@@ -28,4 +29,12 @@ public class UserProjectPermission {
     @JoinColumn(name = "server_id")
     private Server server;
 
+    public UserProjectPermission() {
+    }
+
+    public UserProjectPermission(User user, Project project, Server server) {
+        this.user = user;
+        this.project = project;
+        this.server = server;
+    }
 }
