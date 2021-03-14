@@ -1,8 +1,5 @@
 import React, {useEffect} from "react";
 import { makeStyles, withStyles, Theme, createStyles } from '@material-ui/core/styles';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
 import Avatar from '@material-ui/core/Avatar';
 import axios, {AxiosResponse} from "axios";
 import {useRouter} from "next/router";
@@ -53,9 +50,6 @@ const useStyles = makeStyles((theme: Theme) =>
             fontSize:'1.2em',
             margin: '0px 0px',
             textAlign: 'right'
-        },
-        graphContainer: {
-            display: 'flex',
         },
         avatarSize: {
             width: theme.spacing(15),

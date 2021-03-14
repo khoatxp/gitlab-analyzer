@@ -14,11 +14,10 @@ import {useRouter} from "next/router";
 import {AuthContext} from "../../components/AuthContext";
 import AuthView from "../../components/AuthView";
 import {useSnackbar} from "notistack";
-
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
-import { makeStyles, withStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 
 const GreenCheckbox = withStyles({
     root: {

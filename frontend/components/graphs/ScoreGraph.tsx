@@ -12,13 +12,11 @@ import {
 } from "recharts";
 import {useRouter} from "next/router";
 import {AuthContext} from "../../components/AuthContext";
-import AuthView from "../../components/AuthView";
 import {useSnackbar} from "notistack";
-
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
-import { makeStyles, withStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 
 const GreenCheckbox = withStyles({
     root: {
@@ -39,18 +37,6 @@ const PurpleCheckbox = withStyles({
     },
     checked: {},
 })((props: CheckboxProps) => <Checkbox color="default" {...props} />);
-
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        graphContainer: {
-            display: 'flex',
-        },
-        graphTitleText: {
-            textAlign: 'center',
-            fontSize: '1.2em',
-        },
-    }),
-);
 
 // TODO: Get graph data (commit score, mr score on a given date) from endpoints
 const data = [
