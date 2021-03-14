@@ -4,6 +4,7 @@ import com.eris.gitlabanalyzer.model.Project;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,13 +23,16 @@ public class AnalyticsService {
         this.issueService = issueService;
     }
 
-    public void saveAllFromGitlab(List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+    public List<Long> saveAllFromGitlab(List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        List<Long> projectIds = new ArrayList<>();
         gitLabProjectIdList.forEach(gitLabProjectId -> {
             Project project = projectService.saveProjectInfo(gitLabProjectId);
             gitManagementUserService.saveGitManagementUserInfo(project);
             mergeRequestService.saveMergeRequestInfo(project, startDateTime, endDateTime);
             commitService.saveCommitInfo(project, startDateTime, endDateTime);
             issueService.saveIssueInfo(project, startDateTime, endDateTime);
+            projectIds.add(project.getId());
         });
+        return projectIds;
     }
 }
