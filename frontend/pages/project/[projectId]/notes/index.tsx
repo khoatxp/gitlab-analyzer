@@ -58,7 +58,8 @@ const NotesPage = () => {
 
     const [mergeRequests, setMergeRequests] = useState<MergeRequest[]>([]);
     const [issues, setIssues] = useState<Issue[]>([]);
-    const [notes, setNotes] = useState<Note[][]>([]);
+    const [mergeRequestNotes, setMergeRequestNotes] = useState<Note[][]>([]);
+    const [issueNotes, setIssueNotes] = useState<Note[][]>([]);
 
     const [noteType, setNoteType] = React.useState(NoteType.MergeRequest);
 
@@ -72,44 +73,15 @@ const NotesPage = () => {
 
     const [selectedItem, setSelectedItem] = useState(0);
 
-    const getMergeRequestNotes = (mergeRequestIid: number) => {
-        axios
-            .get(`${PROJECT_ID_URL}/merge_requests/${mergeRequestIid}/notes`, getAxiosAuthConfig())
-            .then((resp: AxiosResponse) => {
-                setNotes(resp.data);
-            }).catch(() => {
-            enqueueSnackbar('Failed to get merge request notes.', {variant: 'error',});
-        });
-    };
-
-    const getIssueNotes = (issueIid: number) => {
-        axios
-            .get(`${PROJECT_ID_URL}/issues/${issueIid}/notes`, getAxiosAuthConfig())
-            .then((resp: AxiosResponse) => {
-                setNotes(resp.data);
-            }).catch(() => {
-            enqueueSnackbar('Failed to get issue notes.', {variant: 'error',});
-        });
-    };
-
     const handleSelectItem = (
         index: number,
     ) => {
         setSelectedItem(index);
-        // if (noteType === NoteType.MergeRequest) {
-        //     if (mergeRequests?.[index]?.iid) {
-        //         getMergeRequestNotes(mergeRequests[index].iid);
-        //     }
-        // } else {
-        //     if (issues?.[index]?.iid) {
-        //         getIssueNotes(issues[index].iid);
-        //     }
-        // }
     };
 
     useEffect(() => {
         if (projectId) {
-            const dateQuery = `?startDateTime=${startDateTime ? startDateTime : "2021-01-01T00:00:00-08:00"}&endDateTime=${endDateTime ? endDateTime : "2021-03-21T00:00:00-08:00"}`;
+            const dateQuery = `?startDateTime=${startDateTime}&endDateTime=${endDateTime}`;
             axios
                 .get(`${PROJECT_ID_URL}/merge_requests${dateQuery}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
@@ -125,20 +97,40 @@ const NotesPage = () => {
                 enqueueSnackbar('Failed to get issues data.', {variant: 'error',});
             });
         }
-
     }, [projectId]);
 
-    // first item is selected on page load
     useEffect(() => {
-        axios.all(mergeRequests.map((mergeRequest) => (
-            axios
-            .get(`${PROJECT_ID_URL}/merge_requests/${mergeRequest.iid}/notes`, getAxiosAuthConfig())))
-        ).then((responses) => {
-            setNotes(responses.map((resp) => (resp.data)));
-
-        });
-        handleSelectItem(0);
+        getAllMergeRequestNotes();
+        handleSelectItem(0); // first merge request is selected on page load
     }, [mergeRequests]);
+
+    useEffect(() => {
+        getAllIssueNotes();
+    }, [issues]);
+
+    const getAllMergeRequestNotes = () => {
+        axios.all(mergeRequests.map(
+            (mergeRequest) => (
+                axios
+                    .get(`${PROJECT_ID_URL}/merge_requests/${mergeRequest.iid}/notes`, getAxiosAuthConfig()))
+            )
+        ).then((responses) => {
+            setMergeRequestNotes(responses.map((resp) => (resp.data)));
+        }).catch(() => {
+            enqueueSnackbar('Failed to get merge request notes.', {variant: 'error',});
+        });
+    };
+
+    const getAllIssueNotes = () => {
+        axios.all(issues.map((issue) => (
+            axios
+                .get(`${PROJECT_ID_URL}/issues/${issue.iid}/notes`, getAxiosAuthConfig())))
+        ).then((responses) => {
+            setIssueNotes(responses.map((resp) => (resp.data)));
+        }).catch(() => {
+            enqueueSnackbar('Failed to get issue notes.', {variant: 'error',});
+        });
+    };
 
     const classes = useStyles();
     return (
@@ -167,7 +159,12 @@ const NotesPage = () => {
 
                         <Grid item xs={12} md={8} lg={9}>
                             <Card>
-                                <NotesList notes={notes[selectedItem]}/>
+                                <NotesList notes={
+                                    noteType === NoteType.MergeRequest ?
+                                        mergeRequestNotes[selectedItem] :
+                                        issueNotes[selectedItem]
+                                }
+                                />
                             </Card>
                         </Grid>
                     </Grid>
@@ -294,7 +291,7 @@ const NotesList = ({notes}: { notes: Note[] }) => {
     );
 };
 
-const getNoteScore = (note : Note) => {
+const getNoteScore = (note: Note) => {
     return note.body.trim().split(/\s+/).length;
 }
 
