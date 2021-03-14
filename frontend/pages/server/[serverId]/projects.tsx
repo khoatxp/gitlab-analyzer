@@ -66,6 +66,7 @@ const index = () => {
             <CardLayout backLink={"/server"} logoType="header">
                 {isLoading && <LoadingBar itemBeingLoaded={itemBeingLoaded}/>}
                 {!isLoading && <ProjectSelect projects={projects} onAnalyzeClick={handleAnalyze}/>}
+                {!isLoading && <ScoreProfileSelector profile={profile} setProfile={setProfile}/>}
             </CardLayout>
         </AuthView>
     );
