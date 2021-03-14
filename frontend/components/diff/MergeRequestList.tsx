@@ -1,33 +1,44 @@
-import React from 'react';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import React, {useState} from 'react';
 import {MergeRequest} from "../../interfaces/GitLabMergeRequest";
-import {Box, Typography} from "@material-ui/core";
+import DiffItemList, {DiffItem} from "./DiffItemList";
 
 type MergeRequestListProps = {
     mergeRequests: MergeRequest[]
     handleSelectMergeRequest: (mergeRequest: MergeRequest) => void;
 }
 
-const MergeRequestList = ( {mergeRequests, handleSelectMergeRequest}: MergeRequestListProps) => {
+const MergeRequestList = ({mergeRequests, handleSelectMergeRequest}: MergeRequestListProps) => {
+    const [selectedIndex, setSelectedIndex] = useState(-1);
+
+    const diffItems = mergeRequests.map((mergeRequest) => {
+        let diffItem: DiffItem = {
+            id: mergeRequest.id.toString(),
+            createdAt: mergeRequest.created_at,
+            authorName: mergeRequest.author.name,
+            title: mergeRequest.title,
+            avatarUrl: mergeRequest.author.avatar_url || undefined,
+        }
+        return diffItem;
+    });
+
+    const handleSelectDiffItem = (diffItem: DiffItem) => {
+        const mergeRequest = mergeRequests.find((mergeRequest) => {
+            return mergeRequest.id.toString() == diffItem.id;
+        })
+        if (!mergeRequest) {
+            return;
+        }
+        handleSelectMergeRequest(mergeRequest);
+    }
+
     return (
-        <Box border={1} borderColor={'lightGray'} mb={1}>
-            <Typography variant="h3" align="center">Merge requests: </Typography>
-            <List component="nav">
-                {
-                    mergeRequests.map((mergeRequest) => (
-                        <ListItem
-                            key={`${mergeRequest.id}-${mergeRequest.iid}`}
-                            button
-                            onClick={() => handleSelectMergeRequest(mergeRequest)}
-                        >
-                            <ListItemText primary={mergeRequest.title} />
-                        </ListItem>
-                    ))
-                }
-            </List>
-        </Box>
+        <DiffItemList
+            diffItems={diffItems}
+            diffItemType="Merge Request"
+            handleSelectDiffItem={handleSelectDiffItem}
+            selectedIndex={selectedIndex}
+            setSelectedIndex={setSelectedIndex}
+        />
     );
 }
 
