@@ -29,13 +29,16 @@ const CommitList = ({commits, handleSelectCommit}: CommitListProps) => {
         const commit = commits.find((commit) => {
             return commit.id == diffItem.id;
         })
-        if (!commit) {return;}
+        if (!commit) {
+            return;
+        }
         handleSelectCommit(commit);
     }
 
     return (
         <DiffItemList
             diffItems={diffItems}
+            diffItemType="Commit"
             handleSelectDiffItem={handleSelectDiffItem}
             selectedIndex={selectedIndex}
             setSelectedIndex={setSelectedIndex}
