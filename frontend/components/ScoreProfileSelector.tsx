@@ -69,12 +69,13 @@ const Popup = (props) => {
         setNewDeleteWeight(deleteWeight);
         setNewLineWeight(lineWeight);
         setNewSyntaxWeight(syntaxWeight);
-        for (let i = 0; i < extensionWeights.length; i+=2) {
-            const key = extensionWeights[i];
-            const value = extensionWeights[i+1];
-            extensionMap.set(key,value);
-        
-        }
+        //for (let i = 0; i < extensionWeights.length; i+=2) {
+        //    const key = extensionWeights[i];
+         //   const value = extensionWeights[i+1];
+         //   extensionMap.set(key,value);
+        //
+        //}
+        setExtensionMap(extensionWeights);
         
     },[open])
 
@@ -87,7 +88,6 @@ const Popup = (props) => {
 
 
     const close = () => {
-        extensionMap.clear();
         handleClose();
     };
 
@@ -119,6 +119,16 @@ const Popup = (props) => {
         if(newName==""){
             enqueueSnackbar('Profile must have a name', {variant: 'error',});
             return;
+        }
+        if(newLineWeight < 0 || newCommentsWeight < 0 || newDeleteWeight < 0 || newSyntaxWeight < 0){
+            enqueueSnackbar('Weights cannot be negative', {variant: 'error',});
+            return;
+        }
+        for (let [key, value] of extensionMap) {
+            if (value < 0){
+                enqueueSnackbar('Extension weights cannot be negative', {variant: 'error',});
+                return;
+            }
         }
 
         if (router.isReady) {
@@ -160,7 +170,7 @@ const Popup = (props) => {
 
         <React.Fragment>
             <Dialog open={open} onClose={close} fullWidth maxWidth="sm" classes={{paper: classes.popup}} >
-                <Button variant="contained" color="grey" className={classes.button} onClick={close}>X</Button>
+                <Button variant="contained" color="primary" className={classes.button} onClick={close}>X</Button>
                 <DialogTitle id="edit-dialog-title" align="center">{"Score Profile"}</DialogTitle>
                 <DialogContent>
                     <form className={classes.root} onSubmit={handleSave}>
@@ -225,10 +235,10 @@ const Popup = (props) => {
                                         />
 
                                         <div>
-                                            {extensionMap.size !== 1 &&
+                                            
                                             <IconButton edge="center" aria-label="deleteextension" onClick={()=>handleRemoveExtension(x[0])}>
-                                                <DeleteIcon style={{ fontSize: "25px", color: "grey" }} />
-                                            </IconButton>}
+                                                <DeleteIcon style={{ fontSize: "25px", color:"grey" }} />
+                                            </IconButton>
                                         </div>
                                     </Box>
                                 );
@@ -289,6 +299,7 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
         setLineWeight();
         setSyntaxWeight();
         extensionWeights.length = 0;
+        extensionWeights =[];
         setOpen(true);
     };
 
@@ -299,12 +310,7 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
         setDeleteWeight(Profile.deleteWeight);
         setLineWeight(Profile.lineWeight);
         setSyntaxWeight(Profile.syntaxWeight);
-        //Object.keys(Profile.extensionWeights).forEach(function(key) {
-        //    extensionWeights.push(key);
-        //    extensionWeights.push(Profile.extensionWeights[key]);
-        //    
-        //});
-        
+        extensionWeights = Array.from(Profile.extensionWeights);   
         setOpen(true);
     };
 
@@ -334,7 +340,7 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                     value={profile}
                     onChange={setProfile}
                     isLoading= "...loading"
-                    maxMenuHeight = {200}
+                    maxMenuHeight = {220}
                     MenuProps={{
                         getContentAnchorEl: null,                     
                         anchorOrigin: {
