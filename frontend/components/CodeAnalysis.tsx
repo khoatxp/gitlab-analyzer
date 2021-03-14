@@ -92,9 +92,6 @@ const useStyles = makeStyles((theme: Theme) =>
             textAlign: 'center',
             fontSize: '1.2em',
         },
-        checkboxContainer: {
-            justifyContent: 'center',
-        },
     }),
 );
 
@@ -214,18 +211,16 @@ const CodeAnalysis = () => {
                 <p className={classes.graphTitleText}>{graphATitle}</p>
                 <div className={classes.graphContainer}>
                     {graphA}
-                    <div className={classes.checkboxContainer}>
-                        <FormGroup>
-                            <FormControlLabel
-                                control={<GreenCheckbox checked={checkboxState.checkedCommitForGraphA} onChange={handleChange} name="checkedCommitForGraphA"/>}
-                                label="Commits"
-                            />
-                            <FormControlLabel
-                                control={<PurpleCheckbox checked={checkboxState.checkedMergeRequestForGraphA} onChange={handleChange} name="checkedMergeRequestForGraphA"/>}
-                                label="Merge Requests"
-                            />
-                        </FormGroup>
-                    </div>
+                    <FormGroup>
+                        <FormControlLabel
+                            control={<GreenCheckbox checked={checkboxState.checkedCommitForGraphA} onChange={handleChange} name="checkedCommitForGraphA"/>}
+                            label="Commits"
+                        />
+                        <FormControlLabel
+                            control={<PurpleCheckbox checked={checkboxState.checkedMergeRequestForGraphA} onChange={handleChange} name="checkedMergeRequestForGraphA"/>}
+                            label="Merge Requests"
+                        />
+                    </FormGroup>
                 </div>
                 <p className={classes.graphTitleText}>{graphBTitle}</p>
                 <div className={classes.graphContainer}>
