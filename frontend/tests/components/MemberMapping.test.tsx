@@ -1,8 +1,9 @@
 import React from 'react';
-import Index from '../../pages/project/[projectId]/overview/index';
+import MemberMapping from '../../components/MemberMapping';
 import {mount, ReactWrapper} from "enzyme";
+import CodeAnalysis from "../../components/CodeAnalysis";
 
-describe("Overview", () =>{
+describe("Member Mapping",()=>{
     const useRouter = jest.spyOn(require('next/router'), 'useRouter');
     const mockUseEffect = jest.spyOn(React, 'useEffect')
     const mockAxios = jest.spyOn(require('axios'), 'get');
@@ -16,7 +17,7 @@ describe("Overview", () =>{
             query: { projectId: 'TestId' }, isReady: true
         }));
         rend = mount(
-            <Index />
+            <MemberMapping />
         );
         await Promise.resolve();
     })
