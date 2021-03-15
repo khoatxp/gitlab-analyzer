@@ -42,11 +42,15 @@ public class GitLabController {
         this.projectService = projectService;
     }
 
-    public boolean hasPermission(Principal principal, Long projectId) {
+    public boolean hasProjectPermission(Principal principal, Long projectId) {
         var user = authService.getLoggedInUser(principal);
         var project = projectService.getProjectById(projectId);
         var server = project.getServer();
         return authService.hasProjectPermission(user.getId(), server.getId(), projectId);
+    }
+
+    public void validatePermission(Principal principal, Long projectId){
+        if (!hasProjectPermission(principal, projectId)) { throw new AccessDeniedException("User has no permission to see this project."); }
     }
 
     @GetMapping(path ="{serverId}/projects")
@@ -62,7 +66,7 @@ public class GitLabController {
     @GetMapping(path ="/projects/{projectId}")
     public Mono<GitLabProject> getProject(Principal principal, @PathVariable("projectId") Long projectId) {
         var project = projectService.getProjectById(projectId);
-        if (!hasPermission(principal, projectId)) { throw new AccessDeniedException("User has no permission to see this project."); }
+        validatePermission(principal, projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getProject(project.getGitLabProjectId());
     }
@@ -78,7 +82,7 @@ public class GitLabController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
         var project = projectService.getProjectById(projectId);
-        if (!hasPermission(principal, projectId)) { throw new AccessDeniedException("User has no permission to see this project."); }
+        validatePermission(principal, projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getMergeRequests(project.getGitLabProjectId(), startDateTime, endDateTime);
     }
@@ -91,7 +95,7 @@ public class GitLabController {
             @PathVariable("merge_request_iid") Long merge_request_iid)  {
 
         var project = projectService.getProjectById(projectId);
-        if (!hasPermission(principal, projectId)) { throw new AccessDeniedException("User has no permission to see this project."); }
+        validatePermission(principal, projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getMergeRequestCommits(project.getGitLabProjectId(), merge_request_iid);
     }
@@ -107,7 +111,7 @@ public class GitLabController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
         var project = projectService.getProjectById(projectId);
-        if (!hasPermission(principal, projectId)) { throw new AccessDeniedException("User has no permission to see this project."); }
+        validatePermission(principal, projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getCommits(project.getGitLabProjectId(), startDateTime, endDateTime);
     }
@@ -119,7 +123,7 @@ public class GitLabController {
             @PathVariable("sha") String sha) {
 
         var project = projectService.getProjectById(projectId);
-        if (!hasPermission(principal, projectId)) { throw new AccessDeniedException("User has no permission to see this project."); }
+        validatePermission(principal, projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getCommitDiff(project.getGitLabProjectId(), sha);
     }
@@ -131,7 +135,7 @@ public class GitLabController {
             @PathVariable("merge_request_iid") Long merge_request_iid) {
 
         var project = projectService.getProjectById(projectId);
-        if (!hasPermission(principal, projectId)) { throw new AccessDeniedException("User has no permission to see this project."); }
+        validatePermission(principal, projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getMergeRequestDiff(project.getGitLabProjectId(), merge_request_iid);
     }
@@ -144,7 +148,7 @@ public class GitLabController {
             @PathVariable("merge_request_iid") Long merge_request_iid) {
 
         var project = projectService.getProjectById(projectId);
-        if (!hasPermission(principal, projectId)) { throw new AccessDeniedException("User has no permission to see this project."); }
+        validatePermission(principal, projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getMergeRequestNotes(project.getGitLabProjectId(), merge_request_iid);
     }
@@ -160,7 +164,7 @@ public class GitLabController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
         var project = projectService.getProjectById(projectId);
-        if (!hasPermission(principal, projectId)) { throw new AccessDeniedException("User has no permission to see this project."); }
+        validatePermission(principal, projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getIssues(project.getGitLabProjectId(), startDateTime, endDateTime);
     }
@@ -173,7 +177,7 @@ public class GitLabController {
             @PathVariable("issue_iid") Long issue_iid) {
 
         var project = projectService.getProjectById(projectId);
-        if (!hasPermission(principal, projectId)) { throw new AccessDeniedException("User has no permission to see this project."); }
+        validatePermission(principal, projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getIssueNotes(project.getGitLabProjectId(), issue_iid);
     }
@@ -183,7 +187,7 @@ public class GitLabController {
             @PathVariable("projectId") Long projectId) {
 
         var project = projectService.getProjectById(projectId);
-        if (!hasPermission(principal, projectId)) { throw new AccessDeniedException("User has no permission to see this project."); }
+        validatePermission(principal, projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getMembers(project.getGitLabProjectId());
     }
