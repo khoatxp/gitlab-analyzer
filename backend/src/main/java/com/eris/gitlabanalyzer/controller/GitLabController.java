@@ -44,7 +44,6 @@ public class GitLabController {
     @GetMapping(path ="{serverId}/projects")
     public Flux<GitLabProject> getProjects(Principal principal, @PathVariable("serverId") Long id) {
         var user = authService.getLoggedInUser(principal);
-
         var userServer = userServerService.getUserServer(user, id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find server."));
         var gitLabService = new GitLabService(userServer.getServer().getServerUrl(), userServer.getAccessToken());
         return gitLabService.getProjects();
