@@ -59,21 +59,21 @@ public class ProjectService {
         }
     }
 
-    public Project saveProjectInfo(User user, Long projectId) {
+    public Project saveProjectInfo(User user, Long gitLabProjectId) {
         // TODO use an internal projectId to find the correct server
         var gitLabService = new GitLabService(serverUrl, accessToken);
         Server server = serverRepository.findByServerUrl(serverUrl)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Server with URL " + serverUrl + " does not exist"));
 
-        Optional<Project> projectOptional = projectRepository.findByGitlabProjectIdAndServerUrl(projectId,serverUrl);
+        var gitLabProject = gitLabService.getProject(gitLabProjectId).block();
+        Optional<Project> projectOptional = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId,serverUrl);
         if(projectOptional.isPresent()){
             createUserProjectPermission(user, server, projectOptional.get());
             return projectOptional.get();
         }
 
-        var gitLabProject = gitLabService.getProject(projectId).block();
         Project project = projectRepository.save(new Project(
-                projectId,
+                gitLabProjectId,
                 gitLabProject.getName(),
                 gitLabProject.getNameWithNamespace(),
                 gitLabProject.getWebUrl(),
