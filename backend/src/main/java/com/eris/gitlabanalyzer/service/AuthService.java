@@ -1,8 +1,10 @@
 package com.eris.gitlabanalyzer.service;
 
+import com.eris.gitlabanalyzer.model.Project;
+import com.eris.gitlabanalyzer.model.Server;
 import com.eris.gitlabanalyzer.model.User;
+import com.eris.gitlabanalyzer.repository.UserProjectPermissionRepository;
 import com.eris.gitlabanalyzer.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,10 +20,11 @@ import java.util.Optional;
 public class AuthService implements UserDetailsService {
 
     private UserRepository userRepository;
+    private UserProjectPermissionRepository userProjectPermissionRepository;
 
-    @Autowired
-    public AuthService(UserRepository userRepository) {
+    public AuthService(UserRepository userRepository, UserProjectPermissionRepository userProjectPermissionRepository) {
         this.userRepository = userRepository;
+        this.userProjectPermissionRepository = userProjectPermissionRepository;
     }
 
     @Override
@@ -40,4 +43,13 @@ public class AuthService implements UserDetailsService {
         }
         return userRepository.findUserByUsername(principle.getName()).orElseThrow(() -> new AccessDeniedException("User not found."));
     }
+
+    public boolean hasPermission(User user, Project project, Server server) {
+        if (userProjectPermissionRepository.findByUserIdAndServerIdAndProjectId(
+                user.getId(), server.getId(), project.getId()).isPresent()) {
+            return true;
+        }
+        return false;
+    }
+
 }
