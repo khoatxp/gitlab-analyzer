@@ -1,7 +1,10 @@
 package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.User;
+import com.eris.gitlabanalyzer.repository.ProjectRepository;
+import com.eris.gitlabanalyzer.repository.UserProjectPermissionRepository;
 import com.eris.gitlabanalyzer.repository.UserRepository;
+import com.eris.gitlabanalyzer.repository.UserServerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -18,10 +21,17 @@ import java.util.Optional;
 public class AuthService implements UserDetailsService {
 
     private UserRepository userRepository;
+    private UserProjectPermissionRepository userProjectPermissionRepository;
+    private UserServerRepository userServerRepository;
+    private ProjectRepository projectRepository;
 
     @Autowired
-    public AuthService(UserRepository userRepository) {
+    public AuthService(UserRepository userRepository, UserProjectPermissionRepository userProjectPermissionRepository,
+                       UserServerRepository userServerRepository, ProjectRepository projectRepository) {
         this.userRepository = userRepository;
+        this.userProjectPermissionRepository = userProjectPermissionRepository;
+        this.userServerRepository = userServerRepository;
+        this.projectRepository = projectRepository;
     }
 
     @Override

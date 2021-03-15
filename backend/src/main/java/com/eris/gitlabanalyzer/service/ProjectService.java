@@ -9,6 +9,7 @@ import com.eris.gitlabanalyzer.repository.UserProjectPermissionRepository;
 import com.eris.gitlabanalyzer.repository.UserServerRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
@@ -67,7 +68,8 @@ public class ProjectService {
                 server
         );
 
-        var userServer = userServerRepository.findUserServerByAccessToken(accessToken).get();
+        var userServer = userServerRepository.findUserServerByAccessToken(accessToken).orElseThrow(
+                () -> new AccessDeniedException("UserServer not found."));
 
         User user = userServer.getUser();
 
