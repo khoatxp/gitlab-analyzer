@@ -51,43 +51,56 @@ interface Props {
 const Popup = (props) => {
     const classes = useStyles();
     const router = useRouter();
-    const { open, handleClose, id, name, lineWeight, commentsWeight, deleteWeight, extensionWeights, syntaxWeight, } = props;
+    const { open, handleClose, id, profile  } = props;
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
+
     const[savedArray, setSavedArray] = useState<{}>({});
+    const[Profile, setProfile] = useState<ScoreProfile>();
     const [extensionMap, setExtensionMap] = useState(new Map())
-    const [newSyntaxWeight, setNewSyntaxWeight] = useState<number>()
-    const [newCommentsWeight, setNewCommentsWeight] = useState<number>();
-    const [newName, setNewName] = useState<string>(name);
-    const [newLineWeight, setNewLineWeight] = useState<number>();
-    const [newDeleteWeight, setNewDeleteWeight] = useState<number>();
+    const [syntaxWeight, setSyntaxWeight] = useState<number>()
+    const [commentsWeight, setCommentsWeight] = useState<number>();
+    const [name, setName] = useState<string>()
+    const [lineWeight, setLineWeight] = useState<number>();
+    const [deleteWeight, setDeleteWeight] = useState<number>();
     
     useEffect(() => {
-        setNewName(name);
-        setNewCommentsWeight(commentsWeight);
-        setNewDeleteWeight(deleteWeight);
-        setNewLineWeight(lineWeight);
-        setNewSyntaxWeight(syntaxWeight);
-        //for (let i = 0; i < extensionWeights.length; i+=2) {
-        //    const key = extensionWeights[i];
-         //   const value = extensionWeights[i+1];
-         //   extensionMap.set(key,value);
-        //
-        //}
-        setExtensionMap(extensionWeights);
-        
+
+        if(id > 0){
+                    setName(profile.name);
+                    setCommentsWeight(profile.commentsWeight);
+                    setDeleteWeight(profile.deleteWeight);
+                    setLineWeight(profile.lineWeight);
+                    setSyntaxWeight(profile.syntaxWeight);
+                    let map = new Map(Object.entries(profile.extensionWeights));
+                    setExtensionMap(map);
+        }
+        else{
+                    setName("");
+                    setCommentsWeight();
+                    setDeleteWeight();
+                    setLineWeight();
+                    setSyntaxWeight();
+                    let map= new Map();
+                    setExtensionMap(map);
+        }
+
     },[open])
 
     useEffect(() => {
+
+        setSavedArray({});
         Array.from(extensionMap).map((x, index) => {
             setSavedArray({...savedArray, [x[0]]:x[1]});
         })
-        
+
     }, [extensionMap])
 
 
     const close = () => {
+        setExtensionMap((prev) => new Map(prev.clear()));
+        setSavedArray({});
         handleClose();
     };
 
@@ -116,11 +129,11 @@ const Popup = (props) => {
 
     const handleSave = () => {
 
-        if(newName==""){
+        if(name==""){
             enqueueSnackbar('Profile must have a name', {variant: 'error',});
             return;
         }
-        if(newLineWeight < 0 || newCommentsWeight < 0 || newDeleteWeight < 0 || newSyntaxWeight < 0){
+        if(lineWeight < 0 || commentsWeight < 0 || deleteWeight < 0 || syntaxWeight < 0){
             enqueueSnackbar('Weights cannot be negative', {variant: 'error',});
             return;
         }
@@ -132,13 +145,13 @@ const Popup = (props) => {
         }
 
         if (router.isReady) {
-            
+
             const newProfile = {
-                name: newName,
-                lineWeight: newLineWeight,
-                deleteWeight: newDeleteWeight,
-                syntaxWeight: newSyntaxWeight,
-                commentsWeight: newCommentsWeight,
+                name: name,
+                lineWeight: lineWeight,
+                deleteWeight: deleteWeight,
+                syntaxWeight: syntaxWeight,
+                commentsWeight: commentsWeight,
                 extensionWeights: savedArray,
             }
 
@@ -176,36 +189,36 @@ const Popup = (props) => {
                     <form className={classes.root} onSubmit={handleSave}>
                         <div marginLeft={2} align="right">
                             <Box width={150}>
-                                <AppTextField label="Name" value={newName} onChange={(e) => setNewName( e.target.value)} required/>
+                                <AppTextField label="Name" value={name} onChange={(e) => setName( e.target.value)} required/>
                             </Box>
                         </div>
                         <Box display="flex" flexDirection="row" justifyContent="center" >
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="New Line" placeholder="Weight" 
                                 type="number" 
-                                value={newLineWeight} 
-                                onChange={(e) => setNewLineWeight(e.target.value)}                               
+                                value={lineWeight}
+                                onChange={(e) => setLineWeight(e.target.value)}
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="Deleting" placeholder="Weight" 
                                 type="number" 
-                                value={newDeleteWeight} 
-                                onChange={(e) => setNewDeleteWeight(e.target.value)} 
+                                value={deleteWeight}
+                                onChange={(e) => setDeleteWeight(e.target.value)}
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="Syntax(e.g '}')" placeholder="Weight" 
                                 type="number" 
-                                value={newSyntaxWeight} 
-                                onChange={(e) => setNewSyntaxWeight(e.target.value)} 
+                                value={syntaxWeight}
+                                onChange={(e) => setSyntaxWeight(e.target.value)}
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="Comments" placeholder="Weight" 
                                 type="number" 
-                                value={newCommentsWeight} 
-                                onChange={(e) => setNewCommentsWeight(e.target.value)} 
+                                value={commentsWeight}
+                                onChange={(e) => setCommentsWeight(e.target.value)}
                                 />
                             </Box>
                         </Box>
@@ -270,14 +283,9 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const router = useRouter();
     const {enqueueSnackbar} = useSnackbar();
-
+    const [selectedProfile, setSelectedProfile] = useState<ScoreProfile | null>();
     const [id,setId] = useState<number>()
-    var extensionWeights = []
-    const [syntaxWeight, setSyntaxWeight] = useState<number>()
-    const [commentsWeight, setCommentsWeight] = useState<number>();
-    const [name, setName] = useState<string>()
-    const [lineWeight, setLineWeight] = useState<number>();
-    const [deleteWeight, setDeleteWeight] = useState<number>();
+
 
     useEffect(() => {
         if (router.isReady) {
@@ -293,24 +301,13 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
 
     const handleNew = () => {
         setId(0);
-        setName("");
-        setCommentsWeight();
-        setDeleteWeight();
-        setLineWeight();
-        setSyntaxWeight();
-        extensionWeights.length = 0;
-        extensionWeights =[];
+        setSelectedProfile(null)
         setOpen(true);
     };
 
     const handleEdit = (Profile) => {
         setId(Profile.id)
-        setName(Profile.name);
-        setCommentsWeight(Profile.commentsWeight);
-        setDeleteWeight(Profile.deleteWeight);
-        setLineWeight(Profile.lineWeight);
-        setSyntaxWeight(Profile.syntaxWeight);
-        extensionWeights = Array.from(Profile.extensionWeights);   
+        setSelectedProfile(Profile)
         setOpen(true);
     };
 
@@ -358,7 +355,7 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                                     <IconButton edge="end" aria-label="edit" onClick={() => { handleEdit(profile);}} >
                                         <EditIcon style={{ fontSize: "25px", color: "grey" }} />
                                     </IconButton>
-                                    <Popup  open={open} handleClose={handleClose} name={name} deleteWeight={deleteWeight} commentsWeight={commentsWeight} syntaxWeight={syntaxWeight} extensionWeights={extensionWeights} id={id} lineWeight={lineWeight}/>             
+                                    <Popup  open={open} handleClose={handleClose} id={id} profile={selectedProfile}/>
                                     <IconButton edge="end" aria-label="delete"  onClick={() => { handleDelete(profile.id);}}>
                                         <DeleteIcon style={{ fontSize: "25px", color: "#CC160B" }}/>
                                     </IconButton>
@@ -371,7 +368,7 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
             <IconButton aria-label="add" onClick={handleNew} marginTop={5}>
                     <AddBoxIcon style={{ fontSize: "25px", color: "green" }}/>
             </IconButton>
-            <Popup  open={open} handleClose={handleClose} name={name} deleteWeight={deleteWeight} commentsWeight={commentsWeight} syntaxWeight={syntaxWeight} extensionWeights={extensionWeights} id={id} lineWeight={lineWeight}/>             
+            <Popup  open={open} handleClose={handleClose} id={id} profile={selectedProfile}/>
   
         </Box>
     );

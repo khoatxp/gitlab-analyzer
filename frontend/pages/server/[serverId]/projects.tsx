@@ -9,8 +9,7 @@ import {useSnackbar} from 'notistack';
 import ProjectSelect from "../../../components/ProjectSelect";
 import LoadingBar from "../../../components/LoadingBar";
 import {formatISO} from "date-fns";
-import ScoreProfileSelector from "../../../components/ScoreProfileSelector";
-import ScoreProfile from "../../../interfaces/ScoreProfile";
+
 
 const index = () => {
     const router = useRouter();
@@ -19,8 +18,6 @@ const index = () => {
     const [projects, setProjects] = useState<GitLabProject[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [itemBeingLoaded, setItemBeingLoaded] = useState<string>('');
-    const [profile, setProfile] = useState<ScoreProfile>();
-    const router = useRouter();
     const {serverId} = router.query;
 
     useEffect(() => {
@@ -66,7 +63,6 @@ const index = () => {
             <CardLayout backLink={"/server"} logoType="header">
                 {isLoading && <LoadingBar itemBeingLoaded={itemBeingLoaded}/>}
                 {!isLoading && <ProjectSelect projects={projects} onAnalyzeClick={handleAnalyze}/>}
-                {!isLoading && <ScoreProfileSelector profile={profile} setProfile={setProfile}/>}
             </CardLayout>
         </AuthView>
     );
