@@ -12,8 +12,7 @@ export const MenuButton = withStyles({
         backgroundColor: 'white',
         borderRadius: '999px',
         margin: '20px 0',
-        position: 'fixed',
-        width: '10%',
+        width: '80%',
         '&:hover': {
             backgroundColor: '#8FC6F3',
             borderColor: '#8FC6F3',
