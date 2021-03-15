@@ -5,6 +5,8 @@ import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
+import com.eris.gitlabanalyzer.repository.UserProjectPermissionRepository;
+import com.eris.gitlabanalyzer.repository.UserServerRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ import java.util.stream.Collectors;
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final ServerRepository serverRepository;
+    private final UserProjectPermissionRepository userProjectPermissionRepository;
+    private final UserServerRepository userServerRepository;
 
     // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
@@ -33,9 +37,11 @@ public class ProjectService {
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public ProjectService(ProjectRepository projectRepository, ServerRepository serverRepository) {
+    public ProjectService(ProjectRepository projectRepository, ServerRepository serverRepository, UserProjectPermissionRepository userProjectPermissionRepository, UserServerRepository userServerRepository) {
         this.projectRepository = projectRepository;
         this.serverRepository = serverRepository;
+        this.userProjectPermissionRepository = userProjectPermissionRepository;
+        this.userServerRepository = userServerRepository;
     }
 
 
@@ -60,6 +66,21 @@ public class ProjectService {
                 gitLabProject.getWebUrl(),
                 server
         );
+
+        var userServer = userServerRepository.findUserServerByAccessToken(accessToken).get();
+
+        User user = userServer.getUser();
+
+        var queryPermission = userProjectPermissionRepository.findByUserIdAndServerIdAndProjectId(
+                user.getId(),
+                server.getId(),
+                project.getId()
+        );
+
+        if (queryPermission.isEmpty()){
+            UserProjectPermission userProjectPermission = new UserProjectPermission(user, project, server);
+            user.addProjectPermission(userProjectPermission);
+        }
 
         return projectRepository.save(project);
     }
