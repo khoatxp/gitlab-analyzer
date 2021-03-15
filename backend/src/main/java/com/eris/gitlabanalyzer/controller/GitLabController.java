@@ -65,8 +65,8 @@ public class GitLabController {
     // Used in notes page for now
     @GetMapping(path ="/projects/{projectId}")
     public Mono<GitLabProject> getProject(Principal principal, @PathVariable("projectId") Long projectId) {
-        var project = projectService.getProjectById(projectId);
         validatePermission(principal, projectId);
+        var project = projectService.getProjectById(projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getProject(project.getGitLabProjectId());
     }
@@ -81,8 +81,8 @@ public class GitLabController {
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
-        var project = projectService.getProjectById(projectId);
         validatePermission(principal, projectId);
+        var project = projectService.getProjectById(projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getMergeRequests(project.getGitLabProjectId(), startDateTime, endDateTime);
     }
@@ -94,8 +94,8 @@ public class GitLabController {
             @PathVariable("projectId") Long projectId,
             @PathVariable("merge_request_iid") Long merge_request_iid)  {
 
-        var project = projectService.getProjectById(projectId);
         validatePermission(principal, projectId);
+        var project = projectService.getProjectById(projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getMergeRequestCommits(project.getGitLabProjectId(), merge_request_iid);
     }
@@ -110,8 +110,8 @@ public class GitLabController {
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
-        var project = projectService.getProjectById(projectId);
         validatePermission(principal, projectId);
+        var project = projectService.getProjectById(projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getCommits(project.getGitLabProjectId(), startDateTime, endDateTime);
     }
@@ -122,8 +122,8 @@ public class GitLabController {
             @PathVariable("projectId") Long projectId,
             @PathVariable("sha") String sha) {
 
-        var project = projectService.getProjectById(projectId);
         validatePermission(principal, projectId);
+        var project = projectService.getProjectById(projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getCommitDiff(project.getGitLabProjectId(), sha);
     }
@@ -134,8 +134,8 @@ public class GitLabController {
             @PathVariable("projectId") Long projectId,
             @PathVariable("merge_request_iid") Long merge_request_iid) {
 
-        var project = projectService.getProjectById(projectId);
         validatePermission(principal, projectId);
+        var project = projectService.getProjectById(projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getMergeRequestDiff(project.getGitLabProjectId(), merge_request_iid);
     }
@@ -147,8 +147,8 @@ public class GitLabController {
             @PathVariable("projectId") Long projectId,
             @PathVariable("merge_request_iid") Long merge_request_iid) {
 
-        var project = projectService.getProjectById(projectId);
         validatePermission(principal, projectId);
+        var project = projectService.getProjectById(projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getMergeRequestNotes(project.getGitLabProjectId(), merge_request_iid);
     }
@@ -163,8 +163,8 @@ public class GitLabController {
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
-        var project = projectService.getProjectById(projectId);
         validatePermission(principal, projectId);
+        var project = projectService.getProjectById(projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getIssues(project.getGitLabProjectId(), startDateTime, endDateTime);
     }
@@ -176,8 +176,8 @@ public class GitLabController {
             @PathVariable("projectId") Long projectId,
             @PathVariable("issue_iid") Long issue_iid) {
 
-        var project = projectService.getProjectById(projectId);
         validatePermission(principal, projectId);
+        var project = projectService.getProjectById(projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getIssueNotes(project.getGitLabProjectId(), issue_iid);
     }
@@ -186,8 +186,8 @@ public class GitLabController {
             Principal principal,
             @PathVariable("projectId") Long projectId) {
 
-        var project = projectService.getProjectById(projectId);
         validatePermission(principal, projectId);
+        var project = projectService.getProjectById(projectId);
         var gitLabService = new GitLabService(serverUrl, accessToken);
         return gitLabService.getMembers(project.getGitLabProjectId());
     }
