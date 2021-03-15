@@ -348,7 +348,7 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                     }}
                 >
                     {profiles.map(profile => (
-                        <MenuItem value={profile} key={profile.id}>  
+                        <MenuItem value={profile.id} key={profile.id}>
                             {profile.name}
                             {isIconVisible ? (
                                 <ListItemSecondaryAction variant="outlined">
