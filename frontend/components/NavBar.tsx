@@ -37,7 +37,8 @@ const NavBar = () => {
     const {user} = React.useContext(AuthContext);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const router = useRouter();
-    const { projectId } =  router.query;
+    const { projectId, startDateTime, endDateTime } =  router.query;
+    const dateQuery = `?startDateTime=${startDateTime}&endDateTime=${endDateTime}`;
     const classes = useStyles();
 
     const handleClickMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -101,7 +102,7 @@ const NavBar = () => {
                     </MenuItem>
                     {projectId?
                         <MenuItem onClick={handleClose}>
-                            <NextLink href={`/project/${projectId}/members`}>
+                            <NextLink href={`/project/${projectId}/members${dateQuery}`}>
                                 <Link>
                                     Members
                                 </Link>

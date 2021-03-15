@@ -16,7 +16,7 @@ public interface MergeRequestRepository extends JpaRepository<MergeRequest, Long
     @Query("select m from MergeRequest m where m.project.id = ?1")
     List<MergeRequest> findAllByProjectId(Long projectId);
 
-    // TODO: update once we have other date variables
-    @Query("select m from MergeRequest m where m.project.id = ?1 and m.createdAt >= ?2 and m.createdAt <= ?3")
+    @Query("select m from MergeRequest m where m.project.id = ?1 and m.mergedAt >= ?2 and m.mergedAt <= ?3")
     List<MergeRequest> findAllByProjectIdAndDateRange(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
+
 }

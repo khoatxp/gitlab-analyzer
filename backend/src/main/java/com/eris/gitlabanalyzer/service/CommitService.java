@@ -8,6 +8,8 @@ import com.eris.gitlabanalyzer.repository.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -24,6 +26,7 @@ public class CommitService {
     ProjectRepository projectRepository;
     GitManagementUserRepository gitManagementUserRepository;
     CommitCommentRepository commitCommentRepository;
+    ScoreService scoreService;
     CommitAuthorRepository commitAuthorRepository;
 
     // TODO Remove after server info is correctly retrieved based on internal projectId
@@ -34,13 +37,14 @@ public class CommitService {
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public CommitService(MergeRequestRepository mergeRequestRepository, CommitRepository commitRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, CommitCommentRepository commitCommentRepository, CommitAuthorRepository commitAuthorRepository) {
+    public CommitService(MergeRequestRepository mergeRequestRepository, CommitRepository commitRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, CommitCommentRepository commitCommentRepository, ScoreService scoreService, CommitAuthorRepository commitAuthorRepository ) {
         this.mergeRequestRepository = mergeRequestRepository;
         this.commitRepository = commitRepository;
         this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
         this.commitCommentRepository = commitCommentRepository;
         this.commitAuthorRepository = commitAuthorRepository;
+        this.scoreService = scoreService;
     }
 
     public String splitEmail(String email) {
@@ -82,7 +86,7 @@ public class CommitService {
                             gitLabCommit.getTitle(),
                             gitLabCommit.getAuthorName(),
                             gitLabCommit.getAuthorEmail(),
-                            gitLabCommit.getCreatedAt(),
+                            gitLabCommit.getCreatedAt().withOffsetSameInstant(ZoneOffset.UTC),
                             gitLabCommit.getWebUrl(),
                             project
                     );
@@ -95,6 +99,7 @@ public class CommitService {
 
                     commit = commitRepository.save(commit);
                     saveCommitComment(project, commit);
+                    scoreService.saveCommitDiffMetrics(commit);
                 }
         );
 

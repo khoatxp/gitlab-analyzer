@@ -1175,7 +1175,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                                                                       tabIndex={-1}
                                                                     >
                                                                       <Link
-                                                                        href="/project/TestId/members"
+                                                                        href="/project/TestId/members?startDateTime=TestStartTime&endDateTime=TestEndTime"
                                                                         key=".0"
                                                                       >
                                                                         <WithStyles(ForwardRef(Link))

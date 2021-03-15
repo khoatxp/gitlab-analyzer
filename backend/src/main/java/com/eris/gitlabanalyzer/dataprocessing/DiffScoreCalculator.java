@@ -1,53 +1,52 @@
 package com.eris.gitlabanalyzer.dataprocessing;
 
 import com.eris.gitlabanalyzer.model.FileScore;
+import com.eris.gitlabanalyzer.model.ScoreProfile;
 import com.eris.gitlabanalyzer.repository.FileScoreRepository;
+import com.eris.gitlabanalyzer.repository.ScoreProfileRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//TODO create public method to read-in/update point values
 @Component
 public class DiffScoreCalculator {
 
-    private Map<String, Integer> filePointValues = new HashMap<>();
-    private int commentPointValue = 1;
-    private final int DEFAULT_FILE_POINTS = 2;
+    private ScoreProfile defaultScoreProfile;
 
+    private FileScoreRepository fileScoreRepository;
+    private ScoreProfileRepository scoreProfileRepository;
 
-    FileScoreRepository fileScoreRepository;
-
-    public DiffScoreCalculator(FileScoreRepository fileScoreRepository){
+    public DiffScoreCalculator(FileScoreRepository fileScoreRepository, ScoreProfileRepository scoreProfileRepository){
         this.fileScoreRepository = fileScoreRepository;
+        this.scoreProfileRepository = scoreProfileRepository;
+        defaultScoreProfile = new ScoreProfile("defaultScoreProfile", 2, 0.5, 1, 1 );
+        Map<String, Double> extensions = new HashMap<>();
+        defaultScoreProfile.addExtension(extensions);
     }
 
-
-    public int calculateScoreMerge(long mergeId){
+    public double calculateScoreMerge(long mergeId, Long scoreProfileId){
+        ScoreProfile scoreProfile = scoreProfileRepository.findScoreProfileById(scoreProfileId).orElse(defaultScoreProfile);
         List<FileScore> fileScores = fileScoreRepository.findByMergeId(mergeId);
-        return calculateFileScore(fileScores);
+        return calculateFileScore(fileScores, scoreProfile);
     }
 
-    public int calculateScoreCommit(long commitId){
+    public double calculateScoreCommit(long commitId, Long scoreProfileId){
+        ScoreProfile scoreProfile = scoreProfileRepository.findScoreProfileById(scoreProfileId).orElse(defaultScoreProfile);
         List<FileScore> fileScores = fileScoreRepository.findByCommitId(commitId);
-        return calculateFileScore(fileScores);
+        return calculateFileScore(fileScores, scoreProfile);
     }
 
-    //TODO look into handling of default values may not need function
-    private int getFilePointValue(String fileType){
-        return  filePointValues.getOrDefault(fileType, DEFAULT_FILE_POINTS);
-    }
-
-    //Todo update scoring values
-    private int calculateFileScore(List<FileScore> fileScores){
-        int totalScore = 0;
+    private double calculateFileScore(List<FileScore> fileScores, ScoreProfile scoreProfile){
+        double totalScore = 0;
         for(FileScore fileScore : fileScores){
-            int fileTypeWeight = filePointValues.getOrDefault(fileScore.getFileType(), DEFAULT_FILE_POINTS);
-            totalScore += fileScore.getCodeLineAdded() * fileTypeWeight;
-            totalScore += fileScore.getSyntaxLineAdded() * commentPointValue;
-            totalScore += fileScore.getCommentLineAdded() * commentPointValue;
-            totalScore += fileScore.getLineRemoved() * (fileTypeWeight/2);
+            double fileWeightModifier = scoreProfile.getExtensionWeights().getOrDefault(fileScore.getFileType(), 1.0);
+
+            totalScore += fileScore.getCodeLineAdded() * (fileWeightModifier * scoreProfile.getLineWeight());
+            totalScore += fileScore.getSyntaxLineAdded() * scoreProfile.getSyntaxWeight();
+            totalScore += fileScore.getCommentLineAdded() *  scoreProfile.getCommentsWeight();
+            totalScore += fileScore.getLineRemoved() * scoreProfile.getDeleteWeight();
         }
 
         return  totalScore;

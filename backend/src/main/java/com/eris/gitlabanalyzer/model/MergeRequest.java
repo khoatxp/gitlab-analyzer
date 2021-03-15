@@ -50,6 +50,11 @@ public class MergeRequest {
     private OffsetDateTime createdAt;
 
     @Column(
+            name = "merged_at"
+    )
+    private OffsetDateTime mergedAt;
+
+    @Column(
             name = "web_url",
             nullable = false
 
@@ -106,6 +111,10 @@ public class MergeRequest {
         return createdAt;
     }
 
+    public OffsetDateTime getMergedAt(){
+        return mergedAt;
+    }
+
     public String getWebUrl() {
         return webUrl;
     }
@@ -129,11 +138,12 @@ public class MergeRequest {
     public MergeRequest() {
     }
 
-    public MergeRequest(Long iid, String authorUsername, String title, OffsetDateTime createdAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
+    public MergeRequest(Long iid, String authorUsername, String title, OffsetDateTime createdAt, OffsetDateTime mergedAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
         this.iid = iid;
         this.authorUsername = authorUsername;
         this.title = title;
         this.createdAt = createdAt;
+        this.mergedAt = mergedAt;
         this.webUrl = webUrl;
         this.project = project;
         this.gitManagementUser = gitManagementUser;
