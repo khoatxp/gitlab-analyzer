@@ -1172,7 +1172,7 @@ exports[`NavBar Snapshot NavBar 1`] = `
                                                                     tabIndex={-1}
                                                                   >
                                                                     <Link
-                                                                      href="/project/TestId/members"
+                                                                      href="/project/TestId/members?startDateTime=undefined&endDateTime=undefined"
                                                                       key=".0"
                                                                     >
                                                                       <WithStyles(ForwardRef(Link))
