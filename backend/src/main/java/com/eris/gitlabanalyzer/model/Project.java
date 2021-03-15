@@ -79,6 +79,14 @@ public class Project {
     )
     private List<Issue> issues = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "project",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<UserProjectPermission> userProjectPermissions = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(
             name = "server_id",
@@ -182,7 +190,6 @@ public class Project {
             issue.setProject(this);
         }
     }
-
 
     @Override
     public String toString() {
