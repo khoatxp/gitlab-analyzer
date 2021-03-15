@@ -39,12 +39,12 @@ public class ProjectController {
     }
 
     @PostMapping(path = "/analytics")
-    public void saveAllFromGitlab(
+    public List<Long> saveAllFromGitlab(
             @RequestBody List<Long> projectIdList,
             @RequestParam("startDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
-        analyticsService.saveAllFromGitlab(projectIdList, startDateTime, endDateTime);
+        return analyticsService.saveAllFromGitlab(projectIdList, startDateTime, endDateTime);
     }
 }

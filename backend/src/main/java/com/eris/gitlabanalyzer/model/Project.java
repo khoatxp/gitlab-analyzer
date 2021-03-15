@@ -100,6 +100,14 @@ public class Project {
             fetch = FetchType.LAZY)
     private List<GitManagementUser> gitManagementUsers = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "gitManagementUser",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<CommitAuthor> commitAuthors = new ArrayList<>();
+
     public Project() {
     }
 

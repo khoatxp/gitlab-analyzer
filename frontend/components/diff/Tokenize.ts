@@ -27,5 +27,9 @@ export const Tokenize = (change: ParsedFileChange) => {
 // Get file extension so react-diff-view knows what language syntax to use
 const getExtensionFromFilePath = (path: string): string => {
     // Get everything after the last period
-    return path.substr(path.lastIndexOf(".") + 1);
+    try {
+        return path.substr(path.lastIndexOf(".") + 1);
+    } catch {
+        return '';
+    }
 }

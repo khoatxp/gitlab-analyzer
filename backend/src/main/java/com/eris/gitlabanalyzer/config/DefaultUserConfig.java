@@ -12,6 +12,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Optional;
+
 @Configuration
 public class DefaultUserConfig {
     @Value("${gitlab.SERVER_URL}")
@@ -29,11 +31,15 @@ public class DefaultUserConfig {
             if (serverUrl != null && !serverUrl.isBlank() &&
                     accessToken != null && !accessToken.isBlank() &&
                     username != null && !username.isBlank()) {
-                Server server = new Server(serverUrl);
-                serverRepository.save(server);
-                User user = new User(username);
-                user.addServer(server, accessToken);
-                userRepository.save(user);
+                Optional<Server> serverOptional = serverRepository.findByServerUrlAndAccessToken(serverUrl,accessToken);
+                Server server = serverOptional.orElseGet(()-> serverRepository.save(new Server(serverUrl)));
+
+                Optional<User> userOptional = userRepository.findUserByUsername(username);
+                if(userOptional.isEmpty()){
+                    User user = new User(username);
+                    user.addServer(server, accessToken);
+                    userRepository.save(user);
+                }
             }
         };
     }
