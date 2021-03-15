@@ -35,7 +35,7 @@ const MenuSideBar = () => {
     return (
         <Box
             className={classes.background}
-            height="calc(100vh - 7vh)" // 7vh is the height of the NavBar
+            height="auto"
             width="16vw"
             display="flex"
             flexDirection="column"

@@ -7,6 +7,7 @@ import Image from "next/image";
 import {Box, Button, Icon, Link, Menu, MenuItem} from "@material-ui/core";
 import {AuthContext} from "./AuthContext";
 import NextLink from "next/link";
+import {useRouter} from "next/router";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -35,7 +36,8 @@ const useStyles = makeStyles((theme) => ({
 const NavBar = () => {
     const {user} = React.useContext(AuthContext);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
+    const router = useRouter();
+    const { projectId } =  router.query;
     const classes = useStyles();
 
     const handleClickMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -86,8 +88,8 @@ const NavBar = () => {
                     keepMounted
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
-                    anchorOrigin={{vertical: "bottom", horizontal: "center"}}
-                    transformOrigin={{vertical: "top", horizontal: "center"}}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    transformOrigin={{ vertical: "top", horizontal: "center" }}
                 >
                     <MenuItem onClick={handleClose}>
                         <NextLink href="/server" passHref>
@@ -95,7 +97,17 @@ const NavBar = () => {
                                 Servers
                             </Link>
                         </NextLink>
+
                     </MenuItem>
+                    {projectId?
+                        <MenuItem onClick={handleClose}>
+                            <NextLink href={`/project/${projectId}/members`}>
+                                <Link>
+                                    Members
+                                </Link>
+                            </NextLink>
+                        </MenuItem>:''
+                    }
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
             </Toolbar>

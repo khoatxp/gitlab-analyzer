@@ -1,9 +1,6 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.model.Project;
-import com.eris.gitlabanalyzer.model.RawCommitData;
-import com.eris.gitlabanalyzer.model.RawMergeRequestData;
-import com.eris.gitlabanalyzer.model.RawTimeLineProjectData;
+import com.eris.gitlabanalyzer.model.*;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
@@ -19,6 +16,7 @@ import reactor.core.scheduler.Schedulers;
 import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,19 +43,22 @@ public class ProjectService {
         // TODO use an internal projectId to find the correct server
         var gitLabService = new GitLabService(serverUrl, accessToken);
 
-        Project project = projectRepository.findByGitlabProjectIdAndServerUrl(projectId, serverUrl);
-        if (project != null) {
-            return project;
+        Optional<Project> projectOptional = projectRepository.findByGitlabProjectIdAndServerUrl(projectId,serverUrl);
+        if(projectOptional.isPresent()){
+            return projectOptional.get();
         }
+
+        Server server = serverRepository.findByServerUrl(serverUrl)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Server with URL " + serverUrl + " does not exist"));
 
         var gitLabProject = gitLabService.getProject(projectId).block();
 
-        project = new Project(
+        Project project = new Project(
                 projectId,
                 gitLabProject.getName(),
                 gitLabProject.getNameWithNamespace(),
                 gitLabProject.getWebUrl(),
-                serverRepository.findByServerUrlAndAccessToken(serverUrl, accessToken)
+                server
         );
 
         return projectRepository.save(project);

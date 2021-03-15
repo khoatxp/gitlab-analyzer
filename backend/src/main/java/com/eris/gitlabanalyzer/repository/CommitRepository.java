@@ -4,7 +4,6 @@ import com.eris.gitlabanalyzer.model.Commit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -22,4 +21,6 @@ public interface CommitRepository extends JpaRepository<Commit,Long> {
     @Query("select c from Commit c where c.project.id = ?1 and c.createdAt >= ?2 and c.createdAt <= ?3 and c.mergeRequest  IS NULL")
     List<Commit> findAllOrphanByProjectIdAndDateRange(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
 
+    @Query("select c from Commit c where c.project.id=?1 and c.authorEmail in (select ca.authorEmail from CommitAuthor ca where ca.authorEmail = c.authorEmail and ca.gitManagementUser.id = ?2)")
+    List<Commit> findByProjectIdAndGitManagementUserId(Long projectId, Long gitManagementUserId);
 }

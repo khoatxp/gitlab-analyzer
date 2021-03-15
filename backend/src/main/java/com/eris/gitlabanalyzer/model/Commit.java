@@ -73,16 +73,6 @@ public class Commit {
     )
     private String webUrl;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(
-            name = "commit_id",
-            referencedColumnName = "commit_id",
-            foreignKey = @ForeignKey(
-                    name = "commit_mapping_commit_id_fk"
-            )
-    )
-    private CommitMapping commitMapping;
-
     @OneToMany(
             mappedBy = "commit",
             orphanRemoval = true,
@@ -97,12 +87,6 @@ public class Commit {
             nullable = false,
             referencedColumnName = "project_id")
     private Project project;
-
-    @ManyToOne
-    @JoinColumn(
-            name = "git_management_user_id",
-            referencedColumnName = "git_management_user_id")
-    private GitManagementUser gitManagementUser;
 
     @ManyToOne
     @JoinColumn(
@@ -121,14 +105,6 @@ public class Commit {
         this.createdAt = createdAt;
         this.webUrl = webUrl;
         this.project = project;
-    }
-
-    public CommitMapping getCommitMapping() {
-        return commitMapping;
-    }
-
-    public void setCommitMapping(CommitMapping commitMapping) {
-        this.commitMapping = commitMapping;
     }
 
     public Long getId() {
@@ -164,10 +140,6 @@ public class Commit {
         this.project = project;
     }
 
-    public void setGitManagementUser(GitManagementUser gitManagementUser) {
-        this.gitManagementUser = gitManagementUser;
-    }
-
     public void setMergeRequest(MergeRequest mergeRequest) {
         this.mergeRequest = mergeRequest;
         this.mergedAt = mergeRequest.getMergedAt();
@@ -186,8 +158,6 @@ public class Commit {
                 "id=" + id +
                 ", sha='" + sha + '\'' +
                 ", title='" + title + '\'' +
-                ", authorName='" + authorName + '\'' +
-                ", authorEmail='" + authorEmail + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 ", webUrl='" + webUrl + '\'' +
                 '}';
