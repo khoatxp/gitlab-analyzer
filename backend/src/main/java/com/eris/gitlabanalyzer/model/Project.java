@@ -191,13 +191,6 @@ public class Project {
         }
     }
 
-    public void addUserProjectPermission(UserProjectPermission userProjectPermission) {
-        if (!this.userProjectPermissions.contains(userProjectPermission)) {
-            this.userProjectPermissions.add(userProjectPermission);
-            userProjectPermission.setProject(this);
-        }
-    }
-
     @Override
     public String toString() {
         return "Project{" +

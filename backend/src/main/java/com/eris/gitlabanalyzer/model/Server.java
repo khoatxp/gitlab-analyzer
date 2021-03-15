@@ -105,14 +105,6 @@ public class Server {
         }
     }
 
-    public void addUserProjectPermission(UserProjectPermission userProjectPermission) {
-        if (!this.userProjectPermissions.contains(userProjectPermission)) {
-            this.userProjectPermissions.add(userProjectPermission);
-            userProjectPermission.setServer(this);
-        }
-    }
-
-
     @Override
     public String toString() {
         return "Server{" +
