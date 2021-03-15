@@ -45,46 +45,42 @@ public class ProjectService {
         this.userServerRepository = userServerRepository;
     }
 
-
-    public Project saveProjectInfo(Long projectId) {
-        // TODO use an internal projectId to find the correct server
-        var gitLabService = new GitLabService(serverUrl, accessToken);
-
-        Optional<Project> projectOptional = projectRepository.findByGitlabProjectIdAndServerUrl(projectId,serverUrl);
-        if(projectOptional.isPresent()){
-            return projectOptional.get();
-        }
-
-        Server server = serverRepository.findByServerUrl(serverUrl)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Server with URL " + serverUrl + " does not exist"));
-
-        var gitLabProject = gitLabService.getProject(projectId).block();
-
-        Project project = new Project(
-                projectId,
-                gitLabProject.getName(),
-                gitLabProject.getNameWithNamespace(),
-                gitLabProject.getWebUrl(),
-                server
-        );
-
-        var userServer = userServerRepository.findUserServerByAccessToken(accessToken).orElseThrow(
-                () -> new AccessDeniedException("UserServer not found."));
-
-        User user = userServer.getUser();
-
+    private void createUserProjectPermission(User user, Server server, Project project)
+    {
         var queryPermission = userProjectPermissionRepository.findByUserIdAndServerIdAndProjectId(
                 user.getId(),
                 server.getId(),
                 project.getId()
         );
 
-        if (queryPermission.isEmpty()){
+        if(queryPermission.isEmpty()) {
             UserProjectPermission userProjectPermission = new UserProjectPermission(user, project, server);
-            user.addProjectPermission(userProjectPermission);
+            userProjectPermissionRepository.save(userProjectPermission);
+        }
+    }
+
+    public Project saveProjectInfo(User user, Long projectId) {
+        // TODO use an internal projectId to find the correct server
+        var gitLabService = new GitLabService(serverUrl, accessToken);
+        Server server = serverRepository.findByServerUrl(serverUrl)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Server with URL " + serverUrl + " does not exist"));
+
+        Optional<Project> projectOptional = projectRepository.findByGitlabProjectIdAndServerUrl(projectId,serverUrl);
+        if(projectOptional.isPresent()){
+            createUserProjectPermission(user, server, projectOptional.get());
+            return projectOptional.get();
         }
 
-        return projectRepository.save(project);
+        var gitLabProject = gitLabService.getProject(projectId).block();
+        Project project = projectRepository.save(new Project(
+                projectId,
+                gitLabProject.getName(),
+                gitLabProject.getNameWithNamespace(),
+                gitLabProject.getWebUrl(),
+                server
+        ));
+        createUserProjectPermission(user, server, project);
+        return project;
     }
 
     public RawTimeLineProjectData getTimeLineProjectData(Long gitLabProjectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {

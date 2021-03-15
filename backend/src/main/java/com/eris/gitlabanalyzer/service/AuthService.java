@@ -44,12 +44,9 @@ public class AuthService implements UserDetailsService {
         return userRepository.findUserByUsername(principle.getName()).orElseThrow(() -> new AccessDeniedException("User not found."));
     }
 
-    public boolean hasPermission(User user, Project project, Server server) {
-        if (userProjectPermissionRepository.findByUserIdAndServerIdAndProjectId(
-                user.getId(), server.getId(), project.getId()).isPresent()) {
-            return true;
-        }
-        return false;
+    public boolean hasProjectPermission(Long userId, Long serverId, Long projectId) {
+        return userProjectPermissionRepository.findByUserIdAndServerIdAndProjectId(
+                userId, serverId, projectId).isPresent();
     }
 
 }

@@ -38,6 +38,10 @@ public class User {
     )
     private List<UserServer> userServers = new ArrayList<>();
 
+    public List<UserProjectPermission> getUserProjectPermissions() {
+        return userProjectPermissions;
+    }
+
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
@@ -45,7 +49,6 @@ public class User {
             fetch = FetchType.LAZY
     )
     private List<UserProjectPermission> userProjectPermissions = new ArrayList<>();
-
 
     public User(){}
 
@@ -75,12 +78,6 @@ public class User {
         if (!this.userServers.contains(userServer)) {
             this.userServers.add(userServer);
             userServer.setUser(this);
-        }
-    }
-    public void addProjectPermission(UserProjectPermission userProjectPermission) {
-        if (!this.userProjectPermissions.contains(userProjectPermission)) {
-            this.userProjectPermissions.add(userProjectPermission);
-            userProjectPermission.setUser(this);
         }
     }
 

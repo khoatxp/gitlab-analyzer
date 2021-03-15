@@ -46,7 +46,7 @@ public class GitLabController {
         var user = authService.getLoggedInUser(principal);
         var project = projectService.getProjectById(projectId);
         var server = project.getServer();
-        return authService.hasPermission(user, project, server);
+        return authService.hasProjectPermission(user.getId(), server.getId(), projectId);
     }
 
     @GetMapping(path ="{serverId}/projects")
