@@ -18,11 +18,12 @@ public class ScoreController {
     public ScoreController(ScoreService scoreService) {
         this.scoreService = scoreService;
     }
-
+    // todo remove once we are passing profileId with every call
     @GetMapping(path ="/merge_request/{merge_request_id}/diff/score")
     public double getMergeDiffScore (@PathVariable("merge_request_id") Long merge_request_id){
         return scoreService.getMergeDiffScore(merge_request_id, 0L);
     }
+    // todo remove once we are passing profileId with every call
     @GetMapping(path ="/{projectId}/merge_requests/score")
     public double getTotalMergeDiffScore (@PathVariable("projectId") Long projectId,
                                        @RequestParam("startDateTime")
@@ -47,11 +48,12 @@ public class ScoreController {
                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
         return scoreService.getTotalMergeDiffScore(projectId, scoreProfileId, startDateTime, endDateTime);
     }
-
+    // todo remove once we are passing profileId with every call
     @GetMapping(path ="/commit/{commitId}/diff/score")
     public double getCommitDiffScore (@PathVariable("commitId") Long commitId){
         return scoreService.getCommitDiffScore(commitId, 0L);
     }
+    // todo remove once we are passing profileId with every call
     @GetMapping(path ="/{projectId}/commits/score")
     public double getTotalCommitDiffScore (@PathVariable("projectId") Long projectId,
                                        @RequestParam("startDateTime")
