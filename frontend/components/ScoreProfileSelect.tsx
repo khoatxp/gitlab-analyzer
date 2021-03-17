@@ -35,12 +35,7 @@ const useStyles = makeStyles((theme) => ({
         padding:"20px",
         boxShadow:'none'
     },
-    button: {
-        borderRadius: "20px",
-        padding: "12px 30px",
-        margin: "10px",
-        color:"primary"
-    }
+
 }));
 
 interface Props {
@@ -48,10 +43,10 @@ interface Props {
     setProfile: (x:ScoreProfile) => void
 }
 
-const Popup = (props) => {
+const ScoreProfileModal = (props) => {
     const classes = useStyles();
     const router = useRouter();
-    const { open, handleClose, id, profile  } = props;
+    const { open, handleClose, id, profile, isNewProfile  } = props;
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
@@ -67,23 +62,23 @@ const Popup = (props) => {
     
     useEffect(() => {
 
-        if(id > 0){
-                    setName(profile.name);
-                    setCommentsWeight(profile.commentsWeight);
-                    setDeleteWeight(profile.deleteWeight);
-                    setLineWeight(profile.lineWeight);
-                    setSyntaxWeight(profile.syntaxWeight);
-                    let map = new Map(Object.entries(profile.extensionWeights));
-                    setExtensionMap(map);
+        if(isNewProfile == false){
+             setName(profile.name);
+             setCommentsWeight(profile.commentsWeight);
+             setDeleteWeight(profile.deleteWeight);
+             setLineWeight(profile.lineWeight);
+             setSyntaxWeight(profile.syntaxWeight);
+             let map = new Map(Object.entries(profile.extensionWeights));
+             setExtensionMap(map);
         }
         else{
-                    setName("");
-                    setCommentsWeight();
-                    setDeleteWeight();
-                    setLineWeight();
-                    setSyntaxWeight();
-                    let map= new Map();
-                    setExtensionMap(map);
+            setName("");
+            setCommentsWeight();
+            setDeleteWeight();
+            setLineWeight();
+            setSyntaxWeight();
+            let map= new Map();
+            setExtensionMap(map);
         }
 
     },[open])
@@ -155,7 +150,7 @@ const Popup = (props) => {
                 extensionWeights: savedArray,
             }
 
-            if (id != 0) {
+            if (isNewProfile == false) {
                 axios
                 .put(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile/${id}` , newProfile, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
@@ -183,11 +178,10 @@ const Popup = (props) => {
 
         <React.Fragment>
             <Dialog open={open} onClose={close} fullWidth maxWidth="sm" classes={{paper: classes.popup}} >
-                <Button variant="contained" color="primary" className={classes.button} onClick={close}>X</Button>
-                <DialogTitle id="edit-dialog-title" align="center">{"Score Profile"}</DialogTitle>
+                <DialogTitle id="edit-dialog-title" style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>{"Score Profile"}</DialogTitle>
                 <DialogContent>
                     <form className={classes.root} onSubmit={handleSave}>
-                        <div marginLeft={2} align="right">
+                        <div marginLeft={2} style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
                             <Box width={150}>
                                 <AppTextField label="Name" value={name} onChange={(e) => setName( e.target.value)} required/>
                             </Box>
@@ -222,10 +216,10 @@ const Popup = (props) => {
                                 />
                             </Box>
                         </Box>
-                        <DialogTitle id="extension-dialog-title" align="center">{"Extensions"}</DialogTitle>
+                        <DialogTitle id="extension-dialog-title" style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>{"Extensions"}</DialogTitle>
                         <Box  display="flex" flexDirection="row" justifyContent="center" flexWrap="wrap">
                             {extensionMap && extensionMap.size > 0 ?
-                            Array.from(extensionMap).map((x, index) => {
+                            Array.from(extensionMap).map((extension, index) => {
                                 return (
 
                                     <Box
@@ -238,18 +232,18 @@ const Popup = (props) => {
                                         alignItems="center"
                                     >
                                         <AppTextField label="extension" 
-                                        value={x[0]} 
-                                        onChange={(e) => handleExtensionChange(x[0], e.target.value)} 
+                                        value={extension[0]}
+                                        onChange={(e) => handleExtensionChange(extension[0], e.target.value)}
                                         />
                                         <AppTextField label="weight" 
-                                        value={x[1]} 
-                                        onChange={(e) => handleWeightChange(x[0], e.target.value) } 
+                                        value={extension[1]}
+                                        onChange={(e) => handleWeightChange(extension[0], e.target.value) }
                                         type="number"
                                         />
 
                                         <div>
                                             
-                                            <IconButton edge="center" aria-label="deleteextension" onClick={()=>handleRemoveExtension(x[0])}>
+                                            <IconButton edge="center" aria-label="deleteextension" onClick={()=>handleRemoveExtension(extension[0])}>
                                                 <DeleteIcon style={{ fontSize: "25px", color:"grey" }} />
                                             </IconButton>
                                         </div>
@@ -257,16 +251,17 @@ const Popup = (props) => {
                                 );
                             }): "No extensions set for this Profile"}
                         </Box>
-                        <div align="start">
-                            <IconButton edge="start" aria-label="addextension" onClick={handleAddExtension}>
+                        <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
+                            <IconButton edge="center" aria-label="addextension" onClick={handleAddExtension}>
                                 <AddCircleIcon style={{ fontSize: "30px", color: "green" }} />
                             </IconButton>
                         </div>
                     </form>
                 </DialogContent>
                 <DialogActions>
-                    <div align="end">
-                    <AppButton size="small" type="submit" color="primary" onClick={handleSave}>Save</AppButton>
+                    <div alignItems="end">
+                    <AppButton size="large"  color="primary" onClick={close}>Cancel</AppButton>
+                    <AppButton size="large" type="submit" color="primary" onClick={handleSave}>Save</AppButton>
                     </div>
                 </DialogActions>
             </Dialog>
@@ -276,6 +271,8 @@ const Popup = (props) => {
 
 const ScoreProfileSelector = ({profile, setProfile}:Props) => {
 
+
+    const [isNewProfile, setIsNewProfile] = useState(true);
     const classes = useStyles();
     const [profiles, setProfiles] =  useState<ScoreProfile[]>([]);
     const [isIconVisible, setIconVisible] = useState(false);
@@ -301,12 +298,14 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
 
     const handleNew = () => {
         setId(0);
+        setIsNewProfile(true)
         setSelectedProfile(null)
         setOpen(true);
     };
 
     const handleEdit = (Profile) => {
         setId(Profile.id)
+        setIsNewProfile(false)
         setSelectedProfile(Profile)
         setOpen(true);
     };
@@ -355,7 +354,7 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                                     <IconButton edge="end" aria-label="edit" onClick={() => { handleEdit(profile);}} >
                                         <EditIcon style={{ fontSize: "25px", color: "grey" }} />
                                     </IconButton>
-                                    <Popup  open={open} handleClose={handleClose} id={id} profile={selectedProfile}/>
+                                    <ScoreProfileModal  open={open} handleClose={handleClose} id={id} profile={selectedProfile} isNewProfile={isNewProfile}/>
                                     <IconButton edge="end" aria-label="delete"  onClick={() => { handleDelete(profile.id);}}>
                                         <DeleteIcon style={{ fontSize: "25px", color: "#CC160B" }}/>
                                     </IconButton>
@@ -368,7 +367,7 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
             <IconButton aria-label="add" onClick={handleNew} marginTop={5}>
                     <AddBoxIcon style={{ fontSize: "25px", color: "green" }}/>
             </IconButton>
-            <Popup  open={open} handleClose={handleClose} id={id} profile={selectedProfile}/>
+            <ScoreProfileModal  open={open} handleClose={handleClose} id={id} profile={selectedProfile} isNewProfile={isNewProfile}/>
   
         </Box>
     );
