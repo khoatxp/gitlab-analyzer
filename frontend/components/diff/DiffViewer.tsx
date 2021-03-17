@@ -3,15 +3,16 @@ import {parseFileChangesForDiffViewer} from "./FileChangeParser";
 import {ParsedFileChange} from "../../interfaces/ParsedFileChange";
 import React, {useMemo, useState} from "react";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
-import {Box, Button, Card, Divider, ListSubheader, Typography} from "@material-ui/core";
+import {Box, Card, Divider, ListSubheader, Typography} from "@material-ui/core";
 import {Tokenize} from "./Tokenize";
+import LinkIcon from '@material-ui/icons/Link';
 // @ts-ignore (Doesn't have typescript types)
 import {Decoration, Diff, Hunk} from 'react-diff-view';
 import List from "@material-ui/core/List";
 import AppButton from "../app/AppButton";
 
-type DiffViewerProps = { fileChanges: FileChange[] };
-const DiffViewer = ({fileChanges}: DiffViewerProps) => {
+type DiffViewerProps = { fileChanges: FileChange[], linkToFileChanges: string };
+const DiffViewer = ({fileChanges, linkToFileChanges}: DiffViewerProps) => {
     const [isUnified, setUnified] = useState<boolean>(true);
     const parsedFileChanges = parseFileChangesForDiffViewer(fileChanges);
     return (
@@ -24,9 +25,22 @@ const DiffViewer = ({fileChanges}: DiffViewerProps) => {
                         <p>
                             Diff
                         </p>
-                        <Box display="flex" flexDirection="row-reverse" width="100%" alignItems="center" >
-                            <AppButton color="primary" size="small" onClick={() => setUnified(!isUnified)}>
+                        <Box display="flex" width="100%" alignItems="center" justifyContent="flex-end">
+                            <AppButton
+                                disabled={fileChanges.length === 0}
+                                color="primary"
+                                size="small"
+                                onClick={() => setUnified(!isUnified)}
+                            >
                                 {isUnified ? 'Split' : 'Unified'} View
+                            </AppButton>
+                            <AppButton
+                                disabled={!linkToFileChanges}
+                                color="primary"
+                                size="small"
+                                onClick={() => window.open(linkToFileChanges, '_blank')}
+                            >
+                                <LinkIcon/>
                             </AppButton>
                         </Box>
                     </ListSubheader>
