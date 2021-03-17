@@ -20,7 +20,7 @@ const DiffViewer = ({fileChanges, linkToFileChanges}: DiffViewerProps) => {
                 subheader={
                     <ListSubheader style={{display: 'flex'}}>
                         <p>
-                            Diff
+                            Diff(s)
                         </p>
                         <Box display="flex" width="100%" alignItems="center" justifyContent="flex-end">
                             <AppButton
@@ -36,8 +36,9 @@ const DiffViewer = ({fileChanges, linkToFileChanges}: DiffViewerProps) => {
                                 color="primary"
                                 size="small"
                                 onClick={() => window.open(linkToFileChanges, '_blank')}
+                                startIcon={<LinkIcon/>}
                             >
-                                <LinkIcon/>
+                                View in GitLab
                             </AppButton>
                         </Box>
                     </ListSubheader>
