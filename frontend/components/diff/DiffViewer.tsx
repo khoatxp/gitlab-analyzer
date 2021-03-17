@@ -3,13 +3,15 @@ import {parseFileChangesForDiffViewer} from "./FileChangeParser";
 import {ParsedFileChange} from "../../interfaces/ParsedFileChange";
 import React, {useMemo, useState} from "react";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
-import {Box, Card, Divider, ListSubheader, Typography} from "@material-ui/core";
+import {Box, Card, Divider, IconButton, ListSubheader, Typography} from "@material-ui/core";
 import {Tokenize} from "./Tokenize";
 import LinkIcon from '@material-ui/icons/Link';
 // @ts-ignore (Doesn't have typescript types)
 import {Decoration, Diff, Hunk} from 'react-diff-view';
 import List from "@material-ui/core/List";
 import AppButton from "../app/AppButton";
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 
 type DiffViewerProps = { fileChanges: FileChange[], linkToFileChanges: string };
 const DiffViewer = ({fileChanges, linkToFileChanges}: DiffViewerProps) => {
@@ -74,21 +76,30 @@ const DiffViewer = ({fileChanges, linkToFileChanges}: DiffViewerProps) => {
 type FileDiffViewProps = { unified?: boolean, change: ParsedFileChange }
 const FileDiffView = ({unified, change}: FileDiffViewProps) => {
     const styles = useStyles();
+    const [hidden, setHidden] = useState<boolean>(false);
     const tokens = useMemo(() => Tokenize(change), [change]);   // Used for syntax highlighting
 
     return (
         <Card raised className={styles.fileDiff}>
-            <Typography className={styles.diffHeader}>{getFileChangeHeader(change)}</Typography>
-            <Diff viewType={ unified ? "unified" : 'split'} diffType={change.type} hunks={change.hunks} tokens={tokens}>
-                {(hunks: any[]) =>
-                    hunks.map(hunk => [
-                        <Decoration key={'deco-' + hunk.content}>
-                            <div className={styles.hunkHeader}>{hunk.content}</div>
-                        </Decoration>,
-                        <Hunk key={hunk.content} hunk={hunk}/>,
-                    ])
-                }
-            </Diff>
+            <Typography className={styles.diffHeader}>
+                <IconButton size="small" onClick={() => setHidden(!hidden)}>
+                    { hidden ? <ArrowDropDownIcon/> : <ArrowRightIcon/> }
+                </IconButton>
+                {getFileChangeHeader(change)}
+            </Typography>
+            {
+                !hidden &&
+                <Diff viewType={ unified ? "unified" : 'split'} diffType={change.type} hunks={change.hunks} tokens={tokens}>
+                    {(hunks: any[]) =>
+                        hunks.map(hunk => [
+                            <Decoration key={'deco-' + hunk.content}>
+                                <div className={styles.hunkHeader}>{hunk.content}</div>
+                            </Decoration>,
+                            <Hunk key={hunk.content} hunk={hunk}/>,
+                        ])
+                    }
+                </Diff>
+            }
         </Card>
     )
 }
