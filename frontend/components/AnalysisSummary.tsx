@@ -6,6 +6,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import StarIcon from '@material-ui/icons/Star';
 import RestaurantIcon from '@material-ui/icons/Restaurant';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
+import {useSnackbar} from "notistack";
 
 const useStyles = makeStyles(theme => ({
     avatar: {
@@ -23,8 +24,21 @@ export interface ProjectSummary {
 }
 
 const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) => {
+    const {enqueueSnackbar} = useSnackbar();
     const styles = useStyles();
 
+    const handleCopyScore = async () => {
+        try {
+            let scoreText = `Merge Request Count: ${projectSummary.mergeRequestCount}\n`;
+            scoreText += `Merge Request Score: ${projectSummary.mergeRequestScore}\n`;
+            scoreText += `Commit Count: ${projectSummary.commitCount}\n`;
+            scoreText += `Commit Score: ${projectSummary.commitScore}`;
+            await navigator.clipboard.writeText(scoreText);
+            enqueueSnackbar("Score summary copied to clipboard", {variant: "success"})
+        } catch {
+            enqueueSnackbar("Failed to copy score summary to clipboard", {variant: "error"})
+        }
+    }
 
     if (!projectSummary.project) {
         return <></>
@@ -44,8 +58,10 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
                     {projectSummary.mergeRequestCount} Merge Request(s)
                 </Typography>
                 <Box pt={1}>
-                    <Chip style={{marginRight: "5px"}} color="primary" size="small" icon={<StarIcon/>} label={`Stars: ${projectSummary.project.star_count}`}/>
-                    <Chip color="primary" size="small" icon={<RestaurantIcon/>} label={`Forks: ${projectSummary.project.forks_count}`}/>
+                    <Chip style={{marginRight: "5px"}} color="primary" size="small" icon={<StarIcon/>}
+                          label={`Stars: ${projectSummary.project.star_count}`}/>
+                    <Chip color="primary" size="small" icon={<RestaurantIcon/>}
+                          label={`Forks: ${projectSummary.project.forks_count}`}/>
                 </Box>
             </Box>
 
@@ -55,8 +71,8 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
                     <Typography variant="h6"><b>Commit Score:</b> {projectSummary.commitScore}</Typography>
                 </Box>
                 <Box ml={2}>
-                    <IconButton color="primary" size="medium">
-                        <FileCopyIcon />
+                    <IconButton color="primary" size="medium" onClick={handleCopyScore}>
+                        <FileCopyIcon/>
                     </IconButton>
                 </Box>
             </Box>
