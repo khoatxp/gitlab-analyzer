@@ -16,7 +16,7 @@ import Select from '@material-ui/core/Select';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import {AuthContext} from "./AuthContext";
 import {useSnackbar} from 'notistack';
-import ScoreProfileModal from "./ScoreProfileModal"
+import ScoreProfileModal from "./ScoreProfileModal";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -97,21 +97,22 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                     onClose={() => setIconVisible(false)}
                     value={profile}
                     onChange={setProfile}
-                    isLoading= "...loading"
+                    isLoading= "...loading profiles"
                     maxMenuHeight = {220}
+                    isClearable={true}
                     MenuProps={{
-                        getContentAnchorEl: null,                     
+                        getContentAnchorEl: null,
                         anchorOrigin: {
                           vertical: "bottom",
                           horizontal: "left",
                         }
-                        
+
                     }}
                 >
                     {profiles.map(profile => (
                         <MenuItem value={profile.id} key={profile.id}>
                             {profile.name}
-                            {isIconVisible ? (
+                            {isIconVisible && profile != profile.name  ? (
                                 <ListItemSecondaryAction variant="outlined">
                                     <IconButton edge="end" aria-label="edit" onClick={() => { handleEdit(profile);}} >
                                         <EditIcon style={{ fontSize: "25px", color: "grey" }} />

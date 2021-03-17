@@ -10,10 +10,8 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import DialogActions from '@material-ui/core/DialogActions';
 import FormControl from '@material-ui/core/FormControl';
 import DialogContent from "@material-ui/core/DialogContent";
-import EditIcon from '@material-ui/icons/Edit';
-import AddBoxIcon from '@material-ui/icons/AddBox';
-import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from "@material-ui/icons/Delete";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from '@material-ui/core/DialogTitle';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
@@ -240,7 +238,7 @@ const ScoreProfileModal = (props) => {
                                         </div>
                                     </Box>
                                 );
-                            }): "No extensions set for this Profile"}
+                            }): "No extensions set for this profile"}
                         </Box>
                         <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
                             <IconButton edge="center" aria-label="addextension" onClick={handleAddExtension}>
