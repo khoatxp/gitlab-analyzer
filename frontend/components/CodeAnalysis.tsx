@@ -27,7 +27,7 @@ const CodeAnalysis = () => {
                 .then((resp: AxiosResponse) => {
                     setProject(resp.data);
                 }).catch(() => {
-                enqueueSnackbar('Failed to get project name.', {variant: 'error',});
+                enqueueSnackbar('Failed to get project data.', {variant: 'error',});
             });
             axios
                 .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_requests?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
