@@ -1,16 +1,18 @@
 import {FileChange} from "../../interfaces/GitLabFileChange";
 import {parseFileChangesForDiffViewer} from "./FileChangeParser";
 import {ParsedFileChange} from "../../interfaces/ParsedFileChange";
-import React, {useMemo} from "react";
+import React, {useMemo, useState} from "react";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
-import {Box, Card, Divider, ListSubheader, Typography} from "@material-ui/core";
+import {Box, Button, Card, Divider, ListSubheader, Typography} from "@material-ui/core";
 import {Tokenize} from "./Tokenize";
 // @ts-ignore (Doesn't have typescript types)
 import {Decoration, Diff, Hunk} from 'react-diff-view';
 import List from "@material-ui/core/List";
+import AppButton from "../app/AppButton";
 
 type DiffViewerProps = { fileChanges: FileChange[] };
 const DiffViewer = ({fileChanges}: DiffViewerProps) => {
+    const [isUnified, setUnified] = useState<boolean>(true);
     const parsedFileChanges = parseFileChangesForDiffViewer(fileChanges);
     return (
         <Card>
@@ -18,7 +20,16 @@ const DiffViewer = ({fileChanges}: DiffViewerProps) => {
                 component="nav"
                 disablePadding
                 subheader={
-                    <ListSubheader>Diff</ListSubheader>
+                    <ListSubheader style={{display: 'flex'}}>
+                        <p>
+                            Diff
+                        </p>
+                        <Box display="flex" flexDirection="row-reverse" width="100%" alignItems="center" >
+                            <AppButton color="primary" size="small" onClick={() => setUnified(!isUnified)}>
+                                {isUnified ? 'Split' : 'Unified'} View
+                            </AppButton>
+                        </Box>
+                    </ListSubheader>
                 }
             >
                 <Divider/>
@@ -35,6 +46,7 @@ const DiffViewer = ({fileChanges}: DiffViewerProps) => {
                     {
                         parsedFileChanges.map((change) => (
                             <FileDiffView
+                                unified={isUnified}
                                 key={change.newPath + '-' + change.newRevision}
                                 change={change}/>
                         ))
@@ -45,15 +57,15 @@ const DiffViewer = ({fileChanges}: DiffViewerProps) => {
     )
 }
 
-type FileDiffViewProps = { change: ParsedFileChange }
-const FileDiffView = ({change}: FileDiffViewProps) => {
+type FileDiffViewProps = { unified?: boolean, change: ParsedFileChange }
+const FileDiffView = ({unified, change}: FileDiffViewProps) => {
     const styles = useStyles();
     const tokens = useMemo(() => Tokenize(change), [change]);   // Used for syntax highlighting
 
     return (
         <Card raised className={styles.fileDiff}>
             <Typography className={styles.diffHeader}>{getFileChangeHeader(change)}</Typography>
-            <Diff viewType="unified" diffType={change.type} hunks={change.hunks} tokens={tokens}>
+            <Diff viewType={ unified ? "unified" : 'split'} diffType={change.type} hunks={change.hunks} tokens={tokens}>
                 {(hunks: any[]) =>
                     hunks.map(hunk => [
                         <Decoration key={'deco-' + hunk.content}>
