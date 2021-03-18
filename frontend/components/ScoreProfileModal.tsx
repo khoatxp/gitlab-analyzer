@@ -121,6 +121,10 @@ const ScoreProfileModal = (props) => {
             enqueueSnackbar('Weights cannot be negative', {variant: 'error',});
             return;
         }
+        if(lineWeight == null || commentsWeight == null || deleteWeight == null || syntaxWeight == null){
+            enqueueSnackbar('Text fields must not be empty', {variant: 'error',});
+            return;
+        }
         for (let [key, value] of extensionMap) {
             if (value < 0){
                 enqueueSnackbar('Extension weights cannot be negative', {variant: 'error',});

@@ -4,7 +4,7 @@ import {GitLabProject} from "../interfaces/GitLabProject";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import AppDateTimePicker from "./app/AppDateTimePicker";
 import AppButton from "./app/AppButton";
-import ScoreProfileSelector from "./ScoreProfileSelector";
+import ScoreProfileSelect from "./ScoreProfileSelect";
 import ScoreProfile from "../interfaces/ScoreProfile";
 
 type ProjectSelectProps = {
@@ -17,10 +17,14 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
     const [selectedProjectId, setSelectedProjectId] = useState<number>(0);
     const [startDateTime, setStartDateTime] = useState<Date>(new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()));
     const [endDateTime, setEndDateTime] = useState<Date>(now);
-    const [profile, setProfile] = useState<ScoreProfile>();
+    const [scoreProfileId, setScoreProfileId] = useState<number>();
 
     const onProjectSelect = (_event: any, value: GitLabProject) => {
         setSelectedProjectId(value ? value.id: 0); // Value will be null when the clear button is pressed. Ensure we have a number
+    }
+
+    const onProfileSelect = (_event: any, value: ScoreProfile) => {
+        setScoreProfileId(value)
     }
 
     return (
@@ -53,10 +57,10 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
                     endDateTime={endDateTime}
                 />
 
-                <ScoreProfileSelector
-                        profile={profile}
-                        setProfile={setProfile}
-                 />}
+                <ScoreProfileSelect
+                    profile={scoreProfileId}
+                    setProfile={onProfileSelect}
+                 />
 
             </Box>
             <Box

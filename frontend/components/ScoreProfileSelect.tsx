@@ -99,20 +99,11 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                     onChange={setProfile}
                     isLoading= "...loading profiles"
                     maxMenuHeight = {220}
-                    isClearable={true}
-                    MenuProps={{
-                        getContentAnchorEl: null,
-                        anchorOrigin: {
-                          vertical: "bottom",
-                          horizontal: "left",
-                        }
-
-                    }}
                 >
                     {profiles.map(profile => (
                         <MenuItem value={profile.id} key={profile.id}>
                             {profile.name}
-                            {isIconVisible && profile != profile.name  ? (
+                            {isIconVisible ? (
                                 <ListItemSecondaryAction variant="outlined">
                                     <IconButton edge="end" aria-label="edit" onClick={() => { handleEdit(profile);}} >
                                         <EditIcon style={{ fontSize: "25px", color: "grey" }} />
