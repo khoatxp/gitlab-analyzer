@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 
 interface Props {
     profile: ScoreProfile 
-    setProfile: (x:ScoreProfile) => void
+    setProfile: (profile:ScoreProfile) => void
 }
 
 const ScoreProfileSelector = ({profile, setProfile}:Props) => {

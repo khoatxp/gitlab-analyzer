@@ -206,7 +206,7 @@ const ScoreProfileModal = (props) => {
                             </Box>
                         </Box>
                         <DialogTitle id="extension-dialog-title" style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>{"Extensions"}</DialogTitle>
-                        <Box  display="flex" flexDirection="row" justifyContent="center" flexWrap="wrap">
+                        <Box  style={{ display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}} >
                             {extensionMap && extensionMap.size > 0 ?
                             Array.from(extensionMap).map((extension, index) => {
                                 return (
@@ -216,20 +216,24 @@ const ScoreProfileModal = (props) => {
                                         display="flex"
                                         marginRight={3}
                                         marginLeft={3}
-                                        flexDirection="column"
-                                        justifyContent="column"
+                                        flexDirection="row"
+                                        justifyContent="space-between"
                                         alignItems="center"
                                     >
-                                        <AppTextField label="extension"
-                                        value={extension[0]}
-                                        onChange={(e) => handleExtensionChange(extension[0], e.target.value)}
-                                        />
-                                        <AppTextField label="weight"
-                                        value={extension[1]}
-                                        onChange={(e) => handleWeightChange(extension[0], e.target.value) }
-                                        type="number"
-                                        />
+                                        <Box marginLeft={1} marginRight={1}>
 
+                                            <AppTextField label="extension"
+                                            value={extension[0]}
+                                            onChange={(e) => handleExtensionChange(extension[0], e.target.value)}
+                                            />
+                                        </Box>
+                                        <Box marginLeft={1} marginRight={1}>
+                                            <AppTextField label="weight"
+                                            value={extension[1]}
+                                            onChange={(e) => handleWeightChange(extension[0], e.target.value) }
+                                            type="number"
+                                            />
+                                        </Box>
                                         <div>
 
                                             <IconButton edge="center" aria-label="deleteextension" onClick={()=>handleRemoveExtension(extension[0])}>
@@ -249,8 +253,8 @@ const ScoreProfileModal = (props) => {
                 </DialogContent>
                 <DialogActions>
                     <div alignItems="end">
-                    <AppButton size="large"  color="primary" onClick={close}>Cancel</AppButton>
                     <AppButton size="large" type="submit" color="primary" onClick={handleSave}>Save</AppButton>
+                    <AppButton size="large"  color="primary" onClick={close}>Cancel</AppButton>
                     </div>
                 </DialogActions>
             </Dialog>
