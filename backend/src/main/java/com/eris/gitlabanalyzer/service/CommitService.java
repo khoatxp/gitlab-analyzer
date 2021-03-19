@@ -94,9 +94,6 @@ public class CommitService {
                     if(mergeRequest != null){
                         mergeRequest.addCommit(commit);
                         mrCommitShas.add(gitLabCommit.getSha());
-                        isMergeRequestShared(mergeRequest, commitAuthorRepository
-                                .findByAuthorNameAndAuthorEmailAndProjectId(commit.getAuthorName(), commit.getAuthorEmail(), project.getId()).getGitManagementUser());
-
                     }
 
 
@@ -199,6 +196,7 @@ public class CommitService {
         List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByProjectId(projectId);
 
         for(MergeRequest mr : mergeRequests){
+            System.out.println(mr.getId());
             // reset mr sharedStatus so if was true and new mapping sets to false, won't remain true
             mr.setIsShared(false);
             List<Commit> commits = commitRepository.findCommitByMergeRequest_Id(mr.getId());
@@ -210,13 +208,16 @@ public class CommitService {
                     break;
                 }
             }
+            mergeRequestRepository.updateMergeRequest(mr.getId(), mr.getIsShared());
         }
     }
     // checks whether supplied gitManagementUser is the same as one stored in MR
     private boolean isMergeRequestShared(MergeRequest mr, GitManagementUser gitManagementUser){
-        if(!mr.getGitManagementUser().getId().equals(gitManagementUser.getId())){
-            mr.setIsShared(true);
-            return true;
+        if(gitManagementUser != null){
+            if(!mr.getGitManagementUser().getId().equals(gitManagementUser.getId())){
+                mr.setIsShared(true);
+                return true;
+            }
         }
         return false;
     }
