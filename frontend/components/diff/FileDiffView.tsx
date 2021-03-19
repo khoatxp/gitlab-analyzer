@@ -28,7 +28,7 @@ const useStyles = makeStyles(() =>
     }),
 );
 
-type FileDiffViewProps = { unified?: boolean, change: ParsedFileChange }
+type FileDiffViewProps = { unified: boolean, change: ParsedFileChange }
 const FileDiffView = ({unified, change}: FileDiffViewProps) => {
     const styles = useStyles();
     const [hidden, setHidden] = useState<boolean>(false);
