@@ -6,7 +6,7 @@ import {
     Container,
     FormControl,
     FormControlLabel,
-    Grid,
+    Grid, Link,
     List,
     ListItem,
     ListItemText,
@@ -24,6 +24,7 @@ import AuthView from "../../../../components/AuthView";
 import MenuLayout from "../../../../components/layout/menu/MenuLayout";
 import formatDate from "../../../../interfaces/dateFormatter";
 import {useSnackbar} from "notistack";
+import {Task} from "../../../../interfaces/GitLabTask";
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -125,10 +126,14 @@ const NotesPage = () => {
                         </Grid>
                         <Grid item xs={12} md={10} lg={10}>
                             <Card>
-                                <NotesList noteArrays={
-                                    noteType === NoteType.MergeRequest ?
+                                <NotesList
+                                    noteArrays={noteType === NoteType.MergeRequest ?
                                         mergeRequestNotes : issueNotes
-                                }
+                                    }
+                                    noteParents={
+                                        noteType === NoteType.MergeRequest ?
+                                            mergeRequests : issues
+                                    }
                                 />
                             </Card>
                         </Grid>
@@ -167,14 +172,14 @@ const RadioGroupSelectMergeRequestsOrIssues = ({value, handleChange}
 }
 
 
-const NotesList = ({noteArrays}: { noteArrays: Note[][] }) => {
+const NotesList = ({noteArrays, noteParents}: { noteArrays: Note[][], noteParents: Task[] }) => {
     const classes = useStyles();
 
     return (
         <List subheader={<ListSubheader disableSticky>{`Notes`}</ListSubheader>}
               className={classes.notesList}
         >
-            {noteArrays?.map((noteArray) => (
+            {noteArrays?.map((noteArray, i) => (
                 noteArray.map((note) => (
                     <ListItem key={note.id}>
                         <ListItemText
@@ -186,19 +191,26 @@ const NotesList = ({noteArrays}: { noteArrays: Note[][] }) => {
                                         variant="body2"
                                         color="textSecondary"
                                     >
-                                        {`@${note.author.username} · ${formatDate(note.created_at)} · ${getWordCount(note.body)} words`}
+                                        {`@${note.author.username}
+                                         · ${formatDate(note.created_at)}
+                                         · ${getWordCount(note.body)} words · `
+                                        }
                                     </Typography>
+                                    <Link variant="body2"
+                                          rel="noopener noreferrer"
+                                          target="_blank"
+                                          href={noteParents[i].web_url}>{`#${noteParents[i].iid}`}</Link>
                                 </>}
                             secondary={
                                 <>
-                                <Typography
-                                    component="span"
-                                    variant="body2"
-                                    color="textPrimary"
-                                >
-                                    {note.body}
-                                </Typography>
-                            </>}
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                        color="textPrimary"
+                                    >
+                                        {note.body}
+                                    </Typography>
+                                </>}
                         />
                     </ListItem>
                 ))))}
