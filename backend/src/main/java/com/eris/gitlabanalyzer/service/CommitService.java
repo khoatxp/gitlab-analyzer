@@ -94,6 +94,9 @@ public class CommitService {
                     if(mergeRequest != null){
                         mergeRequest.addCommit(commit);
                         mrCommitShas.add(gitLabCommit.getSha());
+                        isMergeRequestShared(mergeRequest, commitAuthorRepository
+                                .findByAuthorNameAndAuthorEmailAndProjectId(commit.getAuthorName(), commit.getAuthorEmail(), project.getId()).getGitManagementUser());
+
                     }
 
 
@@ -189,6 +192,33 @@ public class CommitService {
 
     public List<Commit> getCommitsOfGitManagementUser(Long projectId, Long gitManagementUserId){
         return commitRepository.findByProjectIdAndGitManagementUserId(projectId, gitManagementUserId);
+    }
+
+
+    public void findAllSharedMergeRequests(Long projectId){
+        List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByProjectId(projectId);
+
+        for(MergeRequest mr : mergeRequests){
+            // reset mr sharedStatus so if was true and new mapping sets to false, won't remain true
+            mr.setIsShared(false);
+            List<Commit> commits = commitRepository.findCommitByMergeRequest_Id(mr.getId());
+            for(Commit commit : commits){
+                GitManagementUser gitManagementUser = commitAuthorRepository.findByAuthorNameAndAuthorEmailAndProjectId(commit.getAuthorName(),
+                        commit.getAuthorEmail(), projectId).getGitManagementUser();
+                if(isMergeRequestShared(mr, gitManagementUser)){
+                    // just need one case where true so break to ignore the rest
+                    break;
+                }
+            }
+        }
+    }
+    // checks whether supplied gitManagementUser is the same as one stored in MR
+    private boolean isMergeRequestShared(MergeRequest mr, GitManagementUser gitManagementUser){
+        if(!mr.getGitManagementUser().getId().equals(gitManagementUser.getId())){
+            mr.setIsShared(true);
+            return true;
+        }
+        return false;
     }
 
 }

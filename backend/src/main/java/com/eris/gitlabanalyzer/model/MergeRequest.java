@@ -61,6 +61,11 @@ public class MergeRequest {
     )
     private String webUrl;
 
+    @Column(
+            name = "is_shared"
+    )
+    private Boolean isShared;
+
     @ManyToOne
     @JoinColumn(
             name = "project_id",
@@ -119,6 +124,10 @@ public class MergeRequest {
         return webUrl;
     }
 
+    public Boolean getIsShared() {
+        return isShared;
+    }
+
     public Project getProject() {
         return project;
     }
@@ -129,6 +138,10 @@ public class MergeRequest {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public void setIsShared(Boolean isShared) {
+        this.isShared = isShared;
     }
 
     public void setGitManagementUser(GitManagementUser gitManagementUser) {
