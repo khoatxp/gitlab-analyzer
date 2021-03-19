@@ -150,7 +150,7 @@ public class GitLabService {
         return headersSpec.retrieve().bodyToMono(GitLabMergeRequestChange.class).flatMapIterable(GitLabMergeRequestChange::getChanges);
     }
 
-    public Flux<GitLabMergeRequestNote> getMergeRequestNotes(Long projectId, Long mergeRequestIid) {
+    public Flux<GitLabNote> getMergeRequestNotes(Long projectId, Long mergeRequestIid) {
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/notes")
                 .queryParam("per_page", 100)
@@ -160,7 +160,7 @@ public class GitLabService {
                 .toString();
 
         return fetchPages(gitlabUrl)
-                .flatMap(response -> response.bodyToFlux(GitLabMergeRequestNote.class));
+                .flatMap(response -> response.bodyToFlux(GitLabNote.class));
     }
 
     public Flux<GitLabIssue> getIssues(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
@@ -178,7 +178,7 @@ public class GitLabService {
                 .flatMap(response -> response.bodyToFlux(GitLabIssue.class));
     }
 
-    public Flux<GitLabIssueNote> getIssueNotes(Long projectId, Long issue_iid) {
+    public Flux<GitLabNote> getIssueNotes(Long projectId, Long issue_iid) {
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/issues/" + issue_iid + "/notes")
                 .queryParam("per_page", 100)
@@ -188,7 +188,7 @@ public class GitLabService {
                 .toString();
 
         return fetchPages(gitlabUrl)
-                .flatMap(response -> response.bodyToFlux(GitLabIssueNote.class));
+                .flatMap(response -> response.bodyToFlux(GitLabNote.class));
     }
 
     // recursively make a request for the next page and then return a collection of response

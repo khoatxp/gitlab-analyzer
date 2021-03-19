@@ -142,7 +142,7 @@ public class GitLabController {
 
     // Used in notes page for now
     @GetMapping(path = "/projects/{projectId}/merge_requests/{merge_request_iid}/notes")
-    public Flux<GitLabMergeRequestNote> getMergeRequestNotes(
+    public Flux<GitLabNote> getMergeRequestNotes(
             Principal principal,
             @PathVariable("projectId") Long projectId,
             @PathVariable("merge_request_iid") Long merge_request_iid) {
@@ -171,7 +171,7 @@ public class GitLabController {
 
     // Used in notes page for now
     @GetMapping(path = "/projects/{projectId}/issues/{issue_iid}/notes")
-    public Flux<GitLabIssueNote> getIssueNotes(
+    public Flux<GitLabNote> getIssueNotes(
             Principal principal,
             @PathVariable("projectId") Long projectId,
             @PathVariable("issue_iid") Long issue_iid) {
