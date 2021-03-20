@@ -23,14 +23,17 @@ const useStyles = makeStyles((theme) => ({
         minWidth: 200,
         marginBottom: "15px"
     },
+    menuPaper: {
+        maxHeight: 200,
+    },
 }));
 
 interface Props {
-    profile: ScoreProfile 
-    setProfile: (profile: ScoreProfile) => void
+    scoreProfile: ScoreProfile | undefined
+    onScoreProfileSelect: (event: any, profile: ScoreProfile) => void
 }
 
-const ScoreProfileSelector = ({profile, setProfile}:Props) => {
+const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
 
 
 
@@ -43,8 +46,8 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
     const [isIconVisible, setIconVisible] = useState(false);
     const [open, setOpen] = useState(false);
     const [isNewProfile, setIsNewProfile] = useState(true);
-    const [selectedProfile, setSelectedProfile] = useState<ScoreProfile | null>();
-    const [id,setId] = useState<number>()
+    const [selectedProfile, setSelectedProfile] = useState<ScoreProfile | null>(null);
+    const [id,setId] = useState<number>(0)
 
 
     useEffect(() => {
@@ -89,42 +92,47 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
     };
 
     return (
-        <Box display="flex" flexDirection="row" justifyContent="row" marginLeft={4}>
-        <FormControl className={classes.formControl}>
-                <InputLabel id="score-options">Score Options</InputLabel>
-                <Select
-                    labelId="score-options"
-                    onOpen={() => setIconVisible(true)}
-                    onClose={() => setIconVisible(false)}
-                    value={profile}
-                    onChange={setProfile}
-                    isLoading= "...loading profiles"
-                    maxMenuHeight = {220}
-                >
-                    {profiles.length > 0 ? (
-                        profiles.map(profile => (
-                            <MenuItem value={profile.id} key={profile.id}>
-                                {profile.name}
-                                {isIconVisible ? (
-                                    <ListItemSecondaryAction >
-                                        <IconButton edge="end" aria-label="edit" onClick={() => { handleEdit(profile);}} >
-                                            <EditIcon style={{ fontSize: "25px", color: "grey" }} />
-                                        </IconButton>
-                                        <ScoreProfileModal  open={open} handleClose={handleClose} id={id} profile={selectedProfile} isNewProfile={isNewProfile}/>
-                                        <IconButton edge="end" aria-label="delete"  onClick={() => { handleDelete(profile.id);}}>
-                                            <DeleteIcon style={{ fontSize: "25px", color: "#CC160B" }}/>
-                                        </IconButton>
-                                    </ListItemSecondaryAction>
-                                ) : null}
-                            </MenuItem>
-                    ))): <div> No profiles have been created </div> }
-                </Select>
-            </FormControl> 
-            <IconButton aria-label="add" onClick={handleNew} marginTop={5}>
-                    <AddBoxIcon style={{ fontSize: "25px", color: "green" }}/>
+        <Box display="flex" flexDirection="row" justifyContent="center" marginLeft={4}>
+            <FormControl className={classes.formControl}>
+                    <InputLabel id="score-options">Score Options</InputLabel>
+                    <Select
+                        labelId="score-options"
+                        onOpen={() => setIconVisible(true)}
+                        onClose={() => setIconVisible(false)}
+                        value={scoreProfile}
+                        onChange={onScoreProfileSelect}
+                        MenuProps={{
+                            anchorOrigin: {vertical: "top", horizontal: "left"},
+                            transformOrigin: {vertical: "top", horizontal: "left"},
+                            getContentAnchorEl: null,
+                            classes: {paper: classes.menuPaper }}}
+                    >
+                        {profiles.length > 0 ? (
+                            profiles.map(profile => (
+                                <MenuItem value={profile.id} key={profile.id}>
+                                    {profile.name}
+                                    {isIconVisible ? (
+                                        <ListItemSecondaryAction >
+                                            <IconButton edge="end" aria-label="edit" onClick={() => { handleEdit(profile);}} >
+                                                <EditIcon style={{ fontSize: "25px", color: "grey" }} />
+                                            </IconButton>
+                                            <ScoreProfileModal  open={open} handleClose={handleClose} id={id} profile={selectedProfile} isNewProfile={isNewProfile}/>
+                                            <IconButton edge="end" aria-label="delete"  onClick={() => { handleDelete(profile.id);}}>
+                                                <DeleteIcon style={{ fontSize: "25px", color: "#CC160B" }}/>
+                                            </IconButton>
+                                        </ListItemSecondaryAction>
+                                    ) : null}
+                                </MenuItem>
+                        ))): <div> No profiles have been created </div> }
+                    </Select>
+            </FormControl>
+
+            <IconButton edge={false} aria-label="add" onClick={handleNew} >
+                <AddBoxIcon style={{ fontSize: "25px", color: "green" }}/>
             </IconButton>
             <ScoreProfileModal  open={open} handleClose={handleClose} id={id} profile={selectedProfile} isNewProfile={isNewProfile}/>
-  
+
+
         </Box>
     );
 }

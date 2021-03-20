@@ -22,22 +22,27 @@ const useStyles = makeStyles((theme) => ({
     popup:{
         borderRadius:45,
         padding:"20px",
-        boxShadow:'none'
+        boxShadow:'none',
     },
-
 }));
 
+interface Props {
+    open : boolean
+    handleClose : () => void
+    id : number
+    profile : ScoreProfile | null
+    isNewProfile : boolean
+}
 
-const ScoreProfileModal = (props) => {
+
+const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile }: Props) => {
     const classes = useStyles();
     const router = useRouter();
-    const { open, handleClose, id, profile, isNewProfile  } = props;
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
 
     const[savedArray, setSavedArray] = useState<{}>({});
-    const [Profile, setProfile] = useState<ScoreProfile>();
     const [extensionMap, setExtensionMap] = useState(new Map())
     const [syntaxWeight, setSyntaxWeight] = useState<number | null>()
     const [commentsWeight, setCommentsWeight] = useState<number | null>();
@@ -47,7 +52,7 @@ const ScoreProfileModal = (props) => {
 
     useEffect(() => {
 
-        if(isNewProfile == false){
+        if(isNewProfile == false && profile != null){
              setName(profile.name);
              setCommentsWeight(profile.commentsWeight);
              setDeleteWeight(profile.deleteWeight);
@@ -79,7 +84,6 @@ const ScoreProfileModal = (props) => {
 
 
     const close = () => {
-        setExtensionMap((prev) => new Map(prev.clear()));
         setSavedArray({});
         handleClose();
     };
@@ -113,7 +117,7 @@ const ScoreProfileModal = (props) => {
             enqueueSnackbar('Profile must have a name', {variant: 'error',});
             return;
         }
-        if(lineWeight < 0 || commentsWeight < 0 || deleteWeight < 0 || syntaxWeight < 0){
+        if(lineWeight != null && lineWeight < 0 || commentsWeight != null && commentsWeight < 0 || deleteWeight != null && deleteWeight < 0 || syntaxWeight != null && syntaxWeight < 0){
             enqueueSnackbar('Weights cannot be negative', {variant: 'error',});
             return;
         }
@@ -166,11 +170,11 @@ const ScoreProfileModal = (props) => {
     return (
 
         <React.Fragment>
-            <Dialog open={open} onClose={close} fullWidth maxWidth="sm" classes={{paper: classes.popup}} >
+            <Dialog open={open} onClose={close} fullWidth maxWidth="sm" classes={{paper: classes.popup}} overlayStyle={{backgroundColor: 'transparent'}}>
                 <DialogTitle id="edit-dialog-title" style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>{"Score Profile"}</DialogTitle>
                 <DialogContent>
-                    <form className={classes.root} onSubmit={handleSave}>
-                        <div marginLeft={2} style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
+                    <form onSubmit={handleSave}>
+                        <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
                             <Box width={150}>
                                 <AppTextField label="Name" value={name} onChange={(e) => setName( e.target.value)} required/>
                             </Box>
@@ -230,13 +234,13 @@ const ScoreProfileModal = (props) => {
                                         <Box marginLeft={1} marginRight={1}>
                                             <AppTextField label="weight"
                                             value={extension[1]}
-                                            onChange={(e) => handleWeightChange(extension[0], e.target.value) }
+                                            onChange={(e) => handleWeightChange(extension[0], Number(e.target.value)) }
                                             type="number"
                                             />
                                         </Box>
                                         <div>
 
-                                            <IconButton edge="false" aria-label="deleteextension" onClick={()=>handleRemoveExtension(extension[0])}>
+                                            <IconButton edge={false} aria-label="deleteextension" onClick={()=>handleRemoveExtension(extension[0])}>
                                                 <DeleteIcon style={{ fontSize: "25px", color:"grey" }} />
                                             </IconButton>
                                         </div>
@@ -245,7 +249,7 @@ const ScoreProfileModal = (props) => {
                             }): "No extensions set for this profile"}
                         </Box>
                         <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
-                            <IconButton edge="false" aria-label="addextension" onClick={handleAddExtension}>
+                            <IconButton edge={false} aria-label="addextension" onClick={handleAddExtension}>
                                 <AddCircleIcon style={{ fontSize: "30px", color: "green" }} />
                             </IconButton>
                         </div>
