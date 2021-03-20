@@ -19,13 +19,13 @@ public class ProjectController {
     private final ProjectService projectService;
     private final AnalyticsService analyticsService;
     private final AuthService authService;
+
     @Autowired
     public ProjectController(ProjectService projectService, AnalyticsService analyticsService, AuthService authService){
         this.projectService = projectService;
         this.analyticsService = analyticsService;
         this.authService = authService;
     }
-
 
     @GetMapping(path = "/{projectId}/rawdata")
     public RawTimeLineProjectData analyzeProject(
