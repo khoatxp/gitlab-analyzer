@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Overview Snapshot projectId 1`] = `
+exports[`Members Snapshot Members 1`] = `
 <index>
   <AuthView>
     <LoadingPage>

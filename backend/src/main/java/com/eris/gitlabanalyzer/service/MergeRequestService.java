@@ -20,6 +20,7 @@ public class MergeRequestService {
     ProjectRepository projectRepository;
     GitManagementUserRepository gitManagementUserRepository;
     MergeRequestCommentRepository mergeRequestCommentRepository;
+    ScoreService scoreService;
 
     // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
@@ -29,11 +30,12 @@ public class MergeRequestService {
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public MergeRequestService(MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, MergeRequestCommentRepository mergeRequestCommentRepository) {
+    public MergeRequestService(MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, MergeRequestCommentRepository mergeRequestCommentRepository, ScoreService scoreService) {
         this.mergeRequestRepository = mergeRequestRepository;
         this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
         this.mergeRequestCommentRepository = mergeRequestCommentRepository;
+        this.scoreService = scoreService;
     }
 
     public void saveMergeRequestInfo(Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
@@ -52,6 +54,7 @@ public class MergeRequestService {
                                 gitLabMergeRequest.getAuthor().getUsername(),
                                 gitLabMergeRequest.getTitle(),
                                 gitLabMergeRequest.getCreatedAt(),
+                                gitLabMergeRequest.getMergedAt(),
                                 gitLabMergeRequest.getWebUrl(),
                                 project,
                                 gitManagementUser
@@ -59,6 +62,7 @@ public class MergeRequestService {
                     }
                     mergeRequest = mergeRequestRepository.save(mergeRequest);
                     saveMergeRequestComments(project, mergeRequest);
+                    scoreService.saveMergeDiffMetrics(mergeRequest);
                 }
         );
     }

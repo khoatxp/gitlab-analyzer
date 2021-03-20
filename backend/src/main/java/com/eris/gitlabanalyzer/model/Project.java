@@ -79,6 +79,14 @@ public class Project {
     )
     private List<Issue> issues = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "project",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<UserProjectPermission> userProjectPermissions = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(
             name = "server_id",
@@ -91,6 +99,14 @@ public class Project {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY)
     private List<GitManagementUser> gitManagementUsers = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "gitManagementUser",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<CommitAuthor> commitAuthors = new ArrayList<>();
 
     public Project() {
     }
@@ -174,7 +190,6 @@ public class Project {
             issue.setProject(this);
         }
     }
-
 
     @Override
     public String toString() {

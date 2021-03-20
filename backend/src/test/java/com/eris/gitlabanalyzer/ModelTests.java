@@ -61,8 +61,6 @@ class ModelTests {
         testGitManagementUser.addProject(testProject);
         // Connect commit to project.
         testProject.addCommit(testCommit);
-        // Connect commit to GitManagementUser
-        testGitManagementUser.addCommit(testCommit);
         // Connect CommitComment to Commit
         testCommit.addCommitComment(testCommitComment);
         // Connect CommitComment to GitManagementUser
@@ -74,7 +72,7 @@ class ModelTests {
     @Test
     void serverModel() {
         Server queryResult = serverRepository.findByServerUrlAndAccessToken(SERVER_URL,
-                ACCESS_TOKEN);
+                ACCESS_TOKEN).get();
         assertNotNull(queryResult);
         assertEquals(queryResult.getServerUrl(), SERVER_URL);
     }

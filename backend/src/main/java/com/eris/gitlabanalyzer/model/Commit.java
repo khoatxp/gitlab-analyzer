@@ -61,21 +61,17 @@ public class Commit {
     private OffsetDateTime createdAt;
 
     @Column(
+            name = "merged_at"
+
+    )
+    private OffsetDateTime mergedAt;
+
+    @Column(
             name = "web_url",
             nullable = false
 
     )
     private String webUrl;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(
-            name = "commit_id",
-            referencedColumnName = "commit_id",
-            foreignKey = @ForeignKey(
-                    name = "commit_mapping_commit_id_fk"
-            )
-    )
-    private CommitMapping commitMapping;
 
     @OneToMany(
             mappedBy = "commit",
@@ -94,12 +90,6 @@ public class Commit {
 
     @ManyToOne
     @JoinColumn(
-            name = "git_management_user_id",
-            referencedColumnName = "git_management_user_id")
-    private GitManagementUser gitManagementUser;
-
-    @ManyToOne
-    @JoinColumn(
             name = "merge_request_id",
             referencedColumnName = "merge_request_id")
     private MergeRequest mergeRequest;
@@ -115,14 +105,6 @@ public class Commit {
         this.createdAt = createdAt;
         this.webUrl = webUrl;
         this.project = project;
-    }
-
-    public CommitMapping getCommitMapping() {
-        return commitMapping;
-    }
-
-    public void setCommitMapping(CommitMapping commitMapping) {
-        this.commitMapping = commitMapping;
     }
 
     public Long getId() {
@@ -152,17 +134,15 @@ public class Commit {
     public String getWebUrl() {
         return webUrl;
     }
+    public Project getProject(){return project;}
 
     public void setProject(Project project) {
         this.project = project;
     }
 
-    public void setGitManagementUser(GitManagementUser gitManagementUser) {
-        this.gitManagementUser = gitManagementUser;
-    }
-
     public void setMergeRequest(MergeRequest mergeRequest) {
         this.mergeRequest = mergeRequest;
+        this.mergedAt = mergeRequest.getMergedAt();
     }
 
     public void addCommitComment(CommitComment commitComment) {
@@ -178,8 +158,6 @@ public class Commit {
                 "id=" + id +
                 ", sha='" + sha + '\'' +
                 ", title='" + title + '\'' +
-                ", authorName='" + authorName + '\'' +
-                ", authorEmail='" + authorEmail + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 ", webUrl='" + webUrl + '\'' +
                 '}';

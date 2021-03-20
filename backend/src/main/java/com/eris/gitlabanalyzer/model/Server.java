@@ -57,6 +57,14 @@ public class Server {
     )
     private List<UserServer> userServers = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "server",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<UserProjectPermission> userProjectPermissions = new ArrayList<>();
+
     public Server() {
     }
 
@@ -96,7 +104,6 @@ public class Server {
             userServer.setServer(this);
         }
     }
-
 
     @Override
     public String toString() {

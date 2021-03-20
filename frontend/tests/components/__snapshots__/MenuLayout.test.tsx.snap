@@ -647,6 +647,21 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                                               role="menuitem"
                                               tabindex="-1"
                                             >
+                                              <a
+                                                class="MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorPrimary"
+                                              >
+                                                Members
+                                              </a>
+                                              <span
+                                                class="MuiTouchRipple-root"
+                                              />
+                                            </li>
+                                            <li
+                                              aria-disabled="false"
+                                              class="MuiButtonBase-root MuiListItem-root MuiMenuItem-root MuiMenuItem-gutters MuiListItem-gutters MuiListItem-button"
+                                              role="menuitem"
+                                              tabindex="-1"
+                                            >
                                               Logout
                                               <span
                                                 class="MuiTouchRipple-root"
@@ -1159,6 +1174,227 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                                                                       role="menuitem"
                                                                       tabIndex={-1}
                                                                     >
+                                                                      <Link
+                                                                        href="/project/TestId/members?startDateTime=TestStartTime&endDateTime=TestEndTime"
+                                                                        key=".0"
+                                                                      >
+                                                                        <WithStyles(ForwardRef(Link))
+                                                                          onClick={[Function]}
+                                                                          onMouseEnter={[Function]}
+                                                                        >
+                                                                          <ForwardRef(Link)
+                                                                            classes={
+                                                                              Object {
+                                                                                "button": "MuiLink-button",
+                                                                                "focusVisible": "Mui-focusVisible",
+                                                                                "root": "MuiLink-root",
+                                                                                "underlineAlways": "MuiLink-underlineAlways",
+                                                                                "underlineHover": "MuiLink-underlineHover",
+                                                                                "underlineNone": "MuiLink-underlineNone",
+                                                                              }
+                                                                            }
+                                                                            onClick={[Function]}
+                                                                            onMouseEnter={[Function]}
+                                                                          >
+                                                                            <WithStyles(ForwardRef(Typography))
+                                                                              className="MuiLink-root MuiLink-underlineHover"
+                                                                              color="primary"
+                                                                              component="a"
+                                                                              onBlur={[Function]}
+                                                                              onClick={[Function]}
+                                                                              onFocus={[Function]}
+                                                                              onMouseEnter={[Function]}
+                                                                              variant="inherit"
+                                                                            >
+                                                                              <ForwardRef(Typography)
+                                                                                className="MuiLink-root MuiLink-underlineHover"
+                                                                                classes={
+                                                                                  Object {
+                                                                                    "alignCenter": "MuiTypography-alignCenter",
+                                                                                    "alignJustify": "MuiTypography-alignJustify",
+                                                                                    "alignLeft": "MuiTypography-alignLeft",
+                                                                                    "alignRight": "MuiTypography-alignRight",
+                                                                                    "body1": "MuiTypography-body1",
+                                                                                    "body2": "MuiTypography-body2",
+                                                                                    "button": "MuiTypography-button",
+                                                                                    "caption": "MuiTypography-caption",
+                                                                                    "colorError": "MuiTypography-colorError",
+                                                                                    "colorInherit": "MuiTypography-colorInherit",
+                                                                                    "colorPrimary": "MuiTypography-colorPrimary",
+                                                                                    "colorSecondary": "MuiTypography-colorSecondary",
+                                                                                    "colorTextPrimary": "MuiTypography-colorTextPrimary",
+                                                                                    "colorTextSecondary": "MuiTypography-colorTextSecondary",
+                                                                                    "displayBlock": "MuiTypography-displayBlock",
+                                                                                    "displayInline": "MuiTypography-displayInline",
+                                                                                    "gutterBottom": "MuiTypography-gutterBottom",
+                                                                                    "h1": "MuiTypography-h1",
+                                                                                    "h2": "MuiTypography-h2",
+                                                                                    "h3": "MuiTypography-h3",
+                                                                                    "h4": "MuiTypography-h4",
+                                                                                    "h5": "MuiTypography-h5",
+                                                                                    "h6": "MuiTypography-h6",
+                                                                                    "noWrap": "MuiTypography-noWrap",
+                                                                                    "overline": "MuiTypography-overline",
+                                                                                    "paragraph": "MuiTypography-paragraph",
+                                                                                    "root": "MuiTypography-root",
+                                                                                    "srOnly": "MuiTypography-srOnly",
+                                                                                    "subtitle1": "MuiTypography-subtitle1",
+                                                                                    "subtitle2": "MuiTypography-subtitle2",
+                                                                                  }
+                                                                                }
+                                                                                color="primary"
+                                                                                component="a"
+                                                                                onBlur={[Function]}
+                                                                                onClick={[Function]}
+                                                                                onFocus={[Function]}
+                                                                                onMouseEnter={[Function]}
+                                                                                variant="inherit"
+                                                                              >
+                                                                                <a
+                                                                                  className="MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorPrimary"
+                                                                                  onBlur={[Function]}
+                                                                                  onClick={[Function]}
+                                                                                  onFocus={[Function]}
+                                                                                  onMouseEnter={[Function]}
+                                                                                >
+                                                                                  Members
+                                                                                </a>
+                                                                              </ForwardRef(Typography)>
+                                                                            </WithStyles(ForwardRef(Typography))>
+                                                                          </ForwardRef(Link)>
+                                                                        </WithStyles(ForwardRef(Link))>
+                                                                      </Link>
+                                                                      <WithStyles(memo)
+                                                                        center={false}
+                                                                      >
+                                                                        <ForwardRef(TouchRipple)
+                                                                          center={false}
+                                                                          classes={
+                                                                            Object {
+                                                                              "child": "MuiTouchRipple-child",
+                                                                              "childLeaving": "MuiTouchRipple-childLeaving",
+                                                                              "childPulsate": "MuiTouchRipple-childPulsate",
+                                                                              "ripple": "MuiTouchRipple-ripple",
+                                                                              "ripplePulsate": "MuiTouchRipple-ripplePulsate",
+                                                                              "rippleVisible": "MuiTouchRipple-rippleVisible",
+                                                                              "root": "MuiTouchRipple-root",
+                                                                            }
+                                                                          }
+                                                                        >
+                                                                          <span
+                                                                            className="MuiTouchRipple-root"
+                                                                          >
+                                                                            <TransitionGroup
+                                                                              childFactory={[Function]}
+                                                                              component={null}
+                                                                              exit={true}
+                                                                            />
+                                                                          </span>
+                                                                        </ForwardRef(TouchRipple)>
+                                                                      </WithStyles(memo)>
+                                                                    </li>
+                                                                  </ForwardRef(ButtonBase)>
+                                                                </WithStyles(ForwardRef(ButtonBase))>
+                                                              </ForwardRef(ListItem)>
+                                                            </WithStyles(ForwardRef(ListItem))>
+                                                          </ForwardRef(MenuItem)>
+                                                        </WithStyles(ForwardRef(MenuItem))>
+                                                        <WithStyles(ForwardRef(MenuItem))
+                                                          key=".$.2"
+                                                          onClick={[Function]}
+                                                        >
+                                                          <ForwardRef(MenuItem)
+                                                            classes={
+                                                              Object {
+                                                                "dense": "MuiMenuItem-dense",
+                                                                "gutters": "MuiMenuItem-gutters",
+                                                                "root": "MuiMenuItem-root",
+                                                                "selected": "Mui-selected",
+                                                              }
+                                                            }
+                                                            onClick={[Function]}
+                                                          >
+                                                            <WithStyles(ForwardRef(ListItem))
+                                                              button={true}
+                                                              className="MuiMenuItem-root MuiMenuItem-gutters"
+                                                              classes={
+                                                                Object {
+                                                                  "dense": "MuiMenuItem-dense",
+                                                                }
+                                                              }
+                                                              component="li"
+                                                              disableGutters={false}
+                                                              onClick={[Function]}
+                                                              role="menuitem"
+                                                              tabIndex={-1}
+                                                            >
+                                                              <ForwardRef(ListItem)
+                                                                button={true}
+                                                                className="MuiMenuItem-root MuiMenuItem-gutters"
+                                                                classes={
+                                                                  Object {
+                                                                    "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
+                                                                    "button": "MuiListItem-button",
+                                                                    "container": "MuiListItem-container",
+                                                                    "dense": "MuiListItem-dense MuiMenuItem-dense",
+                                                                    "disabled": "Mui-disabled",
+                                                                    "divider": "MuiListItem-divider",
+                                                                    "focusVisible": "Mui-focusVisible",
+                                                                    "gutters": "MuiListItem-gutters",
+                                                                    "root": "MuiListItem-root",
+                                                                    "secondaryAction": "MuiListItem-secondaryAction",
+                                                                    "selected": "Mui-selected",
+                                                                  }
+                                                                }
+                                                                component="li"
+                                                                disableGutters={false}
+                                                                onClick={[Function]}
+                                                                role="menuitem"
+                                                                tabIndex={-1}
+                                                              >
+                                                                <WithStyles(ForwardRef(ButtonBase))
+                                                                  className="MuiListItem-root MuiMenuItem-root MuiMenuItem-gutters MuiListItem-gutters MuiListItem-button"
+                                                                  component="li"
+                                                                  disabled={false}
+                                                                  focusVisibleClassName="Mui-focusVisible"
+                                                                  onClick={[Function]}
+                                                                  role="menuitem"
+                                                                  tabIndex={-1}
+                                                                >
+                                                                  <ForwardRef(ButtonBase)
+                                                                    className="MuiListItem-root MuiMenuItem-root MuiMenuItem-gutters MuiListItem-gutters MuiListItem-button"
+                                                                    classes={
+                                                                      Object {
+                                                                        "disabled": "Mui-disabled",
+                                                                        "focusVisible": "Mui-focusVisible",
+                                                                        "root": "MuiButtonBase-root",
+                                                                      }
+                                                                    }
+                                                                    component="li"
+                                                                    disabled={false}
+                                                                    focusVisibleClassName="Mui-focusVisible"
+                                                                    onClick={[Function]}
+                                                                    role="menuitem"
+                                                                    tabIndex={-1}
+                                                                  >
+                                                                    <li
+                                                                      aria-disabled={false}
+                                                                      className="MuiButtonBase-root MuiListItem-root MuiMenuItem-root MuiMenuItem-gutters MuiListItem-gutters MuiListItem-button"
+                                                                      onBlur={[Function]}
+                                                                      onClick={[Function]}
+                                                                      onDragLeave={[Function]}
+                                                                      onFocus={[Function]}
+                                                                      onKeyDown={[Function]}
+                                                                      onKeyUp={[Function]}
+                                                                      onMouseDown={[Function]}
+                                                                      onMouseLeave={[Function]}
+                                                                      onMouseUp={[Function]}
+                                                                      onTouchEnd={[Function]}
+                                                                      onTouchMove={[Function]}
+                                                                      onTouchStart={[Function]}
+                                                                      role="menuitem"
+                                                                      tabIndex={-1}
+                                                                    >
                                                                       Logout
                                                                       <WithStyles(memo)
                                                                         center={false}
@@ -1238,7 +1474,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
           className="makeStyles-background-9"
           display="flex"
           flexDirection="column"
-          height="calc(100vh - 7vh)"
+          height="auto"
           justifyContent="flex-start"
           width="16vw"
         >

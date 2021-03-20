@@ -3,11 +3,13 @@ package com.eris.gitlabanalyzer.controller;
 import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.RawTimeLineProjectData;
 import com.eris.gitlabanalyzer.service.AnalyticsService;
+import com.eris.gitlabanalyzer.service.AuthService;
 import com.eris.gitlabanalyzer.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -16,10 +18,12 @@ import java.util.List;
 public class ProjectController {
     private final ProjectService projectService;
     private final AnalyticsService analyticsService;
+    private final AuthService authService;
     @Autowired
-    public ProjectController(ProjectService projectService, AnalyticsService analyticsService){
+    public ProjectController(ProjectService projectService, AnalyticsService analyticsService, AuthService authService){
         this.projectService = projectService;
         this.analyticsService = analyticsService;
+        this.authService = authService;
     }
 
 
@@ -40,11 +44,13 @@ public class ProjectController {
 
     @PostMapping(path = "/analytics")
     public List<Long> saveAllFromGitlab(
+            Principal principal,
             @RequestBody List<Long> projectIdList,
             @RequestParam("startDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
-        return analyticsService.saveAllFromGitlab(projectIdList, startDateTime, endDateTime);
+        var user = authService.getLoggedInUser(principal);
+        return analyticsService.saveAllFromGitlab(user, projectIdList, startDateTime, endDateTime);
     }
 }

@@ -1,15 +1,15 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.model.Project;
-import com.eris.gitlabanalyzer.model.RawCommitData;
-import com.eris.gitlabanalyzer.model.RawMergeRequestData;
-import com.eris.gitlabanalyzer.model.RawTimeLineProjectData;
+import com.eris.gitlabanalyzer.model.*;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
+import com.eris.gitlabanalyzer.repository.UserProjectPermissionRepository;
+import com.eris.gitlabanalyzer.repository.UserServerRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
@@ -19,6 +19,7 @@ import reactor.core.scheduler.Schedulers;
 import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final ServerRepository serverRepository;
+    private final UserProjectPermissionRepository userProjectPermissionRepository;
+    private final UserServerRepository userServerRepository;
 
     // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
@@ -35,32 +38,49 @@ public class ProjectService {
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public ProjectService(ProjectRepository projectRepository, ServerRepository serverRepository) {
+    public ProjectService(ProjectRepository projectRepository, ServerRepository serverRepository, UserProjectPermissionRepository userProjectPermissionRepository, UserServerRepository userServerRepository) {
         this.projectRepository = projectRepository;
         this.serverRepository = serverRepository;
+        this.userProjectPermissionRepository = userProjectPermissionRepository;
+        this.userServerRepository = userServerRepository;
     }
 
+    private void createUserProjectPermission(User user, Server server, Project project)
+    {
+        var queryPermission = userProjectPermissionRepository.findByUserIdAndServerIdAndProjectId(
+                user.getId(),
+                server.getId(),
+                project.getId()
+        );
 
-    public Project saveProjectInfo(Long projectId) {
+        if(queryPermission.isEmpty()) {
+            UserProjectPermission userProjectPermission = new UserProjectPermission(user, project, server);
+            userProjectPermissionRepository.save(userProjectPermission);
+        }
+    }
+
+    public Project saveProjectInfo(User user, Long gitLabProjectId) {
         // TODO use an internal projectId to find the correct server
         var gitLabService = new GitLabService(serverUrl, accessToken);
+        Server server = serverRepository.findByServerUrl(serverUrl)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Server with URL " + serverUrl + " does not exist"));
 
-        Project project = projectRepository.findByGitlabProjectIdAndServerUrl(projectId, serverUrl);
-        if (project != null) {
-            return project;
+        var gitLabProject = gitLabService.getProject(gitLabProjectId).block();
+        Optional<Project> projectOptional = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId,serverUrl);
+        if(projectOptional.isPresent()){
+            createUserProjectPermission(user, server, projectOptional.get());
+            return projectOptional.get();
         }
 
-        var gitLabProject = gitLabService.getProject(projectId).block();
-
-        project = new Project(
-                projectId,
+        Project project = projectRepository.save(new Project(
+                gitLabProjectId,
                 gitLabProject.getName(),
                 gitLabProject.getNameWithNamespace(),
                 gitLabProject.getWebUrl(),
-                serverRepository.findByServerUrlAndAccessToken(serverUrl, accessToken)
-        );
-
-        return projectRepository.save(project);
+                server
+        ));
+        createUserProjectPermission(user, server, project);
+        return project;
     }
 
     public RawTimeLineProjectData getTimeLineProjectData(Long gitLabProjectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
