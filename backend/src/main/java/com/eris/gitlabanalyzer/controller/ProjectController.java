@@ -1,5 +1,6 @@
 package com.eris.gitlabanalyzer.controller;
 
+import com.eris.gitlabanalyzer.model.AnalyticsProgress;
 import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.RawTimeLineProjectData;
 import com.eris.gitlabanalyzer.service.AnalyticsService;
@@ -56,5 +57,10 @@ public class ProjectController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
         var user = authService.getLoggedInUser(principal);
         return analyticsService.saveAllFromGitlab(user, projectIdList, startDateTime, endDateTime);
+    }
+
+    @GetMapping(path = "/api/v1/projects/analytics/progress/{userId}")
+    public AnalyticsProgress getProgress(@PathVariable("userId") Long userId){
+        return analyticsService.getProgress(userId);
     }
 }

@@ -32,15 +32,46 @@ const index = () => {
 
     useEffect(() => {
         if(router.isReady) {
-            loadProjects();
-        }
-    }, [serverId]);
+            if(user){
+                axios
+                    .get(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics/progress/${user.id}`,getAxiosAuthConfig())
+                    .then((res: AxiosResponse) => {
+                        if(res.data){
+                            setIsAnalyzing(true);
+                            setProgress(res.data.progress);
+                            setProgressMessage(res.data.message);
+                        }else{
+                            loadProjects();
+                        }
+                    }).catch((err) => {
+                    enqueueSnackbar(`Failed to get projects analysis progress: ${err.message}`, {variant: 'error',});
+                });
 
-    useEffect(()=>{
-        if(user){
-            initializeSocket();
+                const socket = new SockJS(`${process.env.NEXT_PUBLIC_BACKEND_URL}/websocket`);
+                const stompClient = Stomp.over(socket);
+
+                //turn off debugging logs on browser console
+                stompClient.debug = () => {}
+
+                stompClient.connect(getAxiosAuthConfig(), () => {
+                    if(user){
+                        stompClient.subscribe(`/topic/progress/${user.id}`, function (message:any) {
+                            setIsAnalyzing(true);
+
+                            const body = JSON.parse(message.body);
+                            setProgress(body.progress);
+                            setProgressMessage(body.message);
+
+                            if(body.projectId){
+                                const dateQuery = `startDateTime=${body.startDateTime}&endDateTime=${body.endDateTime}`;
+                                router.push(`/project/${body.projectId}/overview?${dateQuery}`);
+                            }
+                        });
+                    }
+                });
+            }
         }
-    },[user])
+    }, [serverId, user]);
 
     const loadProjects = () => {
         // TODO need to pass serverId into this call to get the correct gitlab url and access code from db
@@ -56,25 +87,6 @@ const index = () => {
         });
     }
 
-    const initializeSocket = () =>{
-        const socket = new SockJS(`${process.env.NEXT_PUBLIC_BACKEND_URL}/websocket`);
-        const stompClient = Stomp.over(socket);
-
-        //turn off debugging logs on browser console
-        stompClient.debug = () => {}
-
-        stompClient.connect(getAxiosAuthConfig(), () => {
-            if(user){
-                stompClient.subscribe(`/topic/progress/${user.id}`, function (message:any) {
-                    setIsAnalyzing(true);
-                    const body = JSON.parse(message.body);
-                    setProgress(body.progress);
-                    setProgressMessage(body.message);
-                });
-            }
-        });
-    }
-
     const handleAnalyze = (projectIds: number[], startDateTime: Date, endDateTime: Date) => {
         setIsAnalyzing(true);
 
@@ -86,10 +98,8 @@ const index = () => {
         axios
             .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
             .then((res) => {
-                const analyzedInternalProjectId = res.data[0];
-                router.push(`/project/${analyzedInternalProjectId}/overview?${dateQuery}`);
-            }).catch(() => {
-            enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});
+            }).catch((err) => {
+            enqueueSnackbar('Failed to load analysis from server', {variant: 'error',});
         });
     }
 
