@@ -13,7 +13,6 @@ import AddBoxIcon from '@material-ui/icons/AddBox';
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 import Select from '@material-ui/core/Select';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
 import {AuthContext} from "./AuthContext";
 import {useSnackbar} from 'notistack';
 import ScoreProfileModal from "./ScoreProfileModal";
@@ -28,20 +27,22 @@ const useStyles = makeStyles((theme) => ({
 
 interface Props {
     profile: ScoreProfile 
-    setProfile: (profile:ScoreProfile) => void
+    setProfile: (profile: ScoreProfile) => void
 }
 
 const ScoreProfileSelector = ({profile, setProfile}:Props) => {
 
 
-    const [isNewProfile, setIsNewProfile] = useState(true);
+
     const classes = useStyles();
+    const router = useRouter();
+    const {enqueueSnackbar} = useSnackbar();
+    const {getAxiosAuthConfig} = React.useContext(AuthContext);
+
     const [profiles, setProfiles] =  useState<ScoreProfile[]>([]);
     const [isIconVisible, setIconVisible] = useState(false);
     const [open, setOpen] = useState(false);
-    const {getAxiosAuthConfig} = React.useContext(AuthContext);
-    const router = useRouter();
-    const {enqueueSnackbar} = useSnackbar();
+    const [isNewProfile, setIsNewProfile] = useState(true);
     const [selectedProfile, setSelectedProfile] = useState<ScoreProfile | null>();
     const [id,setId] = useState<number>()
 
@@ -65,7 +66,7 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
         setOpen(true);
     };
 
-    const handleEdit = (Profile) => {
+    const handleEdit = (Profile : ScoreProfile) => {
         setId(Profile.id)
         setIsNewProfile(false)
         setSelectedProfile(Profile)
@@ -76,7 +77,7 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
         setOpen(false);
     };
 
-    const handleDelete = (id) =>{
+    const handleDelete = (id : number) =>{
         if (router.isReady) {
             axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile/${id}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
@@ -104,7 +105,7 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                         <MenuItem value={profile.id} key={profile.id}>
                             {profile.name}
                             {isIconVisible ? (
-                                <ListItemSecondaryAction variant="outlined">
+                                <ListItemSecondaryAction >
                                     <IconButton edge="end" aria-label="edit" onClick={() => { handleEdit(profile);}} >
                                         <EditIcon style={{ fontSize: "25px", color: "grey" }} />
                                     </IconButton>

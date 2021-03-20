@@ -3,12 +3,8 @@ import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
 import ScoreProfile from "../interfaces/ScoreProfile";
 import { makeStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
-import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import DialogActions from '@material-ui/core/DialogActions';
-import FormControl from '@material-ui/core/FormControl';
 import DialogContent from "@material-ui/core/DialogContent";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -41,13 +37,13 @@ const ScoreProfileModal = (props) => {
 
 
     const[savedArray, setSavedArray] = useState<{}>({});
-    const[Profile, setProfile] = useState<ScoreProfile>();
+    const [Profile, setProfile] = useState<ScoreProfile>();
     const [extensionMap, setExtensionMap] = useState(new Map())
-    const [syntaxWeight, setSyntaxWeight] = useState<number>()
-    const [commentsWeight, setCommentsWeight] = useState<number>();
+    const [syntaxWeight, setSyntaxWeight] = useState<number | null>()
+    const [commentsWeight, setCommentsWeight] = useState<number | null>();
     const [name, setName] = useState<string>()
-    const [lineWeight, setLineWeight] = useState<number>();
-    const [deleteWeight, setDeleteWeight] = useState<number>();
+    const [lineWeight, setLineWeight] = useState<number | null>();
+    const [deleteWeight, setDeleteWeight] = useState<number | null>();
 
     useEffect(() => {
 
@@ -62,10 +58,10 @@ const ScoreProfileModal = (props) => {
         }
         else{
             setName("");
-            setCommentsWeight();
-            setDeleteWeight();
-            setLineWeight();
-            setSyntaxWeight();
+            setCommentsWeight(null);
+            setDeleteWeight(null);
+            setLineWeight(null);
+            setSyntaxWeight(null);
             let map= new Map();
             setExtensionMap(map);
         }
@@ -92,7 +88,7 @@ const ScoreProfileModal = (props) => {
         setExtensionMap(prev => new Map([...prev, ["", ""]]))
     };
 
-    const handleRemoveExtension = (extension) => {
+    const handleRemoveExtension = (extension : string) => {
         setExtensionMap((prev) => {
             const newMap = new Map(prev);
             newMap.delete(extension);
@@ -100,13 +96,13 @@ const ScoreProfileModal = (props) => {
         });
     };
 
-    const handleExtensionChange = (oldExtension, newExtension ) => {
+    const handleExtensionChange = (oldExtension : string , newExtension : string ) => {
         var weight = extensionMap.get(oldExtension);
         setExtensionMap(prev => new Map([...prev, [newExtension, weight]]))
         handleRemoveExtension(oldExtension);
     };
 
-    const handleWeightChange = (extension, weight) => {
+    const handleWeightChange = (extension : string, weight : number) => {
         setExtensionMap(prev => new Map([...prev, [extension, weight]]))
     }
 
@@ -184,28 +180,28 @@ const ScoreProfileModal = (props) => {
                                 <AppTextField label="New Line" placeholder="Weight"
                                 type="number"
                                 value={lineWeight}
-                                onChange={(e) => setLineWeight(e.target.value)}
+                                onChange={(e) => setLineWeight(Number(e.target.value))}
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="Deleting" placeholder="Weight"
                                 type="number"
                                 value={deleteWeight}
-                                onChange={(e) => setDeleteWeight(e.target.value)}
+                                onChange={(e) => setDeleteWeight(Number(e.target.value))}
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="Syntax(e.g '}')" placeholder="Weight"
                                 type="number"
                                 value={syntaxWeight}
-                                onChange={(e) => setSyntaxWeight(e.target.value)}
+                                onChange={(e) => setSyntaxWeight(Number(e.target.value))}
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="Comments" placeholder="Weight"
                                 type="number"
                                 value={commentsWeight}
-                                onChange={(e) => setCommentsWeight(e.target.value)}
+                                onChange={(e) => setCommentsWeight(Number(e.target.value))}
                                 />
                             </Box>
                         </Box>
@@ -240,7 +236,7 @@ const ScoreProfileModal = (props) => {
                                         </Box>
                                         <div>
 
-                                            <IconButton edge="center" aria-label="deleteextension" onClick={()=>handleRemoveExtension(extension[0])}>
+                                            <IconButton edge="false" aria-label="deleteextension" onClick={()=>handleRemoveExtension(extension[0])}>
                                                 <DeleteIcon style={{ fontSize: "25px", color:"grey" }} />
                                             </IconButton>
                                         </div>
@@ -249,14 +245,14 @@ const ScoreProfileModal = (props) => {
                             }): "No extensions set for this profile"}
                         </Box>
                         <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
-                            <IconButton edge="center" aria-label="addextension" onClick={handleAddExtension}>
+                            <IconButton edge="false" aria-label="addextension" onClick={handleAddExtension}>
                                 <AddCircleIcon style={{ fontSize: "30px", color: "green" }} />
                             </IconButton>
                         </div>
                     </form>
                 </DialogContent>
                 <DialogActions>
-                    <div alignItems="end">
+                    <div >
                     <AppButton size="large" type="submit" color="primary" onClick={handleSave}>Save</AppButton>
                     <AppButton size="large"  color="primary" onClick={close}>Cancel</AppButton>
                     </div>
