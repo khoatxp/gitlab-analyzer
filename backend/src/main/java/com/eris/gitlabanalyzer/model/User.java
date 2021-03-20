@@ -42,6 +42,7 @@ public class User {
         return userProjectPermissions;
     }
 
+    @JsonIgnore
     @OneToMany(
             mappedBy = "user",
             orphanRemoval = true,
@@ -61,10 +62,6 @@ public class User {
     }
 
     public String getUsername() {return username;}
-
-    public List<UserServer> getUserServers() {
-        return userServers;
-    }
 
     // I think this code is highly coupled with Server model instead of UserServer
     // We might want to handle this in bigger scope.

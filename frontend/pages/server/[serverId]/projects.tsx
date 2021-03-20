@@ -8,14 +8,25 @@ import {AuthContext} from "../../../components/AuthContext";
 import {useSnackbar} from 'notistack';
 import ProjectSelect from "../../../components/ProjectSelect";
 import LoadingBar from "../../../components/LoadingBar";
+import AppProgressBar from "../../../components/app/AppProgressBar";
 import {formatISO} from "date-fns";
+// @ts-ignore
+import SockJS from "sockjs-client";
+// @ts-ignore
+import Stomp from "stompjs";
+import AnimatedProgressText from "../../../components/AnimatedProgressText";
+import Box from "@material-ui/core/Box";
 
 const index = () => {
+    const {user} = React.useContext(AuthContext);
+    const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const router = useRouter();
     const {enqueueSnackbar} = useSnackbar();
-    const {getAxiosAuthConfig} = React.useContext(AuthContext);
+    const [progress, setProgress] = React.useState<number>(0);
+    const [progressMessage, setProgressMessage] = React.useState<string>("Waiting for update from server");
     const [projects, setProjects] = useState<GitLabProject[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
     const [itemBeingLoaded, setItemBeingLoaded] = useState<string>('');
     const {serverId} = router.query;
 
@@ -24,6 +35,12 @@ const index = () => {
             loadProjects();
         }
     }, [serverId]);
+
+    useEffect(()=>{
+        if(user){
+            initializeSocket();
+        }
+    },[user])
 
     const loadProjects = () => {
         // TODO need to pass serverId into this call to get the correct gitlab url and access code from db
@@ -39,21 +56,38 @@ const index = () => {
         });
     }
 
+    const initializeSocket = () =>{
+        const socket = new SockJS(`${process.env.NEXT_PUBLIC_BACKEND_URL}/websocket`);
+        const stompClient = Stomp.over(socket);
+
+        //turn off debugging logs on browser console
+        stompClient.debug = () => {}
+
+        stompClient.connect(getAxiosAuthConfig(), () => {
+            if(user){
+                stompClient.subscribe(`/topic/progress/${user.id}`, function (message:any) {
+                    setIsAnalyzing(true);
+                    const body = JSON.parse(message.body);
+                    setProgress(body.progress);
+                    setProgressMessage(body.message);
+                });
+            }
+        });
+    }
+
     const handleAnalyze = (projectIds: number[], startDateTime: Date, endDateTime: Date) => {
-        // Display loading bar again
-        setItemBeingLoaded("Analysis");
-        setIsLoading(true);
+        setIsAnalyzing(true);
 
         // Make callout and redirect after it is done. Note that the API call may take a while.
         const start = formatISO(startDateTime);
         const end = formatISO(endDateTime);
         const dateQuery = `startDateTime=${start}&endDateTime=${end}`;
+
         axios
             .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
             .then((res) => {
-                const analyizedInternalProjectId = res.data[0];
-                console.log(res.data);
-                router.push(`/project/${analyizedInternalProjectId}/overview?${dateQuery}`);
+                const analyzedInternalProjectId = res.data[0];
+                router.push(`/project/${analyzedInternalProjectId}/overview?${dateQuery}`);
             }).catch(() => {
             enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});
         });
@@ -62,8 +96,17 @@ const index = () => {
     return (
         <AuthView>
             <CardLayout backLink={"/server"} logoType="header">
-                {isLoading && <LoadingBar itemBeingLoaded={itemBeingLoaded}/>}
-                {!isLoading && <ProjectSelect projects={projects} onAnalyzeClick={handleAnalyze}/>}
+                {!isAnalyzing && isLoading && <LoadingBar itemBeingLoaded={itemBeingLoaded}/>}
+                {!isAnalyzing && !isLoading && <ProjectSelect projects={projects} onAnalyzeClick={handleAnalyze}/>}
+                {
+                    isAnalyzing &&
+                        <>
+                            <AppProgressBar variant="determinate" value={progress}/>
+                            <Box margin="8px">
+                                <AnimatedProgressText progress={progress}> {progressMessage} </AnimatedProgressText>
+                            </Box>
+                        </>
+                }
             </CardLayout>
         </AuthView>
     );
