@@ -20,7 +20,7 @@ const index = () => {
     const {serverId} = router.query;
 
     useEffect(() => {
-        if (router.isReady) {
+        if(router.isReady) {
             loadProjects();
         }
     }, [serverId]);
@@ -50,8 +50,10 @@ const index = () => {
         const dateQuery = `startDateTime=${start}&endDateTime=${end}`;
         axios
             .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
-            .then(() => {
-                router.push(`/project/${projectIds[0]}/overview?${dateQuery}`);
+            .then((res) => {
+                const analyizedInternalProjectId = res.data[0];
+                console.log(res.data);
+                router.push(`/project/${analyizedInternalProjectId}/overview?${dateQuery}`);
             }).catch(() => {
             enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});
         });

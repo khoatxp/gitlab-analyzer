@@ -15,9 +15,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class ScoreService {
@@ -46,38 +46,48 @@ public class ScoreService {
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public int getMergeDiffScore(Long projectId, Long mergeRequestId) {
-        calculateDiffMetrics.storeMetricsMerge(projectId, mergeRequestId);
-        return diffScoreCalculator.calculateScoreMerge(mergeRequestId);
+    public double getMergeDiffScore( Long mergeRequestId, Long scoreProfileId){
+        return diffScoreCalculator.calculateScoreMerge(mergeRequestId, scoreProfileId);
     }
 
-    // This will most likely change as we update how we retrieve diff's
-    public int getTotalMergeDiffScore(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        Iterable<GitLabMergeRequest> mergeRequests = gitLabService.getMergeRequests(projectId, startDateTime, endDateTime).toIterable();
-        int totalScore = 0;
-        for (GitLabMergeRequest gitLabMergeRequest : mergeRequests) {
-            MergeRequest mr = mergeRequestRepository.findByIidAndProjectId(gitLabMergeRequest.getIid(), projectId);
-            calculateDiffMetrics.storeMetricsMerge(projectId, mr.getId());
-            totalScore += diffScoreCalculator.calculateScoreMerge(mr.getId());
+    public void saveMergeDiffMetrics(MergeRequest mergeRequest){
+        calculateDiffMetrics.storeMetricsMerge(mergeRequest);
+    }
+
+    public double getTotalMergeDiffScore(Long projectId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByProjectIdAndDateRange(projectId,
+                startDateTime.withOffsetSameInstant(ZoneOffset.UTC), endDateTime.withOffsetSameInstant(ZoneOffset.UTC));
+        double totalScore = 0;
+        for( MergeRequest mr : mergeRequests){
+            totalScore += diffScoreCalculator.calculateScoreMerge(mr.getId(), scoreProfileId);
         }
 
         return totalScore;
     }
 
     // This will most likely change as we update how we retrieve diff's
-    public int getCommitDiffScore(Long projectId, Long commitId) {
-        calculateDiffMetrics.storeMetricsCommit(commitId, projectId);
-        return diffScoreCalculator.calculateScoreCommit(commitId);
+    public double getCommitDiffScore(Long commitId, Long scoreProfileId){
+
+        return diffScoreCalculator.calculateScoreCommit(commitId, scoreProfileId);
     }
 
+    public void saveCommitDiffMetrics(Commit commit){
+        calculateDiffMetrics.storeMetricsCommit(commit);
+    }
+
+
     // This will most likely change as we update how we retrieve diff's
-    public int getTotalCommitDiffScore(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        Iterable<GitLabCommit> commits = gitLabService.getCommits(projectId, startDateTime, endDateTime).toIterable();
-        int totalScore = 0;
-        for (GitLabCommit gitLabCommit : commits) {
-            Commit commit = commitRepository.findByCommitShaAndProjectId(gitLabCommit.getSha(), projectId);
-            calculateDiffMetrics.storeMetricsMerge(projectId, commit.getId());
-            totalScore += diffScoreCalculator.calculateScoreMerge(commit.getId());
+    public double getTotalCommitDiffScore(Long projectId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        List<Commit> commits = commitRepository.findAllByProjectIdAndDateRange(projectId,
+                startDateTime.withOffsetSameInstant(ZoneOffset.UTC), endDateTime.withOffsetSameInstant(ZoneOffset.UTC));
+        double totalScore = 0;
+        for (Commit commit : commits) {
+            totalScore += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
+        }
+        commits = commitRepository.findAllOrphanByProjectIdAndDateRange(projectId,
+                startDateTime.withOffsetSameInstant(ZoneOffset.UTC), endDateTime.withOffsetSameInstant(ZoneOffset.UTC));
+        for (Commit commit : commits) {
+            totalScore += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
         }
         return totalScore;
     }

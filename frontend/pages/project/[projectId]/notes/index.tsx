@@ -51,65 +51,43 @@ enum NoteType {
 
 const NotesPage = () => {
     const {enqueueSnackbar} = useSnackbar();
-    const router = useRouter();
-    const {getAxiosAuthConfig} = React.useContext(AuthContext);
-    const {projectId, startDateTime, endDateTime} = router.query;
-    const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`;
 
     const [mergeRequests, setMergeRequests] = useState<MergeRequest[]>([]);
     const [issues, setIssues] = useState<Issue[]>([]);
-    const [notes, setNotes] = useState<Note[]>([]);
+    const [mergeRequestNotes, setMergeRequestNotes] = useState<Note[][]>([]);
+    const [issueNotes, setIssueNotes] = useState<Note[][]>([]);
 
-    const [noteType, setNoteType] = React.useState(NoteType.MergeRequest);
+    const [noteType, setNoteType] = useState(NoteType.MergeRequest);
+
+    const [mergeRequestWordCounts, setMergeRequestWordCounts] = useState<number[]>([]);
+    const [issueWordCounts, setIssueWordCounts] = useState<number[]>([]);
+
+    const {getAxiosAuthConfig} = React.useContext(AuthContext);
+
+    const router = useRouter();
+    const {projectId, startDateTime, endDateTime} = router.query;
+    const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`;
+
+    const [selectedItem, setSelectedItem] = useState(0);
 
     const handleSelectNoteType = (event: React.ChangeEvent<HTMLInputElement>) => {
         setNoteType(Number((event.target as HTMLInputElement).value));
+
     };
 
     useEffect(() => {
         handleSelectItem(0);
     }, [noteType]);
 
-    const [selectedItem, setSelectedItem] = useState(0);
-
-    const getMergeRequestNotes = (mergeRequestIid: number) => {
-        axios
-            .get(`${PROJECT_ID_URL}/merge_requests/${mergeRequestIid}/notes`, getAxiosAuthConfig())
-            .then((resp: AxiosResponse) => {
-                setNotes(resp.data);
-            }).catch(() => {
-            enqueueSnackbar('Failed to get merge request notes.', {variant: 'error',});
-        });
-    };
-
-    const getIssueNotes = (issueIid: number) => {
-        axios
-            .get(`${PROJECT_ID_URL}/issues/${issueIid}/notes`, getAxiosAuthConfig())
-            .then((resp: AxiosResponse) => {
-                setNotes(resp.data);
-            }).catch(() => {
-            enqueueSnackbar('Failed to get issue notes.', {variant: 'error',});
-        });
-    };
-
     const handleSelectItem = (
         index: number,
     ) => {
         setSelectedItem(index);
-        if (noteType === NoteType.MergeRequest) {
-            if (mergeRequests?.[index]?.iid) {
-                getMergeRequestNotes(mergeRequests[index].iid);
-            }
-        } else {
-            if (issues?.[index]?.iid) {
-                getIssueNotes(issues[index].iid);
-            }
-        }
     };
 
     useEffect(() => {
         if (projectId) {
-            const dateQuery = `?startDateTime=${startDateTime ? startDateTime : "2021-01-01T00:00:00-08:00"}&endDateTime=${endDateTime ? endDateTime : "2021-03-21T00:00:00-08:00"}`;
+            const dateQuery = `?startDateTime=${startDateTime}&endDateTime=${endDateTime}`;
             axios
                 .get(`${PROJECT_ID_URL}/merge_requests${dateQuery}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
@@ -125,13 +103,58 @@ const NotesPage = () => {
                 enqueueSnackbar('Failed to get issues data.', {variant: 'error',});
             });
         }
-
     }, [projectId]);
 
-    // first item is selected on page load
     useEffect(() => {
-        handleSelectItem(0);
+        getAllMergeRequestNotes();
+        handleSelectItem(0); // first merge request is selected on page load
     }, [mergeRequests]);
+
+    useEffect(() => {
+        getAllIssueNotes();
+    }, [issues]);
+
+    const getAllMergeRequestNotes = () => {
+        axios.all(mergeRequests.map(
+            (mergeRequest) => (
+                axios
+                    .get(`${PROJECT_ID_URL}/merge_requests/${mergeRequest.iid}/notes`, getAxiosAuthConfig()))
+            )
+        ).then((responses) => {
+            setMergeRequestNotes(responses.map((resp) => (resp.data)));
+        }).catch(() => {
+            enqueueSnackbar('Failed to get merge request notes.', {variant: 'error',});
+        });
+    };
+
+    const getAllIssueNotes = () => {
+        axios.all(issues.map((issue) => (
+            axios
+                .get(`${PROJECT_ID_URL}/issues/${issue.iid}/notes`, getAxiosAuthConfig())))
+        ).then((responses) => {
+            setIssueNotes(responses.map((resp) => (resp.data)));
+        }).catch(() => {
+            enqueueSnackbar('Failed to get issue notes.', {variant: 'error',});
+        });
+    };
+
+    useEffect(() => {
+        setMergeRequestWordCounts(
+            mergeRequestNotes.map(
+                (notes) =>
+                    notes.reduce((totalWords, note) => (totalWords + getWordCount(note.body)), 0)
+            )
+        )
+    }, [mergeRequestNotes]);
+
+    useEffect(() => {
+        setIssueWordCounts(
+            issueNotes.map(
+                (notes) =>
+                    notes.reduce((totalWords, note) => (totalWords + getWordCount(note.body)), 0)
+            )
+        )
+    }, [issueNotes]);
 
     const classes = useStyles();
     return (
@@ -153,14 +176,24 @@ const NotesPage = () => {
                                 <Box className={classes.taskList}>
                                     <TaskList items={noteType === NoteType.MergeRequest ? mergeRequests : issues}
                                               selectedItem={selectedItem}
-                                              handleSelectedItemChange={handleSelectItem}/>
+                                              handleSelectedItemChange={handleSelectItem}
+                                              wordCounts={
+                                                  noteType === NoteType.MergeRequest ?
+                                                      mergeRequestWordCounts : issueWordCounts
+                                              }
+                                    />
                                 </Box>
                             </Card>
                         </Grid>
 
                         <Grid item xs={12} md={8} lg={9}>
                             <Card>
-                                <NotesList notes={notes}/>
+                                <NotesList notes={
+                                    noteType === NoteType.MergeRequest ?
+                                        mergeRequestNotes[selectedItem] :
+                                        issueNotes[selectedItem]
+                                }
+                                />
                             </Card>
                         </Grid>
                     </Grid>
@@ -202,12 +235,12 @@ const RadioGroupSelectMergeRequestsOrIssues = ({value, handleChange, numMergeReq
 
 const Row = memo(({data, index, style}
                       : {
-    data: { items: Task[], selectedItem: number, setSelectedItem: React.Dispatch<number> },
+    data: { items: Task[], selectedItem: number, setSelectedItem: React.Dispatch<number>, wordCounts: number[] },
     index: number,
     style: React.CSSProperties
 }) => {
 
-    const {items, selectedItem, setSelectedItem} = data;
+    const {items, selectedItem, setSelectedItem, wordCounts} = data;
     const item = items[index];
 
     return (
@@ -219,7 +252,17 @@ const Row = memo(({data, index, style}
             style={style}
         >
             <ListItemText
-                primary={item.title}
+                primary={
+                    <>
+                        {`${item.title} `}
+                        <Typography
+                            component="span"
+                            variant="body2"
+                            color="textSecondary"
+                        >
+                            {`· ${wordCounts[index] ?? "..."} words`}
+                        </Typography>
+                    </>}
                 secondary={`#${item.iid} · opened ${formatDate(item.created_at)} by ${item.author.name}`}/>
         </ListItem>
     );
@@ -227,21 +270,25 @@ const Row = memo(({data, index, style}
 
 const createItemData = memoize((items: Task[],
                                 selectedItem: number,
-                                setSelectedItem: React.Dispatch<number>) => ({
+                                setSelectedItem: React.Dispatch<number>,
+                                wordCounts: number[],
+) => ({
     items,
     selectedItem,
     setSelectedItem,
+    wordCounts,
 }));
 
-const TaskList = ({items, selectedItem, handleSelectedItemChange}
+const TaskList = ({items, selectedItem, handleSelectedItemChange, wordCounts}
                       : {
                       items: Task[],
                       selectedItem: number,
-                      handleSelectedItemChange: React.Dispatch<number>
+                      handleSelectedItemChange: React.Dispatch<number>,
+                      wordCounts: number[],
                   }
 ) => {
 
-    const itemData = createItemData(items, selectedItem, handleSelectedItemChange);
+    const itemData = createItemData(items, selectedItem, handleSelectedItemChange, wordCounts);
     return (
         <AutoSizer>
             {({height, width}) => (
@@ -249,7 +296,7 @@ const TaskList = ({items, selectedItem, handleSelectedItemChange}
                     height={height}
                     itemCount={items.length}
                     itemData={itemData}
-                    itemSize={100}
+                    itemSize={120}
                     width={width}
                 >
                     {Row}
@@ -263,28 +310,32 @@ const NotesList = ({notes}: { notes: Note[] }) => {
     const classes = useStyles();
 
     return (
-        <List subheader={<ListSubheader disableSticky>{`${notes.length} Notes`}</ListSubheader>}
+        <List subheader={<ListSubheader disableSticky>{`${notes?.length ?? "..."} Notes`}</ListSubheader>}
               className={classes.notesList}
         >
-            {notes.map((note) => (
+            {notes?.map((note) => (
                 <ListItem key={note.id}>
                     <ListItemText
                         primary={
-                            <React.Fragment>
+                            <>
                                 {`${note.author.name} `}
                                 <Typography
                                     component="span"
                                     variant="body2"
                                     color="textSecondary"
                                 >
-                                    {`@${note.author.username} · ${formatDate(note.created_at)}`}
+                                    {`@${note.author.username} · ${formatDate(note.created_at)} · ${getWordCount(note.body)} words`}
                                 </Typography>
-                            </React.Fragment>}
+                            </>}
                         secondary={note.body}/>
                 </ListItem>
             ))}
         </List>
     );
 };
+
+const getWordCount = (text: string) => {
+    return text.trim().split(/\s+/).length;
+}
 
 export default NotesPage;

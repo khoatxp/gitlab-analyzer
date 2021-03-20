@@ -4,9 +4,10 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Image from "next/image";
-import {Button, Icon, Link, Menu, MenuItem} from "@material-ui/core";
-import {AuthContext } from "./AuthContext";
+import {Box, Button, Icon, Link, Menu, MenuItem} from "@material-ui/core";
+import {AuthContext} from "./AuthContext";
 import NextLink from "next/link";
+import {useRouter} from "next/router";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -26,13 +27,18 @@ const useStyles = makeStyles((theme) => ({
     },
     userIcon: {
         marginRight: "5px",
+    },
+    buttonText: {
+        textTransform: 'none',
     }
 }));
 
 const NavBar = () => {
     const {user} = React.useContext(AuthContext);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
+    const router = useRouter();
+    const { projectId, startDateTime, endDateTime } =  router.query;
+    const dateQuery = `?startDateTime=${startDateTime}&endDateTime=${endDateTime}`;
     const classes = useStyles();
 
     const handleClickMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -49,7 +55,7 @@ const NavBar = () => {
     }
 
     return (
-        <AppBar className={classes.root} position="static" color="default">
+        <AppBar className={classes.root} position="sticky" color="default">
             <Toolbar>
                 <Icon>
                     <Image
@@ -59,38 +65,52 @@ const NavBar = () => {
                         height={100}
                     />
                 </Icon>
-                <Typography variant="h6" className={classes.title}>
-                    Gitlab Analyzer
-                </Typography>
-                <Typography className={classes.user} variant="h6">
-                    <Icon className={classes.userIcon}>account_circle</Icon>
-                    {user ? user.username : ''}
-                </Typography>
-                <div>
-                    <Button aria-controls="config-menu" aria-haspopup="true" onClick={handleClickMenu}>
+                    <Typography variant="h6" className={classes.title}>
+                        Gitlab Analyzer
+                    </Typography>
+                <Button
+                    aria-controls="config-menu"
+                    aria-haspopup="true"
+                    onClick={handleClickMenu}
+                    className={classes.buttonText}
+                >
+                    <Typography className={classes.user} variant="h6">
+                        <Icon className={classes.userIcon}>account_circle</Icon>
+                        {user ? user.username : ''}
+                    </Typography>
+                    <Box display="flex" alignItems="center" marginLeft="1em">
                         <Icon>settings</Icon>
-                    </Button>
-                    <Menu
-                        id="setting-menu"
-                        anchorEl={anchorEl}
-                        getContentAnchorEl={null}
-                        keepMounted
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                        transformOrigin={{ vertical: "top", horizontal: "center" }}
-                    >
+                    </Box>
+                </Button>
+                <Menu
+                    id="setting-menu"
+                    anchorEl={anchorEl}
+                    getContentAnchorEl={null}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    transformOrigin={{ vertical: "top", horizontal: "center" }}
+                >
+                    <MenuItem onClick={handleClose}>
+                        <NextLink href="/server" passHref>
+                            <Link>
+                                Servers
+                            </Link>
+                        </NextLink>
+
+                    </MenuItem>
+                    {projectId?
                         <MenuItem onClick={handleClose}>
-                            <NextLink href="/server" passHref>
+                            <NextLink href={`/project/${projectId}/members${dateQuery}`}>
                                 <Link>
-                                    Servers
+                                    Members
                                 </Link>
                             </NextLink>
-                        </MenuItem>
-                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                    </Menu>
-                </div>
-                {/*<AppButton color="primary" size="medium" onClick={handleLogout}>Logout</AppButton>*/}
+                        </MenuItem>:''
+                    }
+                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                </Menu>
             </Toolbar>
         </AppBar>
     );

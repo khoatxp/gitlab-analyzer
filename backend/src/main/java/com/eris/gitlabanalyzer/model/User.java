@@ -38,6 +38,17 @@ public class User {
     )
     private List<UserServer> userServers = new ArrayList<>();
 
+    public List<UserProjectPermission> getUserProjectPermissions() {
+        return userProjectPermissions;
+    }
+
+    @OneToMany(
+            mappedBy = "user",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<UserProjectPermission> userProjectPermissions = new ArrayList<>();
 
     public User(){}
 
