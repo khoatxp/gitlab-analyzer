@@ -4,7 +4,7 @@ import React, {useMemo, useState} from "react";
 import {Tokenize} from "./Tokenize";
 import {Card, IconButton, Typography} from "@material-ui/core";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-import ArrowRightIcon from "@material-ui/icons/ArrowRight";
+import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 // @ts-ignore (Doesn't have typescript types)
 import {Decoration, Diff, Hunk} from 'react-diff-view';
 
@@ -38,7 +38,7 @@ const FileDiffView = ({unified, change}: FileDiffViewProps) => {
         <Card raised className={styles.fileDiff}>
             <Typography className={styles.diffHeader}>
                 <IconButton size="small" onClick={() => setHidden(!hidden)}>
-                    { hidden ? <ArrowDropDownIcon/> : <ArrowRightIcon/> }
+                    { hidden ? <ArrowDropDownIcon/> : <ArrowDropUpIcon/> }
                 </IconButton>
                 {getFileChangeHeader(change)}
             </Typography>
