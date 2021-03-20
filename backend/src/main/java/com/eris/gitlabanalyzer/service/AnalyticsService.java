@@ -19,8 +19,16 @@ public class AnalyticsService {
     private final IssueService issueService;
     private final MessageService messageService;
     private final AnalyticsProgressRepository analyticsProgressRepository;
+    private final AnalysisRunService analysisRunService;
 
-    public AnalyticsService(ProjectService projectService, GitManagementUserService gitManagementUserService, MergeRequestService mergeRequestService, CommitService commitService, IssueService issueService, MessageService messageService, AnalyticsProgressRepository analyticsProgressRepository) {
+    public AnalyticsService(ProjectService projectService,
+                            GitManagementUserService gitManagementUserService,
+                            MergeRequestService mergeRequestService,
+                            CommitService commitService,
+                            IssueService issueService,
+                            MessageService messageService,
+                            AnalyticsProgressRepository analyticsProgressRepository,
+                            AnalysisRunService analysisRunService) {
         this.projectService = projectService;
         this.gitManagementUserService = gitManagementUserService;
         this.mergeRequestService = mergeRequestService;
@@ -28,6 +36,7 @@ public class AnalyticsService {
         this.issueService = issueService;
         this.messageService = messageService;
         this.analyticsProgressRepository = analyticsProgressRepository;
+        this.analysisRunService = analysisRunService;
     }
 
     public List<Long> saveAllFromGitlab(User user, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
@@ -56,6 +65,7 @@ public class AnalyticsService {
             analyticsProgressRepository.deleteById(analyticsProgress.getId());
 
             projectIds.add(project.getId());
+            this.analysisRunService.createAnalysisRun(user, project, startDateTime, endDateTime);
         });
         return projectIds;
     }

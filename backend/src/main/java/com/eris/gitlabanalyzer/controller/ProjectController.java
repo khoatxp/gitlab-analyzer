@@ -9,8 +9,6 @@ import com.eris.gitlabanalyzer.service.MessageService;
 import com.eris.gitlabanalyzer.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -18,6 +16,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @RestController
+@RequestMapping(path = "/api/v1/projects")
 public class ProjectController {
     private final ProjectService projectService;
     private final AnalyticsService analyticsService;
@@ -30,8 +29,7 @@ public class ProjectController {
         this.authService = authService;
     }
 
-
-    @GetMapping(path = "/api/v1/projects/{projectId}/rawdata")
+    @GetMapping(path = "/{projectId}/rawdata")
     public RawTimeLineProjectData analyzeProject(
             @PathVariable("projectId") Long projectId,
             @RequestParam("startDateTime")
@@ -41,13 +39,12 @@ public class ProjectController {
         return projectService.getTimeLineProjectData(projectId, startDateTime, endDateTime);
     }
 
-    @GetMapping(path = "/api/v1/projects")
+    @GetMapping
     public List<Project> getProjects(){
         return projectService.getProjects();
     }
 
-
-    @PostMapping(path = "/api/v1/projects/analytics")
+    @PostMapping(path = "/analytics")
     public List<Long> saveAllFromGitlab(
             Principal principal,
             @RequestBody List<Long> projectIdList,
@@ -59,7 +56,7 @@ public class ProjectController {
         return analyticsService.saveAllFromGitlab(user, projectIdList, startDateTime, endDateTime);
     }
 
-    @GetMapping(path = "/api/v1/projects/analytics/progress/{userId}")
+    @GetMapping(path = "/analytics/progress/{userId}")
     public AnalyticsProgress getProgress(@PathVariable("userId") Long userId){
         return analyticsService.getProgress(userId);
     }
