@@ -101,22 +101,23 @@ const ScoreProfileSelector = ({profile, setProfile}:Props) => {
                     isLoading= "...loading profiles"
                     maxMenuHeight = {220}
                 >
-                    {profiles.map(profile => (
-                        <MenuItem value={profile.id} key={profile.id}>
-                            {profile.name}
-                            {isIconVisible ? (
-                                <ListItemSecondaryAction >
-                                    <IconButton edge="end" aria-label="edit" onClick={() => { handleEdit(profile);}} >
-                                        <EditIcon style={{ fontSize: "25px", color: "grey" }} />
-                                    </IconButton>
-                                    <ScoreProfileModal  open={open} handleClose={handleClose} id={id} profile={selectedProfile} isNewProfile={isNewProfile}/>
-                                    <IconButton edge="end" aria-label="delete"  onClick={() => { handleDelete(profile.id);}}>
-                                        <DeleteIcon style={{ fontSize: "25px", color: "#CC160B" }}/>
-                                    </IconButton>
-                                </ListItemSecondaryAction>
-                            ) : null}
-                        </MenuItem>
-                    ))}
+                    {profiles.length > 0 ? (
+                        profiles.map(profile => (
+                            <MenuItem value={profile.id} key={profile.id}>
+                                {profile.name}
+                                {isIconVisible ? (
+                                    <ListItemSecondaryAction >
+                                        <IconButton edge="end" aria-label="edit" onClick={() => { handleEdit(profile);}} >
+                                            <EditIcon style={{ fontSize: "25px", color: "grey" }} />
+                                        </IconButton>
+                                        <ScoreProfileModal  open={open} handleClose={handleClose} id={id} profile={selectedProfile} isNewProfile={isNewProfile}/>
+                                        <IconButton edge="end" aria-label="delete"  onClick={() => { handleDelete(profile.id);}}>
+                                            <DeleteIcon style={{ fontSize: "25px", color: "#CC160B" }}/>
+                                        </IconButton>
+                                    </ListItemSecondaryAction>
+                                ) : null}
+                            </MenuItem>
+                    ))): <div> No profiles have been created </div> }
                 </Select>
             </FormControl> 
             <IconButton aria-label="add" onClick={handleNew} marginTop={5}>
