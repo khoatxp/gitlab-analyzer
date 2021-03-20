@@ -23,6 +23,7 @@ public class AnalysisRunService {
         AnalysisRun analysisRun = new AnalysisRun(
                 owner,
                 project,
+                project.getServer(),
 //                scoreProfile, TODO: hookup once implemented
                 startDateTime,
                 endDateTime

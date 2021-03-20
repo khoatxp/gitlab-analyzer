@@ -31,22 +31,27 @@ public class AnalysisRun {
     @JoinColumn(name="project_id")
     private Project project;
 
+    @ManyToOne
+    @JoinColumn(name = "server_id")
+    private Server server;
+
     // TODO: Hookup once score profile implemented
 //    @ManyToOne
 //    @JoinColumn(name="id")
 //    private ScoreProfile scoreProfile;
 
-    @Column
+    @Column(name = "start_date_time")
     private OffsetDateTime startDateTime;
 
-    @Column
-    private OffsetDateTime endDate;
+    @Column(name = "end_date_time")
+    private OffsetDateTime endDateTime;
 
-    public AnalysisRun(User ownerUser, Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+    public AnalysisRun(User ownerUser, Project project, Server server, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         this.ownerUser = ownerUser;
         this.project = project;
+        this.server = server;
 //        this.scoreProfile = scoreProfile; TODO: hookup once implemented
         this.startDateTime = startDateTime;
-        this.endDate = endDateTime;
+        this.endDateTime = endDateTime;
     }
 }
