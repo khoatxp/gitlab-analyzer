@@ -170,7 +170,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile }: Props) 
     return (
 
         <React.Fragment>
-            <Dialog open={open} onClose={close} fullWidth maxWidth="sm" classes={{paper: classes.popup}} overlayStyle={{backgroundColor: 'transparent'}}>
+            <Dialog open={open} onClose={close} fullWidth maxWidth="sm" classes={{paper: classes.popup}} >
                 <DialogTitle id="edit-dialog-title" style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>{"Score Profile"}</DialogTitle>
                 <DialogContent>
                     <form onSubmit={handleSave}>
