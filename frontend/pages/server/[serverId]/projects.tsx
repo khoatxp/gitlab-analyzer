@@ -31,14 +31,20 @@ const index = () => {
     const {serverId} = router.query;
 
     useEffect(() => {
+        const socket = new SockJS(`${process.env.NEXT_PUBLIC_BACKEND_URL}/websocket`);
+        const stompClient = Stomp.over(socket);
+
+        //turn off debugging logs on browser console
+        stompClient.debug = () => {}
+
         if(router.isReady) {
             if(user){
                 axios
                     .get(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics/progress/${user.id}`,getAxiosAuthConfig())
                     .then((res: AxiosResponse) => {
-                        if(res.data){
+                        if(res.data.message){
                             setIsAnalyzing(true);
-                            setProgress(res.data.progress);
+                            setProgress(Number(res.data.progress));
                             setProgressMessage(res.data.message);
                         }else{
                             loadProjects();
@@ -47,21 +53,16 @@ const index = () => {
                     enqueueSnackbar(`Failed to get projects analysis progress: ${err.message}`, {variant: 'error',});
                 });
 
-                const socket = new SockJS(`${process.env.NEXT_PUBLIC_BACKEND_URL}/websocket`);
-                const stompClient = Stomp.over(socket);
-
-                //turn off debugging logs on browser console
-                stompClient.debug = () => {}
-
                 stompClient.connect(getAxiosAuthConfig(), () => {
                     if(user){
                         stompClient.subscribe(`/topic/progress/${user.id}`, function (message:any) {
                             setIsAnalyzing(true);
 
                             const body = JSON.parse(message.body);
-                            setProgress(body.progress);
+                            setProgress(Number(body.progress));
                             setProgressMessage(body.message);
 
+                            //When the projectId field is not null, we know that the analysis is done
                             if(body.projectId){
                                 const dateQuery = `startDateTime=${body.startDateTime}&endDateTime=${body.endDateTime}`;
                                 router.push(`/project/${body.projectId}/overview?${dateQuery}`);
@@ -69,6 +70,12 @@ const index = () => {
                         });
                     }
                 });
+            }
+        }
+
+        return ()=> {
+            if(stompClient.connected){
+                stompClient.disconnect();
             }
         }
     }, [serverId, user]);
