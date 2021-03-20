@@ -24,15 +24,16 @@ export interface ProjectSummary {
 }
 
 const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) => {
+    const {project, commitCount, mergeRequestCount, commitScore, mergeRequestScore} = projectSummary;
     const {enqueueSnackbar} = useSnackbar();
     const styles = useStyles();
 
     const handleCopyScore = async () => {
         try {
-            let scoreText = `Merge Request Count: ${projectSummary.mergeRequestCount}\n`;
-            scoreText += `Merge Request Score: ${projectSummary.mergeRequestScore}\n`;
-            scoreText += `Commit Count: ${projectSummary.commitCount}\n`;
-            scoreText += `Commit Score: ${projectSummary.commitScore}`;
+            let scoreText = `Merge Request Count: ${mergeRequestCount}\n`;
+            scoreText += `Merge Request Score: ${mergeRequestScore}\n`;
+            scoreText += `Commit Count: ${commitCount}\n`;
+            scoreText += `Commit Score: ${commitScore}`;
             await navigator.clipboard.writeText(scoreText);
             enqueueSnackbar("Score summary copied to clipboard", {variant: "success"})
         } catch {
@@ -40,38 +41,35 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
         }
     }
 
-    if (!projectSummary.project) {
-        return <></>
-    }
     return (
         <Box display="flex" alignItems="center" padding={4}>
-            <Avatar className={styles.avatar} variant='rounded' src={projectSummary.project.avatar_url}>
+            <Avatar className={styles.avatar} variant='rounded' src={project?.avatar_url ?? ''}>
                 <Typography variant="h3">
-                    {getAvatarText(projectSummary.project.avatar_url, projectSummary.project.name)}
+                    {getAvatarText(project?.avatar_url ?? '', project?.name ?? '')}
                 </Typography>
             </Avatar>
 
             <Box ml={3} flexGrow={1}>
-                <Typography variant="h3">{projectSummary.project.name_with_namespace}</Typography>
+                <Typography variant="h3">{project?.name_with_namespace ?? "Loading..."}</Typography>
                 <Typography variant="subtitle2">
-                    {projectSummary.commitCount} Commit(s) -{' '}
-                    {projectSummary.mergeRequestCount} Merge Request(s)
+                    {commitCount} Commit(s) -{' '}
+                    {mergeRequestCount} Merge Request(s)
                 </Typography>
                 <Box pt={1}>
                     <Chip style={{marginRight: "5px"}} color="primary" size="small" icon={<StarIcon/>}
-                          label={`Stars: ${projectSummary.project.star_count}`}/>
+                          label={`Stars: ${project?.star_count ?? 0}`}/>
                     <Chip color="primary" size="small" icon={<RestaurantIcon/>}
-                          label={`Forks: ${projectSummary.project.forks_count}`}/>
+                          label={`Forks: ${project?.forks_count ?? 0}`}/>
                 </Box>
             </Box>
 
             <Box display="flex" alignItems="center">
                 <Box>
-                    <Typography variant="h6"><b>Merge Request Score:</b> {projectSummary.mergeRequestScore}</Typography>
-                    <Typography variant="h6"><b>Commit Score:</b> {projectSummary.commitScore}</Typography>
+                    <Typography variant="h6"><b>Merge Request Score:</b> {mergeRequestScore}</Typography>
+                    <Typography variant="h6"><b>Commit Score:</b> {commitScore}</Typography>
                 </Box>
                 <Box ml={2}>
-                    <IconButton color="primary" size="medium" onClick={handleCopyScore}>
+                    <IconButton color="primary" size="medium" onClick={handleCopyScore} disabled={!project}>
                         <FileCopyIcon/>
                     </IconButton>
                 </Box>
@@ -82,10 +80,11 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
 
 const getAvatarText = (avatarUrl: string, name: string) => {
     // Provide the first letter of the name like GitLab if no avatarUrl is present
-    if (avatarUrl == null) {
-        return name[0].toUpperCase();
+    if (!avatarUrl) {
+        // Use '...' if no name is present
+        return name ? name[0].toUpperCase() : '...';
     } else {
-        return ''
+        return avatarUrl
     }
 }
 
