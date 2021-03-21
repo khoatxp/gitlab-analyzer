@@ -19,7 +19,7 @@ const AnalysisRunList = ({isLoading, analysisRuns, loadAnalysisRuns}: AnalysisRu
                             <Box display="flex" alignItems="center" padding={2.5}>
                                 <Avatar variant='rounded' style={{width: '4em', height: '4em'}}>
                                     <Typography variant="h3">
-                                        {analysis.projectNameWithNamespace[0].toUpperCase()}
+                                        {analysis.projectName[0].toUpperCase()}
                                     </Typography>
                                 </Avatar>
 
