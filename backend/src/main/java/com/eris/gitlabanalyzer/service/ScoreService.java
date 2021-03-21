@@ -48,16 +48,19 @@ public class ScoreService {
         return diffScoreCalculator.calculateScoreMerge(mergeRequestId, scoreProfileId);
     }
 
-    public double[] getMergeUserScore(Long gitManagementUserId, Long projectId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+    public double[] getUserMergeScore(Long gitManagementUserId, Long projectId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
         List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByGitManagementUserIdAndDateRange(gitManagementUserId, projectId, startDateTime, endDateTime);
-        List<MergeRequest> sharedMergeRequests = mergeRequestRepository.findSharedMergeRequests(projectId, startDateTime, endDateTime);
+        // Find shared MR for user that they both own or participated on
+        List<MergeRequest> sharedMergeRequests = mergeRequestRepository.findOwnerSharedMergeRequests(projectId, gitManagementUserId, startDateTime, endDateTime);
+        sharedMergeRequests.addAll(mergeRequestRepository.findParticipantSharedMergeRequests(projectId, gitManagementUserId, startDateTime, endDateTime));
+
         double mergeTotal = 0;
+
         for(MergeRequest mr : mergeRequests){
             mergeTotal += diffScoreCalculator.calculateScoreMerge(mr.getId(), scoreProfileId);
         }
 
         List<Commit> commitsOnSharedMr = new ArrayList<>();
-        System.out.println(sharedMergeRequests.size());
         for(MergeRequest mr : sharedMergeRequests){
             commitsOnSharedMr.addAll(commitRepository.findByMergeIdAndGitManagementUserId(mr.getId(), gitManagementUserId));
         }
@@ -122,6 +125,7 @@ public class ScoreService {
         commits = commitRepository.findAllOrphanByProjectIdAndDateRange(projectId,
                 startDateTime.withOffsetSameInstant(ZoneOffset.UTC), endDateTime.withOffsetSameInstant(ZoneOffset.UTC));
         for (Commit commit : commits) {
+            System.out.println(commit.getId()+"=================================");
             totalScore += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
         }
         return totalScore;

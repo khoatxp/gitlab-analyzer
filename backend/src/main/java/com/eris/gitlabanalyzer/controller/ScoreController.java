@@ -3,10 +3,21 @@ package com.eris.gitlabanalyzer.controller;
 import com.eris.gitlabanalyzer.service.ScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
 
+class MergeReturnObject {
+    public double mergeScore;
+    public double sharedMergeScore;
+
+    public MergeReturnObject(double mergeScore, double sharedMergeScore){
+        this.mergeScore = mergeScore;
+        this.sharedMergeScore = sharedMergeScore;
+    }
+}
 
 @RestController
 @RequestMapping(path = "/api/v1/data/projects")
@@ -50,14 +61,16 @@ public class ScoreController {
     }
 
     @GetMapping(path ="/{projectId}/merge_request/user/{gitManagementUserId}/diff/score/{scoreProfileId}")
-    public double[] getUserMergeScore (@PathVariable("gitManagementUserId") Long gitManagementUserId,
-                                                  @PathVariable("scoreProfileId") Long scoreProfileId,
-                                                  @PathVariable("projectId") Long projectId,
-                                                  @RequestParam("startDateTime")
+    public MergeReturnObject getUserMergeScore (@PathVariable("gitManagementUserId") Long gitManagementUserId,
+                                                               @PathVariable("scoreProfileId") Long scoreProfileId,
+                                                               @PathVariable("projectId") Long projectId,
+                                                               @RequestParam("startDateTime")
                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
-                                                  @RequestParam("endDateTime")
+                                                               @RequestParam("endDateTime")
                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
-        return scoreService.getMergeUserScore(gitManagementUserId, projectId, scoreProfileId, startDateTime, endDateTime);
+        double [] mergeValues = scoreService.getUserMergeScore(gitManagementUserId, projectId, scoreProfileId, startDateTime, endDateTime);
+        MergeReturnObject mergeReturnObject = new MergeReturnObject(mergeValues[0], mergeValues[1]);
+        return mergeReturnObject;
     }
 
     // todo remove once we are passing profileId with every call

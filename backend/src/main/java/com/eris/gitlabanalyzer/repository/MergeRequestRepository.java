@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface MergeRequestRepository extends JpaRepository<MergeRequest, Long> {
@@ -21,15 +22,13 @@ public interface MergeRequestRepository extends JpaRepository<MergeRequest, Long
     @Query("select m from MergeRequest m where m.project.id = ?1 and m.mergedAt >= ?2 and m.mergedAt <= ?3")
     List<MergeRequest> findAllByProjectIdAndDateRange(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
 
-    @Query("select m from MergeRequest m where m.gitManagementUser.id= ?1 and m.project.id= ?2 and m.mergedAt >= ?3 and m.mergedAt <= ?4 and m.isShared= FALSE")
+    @Query("select m from MergeRequest m where m.gitManagementUser.id= ?1 and m.project.id= ?2 and m.mergedAt >= ?3 and m.mergedAt <= ?4 and m.sharedWith is EMPTY ")
     List<MergeRequest> findAllByGitManagementUserIdAndDateRange(Long gitManagementUserId, Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
 
-    @Query("select m from MergeRequest m where m.project.id= ?1 and m.mergedAt >= ?2 and m.mergedAt <= ?3 and m.isShared= TRUE")
-    List<MergeRequest> findSharedMergeRequests(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
+    @Query("select m from MergeRequest m where m.gitManagementUser.id= ?1 and m.project.id= ?2 and m.mergedAt >= ?3 and m.mergedAt <= ?4 and m.sharedWith is not EMPTY ")
+    List<MergeRequest> findOwnerSharedMergeRequests(Long gitManagementUserId, Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
 
-    @Transactional
-    @Modifying
-    @Query("update MergeRequest m set m.isShared = ?2 where m.id = ?1")
-    void updateMergeRequest(Long mergeRequestId, Boolean isShared);
+    @Query("select m from MergeRequest m join m.sharedWith sw where m.project.id= ?1 and m.mergedAt >= ?3 and m.mergedAt <= ?4 and sw = ?2")
+    List<MergeRequest> findParticipantSharedMergeRequests(Long projectId, Long gitManagementUserId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
 
 }

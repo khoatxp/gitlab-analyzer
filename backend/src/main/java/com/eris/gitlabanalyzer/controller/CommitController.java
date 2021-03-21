@@ -47,6 +47,6 @@ public class CommitController {
             @RequestBody List<CommitAuthorRequestBody> commitAuthors) {
         commitService.mapNewCommitAuthors(projectId,commitAuthors);
         // update MR shared status to match mapping
-        commitService.findAllSharedMergeRequests(projectId);
+        commitService.setAllSharedMergeRequests(projectId);
     }
 }
