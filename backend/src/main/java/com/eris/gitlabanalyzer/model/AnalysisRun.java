@@ -52,6 +52,10 @@ public class AnalysisRun {
     @Column(name = "created_date_time")
     private OffsetDateTime createdDateTime;
 
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private AnalysisRunStatus status;
+
     public AnalysisRun(User ownerUser, Project project, Server server, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         this.ownerUser = ownerUser;
         this.project = project;
@@ -59,5 +63,22 @@ public class AnalysisRun {
 //        this.scoreProfile = scoreProfile; TODO: hookup once implemented
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
+        this.status = AnalysisRunStatus.InProgress;
+    }
+
+    public enum AnalysisRunStatus {
+        InProgress ("In Progress"),
+        Error ("Error"),
+        Completed ("Completed");
+
+        private final String status;
+
+        AnalysisRunStatus(String status) {
+            this.status = status;
+        }
+
+        public String toString() {
+            return this.status;
+        }
     }
 }

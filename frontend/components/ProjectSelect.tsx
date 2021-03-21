@@ -39,7 +39,7 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
             />
             <Box m={1.5} display="flex" flexWrap="wrap">
                 {selectedProjects.map((project, index) =>
-                    <Box m={0.5}>
+                    <Box m={0.5} key={project.id}>
                         <Chip
                             label={project.name_with_namespace}
                             onDelete={() => handleDeleteChip(index)}

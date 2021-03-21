@@ -17,8 +17,8 @@ const getColourFromStatus = (status: string) => {
     switch (status) {
         case 'Complete':
             return 'green'
-        case 'In progress':
-            return 'yellow'
+        case 'In Progress':
+            return 'khaki'
         default:
             return 'crimson'
     }
