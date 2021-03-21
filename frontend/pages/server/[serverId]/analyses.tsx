@@ -7,6 +7,8 @@ import axios, {AxiosResponse} from "axios";
 import {useSnackbar} from "notistack";
 import {AuthContext} from "../../../components/AuthContext";
 import AppButton from "../../../components/app/AppButton";
+import formatDate from "../../../utils/DateFormatter";
+import AnalysisRunStatus from "../../../components/AnalysisRunStatus";
 
 const index = () => {
     const router = useRouter();
@@ -46,13 +48,14 @@ const index = () => {
                                 <Box ml={3} flexGrow={1}>
                                     <Typography variant="h4">{analysis.projectNameWithNamespace}</Typography>
                                     <Typography variant="subtitle2">
-                                        {analysis.startDateTime}
+                                        <b>From:</b> {formatDate(analysis.startDateTime)} - {formatDate(analysis.endDateTime)}
                                     </Typography>
                                     <Typography variant="subtitle2">
-                                        {analysis.endDateTime}
+                                        <b>Created:</b> {formatDate(analysis.createdDateTime)}
                                     </Typography>
                                 </Box>
                                 <Box display="flex" alignItems="center">
+                                    <AnalysisRunStatus status={'Complete'}/>
                                     <AppButton
                                         color="primary"
                                         onClick={() => router.push(`/project/${analysis.projectId}/overview?startDateTime=${analysis.startDateTime}&endDateTime=${analysis.endDateTime}`)}

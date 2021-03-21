@@ -12,15 +12,17 @@ public class AnalysisRunView {
     private final Long id;
     private final Long projectId;
     private final String projectNameWithNamespace;
+    private final String projectName;
     private final OffsetDateTime startDateTime;
     private final OffsetDateTime endDateTime;
-    private final OffsetDateTime createdDate;
+    private final OffsetDateTime createdDateTime;
 
     public static AnalysisRunView fromAnalysisRun(AnalysisRun analysisRun) {
         return new AnalysisRunView(
                 analysisRun.getId(),
                 analysisRun.getProject().getId(),
                 analysisRun.getProject().getNameWithNamespace(),
+                analysisRun.getProject().getName(),
                 analysisRun.getStartDateTime(),
                 analysisRun.getEndDateTime(),
                 analysisRun.getCreatedDateTime()
