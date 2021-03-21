@@ -35,7 +35,7 @@ const index = () => {
                 <Box maxHeight="50vh" overflow="auto">
                 {
                     analyses.map((analysis: any) =>
-                        <Paper elevation={4} style={{margin: "1em"}}>
+                        <Paper elevation={4} style={{margin: "1em"}} key={analysis.id}>
                             <Box display="flex" alignItems="center" padding={2.5}>
                                 <Avatar variant='rounded' style={{width: '4em', height: '4em'}}>
                                     <Typography variant="h3">

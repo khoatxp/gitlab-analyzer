@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface AnalysisRunRepository extends JpaRepository<AnalysisRun, Long> {
-    List<AnalysisRun> findByOwnerUserIdAndServerId(Long userId, Long serverId);
+    List<AnalysisRun> findByOwnerUserIdAndServerIdOrderByCreatedDateTimeDesc(Long userId, Long serverId);
 }

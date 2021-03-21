@@ -1,5 +1,7 @@
 package com.eris.gitlabanalyzer.model;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import java.time.OffsetDateTime;
 
@@ -45,6 +47,10 @@ public class AnalysisRun {
 
     @Column(name = "end_date_time")
     private OffsetDateTime endDateTime;
+
+    @CreationTimestamp
+    @Column(name = "created_date_time")
+    private OffsetDateTime createdDateTime;
 
     public AnalysisRun(User ownerUser, Project project, Server server, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         this.ownerUser = ownerUser;
