@@ -1,7 +1,9 @@
 package com.eris.gitlabanalyzer.service;
 
+import com.eris.gitlabanalyzer.model.AnalysisRun;
 import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.User;
+import com.eris.gitlabanalyzer.repository.AnalysisRunRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -16,6 +18,7 @@ public class AnalyticsService {
     private final CommitService commitService;
     private final IssueService issueService;
     private final AnalysisRunService analysisRunService;
+    private final AnalysisRunRepository analysisRunRepository;
 
     public AnalyticsService(
             ProjectService projectService,
@@ -23,25 +26,49 @@ public class AnalyticsService {
             MergeRequestService mergeRequestService,
             CommitService commitService,
             IssueService issueService,
-            AnalysisRunService analysisRunService) {
+            AnalysisRunService analysisRunService,
+            AnalysisRunRepository analysisRunRepository) {
         this.projectService = projectService;
         this.gitManagementUserService = gitManagementUserService;
         this.mergeRequestService = mergeRequestService;
         this.commitService = commitService;
         this.issueService = issueService;
         this.analysisRunService = analysisRunService;
+        this.analysisRunRepository = analysisRunRepository;
     }
 
     public List<Long> saveAllFromGitlab(User user, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        List<Long> projectIds = new ArrayList<>();
+        List<AnalysisRun> analysisRuns = saveProjectsAndAnalysisRuns(user, gitLabProjectIdList, startDateTime, endDateTime);
+        return loadProjectDataForAnalysisRuns(analysisRuns);
+    }
+
+    public List<AnalysisRun> saveProjectsAndAnalysisRuns(User user, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        List<AnalysisRun> analysisRuns = new ArrayList<>();
         gitLabProjectIdList.forEach(gitLabProjectId -> {
             Project project = projectService.saveProjectInfo(user, gitLabProjectId);
-            gitManagementUserService.saveGitManagementUserInfo(project);
-            mergeRequestService.saveMergeRequestInfo(project, startDateTime, endDateTime);
-            commitService.saveCommitInfo(project, startDateTime, endDateTime);
-            issueService.saveIssueInfo(project, startDateTime, endDateTime);
-            projectIds.add(project.getId());
-            this.analysisRunService.createAnalysisRun(user, project, startDateTime, endDateTime);
+            analysisRuns.add(this.analysisRunService.createAnalysisRun(user, project, AnalysisRun.Status.InProgress, startDateTime, endDateTime));
+        });
+        return analysisRuns;
+    }
+
+    public List<Long> loadProjectDataForAnalysisRuns(List<AnalysisRun> analysisRuns) {
+        List<Long> projectIds = new ArrayList<>();
+        analysisRuns.forEach(analysisRun -> {
+            try {
+                var project = analysisRun.getProject();
+                var startDateTime = analysisRun.getStartDateTime();
+                var endDateTime = analysisRun.getEndDateTime();
+                gitManagementUserService.saveGitManagementUserInfo(project);
+                mergeRequestService.saveMergeRequestInfo(project, startDateTime, endDateTime);
+                commitService.saveCommitInfo(project, startDateTime, endDateTime);
+                issueService.saveIssueInfo(project, startDateTime, endDateTime);
+                projectIds.add(project.getId());
+                analysisRun.setStatus(AnalysisRun.Status.Completed);
+                analysisRunRepository.save(analysisRun);
+            } catch(Exception e) {
+                analysisRun.setStatus(AnalysisRun.Status.Error);
+                analysisRunRepository.save(analysisRun);
+            }
         });
         return projectIds;
     }

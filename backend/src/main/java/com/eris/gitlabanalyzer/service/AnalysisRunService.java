@@ -2,7 +2,6 @@ package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.AnalysisRun;
 import com.eris.gitlabanalyzer.model.Project;
-import com.eris.gitlabanalyzer.model.ScoreProfile;
 import com.eris.gitlabanalyzer.model.User;
 import com.eris.gitlabanalyzer.repository.AnalysisRunRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +18,21 @@ public class AnalysisRunService {
         this.analysisRunRepository = analysisRunRepository;
     }
 
-    public void createAnalysisRun(User owner, Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+    public AnalysisRun createAnalysisRun(
+            User owner,
+            Project project,
+            AnalysisRun.Status status,
+            OffsetDateTime startDateTime,
+            OffsetDateTime endDateTime) {
         AnalysisRun analysisRun = new AnalysisRun(
                 owner,
                 project,
                 project.getServer(),
+                status,
 //                scoreProfile, TODO: hookup once implemented
                 startDateTime,
                 endDateTime
         );
-        this.analysisRunRepository.save(analysisRun);
+        return this.analysisRunRepository.save(analysisRun);
     }
 }

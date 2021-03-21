@@ -10,6 +10,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Entity(name = "AnalysisRun")
 @Table(name = "analysis_run")
 @lombok.Getter
+@lombok.Setter
 @lombok.NoArgsConstructor
 public class AnalysisRun {
     @Id
@@ -54,26 +55,33 @@ public class AnalysisRun {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private AnalysisRunStatus status;
+    private Status status;
 
-    public AnalysisRun(User ownerUser, Project project, Server server, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+    public AnalysisRun(
+            User ownerUser,
+            Project project,
+            Server server,
+            Status status,
+            OffsetDateTime startDateTime,
+            OffsetDateTime endDateTime) {
         this.ownerUser = ownerUser;
         this.project = project;
         this.server = server;
+        this.status = status;
 //        this.scoreProfile = scoreProfile; TODO: hookup once implemented
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
-        this.status = AnalysisRunStatus.InProgress;
+        this.status = Status.InProgress;
     }
 
-    public enum AnalysisRunStatus {
+    public enum Status {
         InProgress ("In Progress"),
         Error ("Error"),
         Completed ("Completed");
 
         private final String status;
 
-        AnalysisRunStatus(String status) {
+        Status(String status) {
             this.status = status;
         }
 
