@@ -8,7 +8,7 @@ type MergeRequestListProps = {
 }
 
 const MergeRequestList = ({mergeRequests, handleSelectMergeRequest}: MergeRequestListProps) => {
-    const [selectedIndex, setSelectedIndex] = useState(-1);
+    const [selectedIndex, setSelectedIndex] = useState<number>(-1); // Start with invalid index so nothing is selected
 
     const diffItems = mergeRequests.map((mergeRequest) => {
         let diffItem: DiffItem = {
@@ -16,7 +16,6 @@ const MergeRequestList = ({mergeRequests, handleSelectMergeRequest}: MergeReques
             createdAt: mergeRequest.created_at,
             authorName: mergeRequest.author.name,
             title: mergeRequest.title,
-            avatarUrl: mergeRequest.author.avatar_url || undefined,
         }
         return diffItem;
     });
