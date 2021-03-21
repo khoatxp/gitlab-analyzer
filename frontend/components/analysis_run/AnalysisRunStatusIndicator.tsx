@@ -1,6 +1,6 @@
 import {Avatar, Box, Typography} from "@material-ui/core";
 import React from "react";
-import {AnalysisRunStatus} from "../interfaces/AnalysisRun";
+import {AnalysisRunStatus} from "../../interfaces/AnalysisRun";
 
 type AnalysisRunStatusIndicatorProps = { status: AnalysisRunStatus }
 const AnalysisRunStatusIndicator = ({status}: AnalysisRunStatusIndicatorProps) => {

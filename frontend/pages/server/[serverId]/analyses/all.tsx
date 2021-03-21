@@ -2,14 +2,11 @@ import AuthView from "../../../../components/AuthView";
 import CardLayout from "../../../../components/layout/CardLayout";
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import {Avatar, Box, Paper, Typography} from "@material-ui/core";
 import axios, {AxiosResponse} from "axios";
 import {useSnackbar} from "notistack";
 import {AuthContext} from "../../../../components/AuthContext";
-import AppButton from "../../../../components/app/AppButton";
-import formatDate from "../../../../utils/DateFormatter";
-import AnalysisRunStatusIndicator from "../../../../components/AnalysisRunStatusIndicator";
-import {AnalysisRun, AnalysisRunStatus} from "../../../../interfaces/AnalysisRun";
+import {AnalysisRun} from "../../../../interfaces/AnalysisRun";
+import AnalysisRunList from "../../../../components/analysis_run/AnalysisRunList";
 
 const index = () => {
     const router = useRouter();
@@ -44,7 +41,7 @@ const index = () => {
     return (
         <AuthView>
             <CardLayout backLink={`/server/${serverId}`} logoType="header" size="lg">
-                Test
+                <AnalysisRunList isLoading={isLoading} analysisRuns={analysisRuns} loadAnalysisRuns={loadAnalysisRuns}/>
             </CardLayout>
         </AuthView>
     )
