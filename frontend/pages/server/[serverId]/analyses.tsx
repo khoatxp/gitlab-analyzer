@@ -8,21 +8,22 @@ import {useSnackbar} from "notistack";
 import {AuthContext} from "../../../components/AuthContext";
 import AppButton from "../../../components/app/AppButton";
 import formatDate from "../../../utils/DateFormatter";
-import AnalysisRunStatus from "../../../components/AnalysisRunStatus";
+import AnalysisRunStatusIndicator from "../../../components/AnalysisRunStatusIndicator";
+import {AnalysisRun, AnalysisRunStatus} from "../../../interfaces/AnalysisRun";
 
 const index = () => {
     const router = useRouter();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const {enqueueSnackbar} = useSnackbar();
     const {serverId} = router.query;
-    const [analyses, setAnalyses] = useState([]);
+    const [analysisRuns, setAnalysisRuns] = useState<AnalysisRun[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        loadAnalyses();
+        loadAnalysisRuns();
     }, [serverId]);
 
-    const loadAnalyses = () => {
+    const loadAnalysisRuns = () => {
         if (!router.isReady || isLoading) {
             return;
         }
@@ -30,7 +31,7 @@ const index = () => {
         axios
             .get(`${process.env.NEXT_PUBLIC_API_URL}/analysis_run/${serverId}`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
-                setAnalyses(resp.data)
+                setAnalysisRuns(resp.data)
             }).catch(() => {
             enqueueSnackbar('Failed to get runs.', {variant: 'error',});
             }).finally(() => {
@@ -44,7 +45,7 @@ const index = () => {
             <CardLayout backLink={`/server/${serverId}`} logoType="header" size="lg">
                 <Box maxHeight="50vh" overflow="auto">
                     {
-                        analyses.map((analysis: any) =>
+                        analysisRuns.map((analysis: any) =>
                             <Paper elevation={4} style={{margin: "1em"}} key={analysis.id}>
                                 <Box display="flex" alignItems="center" padding={2.5}>
                                     <Avatar variant='rounded' style={{width: '4em', height: '4em'}}>
@@ -63,11 +64,11 @@ const index = () => {
                                         </Typography>
                                     </Box>
                                     <Box display="flex" alignItems="center">
-                                        <AnalysisRunStatus status={analysis.status}/>
+                                        <AnalysisRunStatusIndicator status={analysis.status}/>
                                         <AppButton
                                             color="primary"
                                             onClick={() => router.push(`/project/${analysis.projectId}/overview?startDateTime=${analysis.startDateTime}&endDateTime=${analysis.endDateTime}`)}
-                                            disabled={analysis.status != "Complete"}
+                                            disabled={analysis.status != AnalysisRunStatus.Completed}
                                         >
                                             View
                                         </AppButton>
@@ -80,7 +81,7 @@ const index = () => {
                 <Box display="flex" justifyContent="center">
                     <AppButton
                         color="primary"
-                        onClick={loadAnalyses}
+                        onClick={loadAnalysisRuns}
                         disabled={isLoading}
                     >
                         Sync
