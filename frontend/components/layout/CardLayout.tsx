@@ -7,7 +7,7 @@ import NextLink from 'next/link'
 import {makeStyles} from "@material-ui/styles";
 
 type CardLayoutProps =  ChildrenProps & {
-    size?: "sm" | "md"
+    size?: "sm" | "md" | "lg"
     logoType?: "center" | "header"
     backLink?: string
     backLabel?: string
@@ -26,6 +26,10 @@ const CardLayout = ({children, size, logoType = "center", backLink, backLabel}: 
     let width = "60vw";
     width = size == "sm" ? "20vw": width;
     width = size == "md" ? "60vw": width;
+    width = size == "lg" ? "80vw": width;
+
+    let height = "60vh"
+    height = size == "lg" ? "80vh" : height;
 
     let logoSize = logoType === "center" ? "120" : "80" ;
     const classes = useStyles();
@@ -36,7 +40,7 @@ const CardLayout = ({children, size, logoType = "center", backLink, backLabel}: 
                 bgcolor="primary.contrastText"
                 boxShadow={20}
                 width={width}
-                height="60vh"
+                height={height}
                 minWidth="250px"
                 minHeight="450px"
                 borderRadius={45}

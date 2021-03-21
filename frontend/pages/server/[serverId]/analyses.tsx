@@ -23,7 +23,6 @@ const index = () => {
         axios
             .get(`${process.env.NEXT_PUBLIC_API_URL}/analysis_run/${serverId}`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
-                console.log(resp.data)
                 setAnalyses(resp.data)
             }).catch(() => {
             enqueueSnackbar('Failed to get runs.', {variant: 'error',});
@@ -32,12 +31,12 @@ const index = () => {
 
     return (
         <AuthView>
-            <CardLayout backLink={`/server/${serverId}`} logoType="header">
-                <Box style={{maxHeight: "300px", overflow: "auto"}}>
+            <CardLayout backLink={`/server/${serverId}`} logoType="header" size="lg">
+                <Box maxHeight="50vh" overflow="auto">
                 {
                     analyses.map((analysis: any) =>
-                        <Paper elevation={5} style={{margin: "0.75em"}}>
-                            <Box display="flex" alignItems="center" padding={3}>
+                        <Paper elevation={4} style={{margin: "1em"}}>
+                            <Box display="flex" alignItems="center" padding={2.5}>
                                 <Avatar variant='rounded' style={{width: '4em', height: '4em'}}>
                                     <Typography variant="h3">
                                         {analysis.projectNameWithNamespace[0].toUpperCase()}
