@@ -54,22 +54,22 @@ public class ScoreService {
         List<MergeRequest> sharedMergeRequests = mergeRequestRepository.findOwnerSharedMergeRequests(projectId, gitManagementUserId, startDateTime, endDateTime);
         sharedMergeRequests.addAll(mergeRequestRepository.findParticipantSharedMergeRequests(projectId, gitManagementUserId, startDateTime, endDateTime));
 
-        double mergeTotal = 0;
+        double mergeScoreTotal = 0;
 
         for(MergeRequest mr : mergeRequests){
-            mergeTotal += diffScoreCalculator.calculateScoreMerge(mr.getId(), scoreProfileId);
+            mergeScoreTotal += diffScoreCalculator.calculateScoreMerge(mr.getId(), scoreProfileId);
         }
 
         List<Commit> commitsOnSharedMr = new ArrayList<>();
         for(MergeRequest mr : sharedMergeRequests){
             commitsOnSharedMr.addAll(commitRepository.findByMergeIdAndGitManagementUserId(mr.getId(), gitManagementUserId));
         }
-        double sharedMergeTotal = 0;
+        double sharedMergeScoreTotal = 0;
         for(Commit commit : commitsOnSharedMr){
-            sharedMergeTotal += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
+            sharedMergeScoreTotal += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
         }
 
-        return new double[]{mergeTotal, sharedMergeTotal};
+        return new double[]{mergeScoreTotal, sharedMergeScoreTotal};
     }
 
     public void saveMergeDiffMetrics(MergeRequest mergeRequest){
