@@ -1,15 +1,15 @@
-import AuthView from "../../../components/AuthView";
-import CardLayout from "../../../components/layout/CardLayout";
+import AuthView from "../../../../components/AuthView";
+import CardLayout from "../../../../components/layout/CardLayout";
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Avatar, Box, Paper, Typography} from "@material-ui/core";
 import axios, {AxiosResponse} from "axios";
 import {useSnackbar} from "notistack";
-import {AuthContext} from "../../../components/AuthContext";
-import AppButton from "../../../components/app/AppButton";
-import formatDate from "../../../utils/DateFormatter";
-import AnalysisRunStatusIndicator from "../../../components/AnalysisRunStatusIndicator";
-import {AnalysisRun, AnalysisRunStatus} from "../../../interfaces/AnalysisRun";
+import {AuthContext} from "../../../../components/AuthContext";
+import AppButton from "../../../../components/app/AppButton";
+import formatDate from "../../../../utils/DateFormatter";
+import AnalysisRunStatusIndicator from "../../../../components/AnalysisRunStatusIndicator";
+import {AnalysisRun, AnalysisRunStatus} from "../../../../interfaces/AnalysisRun";
 
 const index = () => {
     const router = useRouter();
@@ -39,7 +39,7 @@ const index = () => {
         });
     }
 
-    console.log(analyses);
+    console.log(analysisRuns);
     return (
         <AuthView>
             <CardLayout backLink={`/server/${serverId}`} logoType="header" size="lg">
@@ -77,6 +77,7 @@ const index = () => {
                             </Paper>
                         )
                     }
+                    {analysisRuns.length === 0 && <Typography variant="h3" align="center">No analyses found.</Typography>}
                 </Box>
                 <Box display="flex" justifyContent="center">
                     <AppButton
