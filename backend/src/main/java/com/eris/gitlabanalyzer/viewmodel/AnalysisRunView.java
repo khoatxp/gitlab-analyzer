@@ -11,6 +11,7 @@ import java.time.OffsetDateTime;
 public class AnalysisRunView {
     private final Long id;
     private final Long projectId;
+    private final String projectNameWithNamespace;
     private final OffsetDateTime startDateTime;
     private final OffsetDateTime endDateTime;
 
@@ -18,6 +19,7 @@ public class AnalysisRunView {
         return new AnalysisRunView(
                 analysisRun.getId(),
                 analysisRun.getProject().getId(),
+                analysisRun.getProject().getNameWithNamespace(),
                 analysisRun.getStartDateTime(),
                 analysisRun.getEndDateTime()
         );

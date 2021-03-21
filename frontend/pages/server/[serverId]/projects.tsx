@@ -61,7 +61,7 @@ const index = () => {
 
     return (
         <AuthView>
-            <CardLayout backLink={"/server"} logoType="header">
+            <CardLayout backLink={`/server/${serverId}`} logoType="header">
                 {isLoading && <LoadingBar itemBeingLoaded={itemBeingLoaded}/>}
                 {!isLoading && <ProjectSelect projects={projects} onAnalyzeClick={handleAnalyze}/>}
             </CardLayout>
