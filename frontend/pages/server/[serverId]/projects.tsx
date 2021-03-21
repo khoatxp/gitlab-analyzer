@@ -105,8 +105,16 @@ const index = () => {
         axios
             .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
             .then((res) => {
-            }).catch((err) => {
-            enqueueSnackbar('Failed to load analysis from server', {variant: 'error',});
+                let analyzedProjectIds = res.data;
+                if (analyzedProjectIds.length > 1) {
+                    // Multiple projects analyzed, go to analyses page
+                    router.push(`/server/${serverId}/analyses`);
+                } else {
+                    // Single project analyzed, go to overview for the project
+                    router.push(`/project/${analyzedProjectIds[0]}/overview?${dateQuery}`);
+                }
+            }).catch(() => {
+            enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});
         });
     }
 

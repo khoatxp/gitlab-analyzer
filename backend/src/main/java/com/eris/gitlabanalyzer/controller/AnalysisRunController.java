@@ -3,6 +3,7 @@ package com.eris.gitlabanalyzer.controller;
 import com.eris.gitlabanalyzer.model.AnalysisRun;
 import com.eris.gitlabanalyzer.model.User;
 import com.eris.gitlabanalyzer.repository.AnalysisRunRepository;
+import com.eris.gitlabanalyzer.service.AnalysisRunService;
 import com.eris.gitlabanalyzer.service.AuthService;
 import com.eris.gitlabanalyzer.viewmodel.AnalysisRunView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,13 @@ import java.util.stream.Stream;
 public class AnalysisRunController {
     private final AnalysisRunRepository analysisRunRepository;
     private final AuthService authService;
+    private final AnalysisRunService analysisRunService;
 
     @Autowired
-    public AnalysisRunController(AnalysisRunRepository analysisRunRepository, AuthService authService) {
+    public AnalysisRunController(AnalysisRunRepository analysisRunRepository, AuthService authService, AnalysisRunService analysisRunService) {
         this.analysisRunRepository = analysisRunRepository;
         this.authService = authService;
+        this.analysisRunService = analysisRunService;
     }
 
     @GetMapping("{serverId}")
@@ -32,7 +35,15 @@ public class AnalysisRunController {
             Principal currentUser,
             @PathVariable("serverId") Long serverId) {
         User user = this.authService.getLoggedInUser(currentUser);
-        List<AnalysisRun> analysisRuns = this.analysisRunRepository.findByOwnerUserIdAndServerId(user.getId(), serverId);
+        List<AnalysisRun> analysisRuns = this.analysisRunRepository.findByOwnerUserIdAndServerIdOrderByCreatedDateTimeDesc(user.getId(), serverId);
         return analysisRuns.stream().map(AnalysisRunView::fromAnalysisRun);
+    }
+
+    @GetMapping("{serverId}/all")
+    public Stream<AnalysisRunView> getAccessibleAnalysisRuns(
+            Principal currentUser,
+            @PathVariable("serverId") Long serverId) {
+        User user = this.authService.getLoggedInUser(currentUser);
+        return this.analysisRunService.getAccessibleAnalysisRuns(user, serverId);
     }
 }

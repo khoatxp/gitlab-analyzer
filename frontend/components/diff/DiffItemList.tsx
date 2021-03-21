@@ -2,8 +2,8 @@ import React from 'react';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import {Avatar, Box, Card, Divider, ListItemIcon, ListSubheader} from "@material-ui/core";
-import formatDate from "../../interfaces/dateFormatter";
+import {Box, Card, Divider, ListSubheader} from "@material-ui/core";
+import formatDate from "../../utils/DateFormatter";
 
 type DiffItemListProps = {
     diffItems: DiffItem[]
@@ -18,7 +18,6 @@ export interface DiffItem {
     createdAt: string;
     authorName: string
     title: string;
-    avatarUrl?: string;
 }
 
 // A dynamic list made to be able to handle both merge request and commit list rendering
@@ -48,14 +47,6 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                                 }}
                                 selected={selectedIndex == i}
                             >
-                                {
-                                    // Display avatar if available
-                                    diffItem.avatarUrl &&
-                                    <ListItemIcon>
-                                        <Avatar alt={`Author: ${diffItem.authorName}`}
-                                                src={diffItem.avatarUrl || ''}/>
-                                    </ListItemIcon>
-                                }
                                 <ListItemText
                                     primary={diffItem.title}
                                     secondary={`#${diffItem.id} · opened ${formatDate(diffItem.createdAt)} by ${diffItem.authorName}`}

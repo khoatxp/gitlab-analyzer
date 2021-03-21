@@ -7,5 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface AnalysisRunRepository extends JpaRepository<AnalysisRun, Long> {
-    List<AnalysisRun> findByOwnerUserIdAndServerId(Long userId, Long serverId);
+    List<AnalysisRun> findByOwnerUserIdAndServerIdOrderByCreatedDateTimeDesc(Long userId, Long serverId);
+
+    @Query("SELECT a FROM AnalysisRun a WHERE a.ownerUser.id <> ?1 AND a.server.id = ?2 AND a.project.gitLabProjectId IN ?3")
+    List<AnalysisRun> findOthersByServerIdAndGitLabProjectIds(Long userId, Long serverId, List<Long> gitlabProjectIds);
 }
