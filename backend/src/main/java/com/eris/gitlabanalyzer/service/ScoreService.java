@@ -125,7 +125,6 @@ public class ScoreService {
         commits = commitRepository.findAllOrphanByProjectIdAndDateRange(projectId,
                 startDateTime.withOffsetSameInstant(ZoneOffset.UTC), endDateTime.withOffsetSameInstant(ZoneOffset.UTC));
         for (Commit commit : commits) {
-            System.out.println(commit.getId()+"=================================");
             totalScore += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
         }
         return totalScore;
