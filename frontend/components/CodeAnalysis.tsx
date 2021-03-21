@@ -110,8 +110,10 @@ const CodeAnalysis = () => {
                     enqueueSnackbar('Failed to get commits score.', {variant: 'error',});
             });
 
+            // TODO Pass correct Score Profile Id
+            let scoreProfileId = 0;
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/score_digest/?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/score_digest/${scoreProfileId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setScoreDigest(resp.data);
                 }).catch(() => {

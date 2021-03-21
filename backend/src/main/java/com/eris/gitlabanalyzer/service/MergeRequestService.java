@@ -101,28 +101,6 @@ public class MergeRequestService {
     }
     public void getDailyMergeCount(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
 
-        var start = startDateTime;
-        var end = startDateTime.truncatedTo(ChronoUnit.DAYS).plusDays(1);
-
-        while (start.isBefore(endDateTime)) {
-
-            if (end.isAfter(endDateTime)) {
-                end = endDateTime;
-            }
-
-            var utcStart = start.withOffsetSameInstant(ZoneOffset.UTC);
-            var utcEnd = end.withOffsetSameInstant(ZoneOffset.UTC);
-
-            // Get total score for one day
-            var commitScore = getTotalCommitDiffScore(projectId, utcStart, utcEnd);
-            var mergeScore = getTotalMergeDiffScore(projectId, utcStart, utcEnd);
-
-            digests.add(new ScoreDigest(Double.valueOf(commitScore), Double.valueOf(mergeScore), start.toLocalDate()));
-            start = end;
-            end = end.plusDays(1);
-        }
-
-        return digests;
     }
 
 }

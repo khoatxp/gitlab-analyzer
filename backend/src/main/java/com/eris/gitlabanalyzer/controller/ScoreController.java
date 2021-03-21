@@ -79,12 +79,14 @@ public class ScoreController {
                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
         return scoreService.getTotalCommitDiffScore(projectId, scoreProfileId, startDateTime, endDateTime);
     }
-    @GetMapping(path ="/projects/{projectId}/score_digest")
+
+    @GetMapping(path ="/{projectId}/score_digest/{scoreProfileId}")
     public List<ScoreDigest> getDailyScoreDigest (@PathVariable("projectId") Long projectId,
+                                                  @PathVariable("scoreProfileId") Long scoreProfileId,
                                                   @RequestParam("startDateTime")
-                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
+                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
                                                   @RequestParam("endDateTime")
-                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
-        return scoreService.getDailyScoreDigest(projectId, startDateTime, endDateTime);
+                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
+        return scoreService.getDailyScoreDigest(projectId, scoreProfileId, startDateTime, endDateTime);
     }
 }

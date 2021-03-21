@@ -10,5 +10,7 @@ import java.time.LocalDate;
 public class ScoreDigest {
     private Double commitScore;
     private Double mergeRequestScore;
+    private int commitCount;
+    private int mergeRequestCount;
     private LocalDate day;
 }
