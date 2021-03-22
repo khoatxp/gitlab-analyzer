@@ -118,25 +118,19 @@ const NotesPage = () => {
             <MenuLayout tabSelected={2}>
                 <Container maxWidth='xl'>
                     <Grid container spacing={2}>
-                        <Grid>
-                            <RadioGroupSelectMergeRequestsOrIssues
-                                value={noteType}
-                                handleChange={handleSelectNoteType}
+                        <Card>
+                            <NotesList
+                                noteArrays={noteType === NoteType.MergeRequest ?
+                                    mergeRequestNotes : issueNotes
+                                }
+                                noteParents={
+                                    noteType === NoteType.MergeRequest ?
+                                        mergeRequests : issues
+                                }
+                                noteType={noteType}
+                                handleChangeNoteType={handleSelectNoteType}
                             />
-                        </Grid>
-                        <Grid item xs={12} md={10} lg={10}>
-                            <Card>
-                                <NotesList
-                                    noteArrays={noteType === NoteType.MergeRequest ?
-                                        mergeRequestNotes : issueNotes
-                                    }
-                                    noteParents={
-                                        noteType === NoteType.MergeRequest ?
-                                            mergeRequests : issues
-                                    }
-                                />
-                            </Card>
-                        </Grid>
+                        </Card>
                     </Grid>
                 </Container>
             </MenuLayout>
@@ -152,31 +146,42 @@ const RadioGroupSelectMergeRequestsOrIssues = ({value, handleChange}
 
     return (
         <FormControl component="fieldset">
-            <RadioGroup name="mergeRequestsOrIssues"
+            <RadioGroup row
+                        name="mergeRequestsOrIssues"
                         defaultValue={NoteType.MergeRequest}
                         value={value}
                         onChange={handleChange}>
                 <FormControlLabel
                     value={NoteType.MergeRequest}
                     control={<Radio color="primary" size="small"/>}
-                    label={`Merge Requests`}
+                    label={`Merge request notes`}
                 />
                 <FormControlLabel
                     value={NoteType.Issue}
                     control={<Radio color="secondary" size="small"/>}
-                    label={`Issues`}
+                    label={`Issue notes`}
                 />
             </RadioGroup>
         </FormControl>
     );
-}
+};
 
 
-const NotesList = ({noteArrays, noteParents}: { noteArrays: Note[][], noteParents: Task[] }) => {
+const NotesList = ({noteArrays, noteParents, noteType, handleChangeNoteType}: {
+    noteArrays: Note[][],
+    noteParents: Task[],
+    noteType: NoteType,
+    handleChangeNoteType: React.Dispatch<React.ChangeEvent<HTMLInputElement>>,
+}) => {
+
     const classes = useStyles();
-
     return (
-        <List subheader={<ListSubheader disableSticky>{`Notes`}</ListSubheader>}
+        <List subheader={<ListSubheader color={"primary"}>{
+            <RadioGroupSelectMergeRequestsOrIssues
+                value={noteType}
+                handleChange={handleChangeNoteType}
+            />
+        }</ListSubheader>}
               className={classes.notesList}
         >
             {noteArrays?.map((noteArray, i) => (
