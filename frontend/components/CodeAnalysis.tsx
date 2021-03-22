@@ -70,7 +70,7 @@ const CodeAnalysis = () => {
     const [commitCount, setCommitCount] = React.useState<number>();
     const [mergeRequestScore, setMergeRequestScore] = React.useState<number>();
     const [commitScore, setCommitScore] = React.useState<number>();
-    const [scoreDigest, setScoreDigest] = React.useState<ScoreDigest[]>();
+    const [scoreDigest, setScoreDigest] = React.useState<ScoreDigest[]>([]);
 
     useEffect(() => {
         if (router.isReady) {
@@ -138,8 +138,8 @@ const CodeAnalysis = () => {
                         <p className={classes.commitScoreText}>Commit Score: {commitScore}</p>
                     </div>
                 </div>
-                <CountGraph/>
-                <ScoreGraph/>
+                <CountGraph data={scoreDigest}/>
+                <ScoreGraph data={scoreDigest}/>
             </div>
         </>
     );
