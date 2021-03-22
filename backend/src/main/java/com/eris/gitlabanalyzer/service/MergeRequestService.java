@@ -99,8 +99,4 @@ public class MergeRequestService {
         // TODO ensure user has permissions for project
         return mergeRequestRepository.findAllByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
     }
-    public void getDailyMergeCount(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-
-    }
-
 }
