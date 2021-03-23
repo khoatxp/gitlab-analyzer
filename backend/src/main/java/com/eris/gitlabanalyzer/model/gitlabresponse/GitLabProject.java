@@ -9,4 +9,10 @@ public class GitLabProject {
     private String nameWithNamespace;
     @JsonProperty("web_url")
     private String webUrl;
+    @JsonProperty("forks_count")
+    private String forksCount;
+    @JsonProperty("avatar_url")
+    private String avatarUrl;
+    @JsonProperty("star_count")
+    private String starCount;
 }
