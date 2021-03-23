@@ -2,7 +2,7 @@ import AuthView from "../../../../components/AuthView";
 import CardLayout from "../../../../components/layout/CardLayout";
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import {useSnackbar} from "notistack";
 import {AuthContext} from "../../../../components/AuthContext";
 import {AnalysisRun} from "../../../../interfaces/AnalysisRun";
@@ -29,8 +29,8 @@ const index = () => {
             .get(`${process.env.NEXT_PUBLIC_API_URL}/analysis_run/${serverId}`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
                 setAnalysisRuns(resp.data)
-            }).catch(() => {
-            enqueueSnackbar('Failed to get runs.', {variant: 'error',});
+            }).catch((err: AxiosError) => {
+            enqueueSnackbar(`Failed to get runs: ${err}`, {variant: 'error',});
             }).finally(() => {
                 setIsLoading(false);
         });

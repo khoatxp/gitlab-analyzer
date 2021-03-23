@@ -1,9 +1,6 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.model.GitManagementUser;
-import com.eris.gitlabanalyzer.model.MergeRequest;
-import com.eris.gitlabanalyzer.model.MergeRequestComment;
-import com.eris.gitlabanalyzer.model.Project;
+import com.eris.gitlabanalyzer.model.*;
 import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
 import com.eris.gitlabanalyzer.repository.MergeRequestCommentRepository;
 import com.eris.gitlabanalyzer.repository.MergeRequestRepository;
@@ -21,6 +18,7 @@ public class MergeRequestService {
     GitManagementUserRepository gitManagementUserRepository;
     MergeRequestCommentRepository mergeRequestCommentRepository;
     ScoreService scoreService;
+    AnalysisRunService analysisRunService;
 
     // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
@@ -30,41 +28,49 @@ public class MergeRequestService {
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public MergeRequestService(MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, MergeRequestCommentRepository mergeRequestCommentRepository, ScoreService scoreService) {
+    public MergeRequestService(MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, MergeRequestCommentRepository mergeRequestCommentRepository, ScoreService scoreService, AnalysisRunService analysisRunService) {
         this.mergeRequestRepository = mergeRequestRepository;
         this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
         this.mergeRequestCommentRepository = mergeRequestCommentRepository;
         this.scoreService = scoreService;
+        this.analysisRunService = analysisRunService;
     }
 
-    public void saveMergeRequestInfo(Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+    public void saveMergeRequestInfo(AnalysisRun analysisRun, Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         // TODO use an internal projectId to find the correct server
         var gitLabService = new GitLabService(serverUrl, accessToken);
 
         var gitLabMergeRequests = gitLabService.getMergeRequests(project.getGitLabProjectId(), startDateTime, endDateTime);
         var gitLabMergeRequestList = gitLabMergeRequests.collectList().block();
 
-        gitLabMergeRequestList.forEach(gitLabMergeRequest -> {
-                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabMergeRequest.getAuthor().getId(), serverUrl);
-                    MergeRequest mergeRequest = mergeRequestRepository.findByIidAndProjectId(gitLabMergeRequest.getIid(),project.getId());
-                    if(mergeRequest == null){
-                        mergeRequest = new MergeRequest(
-                                gitLabMergeRequest.getIid(),
-                                gitLabMergeRequest.getAuthor().getUsername(),
-                                gitLabMergeRequest.getTitle(),
-                                gitLabMergeRequest.getCreatedAt(),
-                                gitLabMergeRequest.getMergedAt(),
-                                gitLabMergeRequest.getWebUrl(),
-                                project,
-                                gitManagementUser
-                        );
-                    }
-                    mergeRequest = mergeRequestRepository.save(mergeRequest);
-                    saveMergeRequestComments(project, mergeRequest);
-                    scoreService.saveMergeDiffMetrics(mergeRequest);
-                }
-        );
+        Double progress;
+        Double startOfProgressRange = AnalysisRunProgress.Progress.AtStartOfImportingMergeRequests.getValue();
+        Double endOfProgressRange = AnalysisRunProgress.Progress.AtStartOfImportingCommits.getValue();
+
+        for(int i=0; i< gitLabMergeRequestList.size();i++) {
+            progress = startOfProgressRange + (endOfProgressRange-startOfProgressRange) * (i+1)/gitLabMergeRequestList.size();
+            analysisRunService.updateProgress(analysisRun, "Importing "+ (i+1) +"/"+gitLabMergeRequestList.size() + " merge requests",progress);
+
+            var gitLabMergeRequest = gitLabMergeRequestList.get(i);
+            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabMergeRequest.getAuthor().getId(), serverUrl);
+            MergeRequest mergeRequest = mergeRequestRepository.findByIidAndProjectId(gitLabMergeRequest.getIid(),project.getId());
+            if(mergeRequest == null){
+                mergeRequest = new MergeRequest(
+                        gitLabMergeRequest.getIid(),
+                        gitLabMergeRequest.getAuthor().getUsername(),
+                        gitLabMergeRequest.getTitle(),
+                        gitLabMergeRequest.getCreatedAt(),
+                        gitLabMergeRequest.getMergedAt(),
+                        gitLabMergeRequest.getWebUrl(),
+                        project,
+                        gitManagementUser
+                );
+            }
+            mergeRequest = mergeRequestRepository.save(mergeRequest);
+            saveMergeRequestComments(project, mergeRequest);
+            scoreService.saveMergeDiffMetrics(mergeRequest);
+        }
     }
 
     public void saveMergeRequestComments (Project project, MergeRequest mergeRequest){

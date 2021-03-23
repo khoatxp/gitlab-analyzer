@@ -1,6 +1,7 @@
 package com.eris.gitlabanalyzer.controller;
 
 import com.eris.gitlabanalyzer.model.AnalysisRun;
+import com.eris.gitlabanalyzer.model.AnalysisRunProgress;
 import com.eris.gitlabanalyzer.model.User;
 import com.eris.gitlabanalyzer.repository.AnalysisRunRepository;
 import com.eris.gitlabanalyzer.service.AnalysisRunService;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Stream;
@@ -28,6 +28,12 @@ public class AnalysisRunController {
         this.analysisRunRepository = analysisRunRepository;
         this.authService = authService;
         this.analysisRunService = analysisRunService;
+    }
+
+    @GetMapping("progress/{analysisRunId}")
+    public AnalysisRunProgress getAnalysisRun(
+            @PathVariable("analysisRunId") Long analysisRunId){
+        return analysisRunService.getAnalysisRunProgress(analysisRunId);
     }
 
     @GetMapping("{serverId}")

@@ -20,7 +20,6 @@ import java.util.stream.Stream;
 
 @Service
 public class CommitService {
-
     MergeRequestRepository mergeRequestRepository;
     CommitRepository commitRepository;
     ProjectRepository projectRepository;
@@ -28,6 +27,7 @@ public class CommitService {
     CommitCommentRepository commitCommentRepository;
     ScoreService scoreService;
     CommitAuthorRepository commitAuthorRepository;
+    AnalysisRunService analysisRunService;
 
     // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
@@ -37,14 +37,15 @@ public class CommitService {
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public CommitService(MergeRequestRepository mergeRequestRepository, CommitRepository commitRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, CommitCommentRepository commitCommentRepository, ScoreService scoreService, CommitAuthorRepository commitAuthorRepository ) {
+    public CommitService(MergeRequestRepository mergeRequestRepository, CommitRepository commitRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, CommitCommentRepository commitCommentRepository, ScoreService scoreService, CommitAuthorRepository commitAuthorRepository, AnalysisRunService analysisRunService) {
         this.mergeRequestRepository = mergeRequestRepository;
         this.commitRepository = commitRepository;
         this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
         this.commitCommentRepository = commitCommentRepository;
-        this.commitAuthorRepository = commitAuthorRepository;
         this.scoreService = scoreService;
+        this.commitAuthorRepository = commitAuthorRepository;
+        this.analysisRunService = analysisRunService;
     }
 
     public String splitEmail(String email) {
@@ -53,7 +54,7 @@ public class CommitService {
     }
 
 
-    public void saveCommitInfo(Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+    public void saveCommitInfo(AnalysisRun analysisRun, Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         //Save commits associated with each merge request
         List<MergeRequest> mergeRequestList = mergeRequestRepository.findAllByProjectId(project.getId());
         List<String> mrCommitShas = new ArrayList<>(); //Used to filter for the case of orphan commits
@@ -61,14 +62,21 @@ public class CommitService {
         // TODO use an internal projectId to find the correct server
         var gitLabService = new GitLabService(serverUrl, accessToken);
 
-        mergeRequestList.forEach(mergeRequest -> {
-            var gitLabCommits = gitLabService.getMergeRequestCommits(project.getGitLabProjectId(), mergeRequest.getIid());
-            saveCommitHelper(project, mergeRequest, gitLabCommits, mrCommitShas);
-        });
+        Double progress;
+        Double startOfProgressRange = AnalysisRunProgress.Progress.AtStartOfImportingCommits.getValue();
+        Double endOfProgressRange = AnalysisRunProgress.Progress.AtStartOfImportingOrphanCommits.getValue();
+
+        for(int i = 0; i < mergeRequestList.size();i++){
+            progress = startOfProgressRange + (endOfProgressRange-startOfProgressRange) * (i+1)/mergeRequestList.size();
+            analysisRunService.updateProgress(analysisRun, "Importing commits for "+ (i+1) +"/"+mergeRequestList.size() + " merge requests",progress);
+            var gitLabCommits = gitLabService.getMergeRequestCommits(project.getGitLabProjectId(), mergeRequestList.get(i).getIid());
+            saveCommitHelper(project, mergeRequestList.get(i), gitLabCommits, mrCommitShas);
+        }
 
         //Save orphan commits
         var gitLabCommits = gitLabService.getCommits(project.getGitLabProjectId(), startDateTime, endDateTime)
                                                            .filter(gitLabCommit -> !mrCommitShas.contains(gitLabCommit.getSha()));
+        analysisRunService.updateProgress(analysisRun, "Importing orphan commits", AnalysisRunProgress.Progress.AtStartOfImportingOrphanCommits.getValue());
         saveCommitHelper(project, null, gitLabCommits, mrCommitShas);
     }
 

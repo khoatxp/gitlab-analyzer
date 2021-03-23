@@ -57,13 +57,18 @@ public class AnalysisRun {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "analysis_run_progress_id", referencedColumnName = "analysis_run_progress_id")
+    private AnalysisRunProgress analysisRunProgress;
+
     public AnalysisRun(
             User ownerUser,
             Project project,
             Server server,
             Status status,
             OffsetDateTime startDateTime,
-            OffsetDateTime endDateTime) {
+            OffsetDateTime endDateTime,
+            AnalysisRunProgress analysisRunProgress) {
         this.ownerUser = ownerUser;
         this.project = project;
         this.server = server;
@@ -72,6 +77,7 @@ public class AnalysisRun {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.status = Status.InProgress;
+        this.analysisRunProgress = analysisRunProgress;
     }
 
     public enum Status {

@@ -15,6 +15,7 @@ public class IssueService {
     IssueCommentRepository issueCommentRepository;
     ProjectRepository projectRepository;
     GitManagementUserRepository gitManagementUserRepository;
+    AnalysisRunService analysisRunService;
 
     // TODO Remove after server info is correctly retrieved based on internal projectId
     @Value("${gitlab.SERVER_URL}")
@@ -24,37 +25,45 @@ public class IssueService {
     @Value("${gitlab.ACCESS_TOKEN}")
     String accessToken;
 
-    public IssueService(IssueRepository issueRepository, IssueCommentRepository issueCommentRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository) {
+    public IssueService(IssueRepository issueRepository, IssueCommentRepository issueCommentRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, AnalysisRunService analysisRunService) {
         this.issueRepository = issueRepository;
         this.issueCommentRepository = issueCommentRepository;
         this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
+        this.analysisRunService = analysisRunService;
     }
 
-    public void saveIssueInfo(Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+    public void saveIssueInfo(AnalysisRun analysisRun, Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         // TODO use an internal projectId to find the correct server
         var gitLabService = new GitLabService(serverUrl, accessToken);
         var gitLabIssues = gitLabService.getIssues(project.getGitLabProjectId(), startDateTime, endDateTime);
         var gitLabIssueList = gitLabIssues.collectList().block();
 
-        gitLabIssueList.forEach(gitLabIssue -> {
-                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabIssue.getAuthor().getId(), serverUrl);
-                    Issue issue = issueRepository.findByIidAndProjectId(gitLabIssue.getIid(),project.getId());
-                    if(issue == null){
-                        issue = new Issue(
-                                gitLabIssue.getIid(),
-                                gitLabIssue.getTitle(),
-                                gitLabIssue.getAuthor().getName(),
-                                gitLabIssue.getCreatedAt(),
-                                gitLabIssue.getWebUrl(),
-                                project,
-                                gitManagementUser
-                        );
-                    }
-                    issue = issueRepository.save(issue);
-                    saveIssueComments(project, issue);
-                }
-        );
+        Double progress;
+        Double startOfProgressRange = AnalysisRunProgress.Progress.AtStartOfImportingIssues.getValue();
+        Double endOfProgressRange = AnalysisRunProgress.Progress.Done.getValue()-1;
+
+        for(int i=0; i<gitLabIssueList.size(); i++){
+            progress = startOfProgressRange + (endOfProgressRange-startOfProgressRange) * (i+1)/gitLabIssueList.size();
+            analysisRunService.updateProgress(analysisRun, "Importing "+ (i+1) +"/"+gitLabIssueList.size() + " issues",progress);
+
+            var gitLabIssue = gitLabIssueList.get(i);
+            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabIssue.getAuthor().getId(), serverUrl);
+            Issue issue = issueRepository.findByIidAndProjectId(gitLabIssue.getIid(),project.getId());
+            if(issue == null){
+                issue = new Issue(
+                        gitLabIssue.getIid(),
+                        gitLabIssue.getTitle(),
+                        gitLabIssue.getAuthor().getName(),
+                        gitLabIssue.getCreatedAt(),
+                        gitLabIssue.getWebUrl(),
+                        project,
+                        gitManagementUser
+                );
+            }
+            issue = issueRepository.save(issue);
+            saveIssueComments(project, issue);
+        }
     }
 
     public void saveIssueComments (Project project, Issue issue){
