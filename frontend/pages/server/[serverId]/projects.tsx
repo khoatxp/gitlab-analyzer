@@ -14,13 +14,11 @@ import {formatISO} from "date-fns";
 const index = () => {
     const router = useRouter();
     const {enqueueSnackbar} = useSnackbar();
-    const {user, getAxiosAuthConfig} = React.useContext(AuthContext);
+    const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const [projects, setProjects] = useState<GitLabProject[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [itemBeingLoaded, setItemBeingLoaded] = useState<string>('');
     const {serverId} = router.query;
-    const [userId, setUserId] = useState<number>(Number(user.id));
-
 
     useEffect(() => {
         if(router.isReady) {
@@ -66,7 +64,7 @@ const index = () => {
         <AuthView>
             <CardLayout backLink={"/server"} logoType="header">
                 {isLoading && <LoadingBar itemBeingLoaded={itemBeingLoaded}/>}
-                {!isLoading && <ProjectSelect projects={projects} onAnalyzeClick={handleAnalyze} serverId={Number(serverId)} userId={userId}/>}
+                {!isLoading && <ProjectSelect projects={projects} onAnalyzeClick={handleAnalyze}/>}
             </CardLayout>
         </AuthView>
     );

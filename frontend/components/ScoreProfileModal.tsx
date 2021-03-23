@@ -32,11 +32,10 @@ interface Props {
     id : number
     profile : ScoreProfile | null
     isNewProfile : boolean
-    userId : number
 }
 
 
-const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile, userId }: Props) => {
+const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile }: Props) => {
     const classes = useStyles();
     const router = useRouter();
     const {enqueueSnackbar} = useSnackbar();
@@ -146,7 +145,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile, userId }:
 
             if (isNewProfile == false) {
                 axios
-                .put(`${process.env.NEXT_PUBLIC_API_URL}/${userId}/scoreprofile/${userId}/${id}` , newProfile, getAxiosAuthConfig())
+                .put(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile/${id}` , newProfile, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     enqueueSnackbar('Successfully saved score profile', {variant: 'success',});
                 }).catch(() => {
@@ -155,7 +154,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile, userId }:
                 close();
             } else {
                 axios
-                .post(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile/${userId}` , newProfile, getAxiosAuthConfig())
+                .post(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile` , newProfile, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     enqueueSnackbar('Successfully saved score profile', {variant: 'success',});
                 }).catch(() => {

@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/{userId}/scoreprofile")
+@RequestMapping("/api/v1/scoreprofile")
 public class ScoreProfileController {
 
     private final ScoreProfileService scoreProfileService;

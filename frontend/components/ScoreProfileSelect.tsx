@@ -31,15 +31,16 @@ const useStyles = makeStyles((theme) => ({
 interface Props {
     scoreProfile: ScoreProfile | undefined
     onScoreProfileSelect: (event: any, profile: ScoreProfile) => void
-    userId: number
 }
 
-const ScoreProfileSelect = ({scoreProfile, onScoreProfileSelect, userId}:Props) => {
+const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
+
+
 
     const classes = useStyles();
     const router = useRouter();
     const {enqueueSnackbar} = useSnackbar();
-    const {user, getAxiosAuthConfig} = React.useContext(AuthContext);
+    const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
     const [profiles, setProfiles] =  useState<ScoreProfile[]>([]);
     const [isIconVisible, setIconVisible] = useState(false);
@@ -52,7 +53,7 @@ const ScoreProfileSelect = ({scoreProfile, onScoreProfileSelect, userId}:Props) 
     useEffect(() => {
         if (router.isReady) {
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/${userId}/scoreprofile`, getAxiosAuthConfig())
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setProfiles(resp.data);
                 }).catch(() => {
@@ -81,7 +82,7 @@ const ScoreProfileSelect = ({scoreProfile, onScoreProfileSelect, userId}:Props) 
 
     const handleDelete = (id : number) =>{
         if (router.isReady) {
-            axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile/${userId}/${id}`, getAxiosAuthConfig())
+            axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile/${id}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     console.log(resp.data);
                 }).catch(() => {
@@ -115,7 +116,7 @@ const ScoreProfileSelect = ({scoreProfile, onScoreProfileSelect, userId}:Props) 
                                             <IconButton edge="end" aria-label="edit" onClick={() => { handleEdit(profile);}} >
                                                 <EditIcon style={{ fontSize: "25px", color: "grey" }} />
                                             </IconButton>
-                                            <ScoreProfileModal  open={open} handleClose={handleClose} id={id} profile={selectedProfile} isNewProfile={isNewProfile} userId={userId}/>
+                                            <ScoreProfileModal  open={open} handleClose={handleClose} id={id} profile={selectedProfile} isNewProfile={isNewProfile}/>
                                             <IconButton edge="end" aria-label="delete"  onClick={() => { handleDelete(profile.id);}}>
                                                 <DeleteIcon style={{ fontSize: "25px", color: "#CC160B" }}/>
                                             </IconButton>
@@ -129,11 +130,11 @@ const ScoreProfileSelect = ({scoreProfile, onScoreProfileSelect, userId}:Props) 
             <IconButton edge={false} aria-label="add" onClick={handleNew} >
                 <AddBoxIcon style={{ fontSize: "25px", color: "green" }}/>
             </IconButton>
-            <ScoreProfileModal  open={open} handleClose={handleClose} id={id} profile={selectedProfile} isNewProfile={isNewProfile} userId={userId}/>
+            <ScoreProfileModal  open={open} handleClose={handleClose} id={id} profile={selectedProfile} isNewProfile={isNewProfile}/>
 
 
         </Box>
     );
 }
 
-export default ScoreProfileSelect;
+export default ScoreProfileSelector;
