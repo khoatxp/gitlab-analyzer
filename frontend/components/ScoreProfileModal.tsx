@@ -41,8 +41,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile }: Props) 
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
-
-    const[savedArray, setSavedArray] = useState<{}>({});
+    const [savedArray, setSavedArray] = useState<{}>({});
     const [extensionMap, setExtensionMap] = useState(new Map())
     const [syntaxWeight, setSyntaxWeight] = useState<number | null>()
     const [commentsWeight, setCommentsWeight] = useState<number | null>();
