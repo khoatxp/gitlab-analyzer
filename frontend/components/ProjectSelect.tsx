@@ -10,9 +10,11 @@ import ScoreProfile from "../interfaces/ScoreProfile";
 type ProjectSelectProps = {
     projects: GitLabProject[]
     onAnalyzeClick: (projectIds: number[], startDateTime: Date, endDateTime: Date) => void
+    serverId : number
+    userId : number
 }
 
-const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
+const ProjectSelect = ({projects, onAnalyzeClick, serverId}: ProjectSelectProps) => {
     const now = new Date();
     const [selectedProjectId, setSelectedProjectId] = useState<number>(0);
     const [startDateTime, setStartDateTime] = useState<Date>(new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()));
@@ -62,6 +64,7 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
                 <ScoreProfileSelect
                     scoreProfile={scoreProfile}
                     onScoreProfileSelect={onProfileSelect}
+                    userId={userId}
                  />
 
             </Box>
