@@ -53,7 +53,7 @@ const AnalysisProgressModal = ({open,handleClose,loadAnalysisRuns,analysisRun}: 
                     if(res.data.message){
                         setProgress(Number(res.data.progress));
                         setProgressMessage(res.data.message);
-                        if(res.data.message == "Error"){
+                        if(Number(res.data.progress) == 100 || res.data.message == "Error"){
                             handleClose();
                             loadAnalysisRuns();
                         }

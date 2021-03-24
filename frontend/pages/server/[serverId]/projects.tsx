@@ -9,14 +9,8 @@ import {useSnackbar} from 'notistack';
 import ProjectSelect from "../../../components/ProjectSelect";
 import LoadingBar from "../../../components/LoadingBar";
 import {formatISO} from "date-fns";
-// @ts-ignore
-import SockJS from "sockjs-client";
-// @ts-ignore
-import Stomp from "stompjs";
-
 
 const index = () => {
-    const {user} = React.useContext(AuthContext);
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const router = useRouter();
     const {enqueueSnackbar} = useSnackbar();
