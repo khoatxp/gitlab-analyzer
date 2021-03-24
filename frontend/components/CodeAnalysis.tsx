@@ -13,6 +13,8 @@ const CodeAnalysis = () => {
     const router = useRouter();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const {enqueueSnackbar} = useSnackbar();
+    // TODO startDateTime, endDateTime could be possibly undefined (missing from url) or an array(multiple)
+    // Need to handle these cases. This might be a non issue or handled differently with analysis run
     const {projectId, startDateTime, endDateTime} = router.query;
 
     const [project, setProject] = React.useState<GitLabProject>();
@@ -83,8 +85,8 @@ const CodeAnalysis = () => {
     return (
         <>
             <AnalysisSummary projectSummary={projectSummary}/>
-            <CountGraph data={scoreDigest}/>
-            <ScoreGraph data={scoreDigest}/>
+            <CountGraph data={scoreDigest} startDateTime={startDateTime} endDateTime={endDateTime}/>
+            <ScoreGraph data={scoreDigest} startDateTime={startDateTime} endDateTime={endDateTime}/>
         </>
     );
 };

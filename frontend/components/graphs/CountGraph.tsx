@@ -12,13 +12,15 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import {ScoreDigest} from "../../interfaces/ScoreDigest";
-import {parseISO} from "date-fns";
+import { formatDay, setBackground } from "./GraphHelpers"
 
 interface Props {
-    data: ScoreDigest[]
+    data: ScoreDigest[],
+    startDateTime: string,
+    endDateTime: string,
 }
 
-const Chart = ({data}: Props) => {
+const Chart = ({data, startDateTime, endDateTime}: Props) => {
     const [commitCheckboxChecked, setCommitCheckboxChecked] = useState(true);
     const [mergeCheckboxChecked, setMergeCheckboxChecked] = useState(true);
 
@@ -30,27 +32,25 @@ const Chart = ({data}: Props) => {
         setMergeCheckboxChecked(!mergeCheckboxChecked);
     }
 
-    const formatDay = (day:string) => {
-        return parseISO(day).toLocaleDateString('en-Us', {month: 'short', day: 'numeric'});
-    }
-
     return (
         <div style={{display: "flex", flexDirection: "column"}}>
             <p style={{textAlign: "center"}}>Daily Total Commits and Merge Requests Made By Everyone</p>
             <div style={{display: "flex"}}>
                 <ResponsiveContainer width="100%" height={400} minWidth="0">
                     <BarChart
-                       width={1000}
-                       height={350}
-                       data={data}
-                       margin={{ top: 8, right: 30, left: 20, bottom: 8 }}
+                        width={1000}
+                        height={350}
+                        data={data}
+                        margin={{ top: 8, right: 15, left: 15, bottom: 8 }}
+                        barCategoryGap={0}
+                        barGap={0}
                     >
                        <CartesianGrid strokeDasharray="3 3" />
                        <XAxis dataKey="day" tickFormatter={formatDay} label={{ value: "Date", position: "middle", dy: 10}} />
                        <YAxis label={{ value: 'Total Count', angle: -90, position: 'insideLeft' }} />
                        <Tooltip />
-                       <Bar dataKey="commitCount" fill="#82ca9d" barSize={15} hide={!commitCheckboxChecked}/>
-                       <Bar dataKey="mergeRequestCount" fill="#8884d8" barSize={15} hide={!mergeCheckboxChecked}/>
+                       <Bar key="commit-count" dataKey="commitCount" fill="#82ca9d" background={(props) => setBackground(props, startDateTime, endDateTime)}hide={!commitCheckboxChecked}/>
+                       <Bar key="mr-count" dataKey="mergeRequestCount" fill="#8884d8" background={(props) => setBackground(props, startDateTime, endDateTime)} hide={!mergeCheckboxChecked}/>
                     </BarChart>
                 </ResponsiveContainer>
                 <FormGroup>
