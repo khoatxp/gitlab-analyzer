@@ -24,6 +24,14 @@ const CodeAnalysis = () => {
     const [commitScore, setCommitScore] = React.useState<number>(0);
     const [scoreDigest, setScoreDigest] = React.useState<ScoreDigest[]>([]);
 
+    const getDateTime = (queryDatetime: string | string[] | undefined) => {
+        if (Array.isArray(queryDatetime)) {
+            return queryDatetime[0];
+        }
+        return queryDatetime;
+
+    };
+
     useEffect(() => {
         if (router.isReady) {
             axios
@@ -85,8 +93,12 @@ const CodeAnalysis = () => {
     return (
         <>
             <AnalysisSummary projectSummary={projectSummary}/>
-            <CountGraph data={scoreDigest} startDateTime={startDateTime} endDateTime={endDateTime}/>
-            <ScoreGraph data={scoreDigest} startDateTime={startDateTime} endDateTime={endDateTime}/>
+            <CountGraph data={scoreDigest}
+                        startDateTime={getDateTime(startDateTime)}
+                        endDateTime={getDateTime(endDateTime)}/>
+            <ScoreGraph data={scoreDigest}
+                        startDateTime={getDateTime(startDateTime)}
+                        endDateTime={getDateTime(endDateTime)}/>
         </>
     );
 };

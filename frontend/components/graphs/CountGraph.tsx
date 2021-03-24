@@ -16,8 +16,8 @@ import { formatDay, setBackground } from "./GraphHelpers"
 
 interface Props {
     data: ScoreDigest[],
-    startDateTime: string,
-    endDateTime: string,
+    startDateTime: string | undefined,
+    endDateTime: string | undefined,
 }
 
 const Chart = ({data, startDateTime, endDateTime}: Props) => {
