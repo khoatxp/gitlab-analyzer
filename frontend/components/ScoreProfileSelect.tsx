@@ -43,12 +43,12 @@ const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
     const [profiles, setProfiles] =  useState<ScoreProfile[]>([]);
+    const [update, setUpdate] = useState<boolean>(false);
     const [isIconVisible, setIconVisible] = useState(false);
     const [open, setOpen] = useState(false);
     const [isNewProfile, setIsNewProfile] = useState(true);
     const [selectedProfile, setSelectedProfile] = useState<ScoreProfile | null>(null);
     const [id,setId] = useState<number>(0)
-
 
     useEffect(() => {
         if (router.isReady) {
@@ -60,7 +60,19 @@ const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
                     enqueueSnackbar('Failed to retrieve score profiles', {variant: 'error',});
                 })
         }
-    });
+    },[open,update]);
+
+    const handleDelete = (id : number) =>{
+        if (router.isReady) {
+            axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile/${id}`, getAxiosAuthConfig())
+                .then((resp: AxiosResponse) => {
+                    console.log(resp.data);
+                }).catch(() => {
+                enqueueSnackbar('Failed to delete score profile', {variant: 'error',});
+            })
+        }
+        setUpdate(true);
+    };
 
     const handleNew = () => {
         setId(0);
@@ -80,17 +92,6 @@ const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
         setOpen(false);
     };
 
-    const handleDelete = (id : number) =>{
-        if (router.isReady) {
-            axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile/${id}`, getAxiosAuthConfig())
-                .then((resp: AxiosResponse) => {
-                    console.log(resp.data);
-                }).catch(() => {
-                    enqueueSnackbar('Failed to delete score profile', {variant: 'error',});
-                })
-        }
-    };
-
     return (
         <Box display="flex" flexDirection="row" justifyContent="center" marginLeft={4}>
             <FormControl className={classes.formControl}>
@@ -99,6 +100,7 @@ const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
                         labelId="score-options"
                         onOpen={() => setIconVisible(true)}
                         onClose={() => setIconVisible(false)}
+                        defaultValue={""}
                         value={scoreProfile}
                         onChange={onScoreProfileSelect}
                         MenuProps={{

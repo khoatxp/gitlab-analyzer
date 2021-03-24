@@ -42,13 +42,13 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile }: Props) 
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
 
-    const[savedArray, setSavedArray] = useState<{}>({});
+    const [savedArray, setSavedArray] = useState<{}>({});
     const [extensionMap, setExtensionMap] = useState(new Map())
-    const [syntaxWeight, setSyntaxWeight] = useState<number | null>()
-    const [commentsWeight, setCommentsWeight] = useState<number | null>();
+    const [syntaxWeight, setSyntaxWeight] = useState<number>()
+    const [commentsWeight, setCommentsWeight] = useState<number>();
     const [name, setName] = useState<string>()
-    const [lineWeight, setLineWeight] = useState<number | null>();
-    const [deleteWeight, setDeleteWeight] = useState<number | null>();
+    const [lineWeight, setLineWeight] = useState<number>();
+    const [deleteWeight, setDeleteWeight] = useState<number>();
 
     useEffect(() => {
 
@@ -63,10 +63,10 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile }: Props) 
         }
         else{
             setName("");
-            setCommentsWeight(null);
-            setDeleteWeight(null);
-            setLineWeight(null);
-            setSyntaxWeight(null);
+            setCommentsWeight(undefined);
+            setDeleteWeight(undefined);
+            setLineWeight(undefined);
+            setSyntaxWeight(undefined);
             let map= new Map();
             setExtensionMap(map);
         }
@@ -117,11 +117,11 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile }: Props) 
             enqueueSnackbar('Profile must have a name', {variant: 'error',});
             return;
         }
-        if(lineWeight != null && lineWeight < 0 || commentsWeight != null && commentsWeight < 0 || deleteWeight != null && deleteWeight < 0 || syntaxWeight != null && syntaxWeight < 0){
+        if(lineWeight != undefined && lineWeight < 0 || commentsWeight != undefined && commentsWeight < 0 || deleteWeight != undefined && deleteWeight < 0 || syntaxWeight != undefined && syntaxWeight < 0){
             enqueueSnackbar('Weights cannot be negative', {variant: 'error',});
             return;
         }
-        if(lineWeight == null || commentsWeight == null || deleteWeight == null || syntaxWeight == null){
+        if(lineWeight == undefined || commentsWeight == undefined || deleteWeight == undefined || syntaxWeight == undefined){
             enqueueSnackbar('Text fields must not be empty', {variant: 'error',});
             return;
         }
@@ -176,35 +176,35 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile }: Props) 
                     <form onSubmit={handleSave}>
                         <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
                             <Box width={150}>
-                                <AppTextField label="Name" value={name} onChange={(e) => setName( e.target.value)} required/>
+                                <AppTextField label="Name" value={name || ""} onChange={(e) => setName( e.target.value)} required/>
                             </Box>
                         </div>
                         <Box display="flex" flexDirection="row" justifyContent="center" >
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="New Line" placeholder="Weight"
                                 type="number"
-                                value={lineWeight}
+                                value={lineWeight || ""}
                                 onChange={(e) => setLineWeight(Number(e.target.value))}
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="Deleting" placeholder="Weight"
                                 type="number"
-                                value={deleteWeight}
+                                value={deleteWeight || ""}
                                 onChange={(e) => setDeleteWeight(Number(e.target.value))}
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="Syntax(e.g '}')" placeholder="Weight"
                                 type="number"
-                                value={syntaxWeight}
+                                value={syntaxWeight || ""}
                                 onChange={(e) => setSyntaxWeight(Number(e.target.value))}
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="Comments" placeholder="Weight"
                                 type="number"
-                                value={commentsWeight}
+                                value={commentsWeight|| ""}
                                 onChange={(e) => setCommentsWeight(Number(e.target.value))}
                                 />
                             </Box>
@@ -216,6 +216,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile }: Props) 
                                 return (
 
                                     <Box
+                                        key={extension[0]}
                                         boxShadow={0}
                                         display="flex"
                                         marginRight={3}
