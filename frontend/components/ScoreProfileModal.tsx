@@ -43,14 +43,13 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
 
-    const [savedArray, setSavedArray] = useState<{}>({});
+    const [savedArray, setSavedArray] = useState({});
     const [extensions, setExtensions] = useState([]);
     const [syntaxWeight, setSyntaxWeight] = useState<number>()
     const [commentsWeight, setCommentsWeight] = useState<number>();
     const [name, setName] = useState<string>()
     const [lineWeight, setLineWeight] = useState<number>();
     const [deleteWeight, setDeleteWeight] = useState<number>();
-    const [map, setMap] = useState(new Map());
 
     useEffect(() => {
 
@@ -60,11 +59,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
              setDeleteWeight(profile.deleteWeight);
              setLineWeight(profile.lineWeight);
              setSyntaxWeight(profile.syntaxWeight);
-             setExtensions([]);
-             setMap(new Map(Object.entries(profile.extensionWeights)));
-             for (let [key, value] of map) {
-                setExtensions([...extensions, {extension: key, weight: value}]);
-            }
+             setExtensions(Object.entries(profile.extensionWeights));
         }
         else{
             setName("");
@@ -79,9 +74,9 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
 
     useEffect(() => {
 
-        setSavedArray();
+        setSavedArray({});
         extensions.map((file, index : number) => {
-            setSavedArray({...savedArray, [file.extension]: file.weight});
+            setSavedArray({...savedArray, [file[0]]: file[1]});
         });
 
     }, [extensions])
@@ -93,7 +88,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
     };
 
     const handleAddExtension = () => {
-        setExtensions([...extensions, {exension: "", weight: ""}]);
+        setExtensions([...extensions, {string: "", number: ""}]);
     };
 
     const handleRemoveExtension = (index : number) => {
@@ -104,13 +99,13 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
 
     const handleExtensionChange = (extension : string , index : number ) => {
         const list = [...extensions];
-        list[index].extension = extension;
+        list[index][0] = extension;
         setExtensions(list);
     };
 
-    const handleWeightChange = (weight : string, index : number) => {
+    const handleWeightChange = (weight : number, index : number) => {
         const list = [...extensions];
-        list[index].weight = weight;
+        list[index][1] = weight;
         setExtensions(list);
 
     }
@@ -239,15 +234,15 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                         <Box marginLeft={1} marginRight={1}>
                                             
                                             <AppTextField label="extension"
-                                            value={file.extension || ""}
+                                            value={file[0] || ""}
                                             onChange={(e) => handleExtensionChange(e.target.value ,index)}
                                             />
                                         </Box>
                                         <Box marginLeft={1} marginRight={1}>
                                             
                                             <AppTextField label="weight"
-                                            value={file.weight || ""}
-                                            onChange={(e) => handleWeightChange(e.target.value, index) }
+                                            value={file[1] || ""}
+                                            onChange={(e) => handleWeightChange(Number(e.target.value), index) }
                                             type="number"
                                             />
                                         </Box>
