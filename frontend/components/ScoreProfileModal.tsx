@@ -44,12 +44,13 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
 
 
     const [savedArray, setSavedArray] = useState<{}>({});
-    const [extensions, setExtensions] = useState([{}]);
+    const [extensions, setExtensions] = useState([]);
     const [syntaxWeight, setSyntaxWeight] = useState<number>()
     const [commentsWeight, setCommentsWeight] = useState<number>();
     const [name, setName] = useState<string>()
     const [lineWeight, setLineWeight] = useState<number>();
     const [deleteWeight, setDeleteWeight] = useState<number>();
+    const [map, setMap] = useState(new Map());
 
     useEffect(() => {
 
@@ -59,8 +60,8 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
              setDeleteWeight(profile.deleteWeight);
              setLineWeight(profile.lineWeight);
              setSyntaxWeight(profile.syntaxWeight);
-             setExtensions([{}]);
-             let map = new Map(Object.entries(profile.extensionWeights));
+             setExtensions([]);
+             setMap(new Map(Object.entries(profile.extensionWeights)));
              for (let [key, value] of map) {
                 setExtensions([...extensions, {extension: key, weight: value}]);
             }
@@ -71,15 +72,15 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
             setDeleteWeight(undefined);
             setLineWeight(undefined);
             setSyntaxWeight(undefined);
-            setExtensions([{}]);   
+            setExtensions([]);   
         }
 
     },[open])
 
     useEffect(() => {
 
-        setSavedArray({});
-        extensions.map((file, index) => {
+        setSavedArray();
+        extensions.map((file, index : number) => {
             setSavedArray({...savedArray, [file.extension]: file.weight});
         });
 
@@ -103,13 +104,13 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
 
     const handleExtensionChange = (extension : string , index : number ) => {
         const list = [...extensions];
-        list[index] = {extension: extension, weight : ""}
+        list[index].extension = extension;
         setExtensions(list);
     };
 
     const handleWeightChange = (weight : string, index : number) => {
         const list = [...extensions];
-        list[index] = {extension: "", weight : weight}
+        list[index].weight = weight;
         setExtensions(list);
 
     }
@@ -235,17 +236,17 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                         justifyContent="space-between"
                                         alignItems="center"
                                     >
-                                        <Box marginLeft={1} marginRight={1} key={file.extension}>
+                                        <Box marginLeft={1} marginRight={1}>
                                             
                                             <AppTextField label="extension"
-                                            value={file.extension}
+                                            value={file.extension || ""}
                                             onChange={(e) => handleExtensionChange(e.target.value ,index)}
                                             />
                                         </Box>
-                                        <Box marginLeft={1} marginRight={1} key={file.weight}>
+                                        <Box marginLeft={1} marginRight={1}>
                                             
                                             <AppTextField label="weight"
-                                            value={file.weight}
+                                            value={file.weight || ""}
                                             onChange={(e) => handleWeightChange(e.target.value, index) }
                                             type="number"
                                             />
