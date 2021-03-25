@@ -22,7 +22,7 @@ const AnalysisRunList = ({isLoading, analysisRuns, loadAnalysisRuns}: AnalysisRu
 
     return (
         <Box>
-            {open && <AnalysisProgressModal open={open} handleClose={handleClose} loadAnalysisRuns={loadAnalysisRuns} analysisRun={selectedAnalysisRun}/>}
+            {open && <AnalysisProgressModal open={open} handleClose={handleClose} handleWhenProgressIsDone={loadAnalysisRuns} handleError={loadAnalysisRuns} analysisRun={selectedAnalysisRun}/>}
             <Box maxHeight="50vh" overflow="auto">
                 {
                     analysisRuns.map((analysis: any) =>

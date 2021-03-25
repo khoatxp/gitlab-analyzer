@@ -1,10 +1,8 @@
 package com.eris.gitlabanalyzer.model;
 
 import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
 import java.time.OffsetDateTime;
-
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "AnalysisRun")

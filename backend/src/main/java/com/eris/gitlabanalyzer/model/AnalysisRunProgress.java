@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.persistence.*;
-
-
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Getter
@@ -37,11 +34,11 @@ public class AnalysisRunProgress {
     private AnalysisRun analysisRun;
 
     public enum Progress {
-        AtStartOfImportingMembers (10.0),
-        AtStartOfImportingMergeRequests(20.0),
-        AtStartOfImportingCommits (40.0),
+        AtStartOfImportingMembers (0.0),
+        AtStartOfImportingMergeRequests(5.0),
+        AtStartOfImportingCommits (25.0),
         AtStartOfImportingOrphanCommits(70.0),
-        AtStartOfImportingIssues (80.0),
+        AtStartOfImportingIssues (85.0),
         Done(100.0);
 
         private final Double progress;

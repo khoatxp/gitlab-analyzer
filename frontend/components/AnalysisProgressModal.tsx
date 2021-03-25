@@ -27,12 +27,13 @@ const useStyles = makeStyles((theme) => ({
 
 interface Props {
     open: boolean
-    handleClose : () => void
-    loadAnalysisRuns: () => void
+    handleClose: () => void
+    handleError: () => void
+    handleWhenProgressIsDone: () => void
     analysisRun: AnalysisRun | null
 }
 
-const AnalysisProgressModal = ({open,handleClose,loadAnalysisRuns,analysisRun}: Props) =>{
+const AnalysisProgressModal = ({open,handleClose,handleError,handleWhenProgressIsDone,analysisRun}: Props) =>{
     const classes = useStyles();
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
@@ -46,17 +47,23 @@ const AnalysisProgressModal = ({open,handleClose,loadAnalysisRuns,analysisRun}: 
         //turn off debugging logs on browser console
         stompClient.debug = () => {}
 
+        const handleCloseWhenDoneOrError = (progress:number, message: string) => {
+            if(progress == 100){
+                handleClose();
+                handleWhenProgressIsDone();
+            }
+            if(message == "Error"){
+                handleClose();
+                handleError();
+            }
+        }
+
         if(analysisRun){
             axios
                 .get(`${process.env.NEXT_PUBLIC_API_URL}/analysis_run/progress/${analysisRun.id}`,getAxiosAuthConfig())
                 .then((res: AxiosResponse) => {
                     if(res.data.message){
-                        setProgress(Number(res.data.progress));
-                        setProgressMessage(res.data.message);
-                        if(Number(res.data.progress) == 100 || res.data.message == "Error"){
-                            handleClose();
-                            loadAnalysisRuns();
-                        }
+                        handleCloseWhenDoneOrError(Number(res.data.progress),res.data.message);
                     }
                 }).catch((err) => {
                 enqueueSnackbar(`Failed to get projects analysis progress: ${err.message}`, {variant: 'error',});
@@ -67,10 +74,7 @@ const AnalysisProgressModal = ({open,handleClose,loadAnalysisRuns,analysisRun}: 
                     const body = JSON.parse(message.body);
                     setProgress(Number(body.progress));
                     setProgressMessage(body.message);
-                    if(Number(body.progress) == 100 || body.message == "Error"){
-                        handleClose();
-                        loadAnalysisRuns();
-                    }
+                    handleCloseWhenDoneOrError(Number(body.progress),body.message);
                 });
             });
         }
