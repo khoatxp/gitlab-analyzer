@@ -13,10 +13,10 @@ import java.util.Map;
 @Component
 public class DiffScoreCalculator {
 
-    private ScoreProfile defaultScoreProfile;
+    private final ScoreProfile defaultScoreProfile;
 
-    private FileScoreRepository fileScoreRepository;
-    private ScoreProfileRepository scoreProfileRepository;
+    private final FileScoreRepository fileScoreRepository;
+    private final ScoreProfileRepository scoreProfileRepository;
 
     public DiffScoreCalculator(FileScoreRepository fileScoreRepository, ScoreProfileRepository scoreProfileRepository){
         this.fileScoreRepository = fileScoreRepository;
@@ -26,13 +26,13 @@ public class DiffScoreCalculator {
         defaultScoreProfile.addExtension(extensions);
     }
 
-    public double calculateScoreMerge(long mergeId, Long scoreProfileId){
+    public double calculateScoreMerge(Long mergeId, Long scoreProfileId){
         ScoreProfile scoreProfile = scoreProfileRepository.findScoreProfileById(scoreProfileId).orElse(defaultScoreProfile);
         List<FileScore> fileScores = fileScoreRepository.findByMergeId(mergeId);
         return calculateFileScore(fileScores, scoreProfile);
     }
 
-    public double calculateScoreCommit(long commitId, Long scoreProfileId){
+    public double calculateScoreCommit(Long commitId, Long scoreProfileId){
         ScoreProfile scoreProfile = scoreProfileRepository.findScoreProfileById(scoreProfileId).orElse(defaultScoreProfile);
         List<FileScore> fileScores = fileScoreRepository.findByCommitId(commitId);
         return calculateFileScore(fileScores, scoreProfile);
