@@ -77,9 +77,9 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
     useEffect(() => {
 
         setSavedArray({});
-        Array.from(extensionMap).map((x, index) => {
-            setSavedArray({...savedArray, [x[0]]:x[1]});
-        })
+        for (let [key, value] of extensionMap) {
+            setSavedArray({...savedArray, [key]:value});
+        }
 
     }, [extensionMap])
 
@@ -131,7 +131,11 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                 enqueueSnackbar('Extension weights cannot be negative', {variant: 'error',});
                 return;
             }
-        }
+            if (key == ""){
+                enqueueSnackbar('Extension names must not be empty', {variant: 'error',});
+                return;
+            }
+        }     
 
         if (router.isReady) {
 
