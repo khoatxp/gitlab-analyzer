@@ -22,6 +22,12 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
 
     const onProjectSelect = (_event: any, value: GitLabProject) => {
         if (!value) { return; } // Value will be null when the clear button is pressed. Ensure we have a number
+
+        // Check if we are already set to analyze the selected project
+        if (selectedProjects.some(proj => proj.id == value.id)) {
+            return;
+        }
+
         const projectIds = [...selectedProjects, value]
         setSelectedProjects(projectIds)
     }
