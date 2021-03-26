@@ -29,11 +29,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface Props {
-    scoreProfile: ScoreProfile | undefined
-    onScoreProfileSelect: (event: any, profile: ScoreProfile) => void
+    onScoreProfileSelect: (id: number) => void
 }
 
-const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
+const ScoreProfileSelector = ({onScoreProfileSelect}:Props) => {
 
 
 
@@ -42,6 +41,7 @@ const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
+    const [scoreProfile, setScoreProfile] = useState<number>();
     const [profiles, setProfiles] =  useState<ScoreProfile[]>([]);
     const [isIconVisible, setIconVisible] = useState(false);
     const [open, setOpen] = useState(false);
@@ -115,9 +115,8 @@ const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
                         open={selectOpen}
                         onOpen={() => {setIconVisible(true), setSelectOpen(true)}}
                         onClose={() => {setIconVisible(false),setSelectOpen(false)}}
-                        defaultValue={""}
-                        value={scoreProfile}
-                        onChange={onScoreProfileSelect}
+                        value={scoreProfile || ""}
+                        onChange={(e) => {setScoreProfile(Number(e.target.value)), onScoreProfileSelect(Number(e.target.value))}}
                         MenuProps={{
                             anchorOrigin: {vertical: "top", horizontal: "left"},
                             transformOrigin: {vertical: "top", horizontal: "left"},
@@ -125,8 +124,8 @@ const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
                             classes: {paper: classes.menuPaper }}}
                     >
                         {profiles.length > 0 ? (
-                            profiles.map(profile => (
-                                <MenuItem value={profile.id} key={profile.id}>
+                            profiles.map((profile, index :number) => (
+                                <MenuItem value={profile.id} key={index}>
                                     {profile.name}
                                     {isIconVisible ? (
                                         <ListItemSecondaryAction >

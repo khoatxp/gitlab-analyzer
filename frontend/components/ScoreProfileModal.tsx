@@ -59,11 +59,9 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
             setDeleteWeight(profile.deleteWeight);
             setLineWeight(profile.lineWeight);
             setSyntaxWeight(profile.syntaxWeight);
-            setExtensions(Object.entries(profile.extensionWeights));
             setSavedArray({});
-            extensions.forEach(function(extension) {
-                setSavedArray({...savedArray, [extension[0]]: extension[1]});
-            });
+            setExtensions(Object.entries(profile.extensionWeights));
+            
         }
         else{
             setName("");
@@ -78,16 +76,9 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
     },[open])
 
     useEffect(() => {
-
         setSavedArray({});
-        const j = Object.fromEntries(extensions);
-        setSavedArray(j);
-        //extensions.forEach((extension, index) =>{
-        //    var key = extension[0];
-        //    var value = extension[1];
-//
-       // }
-
+        const list = Object.fromEntries(extensions);
+        setSavedArray(list);
     }, [JSON.stringify(extensions)]);
 
 
@@ -101,8 +92,9 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
         setExtensions(list);
     };
 
-    const handleRemoveExtension = (extension : string) => {
-        const list = extensions.filter(prev => prev[0] !== extension);
+    const handleRemoveExtension = (index : number) => {
+        const list = extensions.slice();
+        list.splice(index,1);
         setExtensions(list)
     };
 
@@ -119,6 +111,25 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
 
     }
 
+    const validateExtensions = () =>  {
+
+        const uniqueExtension = new Set(extensions.map(extension => extension[0]));
+        if(uniqueExtension.size < extensions.length){ //checks for duplicates
+           enqueueSnackbar('Duplicate extensions entered', {variant: 'error',});
+           return false;
+        }
+        if (extensions.some( extension => extension[0] === "")){
+            enqueueSnackbar('Extension names must not be empty', {variant: 'error',});
+            return false;
+        }
+        if (extensions.some( extension => extension[1] < 0 || extension[1] == "")){
+            enqueueSnackbar('Extension weights cannot be empty or negative', {variant: 'error',});
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
 
     const handleSave = () => {
 
@@ -134,50 +145,43 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
             enqueueSnackbar('Text fields must not be empty', {variant: 'error',});
             return;
         }
-        extensions.map((extension, index) => {
-            if (extension[1] < 0 || extension[1] == ""){
-                enqueueSnackbar('Extension weights cannot be empty or negative', {variant: 'error',});
-                return;
-            }
-            if (extension[0] == ""){
-                enqueueSnackbar('Extension names must not be empty', {variant: 'error',});
-                return;
-            }
-        });    
+       
+        if (validateExtensions()){
 
-        if (router.isReady) {
+            if (router.isReady) {
 
-            const newProfile = {
-                name: name,
-                lineWeight: lineWeight,
-                deleteWeight: deleteWeight,
-                syntaxWeight: syntaxWeight,
-                commentsWeight: commentsWeight,
-                extensionWeights: savedArray,
-            }
+                const newProfile = {
+                    name: name,
+                    lineWeight: lineWeight,
+                    deleteWeight: deleteWeight,
+                    syntaxWeight: syntaxWeight,
+                    commentsWeight: commentsWeight,
+                    extensionWeights: savedArray,
+                }
 
-            if (isNewProfile == false) {
-                axios
-                .put(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile/${id}` , newProfile, getAxiosAuthConfig())
-                .then((resp: AxiosResponse) => {
-                    enqueueSnackbar('Successfully saved score profile', {variant: 'success',});
-                    update();
-                }).catch(() => {
-                    enqueueSnackbar('Failed to save score profile', {variant: 'error',});
-                })
-                close();
-            } else {
-                axios
-                .post(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile` , newProfile, getAxiosAuthConfig())
-                .then((resp: AxiosResponse) => {
-                    enqueueSnackbar('Successfully saved score profile', {variant: 'success',});
-                    update();
-                }).catch(() => {
-                    enqueueSnackbar('Failed to save score profile', {variant: 'error',});
-                })
-                close();
+                if (isNewProfile == false) {
+                    axios
+                    .put(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile/${id}` , newProfile, getAxiosAuthConfig())
+                    .then((resp: AxiosResponse) => {
+                        enqueueSnackbar('Successfully saved score profile', {variant: 'success',});
+                        update();
+                    }).catch(() => {
+                        enqueueSnackbar('Failed to save score profile', {variant: 'error',});
+                    })
+                    close();
+                } else {
+                    axios
+                    .post(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile` , newProfile, getAxiosAuthConfig())
+                    .then((resp: AxiosResponse) => {
+                        enqueueSnackbar('Successfully saved score profile', {variant: 'success',});
+                        update();
+                    }).catch(() => {
+                        enqueueSnackbar('Failed to save score profile', {variant: 'error',});
+                    })
+                    close();
+                }
             }
-        }
+        }    
 
     };
 
@@ -227,7 +231,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                         <DialogTitle id="extension-dialog-title" style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>{"Extensions"}</DialogTitle>
                         <Box  style={{ display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}} >
                             {extensions && extensions.length > 0 ?
-                            extensions.map((extension, index) => {
+                            extensions.map((extension, index: number) => {
                                 return (
 
                                     <Box
@@ -257,19 +261,13 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                         </Box>
                                         <div>
 
-                                            <IconButton edge={false} aria-label="deleteextension" onClick={()=>handleRemoveExtension(extension[0])}>
+                                            <IconButton edge={false} aria-label="deleteextension" onClick={()=>handleRemoveExtension(index)}>
                                                 <DeleteIcon style={{ fontSize: "25px", color:"grey" }} />
                                             </IconButton>
                                         </div>
                                     </Box>
                                 );
                             }): "No extensions set for this profile"}
-                            {extensions.map((extension, index) => {
-                                return (
-                                    <li> {extension[0]} {extension[1]}</li>
-                                );
-                            })};
-                            {JSON.stringify(savedArray)}
                         </Box>
                         <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
                             <IconButton edge={false} aria-label="addextension" onClick={handleAddExtension}>
