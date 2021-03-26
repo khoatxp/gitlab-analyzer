@@ -21,17 +21,18 @@ export interface ProjectSummary {
     mergeRequestCount: number;
     commitScore: number;
     mergeRequestScore: number;
+    sharedMergeRequestScore: number;
 }
 
 const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) => {
-    const {project, commitCount, mergeRequestCount, commitScore, mergeRequestScore} = projectSummary;
+    const {project, commitCount, mergeRequestCount, commitScore, mergeRequestScore, sharedMergeRequestScore} = projectSummary;
     const {enqueueSnackbar} = useSnackbar();
     const styles = useStyles();
 
     const handleCopyScore = async () => {
         try {
             let scoreText = `Merge Request Count: ${mergeRequestCount}\n`;
-            scoreText += `Merge Request Score: ${mergeRequestScore}\n`;
+            scoreText += `Merge Request Score: ${mergeRequestScore} + ${sharedMergeRequestScore}\n`;
             scoreText += `Commit Count: ${commitCount}\n`;
             scoreText += `Commit Score: ${commitScore}`;
             await navigator.clipboard.writeText(scoreText);
@@ -65,7 +66,7 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
 
             <Box display="flex" alignItems="center">
                 <Box>
-                    <Typography variant="h6"><b>Merge Request Score:</b> {mergeRequestScore}</Typography>
+                    <Typography variant="h6"><b>Merge Request Score:</b> {mergeRequestScore} + {sharedMergeRequestScore}</Typography>
                     <Typography variant="h6"><b>Commit Score:</b> {commitScore}</Typography>
                 </Box>
                 <Box ml={2}>

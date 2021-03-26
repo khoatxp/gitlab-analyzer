@@ -157,7 +157,7 @@ const MemberMapping = () => {
                 <TableFooter>
                     <TableRow>
                         <TableCell>
-                            <NextLink href={`/project/${projectId}/overview${dateQuery}`} passHref>
+                            <NextLink href={`/project/${projectId}/0/overview${dateQuery}`} passHref>
                                 <Link classes={{root:classes.linkBack}}>
                                     <Icon fontSize="small">arrow_back</Icon>
                                     <Typography variant="button"> BACK</Typography>

@@ -19,8 +19,17 @@ const MenuSideBar = () => {
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const [gitLabMemberNames, setGitLabMemberNames] = React.useState<[]>([]);
 
-    const {projectId} = router.query;
-    const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/members`;
+    const {projectId, startDateTime, endDateTime} = router.query;
+    const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/${projectId}/managementusers/members`;
+
+    const handleClick = (id: number) => {
+        const route = router.route;
+        router.push({
+            pathname: route,
+            query: {projectId: projectId, userId: id, startDateTime: startDateTime, endDateTime: endDateTime}
+        })
+    };
+
 
     useEffect(() => {
         if (router.isReady) {
@@ -42,12 +51,13 @@ const MenuSideBar = () => {
             justifyContent="flex-start"
             alignItems="center"
         >
-            <MenuButton variant="contained" disableRipple>
+            <MenuButton variant="contained" disableRipple onClick={() => handleClick(0)}>
                 Everyone
             </MenuButton>
             {gitLabMemberNames.map(member => {
                 const {name} = member;
-                return <MenuButton key={name} variant="contained" disableRipple> {name}</MenuButton>;
+                const {id} = member;
+                return <MenuButton key={name} variant="contained" disableRipple onClick={() => handleClick(+{id}.id)}>{name}</MenuButton>;
             })}
         </Box>
     );

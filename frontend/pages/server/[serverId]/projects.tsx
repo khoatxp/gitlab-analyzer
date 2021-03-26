@@ -54,7 +54,7 @@ const index = () => {
             .then((res) => {
                 const analyizedInternalProjectId = res.data[0];
                 console.log(res.data);
-                router.push(`/project/${analyizedInternalProjectId}/overview?${dateQuery}`);
+                router.push(`/project/${analyizedInternalProjectId}/0/overview?${dateQuery}`);
             }).catch(() => {
             enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});
         });

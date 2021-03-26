@@ -12,12 +12,13 @@ const CodeAnalysis = () => {
     const router = useRouter();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const {enqueueSnackbar} = useSnackbar();
-    const {projectId, startDateTime, endDateTime} = router.query;
+    const {projectId, userId, startDateTime, endDateTime} = router.query;
 
     const [project, setProject] = React.useState<GitLabProject>();
     const [mergerRequestCount, setMergerRequestCount] = React.useState<number>(0);
     const [commitCount, setCommitCount] = React.useState<number>(0);
     const [mergeRequestScore, setMergeRequestScore] = React.useState<number>(0);
+    const [sharedMergeRequestScore, setSharedMergeRequestScore] = React.useState<number>(0);
     const [commitScore, setCommitScore] = React.useState<number>(0);
 
     useEffect(() => {
@@ -43,22 +44,42 @@ const CodeAnalysis = () => {
                 }).catch(() => {
                 enqueueSnackbar('Failed to get commits count.', {variant: 'error',});
             });
-            axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_requests/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
-                .then((resp: AxiosResponse) => {
-                    setMergeRequestScore(resp.data);
-                }).catch(() => {
-                enqueueSnackbar('Failed to get merge request score.', {variant: 'error',});
-            });
-            axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/commits/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
-                .then((resp: AxiosResponse) => {
-                    setCommitScore(resp.data);
-                }).catch(() => {
-                enqueueSnackbar('Failed to get commits score.', {variant: 'error',});
-            });
+            if(userId == '0'){
+                axios
+                    .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_requests/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                    .then((resp: AxiosResponse) => {
+                        setMergeRequestScore(resp.data);
+                        setSharedMergeRequestScore(0);
+                    }).catch(() => {
+                    enqueueSnackbar('Failed to get merge request score.', {variant: 'error',});
+                });
+                axios
+                    .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/commits/score/0?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                    .then((resp: AxiosResponse) => {
+                        setCommitScore(resp.data);
+                    }).catch(() => {
+                    enqueueSnackbar('Failed to get commits score.', {variant: 'error',});
+                });
+            } else {
+                axios
+                    .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_request/user/${userId}/diff/score/0?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                    .then((resp: AxiosResponse) => {
+                        setMergeRequestScore(resp.data?.mergeScore);
+                        setSharedMergeRequestScore(resp.data?.sharedMergeScore);
+                    }).catch(() => {
+                    enqueueSnackbar('Failed to get merge request score.', {variant: 'error',});
+                });
+                axios
+                    .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/commit/user/${userId}/diff/score/0?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                    .then((resp: AxiosResponse) => {
+                        setCommitScore(resp.data);
+                    }).catch(() => {
+                    enqueueSnackbar('Failed to get commits score.', {variant: 'error',});
+                });
+            }
+
         }
-    }, [projectId]);
+    }, [projectId, userId]);
 
     let projectSummary: ProjectSummary = {
         project: project,
@@ -66,6 +87,7 @@ const CodeAnalysis = () => {
         mergeRequestCount: mergerRequestCount,
         commitScore: commitScore,
         mergeRequestScore: mergeRequestScore,
+        sharedMergeRequestScore: sharedMergeRequestScore,
     }
 
     return (

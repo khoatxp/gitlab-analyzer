@@ -1,5 +1,5 @@
 import React from 'react';
-import Index from '../../pages/project/[projectId]/overview/index';
+import Index from '../../pages/project/[projectId]/[userId]/overview';
 import {mount, ReactWrapper} from "enzyme";
 
 describe("Overview", () =>{

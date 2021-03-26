@@ -31,7 +31,7 @@ export default function NavTabs({tabSelected}: { tabSelected: number }) {
                 >
                     <Tab
                         label="Overview"
-                        onClick={() => router.push(`/project/${projectId}/overview${queryDate}`)}
+                        onClick={() => router.push(`/project/${projectId}/0/overview${queryDate}`)}
                     />
                     <Tab
                         label="Code"
