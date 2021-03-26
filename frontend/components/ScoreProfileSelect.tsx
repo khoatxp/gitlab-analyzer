@@ -45,6 +45,7 @@ const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
     const [profiles, setProfiles] =  useState<ScoreProfile[]>([]);
     const [isIconVisible, setIconVisible] = useState(false);
     const [open, setOpen] = useState(false);
+    const [selectOpen, setSelectOpen] = useState(false);
     const [isNewProfile, setIsNewProfile] = useState(true);
     const [selectedProfile, setSelectedProfile] = useState<ScoreProfile | null>(null);
     const [id,setId] = useState<number>(0)
@@ -79,6 +80,7 @@ const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
             axios
                 .get(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
+                    setSelectOpen(false);
                     setProfiles(resp.data);
                 }).catch(() => {
                 enqueueSnackbar('Failed to retrieve score profiles', {variant: 'error',});
@@ -109,9 +111,10 @@ const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
             <FormControl className={classes.formControl}>
                     <InputLabel id="score-options">Score Options</InputLabel>
                     <Select
-                        labelId="score-options"
-                        onOpen={() => setIconVisible(true)}
-                        onClose={() => setIconVisible(false)}
+                        labelId={"score-options"}
+                        open={selectOpen}
+                        onOpen={() => {setIconVisible(true), setSelectOpen(true)}}
+                        onClose={() => {setIconVisible(false),setSelectOpen(false)}}
                         defaultValue={""}
                         value={scoreProfile}
                         onChange={onScoreProfileSelect}

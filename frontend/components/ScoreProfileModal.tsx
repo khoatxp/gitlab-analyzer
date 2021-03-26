@@ -54,12 +54,16 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
     useEffect(() => {
 
         if(isNewProfile == false && profile != null){
-             setName(profile.name);
-             setCommentsWeight(profile.commentsWeight);
-             setDeleteWeight(profile.deleteWeight);
-             setLineWeight(profile.lineWeight);
-             setSyntaxWeight(profile.syntaxWeight);
-             setExtensions(Object.entries(profile.extensionWeights));
+            setName(profile.name);
+            setCommentsWeight(profile.commentsWeight);
+            setDeleteWeight(profile.deleteWeight);
+            setLineWeight(profile.lineWeight);
+            setSyntaxWeight(profile.syntaxWeight);
+            setExtensions(Object.entries(profile.extensionWeights));
+            setSavedArray({});
+            extensions.forEach(function(extension) {
+                setSavedArray({...savedArray, [extension[0]]: extension[1]});
+            });
         }
         else{
             setName("");
@@ -67,7 +71,8 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
             setDeleteWeight(undefined);
             setLineWeight(undefined);
             setSyntaxWeight(undefined);
-            setExtensions([]);   
+            setExtensions([]);  
+            setSavedArray({}); 
         }
 
     },[open])
@@ -75,36 +80,40 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
     useEffect(() => {
 
         setSavedArray({});
-        extensions.map((file, index : number) => {
-            setSavedArray({...savedArray, [file[0]]: file[1]});
-        });
+        const j = Object.fromEntries(extensions);
+        setSavedArray(j);
+        //extensions.forEach((extension, index) =>{
+        //    var key = extension[0];
+        //    var value = extension[1];
+//
+       // }
 
-    }, [extensions])
+    }, [JSON.stringify(extensions)]);
 
 
     const close = () => {
-        setSavedArray({});
         handleClose();
     };
 
     const handleAddExtension = () => {
-        setExtensions([...extensions, {string: "", number: ""}]);
-    };
-
-    const handleRemoveExtension = (index : number) => {
-        const list = [...extensions];
-        list.splice(index, 1);
+        const list = extensions.slice();
+        list.push(["", ""])
         setExtensions(list);
     };
 
+    const handleRemoveExtension = (extension : string) => {
+        const list = extensions.filter(prev => prev[0] !== extension);
+        setExtensions(list)
+    };
+
     const handleExtensionChange = (extension : string , index : number ) => {
-        const list = [...extensions];
+        const list = extensions.slice();
         list[index][0] = extension;
         setExtensions(list);
     };
 
     const handleWeightChange = (weight : number, index : number) => {
-        const list = [...extensions];
+        const list = extensions.slice();
         list[index][1] = weight;
         setExtensions(list);
 
@@ -125,12 +134,12 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
             enqueueSnackbar('Text fields must not be empty', {variant: 'error',});
             return;
         }
-        extensions.map((file, index) => {
-            if (file.weight < 0 || file.weight == ""){
+        extensions.map((extension, index) => {
+            if (extension[1] < 0 || extension[1] == ""){
                 enqueueSnackbar('Extension weights cannot be empty or negative', {variant: 'error',});
                 return;
             }
-            if (file.extension == ""){
+            if (extension[0] == ""){
                 enqueueSnackbar('Extension names must not be empty', {variant: 'error',});
                 return;
             }
@@ -218,7 +227,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                         <DialogTitle id="extension-dialog-title" style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>{"Extensions"}</DialogTitle>
                         <Box  style={{ display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}} >
                             {extensions && extensions.length > 0 ?
-                            extensions.map((file, index) => {
+                            extensions.map((extension, index) => {
                                 return (
 
                                     <Box
@@ -234,27 +243,33 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                         <Box marginLeft={1} marginRight={1}>
                                             
                                             <AppTextField label="extension"
-                                            value={file[0] || ""}
+                                            value={extension[0] || ""}
                                             onChange={(e) => handleExtensionChange(e.target.value ,index)}
                                             />
                                         </Box>
                                         <Box marginLeft={1} marginRight={1}>
                                             
                                             <AppTextField label="weight"
-                                            value={file[1] || ""}
+                                            value={extension[1] || ""}
                                             onChange={(e) => handleWeightChange(Number(e.target.value), index) }
                                             type="number"
                                             />
                                         </Box>
                                         <div>
 
-                                            <IconButton edge={false} aria-label="deleteextension" onClick={()=>handleRemoveExtension(index)}>
+                                            <IconButton edge={false} aria-label="deleteextension" onClick={()=>handleRemoveExtension(extension[0])}>
                                                 <DeleteIcon style={{ fontSize: "25px", color:"grey" }} />
                                             </IconButton>
                                         </div>
                                     </Box>
                                 );
                             }): "No extensions set for this profile"}
+                            {extensions.map((extension, index) => {
+                                return (
+                                    <li> {extension[0]} {extension[1]}</li>
+                                );
+                            })};
+                            {JSON.stringify(savedArray)}
                         </Box>
                         <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
                             <IconButton edge={false} aria-label="addextension" onClick={handleAddExtension}>
