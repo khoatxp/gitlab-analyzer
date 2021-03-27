@@ -7,11 +7,14 @@ import CountGraph from "../components/graphs/CountGraph";
 import ScoreGraph from "../components/graphs/ScoreGraph";
 import AnalysisSummary, {ProjectSummary} from "./AnalysisSummary";
 import {GitLabProject} from "../interfaces/GitLabProject";
+import {ScoreDigest} from "../interfaces/ScoreDigest";
 
 const CodeAnalysis = () => {
     const router = useRouter();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const {enqueueSnackbar} = useSnackbar();
+    // TODO startDateTime, endDateTime could be possibly undefined (missing from url) or an array(multiple)
+    // Need to handle these cases. This might be a non issue or handled differently with analysis run
     const {projectId, startDateTime, endDateTime} = router.query;
 
     const [project, setProject] = React.useState<GitLabProject>();
@@ -19,6 +22,15 @@ const CodeAnalysis = () => {
     const [commitCount, setCommitCount] = React.useState<number>(0);
     const [mergeRequestScore, setMergeRequestScore] = React.useState<number>(0);
     const [commitScore, setCommitScore] = React.useState<number>(0);
+    const [scoreDigest, setScoreDigest] = React.useState<ScoreDigest[]>([]);
+
+    const getDateTime = (queryDatetime: string | string[] | undefined) => {
+        if (Array.isArray(queryDatetime)) {
+            return queryDatetime[0];
+        }
+        return queryDatetime;
+
+    };
 
     useEffect(() => {
         if (router.isReady) {
@@ -57,6 +69,16 @@ const CodeAnalysis = () => {
                 }).catch(() => {
                 enqueueSnackbar('Failed to get commits score.', {variant: 'error',});
             });
+
+            // TODO Pass correct Score Profile Id
+            let scoreProfileId = 0;
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/score_digest/${scoreProfileId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                .then((resp: AxiosResponse) => {
+                    setScoreDigest(resp.data);
+                }).catch(() => {
+                enqueueSnackbar('Failed to get score digest.', {variant: 'error',});
+            });
         }
     }, [projectId]);
 
@@ -71,8 +93,12 @@ const CodeAnalysis = () => {
     return (
         <>
             <AnalysisSummary projectSummary={projectSummary}/>
-            <CountGraph/>
-            <ScoreGraph/>
+            <CountGraph data={scoreDigest}
+                        startDateTime={getDateTime(startDateTime)}
+                        endDateTime={getDateTime(endDateTime)}/>
+            <ScoreGraph data={scoreDigest}
+                        startDateTime={getDateTime(startDateTime)}
+                        endDateTime={getDateTime(endDateTime)}/>
         </>
     );
 };

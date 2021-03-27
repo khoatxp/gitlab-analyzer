@@ -60,7 +60,7 @@ const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
                     enqueueSnackbar('Failed to retrieve score profiles', {variant: 'error',});
                 })
         }
-    });
+    }, []);
 
     const handleNew = () => {
         setId(0);

@@ -36,7 +36,6 @@ const CardLayout = ({children, size, logoType = "center", backLink, backLabel}: 
                 bgcolor="primary.contrastText"
                 boxShadow={20}
                 width={width}
-                height="60vh"
                 minWidth="250px"
                 minHeight="450px"
                 borderRadius={45}

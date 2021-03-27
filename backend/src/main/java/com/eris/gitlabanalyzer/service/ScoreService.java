@@ -4,43 +4,36 @@ import com.eris.gitlabanalyzer.dataprocessing.CalculateDiffMetrics;
 import com.eris.gitlabanalyzer.dataprocessing.DiffScoreCalculator;
 import com.eris.gitlabanalyzer.model.Commit;
 import com.eris.gitlabanalyzer.model.MergeRequest;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
-import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabMergeRequest;
 import com.eris.gitlabanalyzer.repository.CommitRepository;
 import com.eris.gitlabanalyzer.repository.MergeRequestRepository;
+import com.eris.gitlabanalyzer.viewmodel.ScoreDigest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Service
 public class ScoreService {
 
-    private GitLabService gitLabService;
     private final DiffScoreCalculator diffScoreCalculator;
     private final CalculateDiffMetrics calculateDiffMetrics;
     private final MergeRequestRepository mergeRequestRepository;
     private final CommitRepository commitRepository;
-    private final String serverUrl;
-    private final String accessToken;
 
     @Autowired
     public ScoreService(DiffScoreCalculator diffScoreCalculator,
                         CalculateDiffMetrics calculateDiffMetrics, MergeRequestRepository mergeRequestRepository,
-                        CommitRepository commitRepository,
-                        @Value("${gitlab.SERVER_URL}") String serverUrl, // TODO Remove after server info is correctly retrieved based on internal projectId
-                        @Value("${gitlab.ACCESS_TOKEN}") String accessToken) {
+                        CommitRepository commitRepository) {
         this.diffScoreCalculator = diffScoreCalculator;
         this.calculateDiffMetrics = calculateDiffMetrics;
         this.mergeRequestRepository = mergeRequestRepository;
         this.commitRepository = commitRepository;
-        this.serverUrl = serverUrl;
-        this.accessToken = accessToken;
-        gitLabService = new GitLabService(this.serverUrl, this.accessToken);
     }
 
     // This will most likely change as we update how we retrieve diff's
@@ -122,12 +115,61 @@ public class ScoreService {
         for (Commit commit : commits) {
             totalScore += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
         }
-        commits = commitRepository.findAllOrphanByProjectIdAndDateRange(projectId,
-                startDateTime.withOffsetSameInstant(ZoneOffset.UTC), endDateTime.withOffsetSameInstant(ZoneOffset.UTC));
-        for (Commit commit : commits) {
-            totalScore += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
-        }
         return totalScore;
     }
 
+    public List<ScoreDigest> getDailyScoreDigest(Long projectId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+
+        var startDateTimeUTC = startDateTime.withOffsetSameInstant(ZoneOffset.UTC);
+        var endDateTimeUTC = endDateTime.withOffsetSameInstant(ZoneOffset.UTC);
+        List<Commit> commits = commitRepository.findAllByProjectIdAndDateRange(projectId, startDateTimeUTC, endDateTimeUTC);
+        List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByProjectIdAndDateRange(projectId, startDateTimeUTC, endDateTimeUTC);
+
+        var groupedCommits = commits.stream()
+                .collect(groupingBy((commit) ->
+                        commit.getCreatedAt()
+                                .withOffsetSameInstant(startDateTime.getOffset())
+                                .toLocalDate()
+                ));
+        var groupedMergeRequest = mergeRequests.stream()
+                .collect(groupingBy((mergeRequest) ->
+                        mergeRequest.getMergedAt()
+                                .withOffsetSameInstant(startDateTime.getOffset())
+                                .toLocalDate()
+                ));
+
+        // If there is a commit with created_at earlier than startDateTime, use that date as range startDate
+        var startDate = startDateTime.toLocalDate();
+        for (var commitDate : groupedCommits.keySet()) {
+            if (commitDate.isBefore(startDate)) {
+                startDate = commitDate;
+            }
+        }
+
+        var endDate = endDateTime.toLocalDate().plusDays(1); // datesUntil is inclusive/exclusive
+
+        var digests = startDate.datesUntil(endDate).map(commitDate -> {
+            double totalDayCommitScore = 0;
+            double totalDayMergeScore = 0;
+            int commitCount = 0;
+            int mergeCount = 0;
+            if (groupedCommits.containsKey(commitDate)) {
+                var dailyCommits = groupedCommits.get(commitDate);
+                commitCount = dailyCommits.size();
+                for (var commit : dailyCommits) {
+                    totalDayCommitScore += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
+                }
+            }
+            if (groupedMergeRequest.containsKey(commitDate)) {
+                var dailyMerges = groupedMergeRequest.get(commitDate);
+                mergeCount = dailyMerges.size();
+                for (var mergeRequest : dailyMerges) {
+                    totalDayMergeScore += diffScoreCalculator.calculateScoreMerge(mergeRequest.getId(), scoreProfileId);
+                }
+            }
+            return new ScoreDigest(totalDayCommitScore, totalDayMergeScore, commitCount, mergeCount, commitDate);
+        }).collect(Collectors.toList());
+
+        return digests;
+    }
 }
