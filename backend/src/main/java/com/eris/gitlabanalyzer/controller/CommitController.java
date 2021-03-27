@@ -5,11 +5,14 @@ import com.eris.gitlabanalyzer.service.CommitService;
 import com.eris.gitlabanalyzer.viewmodel.CommitAuthorRequestBody;
 import com.eris.gitlabanalyzer.viewmodel.CommitAuthorView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @RestController
+@RequestMapping(path = "/api/v1/")
 public class CommitController {
     private final CommitService commitService;
 
@@ -18,7 +21,7 @@ public class CommitController {
         this.commitService = commitService;
     }
 
-    @GetMapping("/api/v1/{projectId}/commits/authors")
+    @GetMapping("{projectId}/commits/authors")
     public List<CommitAuthorView> getCommitAuthors(
             @PathVariable("projectId") Long projectId,
             @RequestParam(required = false) String state){
@@ -28,20 +31,35 @@ public class CommitController {
         return commitService.getCommitAuthors(projectId);
     }
 
-    @GetMapping("/api/v1/{projectId}/commits")
+    @GetMapping("{projectId}/commits")
     public List<Commit> getCommits(
             @PathVariable("projectId") Long projectId){
         return commitService.getCommits(projectId);
     }
 
-    @GetMapping("/api/v1/{projectId}/commits/{gitManagementUserId}")
+    @GetMapping("{projectId}/commits/{gitManagementUserId}")
     public List<Commit> getCommitsOfGitManagementUser(
             @PathVariable("projectId") Long projectId,
             @PathVariable("gitManagementUserId") Long gitManagementUserId){
         return commitService.getCommitsOfGitManagementUser(projectId,(Long)gitManagementUserId);
     }
 
-    @PostMapping("api/v1/{projectId}/commits/mapping")
+    @GetMapping("data/projects/{projectId}/commits/user/{gitManagementUserId}")
+    public int CommitCount( @PathVariable("projectId") Long projectId,
+                                  @PathVariable("gitManagementUserId") Long gitManagementUserId,
+                                  @RequestParam("startDateTime")
+                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
+                                  @RequestParam("endDateTime")
+                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
+        if(gitManagementUserId != 0L){
+            return commitService.getCommitsOfGitManagementUserInDateRange(projectId, gitManagementUserId, startDateTime, endDateTime).size();
+
+        } else {
+            return commitService.getCommitsInDateRange(projectId, startDateTime, endDateTime).size();
+        }
+    }
+
+    @PostMapping("{projectId}/commits/mapping")
     public void mapNewCommitAuthors(
             @PathVariable("projectId") Long projectId,
             @RequestBody List<CommitAuthorRequestBody> commitAuthors) {

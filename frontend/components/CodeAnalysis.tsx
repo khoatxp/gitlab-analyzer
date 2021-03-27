@@ -12,10 +12,10 @@ const CodeAnalysis = () => {
     const router = useRouter();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const {enqueueSnackbar} = useSnackbar();
-    const {projectId, userId, startDateTime, endDateTime} = router.query;
+    const {projectId, gitManagementUserId, startDateTime, endDateTime} = router.query;
 
     const [project, setProject] = React.useState<GitLabProject>();
-    const [mergerRequestCount, setMergerRequestCount] = React.useState<number>(0);
+    const [mergeRequestCount, setMergeRequestCount] = React.useState<number>(0);
     const [commitCount, setCommitCount] = React.useState<number>(0);
     const [mergeRequestScore, setMergeRequestScore] = React.useState<number>(0);
     const [sharedMergeRequestScore, setSharedMergeRequestScore] = React.useState<number>(0);
@@ -31,60 +31,41 @@ const CodeAnalysis = () => {
                 enqueueSnackbar('Failed to get project data.', {variant: 'error',});
             });
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_requests?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_request/user/${gitManagementUserId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
-                    setMergerRequestCount(resp.data.length);
+                    setMergeRequestCount(resp.data);
                 }).catch(() => {
                 enqueueSnackbar('Failed to get merge request count.', {variant: 'error',});
             });
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commits?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/commits/user/${gitManagementUserId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
-                    setCommitCount(resp.data.length);
+                    setCommitCount(resp.data);
                 }).catch(() => {
                 enqueueSnackbar('Failed to get commits count.', {variant: 'error',});
             });
-            if(userId == '0'){
-                axios
-                    .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_requests/score?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
-                    .then((resp: AxiosResponse) => {
-                        setMergeRequestScore(resp.data);
-                        setSharedMergeRequestScore(0);
-                    }).catch(() => {
-                    enqueueSnackbar('Failed to get merge request score.', {variant: 'error',});
-                });
-                axios
-                    .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/commits/score/0?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
-                    .then((resp: AxiosResponse) => {
-                        setCommitScore(resp.data);
-                    }).catch(() => {
-                    enqueueSnackbar('Failed to get commits score.', {variant: 'error',});
-                });
-            } else {
-                axios
-                    .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_request/user/${userId}/diff/score/0?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
-                    .then((resp: AxiosResponse) => {
-                        setMergeRequestScore(resp.data?.mergeScore);
-                        setSharedMergeRequestScore(resp.data?.sharedMergeScore);
-                    }).catch(() => {
-                    enqueueSnackbar('Failed to get merge request score.', {variant: 'error',});
-                });
-                axios
-                    .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/commit/user/${userId}/diff/score/0?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
-                    .then((resp: AxiosResponse) => {
-                        setCommitScore(resp.data);
-                    }).catch(() => {
-                    enqueueSnackbar('Failed to get commits score.', {variant: 'error',});
-                });
-            }
-
+            //TODO update 0 in endpoint to profile id
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_request/user/${gitManagementUserId}/diff/score/0?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                .then((resp: AxiosResponse) => {
+                    setMergeRequestScore(resp.data?.mergeScore);
+                    setSharedMergeRequestScore(resp.data?.sharedMergeScore);
+                }).catch(() => {enqueueSnackbar('Failed to get merge request score.', {variant: 'error',});
+            });
+            //TODO update 0 in endpoint to profile id
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/commit/user/${gitManagementUserId}/diff/score/0?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                .then((resp: AxiosResponse) => {
+                    setCommitScore(resp.data);
+                }).catch(() => {enqueueSnackbar('Failed to get commits score.', {variant: 'error',});
+            });
         }
-    }, [projectId, userId]);
+    }, [projectId, gitManagementUserId]);
 
     let projectSummary: ProjectSummary = {
         project: project,
         commitCount: commitCount,
-        mergeRequestCount: mergerRequestCount,
+        mergeRequestCount: mergeRequestCount,
         commitScore: commitScore,
         mergeRequestScore: mergeRequestScore,
         sharedMergeRequestScore: sharedMergeRequestScore,

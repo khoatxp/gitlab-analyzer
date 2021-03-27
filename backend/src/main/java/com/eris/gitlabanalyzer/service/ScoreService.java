@@ -49,7 +49,7 @@ public class ScoreService {
     }
 
     public double[] getUserMergeScore(Long gitManagementUserId, Long projectId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
-        List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByGitManagementUserIdAndDateRange(gitManagementUserId, projectId, startDateTime, endDateTime);
+        List<MergeRequest> mergeRequests = mergeRequestRepository.findAllNotSharedByGitManagementUserIdAndDateRange(gitManagementUserId, projectId, startDateTime, endDateTime);
         // Find shared MR for user that they both own or participated on
         List<MergeRequest> sharedMergeRequests = mergeRequestRepository.findOwnerSharedMergeRequests(projectId, gitManagementUserId, startDateTime, endDateTime);
         sharedMergeRequests.addAll(mergeRequestRepository.findParticipantSharedMergeRequests(projectId, gitManagementUserId, startDateTime, endDateTime));

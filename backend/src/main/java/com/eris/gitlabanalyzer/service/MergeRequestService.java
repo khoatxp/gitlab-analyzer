@@ -94,4 +94,8 @@ public class MergeRequestService {
         // TODO ensure user has permissions for project
         return mergeRequestRepository.findAllByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
     }
+
+    public List<MergeRequest> getMergeRequestsByProjectIdAndGitManagementUserId(Long projectId, Long gitManagementUserId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        return mergeRequestRepository.findAllByGitManagementUserIdAndDateRange(projectId, gitManagementUserId, startDateTime, endDateTime);
+    }
 }

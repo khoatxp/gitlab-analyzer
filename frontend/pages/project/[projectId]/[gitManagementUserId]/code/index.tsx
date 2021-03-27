@@ -1,16 +1,16 @@
 import React, {useEffect} from "react";
-import AuthView from "../../../../components/AuthView";
-import MenuLayout from "../../../../components/layout/menu/MenuLayout";
-import {AuthContext} from "../../../../components/AuthContext";
+import AuthView from "../../../../../components/AuthView";
+import MenuLayout from "../../../../../components/layout/menu/MenuLayout";
+import {AuthContext} from "../../../../../components/AuthContext";
 import axios, {AxiosResponse} from "axios";
 import {useRouter} from "next/router";
-import {MergeRequest} from "../../../../interfaces/GitLabMergeRequest";
+import {MergeRequest} from "../../../../../interfaces/GitLabMergeRequest";
 import {useSnackbar} from "notistack";
-import DiffViewer from "../../../../components/diff/DiffViewer";
-import {FileChange} from "../../../../interfaces/GitLabFileChange";
-import MergeRequestList from "../../../../components/diff/MergeRequestList";
-import CommitList from "../../../../components/diff/CommitList";
-import {Commit} from "../../../../interfaces/GitLabCommit";
+import DiffViewer from "../../../../../components/diff/DiffViewer";
+import {FileChange} from "../../../../../interfaces/GitLabFileChange";
+import MergeRequestList from "../../../../../components/diff/MergeRequestList";
+import CommitList from "../../../../../components/diff/CommitList";
+import {Commit} from "../../../../../interfaces/GitLabCommit";
 import {Grid} from "@material-ui/core";
 
 const index = () => {

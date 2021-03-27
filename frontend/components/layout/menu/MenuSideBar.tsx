@@ -26,7 +26,7 @@ const MenuSideBar = () => {
         const route = router.route;
         router.push({
             pathname: route,
-            query: {projectId: projectId, userId: id, startDateTime: startDateTime, endDateTime: endDateTime}
+            query: {projectId: projectId, gitManagementUserId: id, startDateTime: startDateTime, endDateTime: endDateTime}
         })
     };
 
