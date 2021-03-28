@@ -60,12 +60,12 @@ public class CommitService {
         var gitLabService = new GitLabService(serverUrl, accessToken);
 
         Double progress;
-        Double startOfProgressRange = AnalysisRunProgress.Progress.AtStartOfImportingCommits.getValue();
-        Double endOfProgressRange = AnalysisRunProgress.Progress.AtStartOfImportingOrphanCommits.getValue();
+        Double startOfProgressRange = AnalysisRun.Progress.AtStartOfImportingCommits.getValue();
+        Double endOfProgressRange = AnalysisRun.Progress.AtStartOfImportingOrphanCommits.getValue();
 
         for(int i = 0; i < mergeRequestList.size();i++){
             progress = startOfProgressRange + (endOfProgressRange-startOfProgressRange) * (i+1)/mergeRequestList.size();
-            analysisRunService.updateProgress(analysisRun, "Importing commits for "+ (i+1) +"/"+mergeRequestList.size() + " merge requests",progress);
+            analysisRunService.updateProgress(analysisRun, "Importing commits for "+ (i+1) +"/"+mergeRequestList.size() + " merge requests",progress, false);
             var gitLabCommits = gitLabService.getMergeRequestCommits(project.getGitLabProjectId(), mergeRequestList.get(i).getIid());
             saveCommitHelper(project, mergeRequestList.get(i), gitLabCommits, mrCommitShas);
         }
@@ -73,7 +73,7 @@ public class CommitService {
         //Save orphan commits
         var gitLabCommits = gitLabService.getCommits(project.getGitLabProjectId(), startDateTime, endDateTime)
                                                            .filter(gitLabCommit -> !mrCommitShas.contains(gitLabCommit.getSha()));
-        analysisRunService.updateProgress(analysisRun, "Importing orphan commits", AnalysisRunProgress.Progress.AtStartOfImportingOrphanCommits.getValue());
+        analysisRunService.updateProgress(analysisRun, "Importing orphan commits", AnalysisRun.Progress.AtStartOfImportingOrphanCommits.getValue(), false);
         saveCommitHelper(project, null, gitLabCommits, mrCommitShas);
     }
 

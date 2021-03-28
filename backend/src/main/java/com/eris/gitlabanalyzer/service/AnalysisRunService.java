@@ -1,12 +1,11 @@
 package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.AnalysisRun;
-import com.eris.gitlabanalyzer.model.AnalysisRunProgress;
 import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.User;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabProject;
-import com.eris.gitlabanalyzer.repository.AnalysisRunProgressRepository;
 import com.eris.gitlabanalyzer.repository.AnalysisRunRepository;
+import com.eris.gitlabanalyzer.viewmodel.AnalysisRunProgressView;
 import com.eris.gitlabanalyzer.viewmodel.AnalysisRunView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,14 +21,12 @@ import java.util.stream.Stream;
 @Service
 public class AnalysisRunService {
     private AnalysisRunRepository analysisRunRepository;
-    private AnalysisRunProgressRepository analysisRunProgressRepository;
     private UserServerService userServerService;
     private final MessageService messageService;
 
     @Autowired
-    public AnalysisRunService(AnalysisRunRepository analysisRunRepository, AnalysisRunProgressRepository analysisRunProgressRepository, UserServerService userServerService, MessageService messageService) {
+    public AnalysisRunService(AnalysisRunRepository analysisRunRepository, UserServerService userServerService, MessageService messageService) {
         this.analysisRunRepository = analysisRunRepository;
-        this.analysisRunProgressRepository = analysisRunProgressRepository;
         this.userServerService = userServerService;
         this.messageService = messageService;
     }
@@ -40,7 +37,6 @@ public class AnalysisRunService {
             AnalysisRun.Status status,
             OffsetDateTime startDateTime,
             OffsetDateTime endDateTime) {
-        AnalysisRunProgress analysisRunProgress = analysisRunProgressRepository.save(new AnalysisRunProgress());
         AnalysisRun analysisRun = new AnalysisRun(
                 owner,
                 project,
@@ -48,8 +44,7 @@ public class AnalysisRunService {
                 status,
 //                scoreProfile, TODO: hookup once implemented
                 startDateTime,
-                endDateTime,
-                analysisRunProgress
+                endDateTime
         );
         return this.analysisRunRepository.save(analysisRun);
     }
@@ -77,14 +72,18 @@ public class AnalysisRunService {
         }
     }
 
-    public AnalysisRunProgress getAnalysisRunProgress(Long analysisRunId){
-        return analysisRunProgressRepository.findByAnalysisRunId(analysisRunId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to fetch analysis run progress"));
+    public AnalysisRunProgressView getAnalysisRunProgress(Long analysisRunId){
+        AnalysisRun analysisRun = analysisRunRepository.findById(analysisRunId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to fetch analysis run progress"));
+        return AnalysisRunProgressView.fromAnalysisRun(analysisRun);
     }
 
-
-    public void updateProgress(AnalysisRun analysisRun, String message, Double progress){
-        analysisRun.getAnalysisRunProgress().setMessage(message);
-        analysisRun.getAnalysisRunProgress().setProgress(progress);
-        messageService.sendMessage(analysisRunRepository.save(analysisRun));
+    public void updateProgress(AnalysisRun analysisRun, String message, Double progress, boolean saveToDatabase){
+        analysisRun.setMessage(message);
+        analysisRun.setProgress(progress);
+        messageService.sendMessage(analysisRun);
+        if(saveToDatabase == true){
+            analysisRunRepository.save(analysisRun);
+        }
     }
+
 }

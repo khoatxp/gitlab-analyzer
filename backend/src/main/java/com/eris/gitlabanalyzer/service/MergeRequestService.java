@@ -45,12 +45,12 @@ public class MergeRequestService {
         var gitLabMergeRequestList = gitLabMergeRequests.collectList().block();
 
         Double progress;
-        Double startOfProgressRange = AnalysisRunProgress.Progress.AtStartOfImportingMergeRequests.getValue();
-        Double endOfProgressRange = AnalysisRunProgress.Progress.AtStartOfImportingCommits.getValue();
+        Double startOfProgressRange = AnalysisRun.Progress.AtStartOfImportingMergeRequests.getValue();
+        Double endOfProgressRange = AnalysisRun.Progress.AtStartOfImportingCommits.getValue();
 
         for(int i=0; i< gitLabMergeRequestList.size();i++) {
             progress = startOfProgressRange + (endOfProgressRange-startOfProgressRange) * (i+1)/gitLabMergeRequestList.size();
-            analysisRunService.updateProgress(analysisRun, "Importing "+ (i+1) +"/"+gitLabMergeRequestList.size() + " merge requests",progress);
+            analysisRunService.updateProgress(analysisRun, "Importing "+ (i+1) +"/"+gitLabMergeRequestList.size() + " merge requests",progress,false);
 
             var gitLabMergeRequest = gitLabMergeRequestList.get(i);
             GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabMergeRequest.getAuthor().getId(), serverUrl);

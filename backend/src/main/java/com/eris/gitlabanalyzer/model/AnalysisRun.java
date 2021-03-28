@@ -55,9 +55,8 @@ public class AnalysisRun {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "analysis_run_progress_id", referencedColumnName = "analysis_run_progress_id")
-    private AnalysisRunProgress analysisRunProgress;
+    private String message;
+    private Double progress;
 
     public AnalysisRun(
             User ownerUser,
@@ -65,8 +64,7 @@ public class AnalysisRun {
             Server server,
             Status status,
             OffsetDateTime startDateTime,
-            OffsetDateTime endDateTime,
-            AnalysisRunProgress analysisRunProgress) {
+            OffsetDateTime endDateTime) {
         this.ownerUser = ownerUser;
         this.project = project;
         this.server = server;
@@ -75,7 +73,8 @@ public class AnalysisRun {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.status = Status.InProgress;
-        this.analysisRunProgress = analysisRunProgress;
+        this.progress = 0.0;
+        this.message = "Waiting for other projects";
     }
 
     public enum Status {
@@ -91,6 +90,32 @@ public class AnalysisRun {
 
         public String toString() {
             return this.status;
+        }
+    }
+
+    public enum Progress {
+        AtStartOfImportingMembers(0.0),
+        AtStartOfImportingMergeRequests(5.0),
+        AtStartOfImportingCommits(25.0),
+        AtStartOfImportingOrphanCommits(70.0),
+        AtStartOfImportingIssues(85.0),
+        Done(100.0);
+
+        private final Double progress;
+
+        Progress(Double progress) {
+            this.progress = progress;
+        }
+
+        public Double getValue() {
+            return progress;
+        }
+
+        @Override
+        public String toString() {
+            return "Progress{" +
+                    "progress=" + progress +
+                    '}';
         }
     }
 }

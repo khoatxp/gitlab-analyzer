@@ -4,7 +4,6 @@ import com.eris.gitlabanalyzer.model.AnalysisRun;
 import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.User;
 import com.eris.gitlabanalyzer.repository.AnalysisRunRepository;
-import com.eris.gitlabanalyzer.model.AnalysisRunProgress;
 import com.eris.gitlabanalyzer.viewmodel.AnalysisRunView;
 import org.springframework.stereotype.Service;
 
@@ -59,24 +58,24 @@ public class AnalyticsService {
                 var startDateTime = analysisRun.getStartDateTime();
                 var endDateTime = analysisRun.getEndDateTime();
 
-                analysisRunService.updateProgress(analysisRun,"Importing members",AnalysisRunProgress.Progress.AtStartOfImportingMembers.getValue());
+                analysisRunService.updateProgress(analysisRun,"Importing members",AnalysisRun.Progress.AtStartOfImportingMembers.getValue(), true);
                 gitManagementUserService.saveGitManagementUserInfo(project);
 
-                analysisRunService.updateProgress(analysisRun,"Importing merge requests for "+project.getNameWithNamespace(),AnalysisRunProgress.Progress.AtStartOfImportingMergeRequests.getValue());
+                analysisRunService.updateProgress(analysisRun,"Importing merge requests for "+project.getNameWithNamespace(),AnalysisRun.Progress.AtStartOfImportingMergeRequests.getValue(), true);
                 mergeRequestService.saveMergeRequestInfo(analysisRun, project, startDateTime, endDateTime);
 
-                analysisRunService.updateProgress(analysisRun,"Importing commits for "+project.getNameWithNamespace(),AnalysisRunProgress.Progress.AtStartOfImportingCommits.getValue());
+                analysisRunService.updateProgress(analysisRun,"Importing commits for "+project.getNameWithNamespace(),AnalysisRun.Progress.AtStartOfImportingCommits.getValue(), true);
                 commitService.saveCommitInfo(analysisRun, project, startDateTime, endDateTime);
 
-                analysisRunService.updateProgress(analysisRun,"Importing issues for "+project.getNameWithNamespace(),AnalysisRunProgress.Progress.AtStartOfImportingIssues.getValue());
+                analysisRunService.updateProgress(analysisRun,"Importing issues for "+project.getNameWithNamespace(),AnalysisRun.Progress.AtStartOfImportingIssues.getValue(), true);
                 issueService.saveIssueInfo(analysisRun, project, startDateTime, endDateTime);
                 projectIds.add(project.getId());
 
                 analysisRun.setStatus(AnalysisRun.Status.Completed);
-                analysisRunService.updateProgress(analysisRun,"Analysis done for "+project.getNameWithNamespace(), AnalysisRunProgress.Progress.Done.getValue());
+                analysisRunService.updateProgress(analysisRun,"Analysis done for "+project.getNameWithNamespace(), AnalysisRun.Progress.Done.getValue(), true);
             } catch(Exception e) {
                 analysisRun.setStatus(AnalysisRun.Status.Error);
-                analysisRunService.updateProgress(analysisRun,"Error",0.0);
+                analysisRunService.updateProgress(analysisRun,"Error",0.0, true);
             }
         });
         return projectIds;

@@ -40,12 +40,12 @@ public class IssueService {
         var gitLabIssueList = gitLabIssues.collectList().block();
 
         Double progress;
-        Double startOfProgressRange = AnalysisRunProgress.Progress.AtStartOfImportingIssues.getValue();
-        Double endOfProgressRange = AnalysisRunProgress.Progress.Done.getValue()-1;
+        Double startOfProgressRange = AnalysisRun.Progress.AtStartOfImportingIssues.getValue();
+        Double endOfProgressRange = AnalysisRun.Progress.Done.getValue()-1;
 
         for(int i=0; i<gitLabIssueList.size(); i++){
             progress = startOfProgressRange + (endOfProgressRange-startOfProgressRange) * (i+1)/gitLabIssueList.size();
-            analysisRunService.updateProgress(analysisRun, "Importing "+ (i+1) +"/"+gitLabIssueList.size() + " issues",progress);
+            analysisRunService.updateProgress(analysisRun, "Importing "+ (i+1) +"/"+gitLabIssueList.size() + " issues",progress, false);
 
             var gitLabIssue = gitLabIssueList.get(i);
             GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabIssue.getAuthor().getId(), serverUrl);

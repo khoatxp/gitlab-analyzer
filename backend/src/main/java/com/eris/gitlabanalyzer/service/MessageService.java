@@ -1,6 +1,7 @@
 package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.AnalysisRun;
+import com.eris.gitlabanalyzer.viewmodel.AnalysisRunProgressView;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,6 @@ public class MessageService {
     }
 
     public void sendMessage(AnalysisRun analysisRun) {
-        messagingTemplate.convertAndSend("/topic/progress/" + analysisRun.getId(), analysisRun.getAnalysisRunProgress());
+        messagingTemplate.convertAndSend("/topic/progress/" + analysisRun.getId(), AnalysisRunProgressView.fromAnalysisRun(analysisRun));
     }
 }

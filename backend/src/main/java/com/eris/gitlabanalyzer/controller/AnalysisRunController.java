@@ -1,11 +1,11 @@
 package com.eris.gitlabanalyzer.controller;
 
 import com.eris.gitlabanalyzer.model.AnalysisRun;
-import com.eris.gitlabanalyzer.model.AnalysisRunProgress;
 import com.eris.gitlabanalyzer.model.User;
 import com.eris.gitlabanalyzer.repository.AnalysisRunRepository;
 import com.eris.gitlabanalyzer.service.AnalysisRunService;
 import com.eris.gitlabanalyzer.service.AuthService;
+import com.eris.gitlabanalyzer.viewmodel.AnalysisRunProgressView;
 import com.eris.gitlabanalyzer.viewmodel.AnalysisRunView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +31,7 @@ public class AnalysisRunController {
     }
 
     @GetMapping("progress/{analysisRunId}")
-    public AnalysisRunProgress getAnalysisRun(
+    public AnalysisRunProgressView getAnalysisRun(
             @PathVariable("analysisRunId") Long analysisRunId){
         return analysisRunService.getAnalysisRunProgress(analysisRunId);
     }

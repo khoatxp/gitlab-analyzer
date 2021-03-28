@@ -1,7 +1,5 @@
 package com.eris.gitlabanalyzer.controller;
 
-import com.eris.gitlabanalyzer.model.AnalysisRun;
-import com.eris.gitlabanalyzer.model.AnalysisRunProgress;
 import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.RawTimeLineProjectData;
 import com.eris.gitlabanalyzer.service.AnalyticsService;

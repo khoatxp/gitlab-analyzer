@@ -38,7 +38,7 @@ const AnalysisProgressModal = ({open,handleClose,handleError,handleWhenProgressI
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const [progress, setProgress] = React.useState<number>(0);
-    const [progressMessage, setProgressMessage] = React.useState<string>("Waiting for other projects");
+    const [progressMessage, setProgressMessage] = React.useState<string>("Waiting for update");
 
     useEffect(() => {
         const socket = new SockJS(`${process.env.NEXT_PUBLIC_BACKEND_URL}/websocket`);
@@ -62,6 +62,8 @@ const AnalysisProgressModal = ({open,handleClose,handleError,handleWhenProgressI
             axios
                 .get(`${process.env.NEXT_PUBLIC_API_URL}/analysis_run/progress/${analysisRun.id}`,getAxiosAuthConfig())
                 .then((res: AxiosResponse) => {
+                    setProgress(Number(res.data.progress));
+                    setProgressMessage(res.data.message);
                     if(res.data.message){
                         handleCloseWhenDoneOrError(Number(res.data.progress),res.data.message);
                     }

@@ -31,8 +31,8 @@ const index = () => {
                 setAnalysisRuns(resp.data)
             }).catch((err: AxiosError) => {
             enqueueSnackbar(`Failed to get runs: ${err}`, {variant: 'error',});
-            }).finally(() => {
-                setIsLoading(false);
+        }).finally(() => {
+            setIsLoading(false);
         });
     }
 
