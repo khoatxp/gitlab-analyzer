@@ -10,6 +10,7 @@ import ProjectSelect from "../../../components/ProjectSelect";
 import LoadingBar from "../../../components/LoadingBar";
 import {formatISO} from "date-fns";
 
+
 const index = () => {
     const router = useRouter();
     const {enqueueSnackbar} = useSnackbar();
@@ -26,8 +27,6 @@ const index = () => {
     }, [serverId]);
 
     const loadProjects = () => {
-        // TODO need to pass serverId into this call to get the correct gitlab url and access code from db
-        // when that information is available in db
         setItemBeingLoaded("Projects");
         axios
             .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/${serverId}/projects`, getAxiosAuthConfig())
