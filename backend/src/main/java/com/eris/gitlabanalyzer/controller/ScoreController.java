@@ -1,11 +1,13 @@
 package com.eris.gitlabanalyzer.controller;
 
 import com.eris.gitlabanalyzer.service.ScoreService;
+import com.eris.gitlabanalyzer.viewmodel.ScoreDigest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 class MergeReturnObject {
     public double mergeScore;
@@ -73,4 +75,13 @@ public class ScoreController {
         }
     }
 
+    @GetMapping(path ="/{projectId}/score_digest/{scoreProfileId}")
+    public List<ScoreDigest> getDailyScoreDigest (@PathVariable("projectId") Long projectId,
+                                                  @PathVariable("scoreProfileId") Long scoreProfileId,
+                                                  @RequestParam("startDateTime")
+                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
+                                                  @RequestParam("endDateTime")
+                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
+        return scoreService.getDailyScoreDigest(projectId, scoreProfileId, startDateTime, endDateTime);
+    }
 }
