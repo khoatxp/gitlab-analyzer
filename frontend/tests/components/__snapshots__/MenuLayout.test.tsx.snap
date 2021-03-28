@@ -1483,6 +1483,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
           >
             <WithStyles(WithStyles(ForwardRef(Button)))
               disableRipple={true}
+              onClick={[Function]}
               variant="contained"
             >
               <WithStyles(ForwardRef(Button))
@@ -1492,6 +1493,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                   }
                 }
                 disableRipple={true}
+                onClick={[Function]}
                 variant="contained"
               >
                 <ForwardRef(Button)
@@ -1529,6 +1531,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                     }
                   }
                   disableRipple={true}
+                  onClick={[Function]}
                   variant="contained"
                 >
                   <WithStyles(ForwardRef(ButtonBase))
@@ -1538,6 +1541,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                     disabled={false}
                     focusRipple={true}
                     focusVisibleClassName="Mui-focusVisible"
+                    onClick={[Function]}
                     type="button"
                   >
                     <ForwardRef(ButtonBase)
@@ -1554,12 +1558,14 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                       disabled={false}
                       focusRipple={true}
                       focusVisibleClassName="Mui-focusVisible"
+                      onClick={[Function]}
                       type="button"
                     >
                       <button
                         className="MuiButtonBase-root MuiButton-root WithStyles(ForwardRef(Button))-root-11 MuiButton-contained"
                         disabled={false}
                         onBlur={[Function]}
+                        onClick={[Function]}
                         onDragLeave={[Function]}
                         onFocus={[Function]}
                         onKeyDown={[Function]}
