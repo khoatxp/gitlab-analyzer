@@ -35,6 +35,8 @@ const CodeAnalysis = () => {
 
     useEffect(() => {
         if (router.isReady) {
+            // TODO Pass correct Score Profile Id
+            let scoreProfileId = 0;
             axios
                 .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
@@ -56,26 +58,22 @@ const CodeAnalysis = () => {
                 }).catch(() => {
                 enqueueSnackbar('Failed to get commits count.', {variant: 'error',});
             });
-            //TODO update 0 in endpoint to profile id
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_request/user/${gitManagementUserId}/diff/score/0?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_request/user/${gitManagementUserId}/diff/score/${scoreProfileId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setMergeRequestScore(resp.data?.mergeScore);
                     setSharedMergeRequestScore(resp.data?.sharedMergeScore);
                 }).catch(() => {enqueueSnackbar('Failed to get merge request score.', {variant: 'error',});
             });
-            //TODO update 0 in endpoint to profile id
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/commit/user/${gitManagementUserId}/diff/score/0?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/commit/user/${gitManagementUserId}/diff/score/${scoreProfileId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setCommitScore(resp.data);
                 }).catch(() => {enqueueSnackbar('Failed to get commits score.', {variant: 'error',});
             });
 
-            // TODO Pass correct Score Profile Id
-            let scoreProfileId = 0;
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/score_digest/${scoreProfileId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/score_digest/user/${gitManagementUserId}/${scoreProfileId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setScoreDigest(resp.data);
                 }).catch(() => {

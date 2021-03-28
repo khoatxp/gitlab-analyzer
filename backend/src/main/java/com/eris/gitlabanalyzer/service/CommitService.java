@@ -191,13 +191,12 @@ public class CommitService {
 
     public List<Commit> getCommitsInDateRange(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
         List<Commit> commits = commitRepository.findAllByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
-        commits.addAll(commitRepository.findAllOrphanByProjectIdAndDateRange(projectId, startDateTime, endDateTime));
+
         return commits;
     }
 
     public List<Commit> getCommitsOfGitManagementUserInDateRange(Long projectId, Long gitManagementUserId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
-        List<Commit> commits = commitRepository.findByProjectIdAndGitManagementUserIdAndDateRange(projectId, gitManagementUserId, startDateTime, endDateTime);
-        commits.addAll(commitRepository.findOrphanByProjectIdAndGitManagementUserIdAndDateRange(projectId, gitManagementUserId, startDateTime, endDateTime));
+        List<Commit> commits = commitRepository.findAllByProjectIdAndDateRangeAndGitManagementUserId(projectId, gitManagementUserId, startDateTime, endDateTime);
         return commits;
     }
 

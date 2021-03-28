@@ -22,11 +22,11 @@ public interface MergeRequestRepository extends JpaRepository<MergeRequest, Long
     @Query("select m from MergeRequest m where m.project.id = ?1 and m.mergedAt >= ?2 and m.mergedAt <= ?3")
     List<MergeRequest> findAllByProjectIdAndDateRange(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
 
-    @Query("select m from MergeRequest m where m.gitManagementUser.id= ?1 and m.project.id= ?2 and m.mergedAt >= ?3 and m.mergedAt <= ?4 ")
-    List<MergeRequest> findAllByGitManagementUserIdAndDateRange(Long gitManagementUserId, Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
+    @Query("select m from MergeRequest m where m.gitManagementUser.id= ?2 and m.project.id= ?1 and m.mergedAt >= ?3 and m.mergedAt <= ?4 ")
+    List<MergeRequest> findAllByGitManagementUserIdAndDateRange(Long projectId, Long gitManagementUserId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
 
-    @Query("select m from MergeRequest m where m.gitManagementUser.id= ?1 and m.project.id= ?2 and m.mergedAt >= ?3 and m.mergedAt <= ?4 and m.sharedWith is EMPTY ")
-    List<MergeRequest> findAllNotSharedByGitManagementUserIdAndDateRange(Long gitManagementUserId, Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
+    @Query("select m from MergeRequest m where m.gitManagementUser.id= ?2 and m.project.id= ?1 and m.mergedAt >= ?3 and m.mergedAt <= ?4 and m.sharedWith is EMPTY ")
+    List<MergeRequest> findAllNotSharedByGitManagementUserIdAndDateRange(Long projectId, Long gitManagementUserId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
 
     @Query("select m from MergeRequest m where m.gitManagementUser.id= ?1 and m.project.id= ?2 and m.mergedAt >= ?3 and m.mergedAt <= ?4 and m.sharedWith is not EMPTY ")
     List<MergeRequest> findOwnerSharedMergeRequests(Long gitManagementUserId, Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
