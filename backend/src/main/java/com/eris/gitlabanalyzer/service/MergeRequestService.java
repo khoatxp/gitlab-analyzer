@@ -79,9 +79,4 @@ public class MergeRequestService {
             mergeRequestCommentRepository.save(mergeRequestComment);
         });
     }
-
-    public List<MergeRequest> getMergeRequestsByProjectId(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        // TODO ensure user has permissions for project
-        return mergeRequestRepository.findAllByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
-    }
 }

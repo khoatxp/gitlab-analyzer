@@ -7,7 +7,6 @@ import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
 import com.eris.gitlabanalyzer.repository.UserProjectPermissionRepository;
 import com.eris.gitlabanalyzer.repository.UserServerRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -55,7 +54,7 @@ public class ProjectService {
     public Project saveProjectInfo(User user, Long serverId, Long gitLabProjectId) {
         var server = serverRepository.findById(serverId).get();
         var gitLabProject = requestScopeGitLabService.getProject(gitLabProjectId).block();
-        Optional<Project> projectOptional = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, server.getServerUrl());
+        Optional<Project> projectOptional = projectRepository.findByGitlabProjectIdAndServerId(gitLabProjectId, server.getId());
         if(projectOptional.isPresent()){
             createUserProjectPermission(user, server, projectOptional.get());
             return projectOptional.get();
