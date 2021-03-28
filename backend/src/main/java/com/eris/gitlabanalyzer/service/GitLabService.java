@@ -5,6 +5,7 @@ import com.eris.gitlabanalyzer.model.gitlabresponse.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpHeaders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -46,16 +47,17 @@ public class GitLabService {
         }
     }
 
+    @Transactional(timeout = 240)
     public Flux<GitLabProject> getProjects(){
         validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath)
                 .queryParam("per_page", 100)
+                //.queryParam("membership", true)
                 .build()
                 .encode()
                 .toUri()
                 .toString();
-
         return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabProject.class));
     }
 

@@ -31,7 +31,12 @@ const index = () => {
         axios
             .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/${serverId}/projects`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
-                setProjects(resp.data);
+                if (resp.data.length === 1 && resp.data[0].id === null) {
+                    setProjects([]);
+                }
+                else {
+                    setProjects(resp.data);
+                }
                 setIsLoading(false);
             }).catch(() => {
             enqueueSnackbar('Failed to get server projects.', {variant: 'error',});
@@ -48,7 +53,7 @@ const index = () => {
         const end = formatISO(endDateTime);
         const dateQuery = `startDateTime=${start}&endDateTime=${end}`;
         axios
-            .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
+            .post(`${process.env.NEXT_PUBLIC_API_URL}/${serverId}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
             .then((res) => {
                 const analyizedInternalProjectId = res.data[0];
                 console.log(res.data);

@@ -14,7 +14,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/api/v1/projects")
 public class ProjectController {
     private final ProjectService projectService;
     private final AnalyticsService analyticsService;
@@ -26,8 +25,7 @@ public class ProjectController {
         this.authService = authService;
     }
 
-
-    @GetMapping(path = "/{projectId}/rawdata")
+    @GetMapping(path = "/api/v1/projects/{projectId}/rawdata")
     public RawTimeLineProjectData analyzeProject(
             @PathVariable("projectId") Long projectId,
             @RequestParam("startDateTime")
@@ -37,20 +35,21 @@ public class ProjectController {
         return projectService.getTimeLineProjectData(projectId, startDateTime, endDateTime);
     }
 
-    @GetMapping
+    @GetMapping(path = "/api/v1/projects")
     public List<Project> getProjects(){
         return projectService.getProjects();
     }
 
-    @PostMapping(path = "/analytics")
+    @PostMapping(path = "/api/v1/{serverId}/projects/analytics")
     public List<Long> saveAllFromGitlab(
             Principal principal,
+            @PathVariable("serverId") Long serverId,
             @RequestBody List<Long> projectIdList,
             @RequestParam("startDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
         var user = authService.getLoggedInUser(principal);
-        return analyticsService.saveAllFromGitlab(user, projectIdList, startDateTime, endDateTime);
+        return analyticsService.saveAllFromGitlab(user, serverId, projectIdList, startDateTime, endDateTime);
     }
 }

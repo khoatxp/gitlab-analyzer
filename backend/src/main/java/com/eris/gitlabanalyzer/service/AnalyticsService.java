@@ -25,10 +25,10 @@ public class AnalyticsService {
         this.issueService = issueService;
     }
 
-    public List<Long> saveAllFromGitlab(User user, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+    public List<Long> saveAllFromGitlab(User user, Long serverId, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         List<Long> projectIds = new ArrayList<>();
         gitLabProjectIdList.forEach(gitLabProjectId -> {
-            Project project = projectService.saveProjectInfo(user, gitLabProjectId);
+            Project project = projectService.saveProjectInfo(user, serverId, gitLabProjectId);
             gitManagementUserService.saveGitManagementUserInfo(project);
             mergeRequestService.saveMergeRequestInfo(project, startDateTime, endDateTime);
             commitService.saveCommitInfo(project, startDateTime, endDateTime);

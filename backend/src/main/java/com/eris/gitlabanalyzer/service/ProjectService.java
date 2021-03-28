@@ -9,7 +9,6 @@ import com.eris.gitlabanalyzer.repository.UserProjectPermissionRepository;
 import com.eris.gitlabanalyzer.repository.UserServerRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
@@ -29,20 +28,14 @@ public class ProjectService {
     private final ServerRepository serverRepository;
     private final UserProjectPermissionRepository userProjectPermissionRepository;
     private final UserServerRepository userServerRepository;
+    private final GitLabService requestScopeGitLabService;
 
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
-
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
-
-    public ProjectService(ProjectRepository projectRepository, ServerRepository serverRepository, UserProjectPermissionRepository userProjectPermissionRepository, UserServerRepository userServerRepository) {
+    public ProjectService(ProjectRepository projectRepository, ServerRepository serverRepository, UserProjectPermissionRepository userProjectPermissionRepository, UserServerRepository userServerRepository, GitLabService requestScopeGitLabService) {
         this.projectRepository = projectRepository;
         this.serverRepository = serverRepository;
         this.userProjectPermissionRepository = userProjectPermissionRepository;
         this.userServerRepository = userServerRepository;
+        this.requestScopeGitLabService = requestScopeGitLabService;
     }
 
     private void createUserProjectPermission(User user, Server server, Project project)
@@ -59,14 +52,10 @@ public class ProjectService {
         }
     }
 
-    public Project saveProjectInfo(User user, Long gitLabProjectId) {
-        // TODO use an internal projectId to find the correct server
-        var gitLabService = new GitLabService(serverUrl, accessToken);
-        Server server = serverRepository.findByServerUrl(serverUrl)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Server with URL " + serverUrl + " does not exist"));
-
-        var gitLabProject = gitLabService.getProject(gitLabProjectId).block();
-        Optional<Project> projectOptional = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId,serverUrl);
+    public Project saveProjectInfo(User user, Long serverId, Long gitLabProjectId) {
+        var server = serverRepository.findById(serverId).get();
+        var gitLabProject = requestScopeGitLabService.getProject(gitLabProjectId).block();
+        Optional<Project> projectOptional = projectRepository.findByGitlabProjectIdAndServerUrl(gitLabProjectId, server.getServerUrl());
         if(projectOptional.isPresent()){
             createUserProjectPermission(user, server, projectOptional.get());
             return projectOptional.get();
@@ -84,9 +73,7 @@ public class ProjectService {
     }
 
     public RawTimeLineProjectData getTimeLineProjectData(Long gitLabProjectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        // TODO use an internal projectId to find the correct server
-        var gitLabService = new GitLabService(serverUrl, accessToken);
-        var mergeRequests = gitLabService.getMergeRequests(gitLabProjectId, startDateTime, endDateTime);
+        var mergeRequests = requestScopeGitLabService.getMergeRequests(gitLabProjectId, startDateTime, endDateTime);
 
         // for all items in mergeRequests call get commits
         // for all items in commits call get diff
@@ -94,18 +81,18 @@ public class ProjectService {
         var rawMergeRequestData = mergeRequests
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
-                .map((mergeRequest) -> getRawMergeRequestData(gitLabService, mergeRequest, gitLabProjectId))
+                .map((mergeRequest) -> getRawMergeRequestData(mergeRequest, gitLabProjectId))
                 .sorted((mr1, mr2) -> (int) (mr1.getGitLabMergeRequest().getIid() - mr2.getGitLabMergeRequest().getIid()));
 
 
         // for all commits NOT in merge commits get diff
         var mergeRequestCommitIds = getMergeRequestCommitIds(rawMergeRequestData);
-        var commits = gitLabService.getCommits(gitLabProjectId, startDateTime, endDateTime);
+        var commits = requestScopeGitLabService.getCommits(gitLabProjectId, startDateTime, endDateTime);
         var orphanCommits = getOrphanCommits(commits, mergeRequestCommitIds);
         var rawOrphanCommitData = orphanCommits
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
-                .map((commit) -> getRawCommitData(gitLabService, commit, gitLabProjectId))
+                .map((commit) -> getRawCommitData(commit, gitLabProjectId))
                 .sorted(Comparator.comparing(c -> c.getGitLabCommit().getCreatedAt()));
 
         var rawProjectData = new RawTimeLineProjectData(gitLabProjectId, startDateTime, endDateTime, rawMergeRequestData, rawOrphanCommitData);
@@ -114,21 +101,21 @@ public class ProjectService {
     }
 
 
-    private RawMergeRequestData getRawMergeRequestData(GitLabService gitLabService, GitLabMergeRequest mergeRequest, Long gitLabProjectId) {
-        var gitLabCommits = gitLabService.getMergeRequestCommits(gitLabProjectId, mergeRequest.getIid());
+    private RawMergeRequestData getRawMergeRequestData(GitLabMergeRequest mergeRequest, Long gitLabProjectId) {
+        var gitLabCommits = requestScopeGitLabService.getMergeRequestCommits(gitLabProjectId, mergeRequest.getIid());
         var rawCommitData = gitLabCommits
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
-                .map((commit) -> getRawCommitData(gitLabService, commit, gitLabProjectId))
+                .map((commit) -> getRawCommitData(commit, gitLabProjectId))
                 .sorted(Comparator.comparing(c -> c.getGitLabCommit().getCreatedAt()));
 
-        var gitLabDiff = gitLabService.getMergeRequestDiff(gitLabProjectId, mergeRequest.getIid());
+        var gitLabDiff = requestScopeGitLabService.getMergeRequestDiff(gitLabProjectId, mergeRequest.getIid());
 
         return new RawMergeRequestData(rawCommitData, gitLabDiff, mergeRequest);
     }
 
-    private RawCommitData getRawCommitData(GitLabService gitLabService, GitLabCommit commit, Long gitLabProjectId) {
-        var changes = gitLabService.getCommitDiff(gitLabProjectId, commit.getSha());
+    private RawCommitData getRawCommitData(GitLabCommit commit, Long gitLabProjectId) {
+        var changes = requestScopeGitLabService.getCommitDiff(gitLabProjectId, commit.getSha());
         return new RawCommitData(commit, changes);
     }
 
