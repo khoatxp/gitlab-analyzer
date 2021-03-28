@@ -44,12 +44,12 @@ public class ProjectController {
     public List<Long> saveAllFromGitlab(
             Principal principal,
             @PathVariable("serverId") Long serverId,
-            @RequestBody List<Long> projectIdList,
+            @RequestBody List<Long> gitLabProjectIdList,
             @RequestParam("startDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
         var user = authService.getLoggedInUser(principal);
-        return analyticsService.saveAllFromGitlab(user, serverId, projectIdList, startDateTime, endDateTime);
+        return analyticsService.saveAllFromGitlab(user, serverId, gitLabProjectIdList, startDateTime, endDateTime);
     }
 }
