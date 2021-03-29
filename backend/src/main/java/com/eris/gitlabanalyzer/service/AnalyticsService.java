@@ -39,7 +39,7 @@ public class AnalyticsService {
 
     public List<Long> saveAllFromGitlab(User user, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         List<AnalysisRun> analysisRuns = saveProjectsAndAnalysisRuns(user, gitLabProjectIdList, startDateTime, endDateTime);
-        return loadProjectDataForAnalysisRuns(analysisRuns);
+        return saveProjectDataForAnalysisRuns(analysisRuns);
     }
 
     public List<AnalysisRun> saveProjectsAndAnalysisRuns(User user, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
@@ -51,7 +51,7 @@ public class AnalyticsService {
         return analysisRuns;
     }
 
-    public List<Long> loadProjectDataForAnalysisRuns(List<AnalysisRun> analysisRuns) {
+    public List<Long> saveProjectDataForAnalysisRuns(List<AnalysisRun> analysisRuns) {
         List<Long> projectIds = new ArrayList<>();
         analysisRuns.forEach(analysisRun -> {
             try {

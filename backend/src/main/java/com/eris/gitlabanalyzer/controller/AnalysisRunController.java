@@ -35,7 +35,7 @@ public class AnalysisRunController {
             Principal currentUser,
             @PathVariable("serverId") Long serverId) {
         User user = this.authService.getLoggedInUser(currentUser);
-        List<AnalysisRun> analysisRuns = this.analysisRunRepository.findByOwnerUserIdAndServerIdOrderByCreatedDateTimeDesc(user.getId(), serverId);
+        List<AnalysisRun> analysisRuns = analysisRunRepository.findByOwnerUserIdAndServerIdOrderByCreatedDateTimeDesc(user.getId(), serverId);
         return analysisRuns.stream().map(AnalysisRunView::fromAnalysisRun);
     }
 

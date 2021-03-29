@@ -43,12 +43,12 @@ public class AnalysisRunService {
                 startDateTime,
                 endDateTime
         );
-        return this.analysisRunRepository.save(analysisRun);
+        return analysisRunRepository.save(analysisRun);
     }
 
     public Stream<AnalysisRunView> getAccessibleAnalysisRuns(User user, Long serverId) {
         List<Long> userAccessibleGitlabProjectIds = getUserAccessibleGitlabProjectIds(user, serverId);
-        List<AnalysisRun> analysisRuns = this.analysisRunRepository.findOthersByServerIdAndGitLabProjectIds(user.getId(), serverId, userAccessibleGitlabProjectIds);
+        List<AnalysisRun> analysisRuns = analysisRunRepository.findOthersByServerIdAndGitLabProjectIds(user.getId(), serverId, userAccessibleGitlabProjectIds);
         return analysisRuns.stream().map(AnalysisRunView::fromAnalysisRun);
     }
 
