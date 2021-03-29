@@ -47,10 +47,10 @@ public class ProjectController {
     }
 
     @PostMapping(path = "/analytics/save_all")
-    public List<Long> saveAllFromGitlab(
+    public List<Long> saveProjectDataForAnalysisRuns(
             @RequestBody List<AnalysisRunView> analysisRuns){
         List<Long> analysisRunIds = analysisRuns.stream().map(AnalysisRunView::getId).collect(Collectors.toList());
-        return analyticsService.loadProjectDataForAnalysisRuns(analysisRunIds);
+        return analyticsService.saveProjectDataForAnalysisRuns(analysisRunIds);
     }
 
     @PostMapping(path = "/analytics/generate_analysis_runs")
