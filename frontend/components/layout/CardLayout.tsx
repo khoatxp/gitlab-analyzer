@@ -1,4 +1,4 @@
-import {Box, Typography} from "@material-ui/core";
+import {Box, Typography, Link, Icon} from "@material-ui/core";
 import React from "react";
 import Image from "next/image";
 import AppGradientBackground from "../app/AppGradientBackground";
@@ -34,7 +34,7 @@ const CardLayout = ({children, size, logoType = "center", backLink, backLabel}: 
                 bgcolor="primary.contrastText"
                 boxShadow={20}
                 width={width}
-                height={height}
+                height="60vh"
                 minWidth="250px"
                 minHeight="450px"
                 borderRadius={45}
@@ -55,7 +55,7 @@ const CardLayout = ({children, size, logoType = "center", backLink, backLabel}: 
                     </Typography>
                 </Box>
                 <Box
-                    flex={logoType === "center" ? "none" : 1}
+                    flex= {logoType === "center" ? "none" : 1}
                     display="flex"
                     flexDirection="column"
                     justifyContent="center"
