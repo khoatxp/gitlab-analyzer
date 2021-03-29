@@ -39,7 +39,6 @@ public class AnalyticsService {
         this.analysisRunRepository = analysisRunRepository;
     }
 
-
     public Stream<AnalysisRunView> saveProjectsAndAnalysisRuns(User user, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         List<AnalysisRun> analysisRuns = new ArrayList<>();
         gitLabProjectIdList.forEach(gitLabProjectId -> {
@@ -49,7 +48,7 @@ public class AnalyticsService {
         return analysisRuns.stream().map(AnalysisRunView::fromAnalysisRun);
     }
 
-    public List<Long> loadProjectDataForAnalysisRuns(List<Long> analysisRunIds) {
+    public List<Long> saveProjectDataForAnalysisRuns(List<Long> analysisRunIds) {
         List<Long> projectIds = new ArrayList<>();
         List<AnalysisRun> analysisRuns = analysisRunRepository.findByIds(analysisRunIds);
         analysisRuns.forEach(analysisRun -> {
@@ -80,9 +79,4 @@ public class AnalyticsService {
         });
         return projectIds;
     }
-
-
-
-
-
 }

@@ -5,10 +5,15 @@ import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
 import com.eris.gitlabanalyzer.repository.MergeRequestCommentRepository;
 import com.eris.gitlabanalyzer.repository.MergeRequestRepository;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
+import com.eris.gitlabanalyzer.viewmodel.ScoreDigest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.List;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
