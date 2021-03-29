@@ -10,10 +10,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -103,20 +100,21 @@ public class CommitService {
                 }
         );
 
+        setAllSharedMergeRequests(project.getId());
     }
 
     public CommitAuthor saveCommitAuthor(Project project, GitLabCommit gitLabCommit){
-        CommitAuthor commitAuthor = commitAuthorRepository.findByAuthorNameAndAuthorEmailAndProjectId(
+        Optional <CommitAuthor> existingAuthor = commitAuthorRepository.findByAuthorNameAndAuthorEmailAndProjectId(
                 gitLabCommit.getAuthorName(),
                 gitLabCommit.getAuthorEmail(),
                 project.getId()
         );
 
-        if(commitAuthor != null){
-            return commitAuthor;
+        if(existingAuthor.isPresent()){
+            return existingAuthor.get();
         }
 
-        commitAuthor = new CommitAuthor(gitLabCommit.getAuthorName(), gitLabCommit.getAuthorEmail(), project);
+        CommitAuthor commitAuthor = new CommitAuthor(gitLabCommit.getAuthorName(), gitLabCommit.getAuthorEmail(), project);
 
         //First attempt using author username extracted from email
         String username = splitEmail(gitLabCommit.getAuthorEmail());
@@ -189,6 +187,38 @@ public class CommitService {
 
     public List<Commit> getCommitsOfGitManagementUser(Long projectId, Long gitManagementUserId){
         return commitRepository.findByProjectIdAndGitManagementUserId(projectId, gitManagementUserId);
+    }
+
+
+    public void setAllSharedMergeRequests(Long projectId){
+        List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByProjectId(projectId);
+        for(MergeRequest mr : mergeRequests){
+            // reset mr sharedStatus so if was true and new mapping sets to false, won't remain true
+            Set<Long> sharedWith = new LinkedHashSet<>();
+            List<Commit> commits = commitRepository.findCommitByMergeRequest_Id(mr.getId());
+            for(Commit commit : commits){
+               Optional <CommitAuthor> commitAuthor = commitAuthorRepository.findByAuthorNameAndAuthorEmailAndProjectId(commit.getAuthorName(),
+                        commit.getAuthorEmail(), projectId);
+
+               commitAuthor.ifPresent(author -> {
+                   GitManagementUser gitManagementUser = author.getGitManagementUser();
+                   if(isMergeRequestShared(mr, gitManagementUser)){
+                       sharedWith.add(gitManagementUser.getId());
+                   }
+               });
+            }
+            mr.setSharedWith(sharedWith);
+            mergeRequestRepository.save(mr);
+        }
+    }
+    // checks whether supplied gitManagementUser is the same as one stored in MR
+    private boolean isMergeRequestShared(MergeRequest mr, GitManagementUser gitManagementUser){
+        if(gitManagementUser != null){
+            if(!mr.getGitManagementUser().getId().equals(gitManagementUser.getId())){
+                return true;
+            }
+        }
+        return false;
     }
 
 }

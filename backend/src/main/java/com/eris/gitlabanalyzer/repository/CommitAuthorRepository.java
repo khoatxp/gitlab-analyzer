@@ -9,10 +9,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CommitAuthorRepository extends JpaRepository<CommitAuthor, Long> {
-    CommitAuthor findByAuthorNameAndAuthorEmailAndProjectId(String authorName, String authorEmail, Long projectId);
+    Optional<CommitAuthor> findByAuthorNameAndAuthorEmailAndProjectId(String authorName, String authorEmail, Long projectId);
 
     @Query("select c.authorName as authorName, c.authorEmail as authorEmail, c.gitManagementUser.name as mappedGitManagementUserName, c.gitManagementUser.id as mappedGitManagementUserId  from CommitAuthor c where c.project.id = ?1")
     List<CommitAuthorView> findByProjectId(Long projectId);

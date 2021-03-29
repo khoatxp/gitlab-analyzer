@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,6 +48,30 @@ public class ScoreService {
         return diffScoreCalculator.calculateScoreMerge(mergeRequestId, scoreProfileId);
     }
 
+    public double[] getUserMergeScore(Long gitManagementUserId, Long projectId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByGitManagementUserIdAndDateRange(gitManagementUserId, projectId, startDateTime, endDateTime);
+        // Find shared MR for user that they both own or participated on
+        List<MergeRequest> sharedMergeRequests = mergeRequestRepository.findOwnerSharedMergeRequests(projectId, gitManagementUserId, startDateTime, endDateTime);
+        sharedMergeRequests.addAll(mergeRequestRepository.findParticipantSharedMergeRequests(projectId, gitManagementUserId, startDateTime, endDateTime));
+
+        double mergeScoreTotal = 0;
+
+        for(MergeRequest mr : mergeRequests){
+            mergeScoreTotal += diffScoreCalculator.calculateScoreMerge(mr.getId(), scoreProfileId);
+        }
+
+        List<Commit> commitsOnSharedMr = new ArrayList<>();
+        for(MergeRequest mr : sharedMergeRequests){
+            commitsOnSharedMr.addAll(commitRepository.findByMergeIdAndGitManagementUserId(mr.getId(), gitManagementUserId));
+        }
+        double sharedMergeScoreTotal = 0;
+        for(Commit commit : commitsOnSharedMr){
+            sharedMergeScoreTotal += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
+        }
+
+        return new double[]{mergeScoreTotal, sharedMergeScoreTotal};
+    }
+
     public void saveMergeDiffMetrics(MergeRequest mergeRequest){
         calculateDiffMetrics.storeMetricsMerge(mergeRequest);
     }
@@ -66,6 +91,22 @@ public class ScoreService {
     public double getCommitDiffScore(Long commitId, Long scoreProfileId){
 
         return diffScoreCalculator.calculateScoreCommit(commitId, scoreProfileId);
+    }
+
+    public double getUserCommitScore(Long projectId, Long gitManagementUserId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+
+        List<Commit> commits = commitRepository.findByProjectIdAndGitManagementUserIdAndDateRange(projectId, gitManagementUserId,
+                startDateTime.withOffsetSameInstant(ZoneOffset.UTC), endDateTime.withOffsetSameInstant(ZoneOffset.UTC));
+        double totalScore = 0;
+        for (Commit commit : commits) {
+            totalScore += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
+        }
+        commits = commitRepository.findOrphanByProjectIdAndGitManagementUserIdAndDateRange(projectId, gitManagementUserId,
+                startDateTime.withOffsetSameInstant(ZoneOffset.UTC), endDateTime.withOffsetSameInstant(ZoneOffset.UTC));
+        for (Commit commit : commits) {
+            totalScore += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
+        }
+        return totalScore;
     }
 
     public void saveCommitDiffMetrics(Commit commit){
