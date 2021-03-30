@@ -1,7 +1,13 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.model.*;
-import com.eris.gitlabanalyzer.repository.*;
+import com.eris.gitlabanalyzer.model.GitManagementUser;
+import com.eris.gitlabanalyzer.model.MergeRequest;
+import com.eris.gitlabanalyzer.model.Note;
+import com.eris.gitlabanalyzer.model.Project;
+import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
+import com.eris.gitlabanalyzer.repository.MergeRequestCommentRepository;
+import com.eris.gitlabanalyzer.repository.MergeRequestRepository;
+import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

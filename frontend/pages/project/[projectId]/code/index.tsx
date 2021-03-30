@@ -20,6 +20,7 @@ const index = () => {
     const [mergeRequests, setMergeRequests] = React.useState<MergeRequest[]>([]);
     const [commits, setCommits] = React.useState<Commit[]>([]);
     const [fileChanges, setFileChanges] = React.useState<FileChange[]>([]);
+    const [linkToFileChanges, setLinkToFileChanges] = React.useState<string>('');
     const {projectId, startDateTime, endDateTime} = router.query;
 
     useEffect(() => {
@@ -56,10 +57,12 @@ const index = () => {
 
     const handleSelectMergeRequest = (mergeRequest: MergeRequest) => {
         fetchCommitData(mergeRequest);
+        setLinkToFileChanges(mergeRequest.web_url);
         fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${mergeRequest.iid}/diff`);
     };
 
     const handleSelectCommit = (commit: Commit) => {
+        setLinkToFileChanges(commit.web_url);
         fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commit/${commit.id}/diff`);
     };
 
@@ -76,7 +79,7 @@ const index = () => {
                     </Grid>
 
                     <Grid item xs={9}>
-                        <DiffViewer fileChanges={fileChanges}/>
+                        <DiffViewer fileChanges={fileChanges} linkToFileChanges={linkToFileChanges}/>
                     </Grid>
                 </Grid>
             </MenuLayout>
