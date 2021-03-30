@@ -53,7 +53,7 @@ public class GitLabService {
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath)
                 .queryParam("per_page", 100)
-                //.queryParam("membership", true)
+                .queryParam("membership", true)
                 .build()
                 .encode()
                 .toUri()
