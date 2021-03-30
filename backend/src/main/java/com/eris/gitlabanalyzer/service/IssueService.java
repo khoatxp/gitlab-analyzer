@@ -8,6 +8,8 @@ import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.time.OffsetDateTime;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class IssueService {
@@ -37,7 +39,7 @@ public class IssueService {
         var gitLabIssues = gitLabService.getIssues(project.getGitLabProjectId(), startDateTime, endDateTime);
         var gitLabIssueList = gitLabIssues.collectList().block();
 
-        gitLabIssueList.forEach(gitLabIssue -> {
+        Objects.requireNonNull(gitLabIssueList).forEach(gitLabIssue -> {
                     GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabIssue.getAuthor().getId(), serverUrl);
                     Issue issue = issueRepository.findByIidAndProjectId(gitLabIssue.getIid(),project.getId());
                     if(issue == null){
@@ -57,27 +59,29 @@ public class IssueService {
         );
     }
 
-    public void saveIssueComments (Project project, Issue issue){
+    public void saveIssueComments(Project project, Issue issue) {
         // TODO use an internal projectId to find the correct server
         var gitLabService = new GitLabService(serverUrl, accessToken);
         var gitLabIssueComments = gitLabService.getIssueNotes(project.getGitLabProjectId(), issue.getIid());
         var gitLabIssueCommentList = gitLabIssueComments.collectList().block();
 
-        gitLabIssueCommentList.parallelStream().forEach(gitLabIssueComment -> {
-            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabIssueComment.getAuthor().getId(),serverUrl);
-            IssueComment issueComment = issueCommentRepository.findByGitLabIssueNoteIdAndIssueId(gitLabIssueComment.getId(),issue.getIid());
-            if(issueComment == null){
-                issueComment = new IssueComment(
-                        gitLabIssueComment.getId(),
-                        gitLabIssueComment.getBody(),
-                        gitLabIssueComment.getCreatedAt(),
+        Objects.requireNonNull(gitLabIssueCommentList).parallelStream().forEach(gitLabNote -> {
+            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabNote.getAuthor().getId(), serverUrl);
+            Optional<Note> note = issueCommentRepository.findByGitLabNoteIdAndProjectId(gitLabNote.getId(), issue.getIid());
+            if (note.isEmpty()) {
+                boolean isOwn = gitLabNote.getAuthor().getId() == issue.getGitManagementUser().getGitLabUserId();
+                issueCommentRepository.save(new Note(
+                        gitLabNote.getId(),
+                        gitLabNote.getBody(),
                         gitManagementUser,
-                        issue
-                );
+                        gitLabNote.getCreatedAt(),
+                        project.getId(),
+                        isOwn,
+                        issue.getIid(),
+                        issue.getWebUrl()
+                ));
             }
-            issueCommentRepository.save(issueComment);
         });
-
     }
     
     

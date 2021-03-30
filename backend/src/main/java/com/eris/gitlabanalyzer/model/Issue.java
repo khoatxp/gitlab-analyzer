@@ -122,6 +122,10 @@ public class Issue {
         return project;
     }
 
+    public GitManagementUser getGitManagementUser() {
+        return gitManagementUser;
+    }
+
     public GitManagementUser getMember() {
         return gitManagementUser;
     }

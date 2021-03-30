@@ -8,7 +8,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Entity(name = "Note")
 @Table(name = "note")
 @lombok.Getter
-@lombok.AllArgsConstructor
 @lombok.NoArgsConstructor
 public class Note {
     @Id
@@ -25,6 +24,12 @@ public class Note {
             name = "note_id"
     )
     private Long id;
+
+    @Column(
+            name = "gitlab_note_id",
+            nullable = false
+    )
+    private Long gitLabNoteId;
 
     @Column(
             name = "body",
@@ -47,12 +52,6 @@ public class Note {
     private OffsetDateTime createdAt;
 
     @Column(
-            name = "gitlab_note_id",
-            nullable = false
-    )
-    private Long gitLabNoteId;
-
-    @Column(
             name = "project_id",
             nullable = false
     )
@@ -68,7 +67,7 @@ public class Note {
             name = "parent_iid",
             nullable = false
     )
-    private int parentIid;
+    private Long parentIid;
 
     @Column(
             name = "parent_web_url",
@@ -76,9 +75,21 @@ public class Note {
     )
     private String parentWebUrl;
 
-    @Column(
-            name = "noteable_type",
-            nullable= false
-    )
-    private String noteableType;
+    public Note(Long gitLabNoteId,
+                String body,
+                GitManagementUser gitManagementUser,
+                OffsetDateTime createdAt,
+                Long projectId,
+                boolean own,
+                Long parentIid,
+                String parentWebUrl) {
+        this.gitLabNoteId = gitLabNoteId;
+        this.body = body;
+        this.gitManagementUser = gitManagementUser;
+        this.createdAt = createdAt;
+        this.projectId = projectId;
+        this.own = own;
+        this.parentIid = parentIid;
+        this.parentWebUrl = parentWebUrl;
+    }
 }
