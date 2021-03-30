@@ -25,7 +25,7 @@ public class ProjectController {
     private final AuthService authService;
 
     @Autowired
-    public ProjectController(ProjectService projectService, AnalyticsService analyticsService, AuthService authService, MessageService messageService){
+    public ProjectController(ProjectService projectService, AnalyticsService analyticsService, AuthService authService){
         this.projectService = projectService;
         this.analyticsService = analyticsService;
         this.authService = authService;

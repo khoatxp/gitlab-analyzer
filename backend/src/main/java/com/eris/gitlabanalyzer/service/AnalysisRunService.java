@@ -5,7 +5,6 @@ import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.User;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabProject;
 import com.eris.gitlabanalyzer.repository.AnalysisRunRepository;
-import com.eris.gitlabanalyzer.viewmodel.AnalysisRunProgressView;
 import com.eris.gitlabanalyzer.viewmodel.AnalysisRunView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -70,11 +69,6 @@ public class AnalysisRunService {
         } else {
             return new ArrayList<>();
         }
-    }
-
-    public AnalysisRunProgressView getAnalysisRunProgress(Long analysisRunId){
-        AnalysisRun analysisRun = analysisRunRepository.findById(analysisRunId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to fetch analysis run progress"));
-        return AnalysisRunProgressView.fromAnalysisRun(analysisRun);
     }
 
     public void updateProgress(AnalysisRun analysisRun, String message, Double progress, boolean saveToDatabase){
