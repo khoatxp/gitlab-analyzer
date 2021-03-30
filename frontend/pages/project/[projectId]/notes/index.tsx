@@ -22,7 +22,7 @@ import {useRouter} from "next/router";
 import {AuthContext} from "../../../../components/AuthContext";
 import AuthView from "../../../../components/AuthView";
 import MenuLayout from "../../../../components/layout/menu/MenuLayout";
-import formatDate from "../../../../interfaces/dateFormatter";
+import formatDate from "../../../../utils/DateFormatter";
 import {useSnackbar} from "notistack";
 import {Task} from "../../../../interfaces/GitLabTask";
 
