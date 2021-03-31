@@ -49,8 +49,8 @@ public class MergeRequestService {
 
         Objects.requireNonNull(gitLabMergeRequestList).forEach(gitLabMergeRequest -> {
                     GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabMergeRequest.getAuthor().getId(), serverUrl);
-                    MergeRequest mergeRequest = mergeRequestRepository.findByIidAndProjectId(gitLabMergeRequest.getIid(),project.getId());
-                    if(mergeRequest == null){
+                    MergeRequest mergeRequest = mergeRequestRepository.findByIidAndProjectId(gitLabMergeRequest.getIid(), project.getId());
+                    if (mergeRequest == null) {
                         mergeRequest = new MergeRequest(
                                 gitLabMergeRequest.getIid(),
                                 gitLabMergeRequest.getAuthor().getUsername(),
@@ -69,7 +69,7 @@ public class MergeRequestService {
         );
     }
 
-    public void saveMergeRequestComments (Project project, MergeRequest mergeRequest){
+    public void saveMergeRequestComments(Project project, MergeRequest mergeRequest) {
         // TODO use an internal projectId to find the correct server
         var gitLabService = new GitLabService(serverUrl, accessToken);
 
@@ -79,9 +79,9 @@ public class MergeRequestService {
         Objects.requireNonNull(gitLabMergeRequestCommentList).parallelStream().forEach(gitLabNote -> {
             GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabNote.getAuthor().getId(), serverUrl);
             Optional<Note> note = noteRepository.findByGitLabNoteIdAndProjectId(gitLabNote.getId(), project.getId());
-            if(note.isEmpty()){
-                boolean isOwn = gitLabNote.getAuthor().getId() == mergeRequest.getGitManagementUser().getGitLabUserId();
-                noteRepository.save( new Note(
+            if (note.isEmpty() && !gitLabNote.isSystem()) {
+                boolean isOwn = gitLabNote.getAuthor().getId().equals(mergeRequest.getGitManagementUser().getGitLabUserId());
+                noteRepository.save(new Note(
                         gitLabNote.getId(),
                         gitLabNote.getBody(),
                         gitManagementUser,

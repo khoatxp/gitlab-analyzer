@@ -7,6 +7,7 @@ import com.eris.gitlabanalyzer.repository.IssueRepository;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,8 +42,8 @@ public class IssueService {
 
         Objects.requireNonNull(gitLabIssueList).forEach(gitLabIssue -> {
                     GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabIssue.getAuthor().getId(), serverUrl);
-                    Issue issue = issueRepository.findByIidAndProjectId(gitLabIssue.getIid(),project.getId());
-                    if(issue == null){
+                    Issue issue = issueRepository.findByIidAndProjectId(gitLabIssue.getIid(), project.getId());
+                    if (issue == null) {
                         issue = new Issue(
                                 gitLabIssue.getIid(),
                                 gitLabIssue.getTitle(),
@@ -68,8 +69,8 @@ public class IssueService {
         Objects.requireNonNull(gitLabIssueCommentList).parallelStream().forEach(gitLabNote -> {
             GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabNote.getAuthor().getId(), serverUrl);
             Optional<Note> note = issueCommentRepository.findByGitLabNoteIdAndProjectId(gitLabNote.getId(), issue.getIid());
-            if (note.isEmpty()) {
-                boolean isOwn = gitLabNote.getAuthor().getId() == issue.getGitManagementUser().getGitLabUserId();
+            if (note.isEmpty() && !gitLabNote.isSystem()) {
+                boolean isOwn = gitLabNote.getAuthor().getId().equals(issue.getGitManagementUser().getGitLabUserId());
                 issueCommentRepository.save(new Note(
                         gitLabNote.getId(),
                         gitLabNote.getBody(),
@@ -83,6 +84,6 @@ public class IssueService {
             }
         });
     }
-    
-    
+
+
 }
