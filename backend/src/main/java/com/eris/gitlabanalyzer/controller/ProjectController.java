@@ -14,10 +14,12 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @RestController
+@RequestMapping(path = "/api/v1")
 public class ProjectController {
     private final ProjectService projectService;
     private final AnalyticsService analyticsService;
     private final AuthService authService;
+
     @Autowired
     public ProjectController(ProjectService projectService, AnalyticsService analyticsService, AuthService authService){
         this.projectService = projectService;
@@ -25,7 +27,7 @@ public class ProjectController {
         this.authService = authService;
     }
 
-    @GetMapping(path = "/api/v1/projects/{projectId}/rawdata")
+    @GetMapping(path = "/projects/{projectId}/rawdata")
     public RawTimeLineProjectData analyzeProject(
             @PathVariable("projectId") Long projectId,
             @RequestParam("startDateTime")
@@ -35,12 +37,12 @@ public class ProjectController {
         return projectService.getTimeLineProjectData(projectId, startDateTime, endDateTime);
     }
 
-    @GetMapping(path = "/api/v1/projects")
+    @GetMapping(path = "/projects")
     public List<Project> getProjects(){
         return projectService.getProjects();
     }
 
-    @PostMapping(path = "/api/v1/{serverId}/projects/analytics")
+    @PostMapping(path = "/{serverId}/projects/analytics")
     public List<Long> saveAllFromGitlab(
             Principal principal,
             @PathVariable("serverId") Long serverId,

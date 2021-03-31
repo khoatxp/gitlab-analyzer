@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import axios, {AxiosResponse, AxiosError} from "axios";
-import {List, ListItem, ListItemSecondaryAction, ListItemText, Icon, Box, Typography} from "@material-ui/core";
+import axios, {AxiosResponse} from "axios";
+import {Box, Icon, List, ListItem, ListItemSecondaryAction, ListItemText, Typography} from "@material-ui/core";
 import Button from '@material-ui/core/Button';
 import {useSnackbar} from 'notistack';
 import {useRouter} from "next/router";
@@ -22,7 +22,6 @@ const useStyles = makeStyles({
 const Server = () => {
     const classes = useStyles();
     const {enqueueSnackbar} = useSnackbar();
-    const router = useRouter();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [servers, setServers] = useState<UserServerView[]>([]);
@@ -32,7 +31,7 @@ const Server = () => {
             .get(`${process.env.NEXT_PUBLIC_API_URL}/servers`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
                 if (resp.data) {
-                    const userServers:UserServerView[] = resp.data;
+                    const userServers: UserServerView[] = resp.data;
                     setServers(userServers);
                     setIsLoading(false);
                 }
@@ -48,27 +47,27 @@ const Server = () => {
                 <List>
                     {servers.map((server) => {
                         return (
-                        <ListItem key={server.serverId}>
-                            <ListItemText
-                                primary={server.serverUrl}
-                                classes={{primary: classes.itemName}}
-                            />
-                            <ListItemSecondaryAction>
-                                <NextLink href={`/server/${server.serverId}/projects`} passHref>
-                                    <AppButton size="medium" color="primary">Select</AppButton>
-                                </NextLink>
-                            </ListItemSecondaryAction>
-                        </ListItem>);
+                            <ListItem key={server.serverId}>
+                                <ListItemText
+                                    primary={server.serverUrl}
+                                    classes={{primary: classes.itemName}}
+                                />
+                                <ListItemSecondaryAction>
+                                    <NextLink href={`/server/${server.serverId}/`} passHref>
+                                        <AppButton size="medium" color="primary">Select</AppButton>
+                                    </NextLink>
+                                </ListItemSecondaryAction>
+                            </ListItem>);
                     })}
                 </List>
-                    <Box textAlign="center" marginTop="10px">
-                        <NextLink href={`/server/add`} passHref>
-                            <Button>
-                                <Icon>add_circle</Icon> Add New Server
-                            </Button>
-                        </NextLink>
-                    </Box>
-                </CardLayout>
+                <Box textAlign="center" marginTop="10px">
+                    <NextLink href={`/server/add`} passHref>
+                        <Button>
+                            <Icon>add_circle</Icon> Add New Server
+                        </Button>
+                    </NextLink>
+                </Box>
+            </CardLayout>
             }
         </AuthView>
     );
