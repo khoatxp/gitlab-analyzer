@@ -88,14 +88,6 @@ public class MergeRequest {
     )
     private List<Commit> commits = new ArrayList<>();
 
-    @OneToMany(
-            mappedBy = "mergeRequest",
-            orphanRemoval = false,
-            cascade = {CascadeType.PERSIST},
-            fetch = FetchType.LAZY
-    )
-    private List<MergeRequestComment> mergeRequestComments = new ArrayList<>();
-
     public Long getId() {
         return id;
     }
@@ -162,13 +154,6 @@ public class MergeRequest {
         if (!this.commits.contains(commit)) {
             this.commits.add(commit);
             commit.setMergeRequest(this);
-        }
-    }
-
-    public void addMergeRequestComment(MergeRequestComment mergeRequestComment) {
-        if (!this.mergeRequestComments.contains(mergeRequestComment)) {
-            this.mergeRequestComments.add(mergeRequestComment);
-            mergeRequestComment.setMergeRequest(this);
         }
     }
 

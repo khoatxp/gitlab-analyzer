@@ -76,22 +76,6 @@ public class GitManagementUser {
     )
     private List<CommitComment> commitComments = new ArrayList<>();
 
-    @OneToMany(
-            mappedBy = "gitManagementUser",
-            orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            fetch = FetchType.LAZY
-    )
-    private List<IssueComment> issueComments = new ArrayList<>();
-
-    @OneToMany(
-            mappedBy = "gitManagementUser",
-            orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            fetch = FetchType.LAZY
-    )
-    private List<MergeRequestComment> mergeRequestComments = new ArrayList<>();
-
     @ManyToMany
     @JoinTable(
             name = "member",
@@ -139,14 +123,6 @@ public class GitManagementUser {
         return commitComments;
     }
 
-    public List<IssueComment> getIssueComments() {
-        return issueComments;
-    }
-
-    public List<MergeRequestComment> getMergeRequestComments() {
-        return mergeRequestComments;
-    }
-
     public List<Project> getProjects() {
         return projects;
     }
@@ -185,20 +161,6 @@ public class GitManagementUser {
         if (!this.commitComments.contains(commitComment)) {
             this.commitComments.add(commitComment);
             commitComment.setMember(this);
-        }
-    }
-
-    public void addMergeRequestComment(MergeRequestComment mergeRequestComment) {
-        if (!this.mergeRequestComments.contains(mergeRequestComment)) {
-            this.mergeRequestComments.add(mergeRequestComment);
-            mergeRequestComment.setMember(this);
-        }
-    }
-
-    public void addIssueComment(IssueComment issueComment) {
-        if (!this.issueComments.contains(issueComment)) {
-            this.issueComments.add(issueComment);
-            issueComment.setMember(this);
         }
     }
 
