@@ -12,7 +12,6 @@ public class NoteView {
     private final String body;
     private final Author author;
     private final OffsetDateTime createdAt;
-    private final Long projectId;
     private final boolean own;
     private final Long parentIid;
     private final String parentWebUrl;
@@ -23,7 +22,6 @@ public class NoteView {
                 note.getBody(),
                 Author.fromGitManagementUser(note.getGitManagementUser()),
                 note.getCreatedAt(),
-                note.getProjectId(),
                 note.isOwn(),
                 note.getParentIid(),
                 note.getParentWebUrl()

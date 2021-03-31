@@ -16,15 +16,12 @@ import {
     Typography
 } from "@material-ui/core";
 import {Note} from "../../../../interfaces/GitLabNote";
-import {MergeRequest} from "../../../../interfaces/GitLabMergeRequest";
-import {Issue} from "../../../../interfaces/GitLabIssue";
 import {useRouter} from "next/router";
 import {AuthContext} from "../../../../components/AuthContext";
 import AuthView from "../../../../components/AuthView";
 import MenuLayout from "../../../../components/layout/menu/MenuLayout";
 import formatDate from "../../../../utils/DateFormatter";
 import {useSnackbar} from "notistack";
-import {Task} from "../../../../interfaces/GitLabTask";
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -43,18 +40,16 @@ enum NoteType {
 const NotesPage = () => {
     const {enqueueSnackbar} = useSnackbar();
 
-    const [mergeRequests, setMergeRequests] = useState<MergeRequest[]>([]);
-    const [issues, setIssues] = useState<Issue[]>([]);
-    const [mergeRequestNotes, setMergeRequestNotes] = useState<Note[][]>([]);
-    const [issueNotes, setIssueNotes] = useState<Note[][]>([]);
+    const [mergeRequestNotes, setMergeRequestNotes] = useState<Note[]>([]);
+    const [issueNotes, setIssueNotes] = useState<Note[]>([]);
 
     const [noteType, setNoteType] = useState(NoteType.MergeRequest);
 
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
     const router = useRouter();
-    const {projectId, startDateTime, endDateTime} = router.query;
-    const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`;
+    const {projectId} = router.query;
+    const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/${projectId}`;
 
     const handleSelectNoteType = (event: React.ChangeEvent<HTMLInputElement>) => {
         setNoteType(Number((event.target as HTMLInputElement).value));
@@ -63,55 +58,22 @@ const NotesPage = () => {
 
     useEffect(() => {
         if (projectId) {
-            const dateQuery = `?startDateTime=${startDateTime}&endDateTime=${endDateTime}`;
             axios
-                .get(`${PROJECT_ID_URL}/merge_requests${dateQuery}`, getAxiosAuthConfig())
+                .get(`${PROJECT_ID_URL}/merge_request_notes`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
-                    setMergeRequests(resp.data);
+                    setMergeRequestNotes(resp.data);
                 }).catch(() => {
-                enqueueSnackbar('Failed to get merge requests data.', {variant: 'error',});
+                enqueueSnackbar('Failed to get merge requests notes.', {variant: 'error',});
             });
             axios
-                .get(`${PROJECT_ID_URL}/issues${dateQuery}`, getAxiosAuthConfig())
+                .get(`${PROJECT_ID_URL}/issue_notes`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
-                    setIssues(resp.data);
+                    setIssueNotes(resp.data);
                 }).catch(() => {
-                enqueueSnackbar('Failed to get issues data.', {variant: 'error',});
+                enqueueSnackbar('Failed to get issue notes.', {variant: 'error',});
             });
         }
     }, [projectId]);
-
-    useEffect(() => {
-        getAllMergeRequestNotes();
-    }, [mergeRequests]);
-
-    useEffect(() => {
-        getAllIssueNotes();
-    }, [issues]);
-
-    const getAllMergeRequestNotes = () => {
-        axios.all(mergeRequests.map(
-            (mergeRequest) => (
-                axios
-                    .get(`${PROJECT_ID_URL}/merge_requests/${mergeRequest.iid}/notes`, getAxiosAuthConfig()))
-            )
-        ).then((responses) => {
-            setMergeRequestNotes(responses.map((resp) => (resp.data)));
-        }).catch(() => {
-            enqueueSnackbar('Failed to get merge request notes.', {variant: 'error',});
-        });
-    };
-
-    const getAllIssueNotes = () => {
-        axios.all(issues.map((issue) => (
-            axios
-                .get(`${PROJECT_ID_URL}/issues/${issue.iid}/notes`, getAxiosAuthConfig())))
-        ).then((responses) => {
-            setIssueNotes(responses.map((resp) => (resp.data)));
-        }).catch(() => {
-            enqueueSnackbar('Failed to get issue notes.', {variant: 'error',});
-        });
-    };
 
     return (
         <AuthView>
@@ -120,12 +82,8 @@ const NotesPage = () => {
                     <Grid container spacing={2}>
                         <Card>
                             <NotesList
-                                noteArrays={noteType === NoteType.MergeRequest ?
+                                notes={noteType === NoteType.MergeRequest ?
                                     mergeRequestNotes : issueNotes
-                                }
-                                noteParents={
-                                    noteType === NoteType.MergeRequest ?
-                                        mergeRequests : issues
                                 }
                                 noteType={noteType}
                                 handleChangeNoteType={handleSelectNoteType}
@@ -167,9 +125,8 @@ const RadioGroupSelectMergeRequestsOrIssues = ({value, handleChange}
 };
 
 
-const NotesList = ({noteArrays, noteParents, noteType, handleChangeNoteType}: {
-    noteArrays: Note[][],
-    noteParents: Task[],
+const NotesList = ({notes, noteType, handleChangeNoteType}: {
+    notes: Note[],
     noteType: NoteType,
     handleChangeNoteType: React.Dispatch<React.ChangeEvent<HTMLInputElement>>,
 }) => {
@@ -184,41 +141,40 @@ const NotesList = ({noteArrays, noteParents, noteType, handleChangeNoteType}: {
         }</ListSubheader>}
               className={classes.notesList}
         >
-            {noteArrays?.map((noteArray, i) => (
-                noteArray.map((note) => (
-                    <ListItem key={note.id}>
-                        <ListItemText
-                            primary={
-                                <>
-                                    {`${note.author.name} `}
-                                    <Typography
-                                        component="span"
-                                        variant="body2"
-                                        color="textSecondary"
-                                    >
-                                        {`@${note.author.username}
+            {notes.map((note) => (
+                <ListItem key={note.id}>
+                    <ListItemText
+                        primary={
+                            <>
+                                {`${note.author.name} `}
+                                <Typography
+                                    component="span"
+                                    variant="body2"
+                                    color="textSecondary"
+                                >
+                                    {`@${note.author.username}
                                          · ${formatDate(note.created_at)}
                                          · ${getWordCount(note.body)} words · `
-                                        }
-                                    </Typography>
-                                    <Link variant="body2"
-                                          rel="noopener noreferrer"
-                                          target="_blank"
-                                          href={noteParents[i].web_url}>{`#${noteParents[i].iid}`}</Link>
-                                </>}
-                            secondary={
-                                <>
-                                    <Typography
-                                        component="span"
-                                        variant="body2"
-                                        color="textPrimary"
-                                    >
-                                        {note.body}
-                                    </Typography>
-                                </>}
-                        />
-                    </ListItem>
-                ))))}
+                                    }
+                                </Typography>
+                                <Link variant="body2"
+                                      rel="noopener noreferrer"
+                                      target="_blank"
+                                      href={note.parent_web_url}>{`#${note.parent_iid}`}</Link>
+                            </>}
+                        secondary={
+                            <>
+                                <Typography
+                                    component="span"
+                                    variant="body2"
+                                    color="textPrimary"
+                                >
+                                    {note.body}
+                                </Typography>
+                            </>}
+                    />
+                </ListItem>
+            ))}
         </List>
     );
 };

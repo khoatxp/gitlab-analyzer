@@ -5,6 +5,7 @@ export interface Note {
     body: string;
     author: Author;
     created_at: string;
-    noteable_id: number;
-    noteable_iid: number;
+    own: boolean;
+    parent_iid: number;
+    parent_web_url: string;
 }
