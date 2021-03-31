@@ -1,14 +1,19 @@
 package com.eris.gitlabanalyzer.model.types;
 
-import com.fasterxml.jackson.annotation.*;
+import com.eris.gitlabanalyzer.model.GitManagementUser;
 
 @lombok.Getter
+@lombok.AllArgsConstructor
 public class Author {
-    private long id;
-    private String name;
-    private String username;
-    @JsonProperty("avatar_url")
-    private String avatarURL;
-    @JsonProperty("web_url")
-    private String webURL;
+    private final Long id;
+    private final String name;
+    private final String username;
+
+    public static Author fromGitManagementUser(GitManagementUser gitManagementUser) {
+        return new Author(
+                gitManagementUser.getGitLabUserId(),
+                gitManagementUser.getName(),
+                gitManagementUser.getUsername()
+        );
+    }
 }
