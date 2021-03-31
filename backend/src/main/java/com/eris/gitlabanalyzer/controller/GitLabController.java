@@ -140,47 +140,6 @@ public class GitLabController {
         return gitLabService.getMergeRequestDiff(project.getGitLabProjectId(), merge_request_iid);
     }
 
-    // Used in notes page for now
-    @GetMapping(path = "/projects/{projectId}/merge_requests/{merge_request_iid}/notes")
-    public Flux<GitLabNote> getMergeRequestNotes(
-            Principal principal,
-            @PathVariable("projectId") Long projectId,
-            @PathVariable("merge_request_iid") Long merge_request_iid) {
-
-        validatePermission(principal, projectId);
-        var project = projectService.getProjectById(projectId);
-        var gitLabService = new GitLabService(serverUrl, accessToken);
-        return gitLabService.getMergeRequestNotes(project.getGitLabProjectId(), merge_request_iid);
-    }
-
-    // Used in notes page for now
-    @GetMapping(path = "/projects/{projectId}/issues")
-    public Flux<GitLabIssue> getIssues(
-            Principal principal,
-            @PathVariable("projectId") Long projectId,
-            @RequestParam("startDateTime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
-            @RequestParam("endDateTime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
-
-        validatePermission(principal, projectId);
-        var project = projectService.getProjectById(projectId);
-        var gitLabService = new GitLabService(serverUrl, accessToken);
-        return gitLabService.getIssues(project.getGitLabProjectId(), startDateTime, endDateTime);
-    }
-
-    // Used in notes page for now
-    @GetMapping(path = "/projects/{projectId}/issues/{issue_iid}/notes")
-    public Flux<GitLabNote> getIssueNotes(
-            Principal principal,
-            @PathVariable("projectId") Long projectId,
-            @PathVariable("issue_iid") Long issue_iid) {
-
-        validatePermission(principal, projectId);
-        var project = projectService.getProjectById(projectId);
-        var gitLabService = new GitLabService(serverUrl, accessToken);
-        return gitLabService.getIssueNotes(project.getGitLabProjectId(), issue_iid);
-    }
     @GetMapping(path ="/projects/{projectId}/members")
     public Flux<GitLabMember> getMembers(
             Principal principal,
