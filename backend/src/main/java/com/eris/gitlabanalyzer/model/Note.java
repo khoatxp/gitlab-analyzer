@@ -1,5 +1,7 @@
 package com.eris.gitlabanalyzer.model;
 
+import com.eris.gitlabanalyzer.model.types.NoteType;
+
 import javax.persistence.*;
 import java.time.OffsetDateTime;
 
@@ -75,6 +77,13 @@ public class Note {
     )
     private String parentWebUrl;
 
+    @Enumerated(EnumType.STRING)
+    @Column(
+            name = "noteable_type",
+            nullable = false
+    )
+    private NoteType noteableType;
+
     public Note(Long gitLabNoteId,
                 String body,
                 GitManagementUser gitManagementUser,
@@ -82,7 +91,8 @@ public class Note {
                 Long projectId,
                 boolean own,
                 Long parentIid,
-                String parentWebUrl) {
+                String parentWebUrl,
+                NoteType noteableType) {
         this.gitLabNoteId = gitLabNoteId;
         this.body = body;
         this.gitManagementUser = gitManagementUser;
@@ -91,5 +101,6 @@ public class Note {
         this.own = own;
         this.parentIid = parentIid;
         this.parentWebUrl = parentWebUrl;
+        this.noteableType = noteableType;
     }
 }

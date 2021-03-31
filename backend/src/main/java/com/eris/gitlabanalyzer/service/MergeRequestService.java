@@ -89,7 +89,8 @@ public class MergeRequestService {
                         project.getId(),
                         isOwn,
                         mergeRequest.getIid(),
-                        mergeRequest.getWebUrl()
+                        mergeRequest.getWebUrl(),
+                        gitLabNote.getNoteableType()
                 ));
             }
         });

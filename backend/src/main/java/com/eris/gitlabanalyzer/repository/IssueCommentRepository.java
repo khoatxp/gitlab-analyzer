@@ -10,9 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface IssueCommentRepository extends JpaRepository<Note, Long> {
-    @Query("select n from Note n where n.projectId = ?1")
+    @Query("select n from Note n where n.projectId = ?1 and n.noteableType='Issue'")
     List<Note> findAllByProjectId(Long projectId);
 
-    @Query("select n from Note n where n.gitLabNoteId = ?1 and n.projectId = ?2")
+    @Query("select n from Note n where n.gitLabNoteId = ?1 and n.projectId = ?2 and n.noteableType='Issue'")
     Optional<Note> findByGitLabNoteIdAndProjectId(Long gitLabNoteId, Long projectId);
 }

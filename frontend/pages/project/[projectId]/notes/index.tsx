@@ -153,14 +153,14 @@ const NotesList = ({notes, noteType, handleChangeNoteType}: {
                                     color="textSecondary"
                                 >
                                     {`@${note.author.username}
-                                         · ${formatDate(note.created_at)}
+                                         · ${formatDate(note.createdAt)}
                                          · ${getWordCount(note.body)} words · `
                                     }
                                 </Typography>
                                 <Link variant="body2"
                                       rel="noopener noreferrer"
                                       target="_blank"
-                                      href={note.parent_web_url}>{`#${note.parent_iid}`}</Link>
+                                      href={note.parentWebUrl}>{`#${note.parentIid}`}</Link>
                             </>}
                         secondary={
                             <>

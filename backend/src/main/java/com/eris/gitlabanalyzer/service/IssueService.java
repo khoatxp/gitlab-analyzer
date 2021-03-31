@@ -79,7 +79,8 @@ public class IssueService {
                         project.getId(),
                         isOwn,
                         issue.getIid(),
-                        issue.getWebUrl()
+                        issue.getWebUrl(),
+                        gitLabNote.getNoteableType()
                 ));
             }
         });

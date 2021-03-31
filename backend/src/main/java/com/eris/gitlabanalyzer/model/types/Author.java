@@ -4,10 +4,11 @@ import com.eris.gitlabanalyzer.model.GitManagementUser;
 
 @lombok.Getter
 @lombok.AllArgsConstructor
+@lombok.NoArgsConstructor
 public class Author {
-    private final Long id;
-    private final String name;
-    private final String username;
+    private Long id;
+    private String name;
+    private String username;
 
     public static Author fromGitManagementUser(GitManagementUser gitManagementUser) {
         return new Author(

@@ -1,6 +1,7 @@
 package com.eris.gitlabanalyzer.model.gitlabresponse;
 
 import com.eris.gitlabanalyzer.model.types.Author;
+import com.eris.gitlabanalyzer.model.types.NoteType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.OffsetDateTime;
@@ -18,5 +19,5 @@ public class GitLabNote {
     @JsonProperty("noteable_iid")
     private Long noteableIid;
     @JsonProperty("noteable_type")
-    private String noteableType;
+    private NoteType noteableType;
 }
