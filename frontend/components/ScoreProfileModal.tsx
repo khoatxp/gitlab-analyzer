@@ -44,7 +44,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
 
 
     const [savedArray, setSavedArray] = useState({});
-    const [extensions, setExtensions] = useState([]);
+    const [extensions, setExtensions] = useState<[string, number][]>([]);
     const [syntaxWeight, setSyntaxWeight] = useState<number>()
     const [commentsWeight, setCommentsWeight] = useState<number>();
     const [name, setName] = useState<string>()
@@ -88,7 +88,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
 
     const handleAddExtension = () => {
         const list = extensions.slice();
-        list.push(["", ""])
+        list.push(["", 0])
         setExtensions(list);
     };
 
@@ -122,7 +122,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
             enqueueSnackbar('Extension names must not be empty', {variant: 'error',});
             return false;
         }
-        if (extensions.some( extension => extension[1] < 0 || extension[1] == "")){
+        if (extensions.some( extension => extension[1] < 0 || extension[1] == undefined)){
             enqueueSnackbar('Extension weights cannot be empty or negative', {variant: 'error',});
             return false;
         }
@@ -195,35 +195,35 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                     <form onSubmit={handleSave}>
                         <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
                             <Box width={150}>
-                                <AppTextField label="Name" value={name || ""} onChange={(e) => setName( e.target.value)} required/>
+                                <AppTextField label="Name" value={name ?? ""} onChange={(e) => setName( e.target.value)} required/>
                             </Box>
                         </div>
                         <Box display="flex" flexDirection="row" justifyContent="center" >
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="New Line" placeholder="Weight"
                                 type="number"
-                                value={lineWeight || ""}
+                                value={lineWeight ?? ""}
                                 onChange={(e) => setLineWeight(Number(e.target.value))}
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="Deleting" placeholder="Weight"
                                 type="number"
-                                value={deleteWeight || ""}
+                                value={deleteWeight ?? ""}
                                 onChange={(e) => setDeleteWeight(Number(e.target.value))}
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="Syntax(e.g '}')" placeholder="Weight"
                                 type="number"
-                                value={syntaxWeight || ""}
+                                value={syntaxWeight ?? ""}
                                 onChange={(e) => setSyntaxWeight(Number(e.target.value))}
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="Comments" placeholder="Weight"
                                 type="number"
-                                value={commentsWeight|| ""}
+                                value={commentsWeight ?? ""}
                                 onChange={(e) => setCommentsWeight(Number(e.target.value))}
                                 />
                             </Box>
@@ -247,14 +247,14 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                         <Box marginLeft={1} marginRight={1}>
                                             
                                             <AppTextField label="extension"
-                                            value={extension[0] || ""}
+                                            value={extension[0] ?? ""}
                                             onChange={(e) => handleExtensionChange(e.target.value ,index)}
                                             />
                                         </Box>
                                         <Box marginLeft={1} marginRight={1}>
                                             
                                             <AppTextField label="weight"
-                                            value={extension[1] || ""}
+                                            value={extension[1] ?? ""}
                                             onChange={(e) => handleWeightChange(Number(e.target.value), index) }
                                             type="number"
                                             />

@@ -67,6 +67,9 @@ const ScoreProfileSelector = ({onScoreProfileSelect}:Props) => {
             axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile/${id}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     console.log(resp.data);
+                    if(scoreProfile == id){
+                        setScoreProfile(undefined);
+                    }
                     update();
                 }).catch(() => {
                 enqueueSnackbar('Failed to delete score profile', {variant: 'error',});
@@ -113,10 +116,10 @@ const ScoreProfileSelector = ({onScoreProfileSelect}:Props) => {
                     <Select
                         labelId={"score-options"}
                         open={selectOpen}
-                        onOpen={() => {setIconVisible(true), setSelectOpen(true)}}
-                        onClose={() => {setIconVisible(false),setSelectOpen(false)}}
+                        onOpen={() => {setIconVisible(true); setSelectOpen(true)}}
+                        onClose={() => {setIconVisible(false); setSelectOpen(false)}}
                         value={scoreProfile || ""}
-                        onChange={(e) => {setScoreProfile(Number(e.target.value)), onScoreProfileSelect(Number(e.target.value))}}
+                        onChange={(e) => {setScoreProfile(Number(e.target.value)); onScoreProfileSelect(Number(e.target.value))}}
                         MenuProps={{
                             anchorOrigin: {vertical: "top", horizontal: "left"},
                             transformOrigin: {vertical: "top", horizontal: "left"},
