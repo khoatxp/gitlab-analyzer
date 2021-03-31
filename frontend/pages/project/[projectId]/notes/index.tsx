@@ -29,6 +29,7 @@ const useStyles = makeStyles(() =>
         notesList: {
             overflow: 'auto',
             height: '80vh',
+            width: '80vw',
         },
     }),
 );
@@ -148,7 +149,7 @@ const NotesList = ({mergeRequestNotes, issueNotes}: {
     const classes = useStyles();
     return (
         <List subheader={<ListSubheader color={"primary"}>{
-            <Box>
+            <Box bgcolor="white">
                 <RadioGroupSelectMergeRequestsOrIssues
                     value={noteType}
                     handleChange={handleChangeNoteType}
@@ -194,6 +195,7 @@ const NotesList = ({mergeRequestNotes, issueNotes}: {
                                         component="span"
                                         variant="body2"
                                         color="textPrimary"
+                                        style={{wordWrap: 'break-word'}}
                                     >
                                         {note.body}
                                     </Typography>
