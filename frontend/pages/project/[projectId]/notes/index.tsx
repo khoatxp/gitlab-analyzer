@@ -2,10 +2,11 @@ import {createStyles, makeStyles} from "@material-ui/core/styles";
 import React, {useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import {
-    Card,
+    Box,
+    Card, Checkbox,
     Container,
     FormControl,
-    FormControlLabel,
+    FormControlLabel, FormGroup,
     Grid, Link,
     List,
     ListItem,
@@ -43,18 +44,11 @@ const NotesPage = () => {
     const [mergeRequestNotes, setMergeRequestNotes] = useState<Note[]>([]);
     const [issueNotes, setIssueNotes] = useState<Note[]>([]);
 
-    const [noteType, setNoteType] = useState(NoteType.MergeRequest);
-
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
     const router = useRouter();
     const {projectId} = router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/${projectId}`;
-
-    const handleSelectNoteType = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setNoteType(Number((event.target as HTMLInputElement).value));
-
-    };
 
     useEffect(() => {
         if (projectId) {
@@ -82,11 +76,8 @@ const NotesPage = () => {
                     <Grid container spacing={2}>
                         <Card>
                             <NotesList
-                                notes={noteType === NoteType.MergeRequest ?
-                                    mergeRequestNotes : issueNotes
-                                }
-                                noteType={noteType}
-                                handleChangeNoteType={handleSelectNoteType}
+                                mergeRequestNotes={mergeRequestNotes}
+                                issueNotes={issueNotes}
                             />
                         </Card>
                     </Grid>
@@ -124,56 +115,91 @@ const RadioGroupSelectMergeRequestsOrIssues = ({value, handleChange}
     );
 };
 
-
-const NotesList = ({notes, noteType, handleChangeNoteType}: {
-    notes: Note[],
-    noteType: NoteType,
-    handleChangeNoteType: React.Dispatch<React.ChangeEvent<HTMLInputElement>>,
+const HideOwnCheckbox = ({hidden, handleChange}
+                             : {
+    hidden: boolean,
+    handleChange: React.Dispatch<React.ChangeEvent<HTMLInputElement>>,
 }) => {
+    return (
+        <FormControl component="fieldset">
+            <FormGroup>
+                <FormControlLabel
+                    control={<Checkbox checked={hidden} onChange={handleChange} name="hide own" size="small"/>}
+                    label='Hide "(Own)" notes'
+                />
+            </FormGroup>
+        </FormControl>
+    );
+};
+
+const NotesList = ({mergeRequestNotes, issueNotes}: {
+    mergeRequestNotes: Note[],
+    issueNotes: Note[],
+}) => {
+
+    const [noteType, setNoteType] = useState(NoteType.MergeRequest);
+    const [hideOwnNotes, setHideOwnNotes] = useState(false);
+
+    const handleChangeNoteType = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setNoteType(Number((event.target as HTMLInputElement).value));
+    };
+
 
     const classes = useStyles();
     return (
         <List subheader={<ListSubheader color={"primary"}>{
-            <RadioGroupSelectMergeRequestsOrIssues
-                value={noteType}
-                handleChange={handleChangeNoteType}
-            />
+            <Box>
+                <RadioGroupSelectMergeRequestsOrIssues
+                    value={noteType}
+                    handleChange={handleChangeNoteType}
+                />
+                <HideOwnCheckbox hidden={hideOwnNotes} handleChange={() => setHideOwnNotes(!hideOwnNotes)}/>
+            </Box>
         }</ListSubheader>}
               className={classes.notesList}
         >
-            {notes.map((note) => (
-                <ListItem key={note.id}>
-                    <ListItemText
-                        primary={
-                            <>
-                                {`${note.author.name} `}
-                                <Typography
-                                    component="span"
-                                    variant="body2"
-                                    color="textSecondary"
-                                >
-                                    {`@${note.author.username}
+            {(noteType === NoteType.MergeRequest ? mergeRequestNotes : issueNotes).map((note) => (
+                hideOwnNotes && note.own ? <></> :
+                    <ListItem key={note.id}>
+                        <ListItemText
+                            primary={
+                                <>
+                                    {`${note.author.name} `}
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                        color="textSecondary"
+                                    >
+                                        {`@${note.author.username}
                                          · ${formatDate(note.createdAt)}
                                          · ${getWordCount(note.body)} words · `
-                                    }
-                                </Typography>
-                                <Link variant="body2"
-                                      rel="noopener noreferrer"
-                                      target="_blank"
-                                      href={note.parentWebUrl}>{`#${note.parentIid}`}</Link>
-                            </>}
-                        secondary={
-                            <>
-                                <Typography
-                                    component="span"
-                                    variant="body2"
-                                    color="textPrimary"
-                                >
-                                    {note.body}
-                                </Typography>
-                            </>}
-                    />
-                </ListItem>
+                                        }
+                                    </Typography>
+                                    <Link variant="body2"
+                                          rel="noopener noreferrer"
+                                          target="_blank"
+                                          href={note.parentWebUrl}>{`#${note.parentIid}`}
+                                    </Link>
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                        color="textSecondary"
+                                    >
+                                        {note.own ? " · (Own)" : " · (Other)"}
+                                    </Typography>
+                                </>}
+                            secondary={
+                                <>
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                        color="textPrimary"
+                                    >
+                                        {note.body}
+                                    </Typography>
+                                </>}
+                        />
+                    </ListItem>
             ))}
         </List>
     );
