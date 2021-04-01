@@ -11,34 +11,26 @@ import java.time.OffsetDateTime;
 
 @Service
 public class IssueService {
-    IssueRepository issueRepository;
-    IssueCommentRepository issueCommentRepository;
-    ProjectRepository projectRepository;
-    GitManagementUserRepository gitManagementUserRepository;
+    private final IssueRepository issueRepository;
+    private final IssueCommentRepository issueCommentRepository;
+    private final ProjectRepository projectRepository;
+    private final GitManagementUserRepository gitManagementUserRepository;
+    private final GitLabService requestScopeGitLabService;;
 
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
-
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
-
-    public IssueService(IssueRepository issueRepository, IssueCommentRepository issueCommentRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository) {
+    public IssueService(IssueRepository issueRepository, IssueCommentRepository issueCommentRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, GitLabService requestScopeGitLabService) {
         this.issueRepository = issueRepository;
         this.issueCommentRepository = issueCommentRepository;
         this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
+        this.requestScopeGitLabService = requestScopeGitLabService;
     }
 
     public void saveIssueInfo(Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        // TODO use an internal projectId to find the correct server
-        var gitLabService = new GitLabService(serverUrl, accessToken);
-        var gitLabIssues = gitLabService.getIssues(project.getGitLabProjectId(), startDateTime, endDateTime);
+        var gitLabIssues = requestScopeGitLabService.getIssues(project.getGitLabProjectId(), startDateTime, endDateTime);
         var gitLabIssueList = gitLabIssues.collectList().block();
 
         gitLabIssueList.forEach(gitLabIssue -> {
-                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabIssue.getAuthor().getId(), serverUrl);
+                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabIssue.getAuthor().getId(), project.getServer().getId());
                     Issue issue = issueRepository.findByIidAndProjectId(gitLabIssue.getIid(),project.getId());
                     if(issue == null){
                         issue = new Issue(
@@ -58,13 +50,11 @@ public class IssueService {
     }
 
     public void saveIssueComments (Project project, Issue issue){
-        // TODO use an internal projectId to find the correct server
-        var gitLabService = new GitLabService(serverUrl, accessToken);
-        var gitLabIssueComments = gitLabService.getIssueNotes(project.getGitLabProjectId(), issue.getIid());
+        var gitLabIssueComments = requestScopeGitLabService.getIssueNotes(project.getGitLabProjectId(), issue.getIid());
         var gitLabIssueCommentList = gitLabIssueComments.collectList().block();
 
         gitLabIssueCommentList.parallelStream().forEach(gitLabIssueComment -> {
-            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabIssueComment.getAuthor().getId(),serverUrl);
+            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabIssueComment.getAuthor().getId(),project.getServer().getId());
             IssueComment issueComment = issueCommentRepository.findByGitLabIssueNoteIdAndIssueId(gitLabIssueComment.getId(),issue.getIid());
             if(issueComment == null){
                 issueComment = new IssueComment(

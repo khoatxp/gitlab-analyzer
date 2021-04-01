@@ -6,7 +6,6 @@ import com.eris.gitlabanalyzer.model.User;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabProject;
 import com.eris.gitlabanalyzer.repository.AnalysisRunRepository;
 import com.eris.gitlabanalyzer.viewmodel.AnalysisRunView;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,12 +19,11 @@ import java.util.stream.Stream;
 @Service
 public class AnalysisRunService {
     private AnalysisRunRepository analysisRunRepository;
-    private UserServerService userServerService;
+    private final GitLabService requestScopeGitLabService;
 
-    @Autowired
-    public void AnalyticsService(AnalysisRunRepository analysisRunRepository, UserServerService userServerService) {
+    public AnalysisRunService(AnalysisRunRepository analysisRunRepository, GitLabService requestScopeGitLabService) {
         this.analysisRunRepository = analysisRunRepository;
-        this.userServerService = userServerService;
+        this.requestScopeGitLabService = requestScopeGitLabService;
     }
 
     public AnalysisRun createAnalysisRun(
@@ -47,15 +45,13 @@ public class AnalysisRunService {
     }
 
     public Stream<AnalysisRunView> getAccessibleAnalysisRuns(User user, Long serverId) {
-        List<Long> userAccessibleGitlabProjectIds = getUserAccessibleGitlabProjectIds(user, serverId);
+        List<Long> userAccessibleGitlabProjectIds = getUserAccessibleGitlabProjectIds();
         List<AnalysisRun> analysisRuns = analysisRunRepository.findOthersByServerIdAndGitLabProjectIds(user.getId(), serverId, userAccessibleGitlabProjectIds);
         return analysisRuns.stream().map(AnalysisRunView::fromAnalysisRun);
     }
 
-    private List<Long> getUserAccessibleGitlabProjectIds(User user, Long serverId) {
-        var userServer = userServerService.getUserServer(user, serverId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find server."));
-        var gitLabService = new GitLabService(userServer.getServer().getServerUrl(), userServer.getAccessToken());
-        List<GitLabProject> gitLabProjects = gitLabService
+    private List<Long> getUserAccessibleGitlabProjectIds() {
+        List<GitLabProject> gitLabProjects = requestScopeGitLabService
                 .getProjects()
                 .collectList()
                 .block();
