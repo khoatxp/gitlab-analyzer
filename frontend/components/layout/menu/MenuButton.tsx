@@ -4,7 +4,7 @@ import Button from "@material-ui/core/Button";
 export const MenuButton = withStyles({
     root: {
         textTransform: 'none',
-        fontSize: '16px',
+        fontSize: '13px',
         padding: '20px',
         border: '1px solid white',
         color: 'black',
