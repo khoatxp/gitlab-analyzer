@@ -65,7 +65,6 @@ const CardLayout = ({children, size, logoType = "center", backLink, backLabel}: 
                 {backLink &&
                 <Box>
                     <AppButton
-                        color="primary"
                         startIcon={<ArrowBackIcon/>}
                         onClick={() => router.push(backLink)}
                     >
