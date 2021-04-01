@@ -2,11 +2,11 @@ package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.error.GitLabServiceConfigurationException;
 import com.eris.gitlabanalyzer.model.gitlabresponse.*;
-import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.ClientResponse;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
@@ -27,14 +27,24 @@ public class GitLabService {
     @Setter private String serverUrl;
     @Setter private String accessToken;
 
+    private WebClient createWebclient() {
+        // setting the default buffer size to 16MB
+        return WebClient.builder().exchangeStrategies(ExchangeStrategies.builder()
+                .codecs(configurer -> configurer
+                        .defaultCodecs()
+                        .maxInMemorySize(16 * 1024 * 1024))
+                .build())
+                .build();
+    }
+
     public GitLabService(String serverUrl, String accessToken) {
-        this.webClient = WebClient.create();
+        this.webClient = createWebclient();
         this.serverUrl = serverUrl;
         this.accessToken = accessToken;
     }
 
     public GitLabService() {
-        this.webClient = WebClient.create();
+        this.webClient = createWebclient();
     }
 
     private void validateConfiguration() {
@@ -147,7 +157,7 @@ public class GitLabService {
         validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/repository/commits/" + sha + "/diff")
-                .queryParam("per_page", 100)
+                .queryParam("per_page", 50)
                 .build()
                 .encode()
                 .toUri()
@@ -174,7 +184,7 @@ public class GitLabService {
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/changes")
                 .queryParam("access_raw_diffs", true)
-                .queryParam("per_page", 100)
+                .queryParam("per_page", 50)
                 .build()
                 .encode()
                 .toUri()
@@ -188,7 +198,7 @@ public class GitLabService {
         validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/notes")
-                .queryParam("per_page", 100)
+                .queryParam("per_page", 50)
                 .build()
                 .encode()
                 .toUri()
@@ -204,7 +214,7 @@ public class GitLabService {
                 .path(projectPath + projectId + "/issues")
                 .queryParam("created_after", startDateTime.toInstant().toString())
                 .queryParam("updated_before", endDateTime.toInstant().toString())
-                .queryParam("per_page", 100)
+                .queryParam("per_page", 50)
                 .build()
                 .encode()
                 .toUri()
@@ -218,7 +228,7 @@ public class GitLabService {
         validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/issues/" + issue_iid + "/notes")
-                .queryParam("per_page", 100)
+                .queryParam("per_page", 50)
                 .build()
                 .encode()
                 .toUri()
