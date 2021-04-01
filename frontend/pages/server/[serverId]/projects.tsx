@@ -50,9 +50,14 @@ const index = () => {
         axios
             .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
             .then((res) => {
-                const analyizedInternalProjectId = res.data[0];
-                console.log(res.data);
-                router.push(`/project/${analyizedInternalProjectId}/0/overview?${dateQuery}`);
+                let analyzedProjectIds = res.data;
+                if (analyzedProjectIds.length > 1) {
+                    // Multiple projects analyzed, go to analyses page
+                    router.push(`/server/${serverId}/analyses`);
+                } else {
+                    // Single project analyzed, go to overview for the project
+                    router.push(`/project/${analyzedProjectIds[0]}/0/overview?${dateQuery}`);
+                }
             }).catch(() => {
             enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});
         });
@@ -60,7 +65,7 @@ const index = () => {
 
     return (
         <AuthView>
-            <CardLayout backLink={"/server"} logoType="header">
+            <CardLayout backLink={`/server/${serverId}`} logoType="header">
                 {isLoading && <LoadingBar itemBeingLoaded={itemBeingLoaded}/>}
                 {!isLoading && <ProjectSelect projects={projects} onAnalyzeClick={handleAnalyze}/>}
             </CardLayout>

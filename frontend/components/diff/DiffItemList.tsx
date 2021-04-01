@@ -3,7 +3,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import {Box, Card, Divider, ListSubheader} from "@material-ui/core";
-import formatDate from "../../interfaces/dateFormatter";
+import formatDate from "../../utils/DateFormatter";
 
 type DiffItemListProps = {
     diffItems: DiffItem[]

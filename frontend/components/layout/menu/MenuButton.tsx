@@ -23,6 +23,11 @@ export const MenuButton = withStyles({
         },
         '&:focus': {
             boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
+            color: '#005cbf',
         },
+        '&.selected': {
+            boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
+            color: '#005cbf',
+        }
     },
 })(Button);

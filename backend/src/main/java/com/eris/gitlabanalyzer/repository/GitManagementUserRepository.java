@@ -22,4 +22,7 @@ public interface GitManagementUserRepository extends JpaRepository<GitManagement
 
     @Query("select g.id as id, g.username as username, g.name as name from GitManagementUser g inner join g.projects project where project.id = ?1 order by g.name asc")
     List<GitManagementUserView> findByProjectId(Long projectId);
+
+    @Query("select g.id as id, g.username as username, g.name as name from GitManagementUser g where g.id = ?1")
+    GitManagementUserView findByGitManagementUserId(Long gitManagementUserId);
 }

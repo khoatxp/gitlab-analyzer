@@ -23,6 +23,9 @@ const MenuSideBar = () => {
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/${projectId}/managementusers/members`;
 
     const handleClick = (id: number) => {
+        let prevSelected = document.getElementsByClassName('selected');
+        prevSelected[0]?.classList.remove('selected');
+        document.getElementById(`memberButton${id}`)?.classList.add('selected');
         const route = router.route;
         router.push({
             pathname: route,
@@ -51,13 +54,13 @@ const MenuSideBar = () => {
             justifyContent="flex-start"
             alignItems="center"
         >
-            <MenuButton variant="contained" disableRipple onClick={() => handleClick(0)}>
+            <MenuButton variant="contained" id={'memberButton0'} disableRipple onClick={() => handleClick(0)}>
                 Everyone
             </MenuButton>
             {gitLabMemberNames.map(member => {
                 const {name} = member;
                 const {id} = member;
-                return <MenuButton key={name} variant="contained" disableRipple onClick={() => handleClick(+{id}.id)}>{name}</MenuButton>;
+                return <MenuButton key={name} id={`memberButton${{id}.id}`} variant="contained" disableRipple onClick={() => handleClick(+{id}.id)}>{name}</MenuButton>;
             })}
         </Box>
     );

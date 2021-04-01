@@ -25,11 +25,11 @@ const CodeAnalysis = () => {
     const [commitScore, setCommitScore] = React.useState<number>(0);
     const [scoreDigest, setScoreDigest] = React.useState<ScoreDigest[]>([]);
 
-    const getDateTime = (queryDatetime: string | string[] | undefined) => {
-        if (Array.isArray(queryDatetime)) {
-            return queryDatetime[0];
+    const getParameter = (queryParameter: string | string[] | undefined) => {
+        if (Array.isArray(queryParameter)) {
+            return queryParameter[0];
         }
-        return queryDatetime;
+        return queryParameter;
 
     };
 
@@ -95,11 +95,13 @@ const CodeAnalysis = () => {
         <>
             <AnalysisSummary projectSummary={projectSummary}/>
             <CountGraph data={scoreDigest}
-                        startDateTime={getDateTime(startDateTime)}
-                        endDateTime={getDateTime(endDateTime)}/>
+                        startDateTime={getParameter(startDateTime)}
+                        endDateTime={getParameter(endDateTime)}
+                        gitManagementUserId={getParameter(gitManagementUserId)}/>
             <ScoreGraph data={scoreDigest}
-                        startDateTime={getDateTime(startDateTime)}
-                        endDateTime={getDateTime(endDateTime)}/>
+                        startDateTime={getParameter(startDateTime)}
+                        endDateTime={getParameter(endDateTime)}
+                        gitManagementUserId={getParameter(gitManagementUserId)}/>
         </>
     );
 };
