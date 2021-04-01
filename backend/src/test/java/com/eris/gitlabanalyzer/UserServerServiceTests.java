@@ -1,11 +1,9 @@
 package com.eris.gitlabanalyzer;
 
 import com.eris.gitlabanalyzer.repository.UserRepository;
-import com.eris.gitlabanalyzer.service.GitLabService;
 import com.eris.gitlabanalyzer.service.UserServerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +44,6 @@ class UserServerServiceTests {
         var userServers = userServerService.getUserServers(user);
         var userServer = userServers.get(0);
         assertThrows(IllegalStateException.class,
-                () -> {userServerService.createServer(user, userServer.getServer().getServerUrl(), "diff_access_token_than_the_original");});
+                () -> {userServerService.createUserServer(user, userServer.getServer().getServerUrl(), "diff_access_token_than_the_original");});
     }
 }
