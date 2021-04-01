@@ -31,7 +31,14 @@ const index = () => {
         axios
             .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/${serverId}/projects`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
-                setProjects(resp.data);
+                // Couple of times I have seen this endpoint return a list of one item with all nulls. Have not been
+                // able to reproduce consistently. Adding a condition check here to at least handle it on frontend
+                if (resp.data.length === 1 && resp.data[0].id === null) {
+                    setProjects([]);
+                }
+                else {
+                    setProjects(resp.data);
+                }
                 setIsLoading(false);
             }).catch(() => {
             enqueueSnackbar('Failed to get server projects.', {variant: 'error',});
@@ -48,7 +55,7 @@ const index = () => {
         const end = formatISO(endDateTime);
         const dateQuery = `startDateTime=${start}&endDateTime=${end}`;
         axios
-            .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
+            .post(`${process.env.NEXT_PUBLIC_API_URL}/${serverId}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
             .then((res) => {
                 let analyzedProjectIds = res.data;
                 if (analyzedProjectIds.length > 1) {
