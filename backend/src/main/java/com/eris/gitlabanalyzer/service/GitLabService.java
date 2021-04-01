@@ -20,7 +20,6 @@ import java.util.HashMap;
 // instantiated with no arg constructor and serverUrl, accessToken set via setters
 // The injected GitLabService you see in various places is a request scope bean that is created in GitLabServiceConfig
 // and set in a GitLabServiceConfigInterceptor preHandle HandlerInterceptor
-@Getter
 public class GitLabService {
     private final WebClient webClient;
     private final String projectPath = "api/v4/projects/";

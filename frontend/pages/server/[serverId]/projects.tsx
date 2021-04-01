@@ -31,6 +31,8 @@ const index = () => {
         axios
             .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/${serverId}/projects`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
+                // Couple of times I have seen this endpoint return a list of one item with all nulls. Have not been
+                // able to reproduce consistently. Adding a condition check here to at least handle it on frontend
                 if (resp.data.length === 1 && resp.data[0].id === null) {
                     setProjects([]);
                 }
