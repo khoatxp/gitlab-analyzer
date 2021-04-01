@@ -202,28 +202,28 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="New Line" placeholder="Weight"
                                 type="number"
-                                value={lineWeight ?? ""}
+                                value={lineWeight != undefined ? lineWeight.toString() : ""}
                                 onChange={(e) => setLineWeight(Number(e.target.value))}
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="Deleting" placeholder="Weight"
                                 type="number"
-                                value={deleteWeight ?? ""}
+                                value={deleteWeight != undefined ? deleteWeight.toString() : ""}
                                 onChange={(e) => setDeleteWeight(Number(e.target.value))}
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="Syntax(e.g '}')" placeholder="Weight"
                                 type="number"
-                                value={syntaxWeight ?? ""}
+                                value={syntaxWeight != undefined ? syntaxWeight.toString() : ""}
                                 onChange={(e) => setSyntaxWeight(Number(e.target.value))}
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
                                 <AppTextField label="Comments" placeholder="Weight"
                                 type="number"
-                                value={commentsWeight ?? ""}
+                                value={commentsWeight != undefined ? commentsWeight.toString() : ""}
                                 onChange={(e) => setCommentsWeight(Number(e.target.value))}
                                 />
                             </Box>
@@ -254,7 +254,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                         <Box marginLeft={1} marginRight={1}>
                                             
                                             <AppTextField label="weight"
-                                            value={extension[1] ?? ""}
+                                            value={extension[1] != undefined ? extension[1].toString() : ""}
                                             onChange={(e) => handleWeightChange(Number(e.target.value), index) }
                                             type="number"
                                             />
