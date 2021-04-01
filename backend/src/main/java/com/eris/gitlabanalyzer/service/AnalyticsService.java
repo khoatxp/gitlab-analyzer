@@ -37,15 +37,15 @@ public class AnalyticsService {
         this.analysisRunRepository = analysisRunRepository;
     }
 
-    public List<Long> saveAllFromGitlab(User user, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        List<AnalysisRun> analysisRuns = saveProjectsAndAnalysisRuns(user, gitLabProjectIdList, startDateTime, endDateTime);
+    public List<Long> saveAllFromGitlab(User user, Long serverId, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        List<AnalysisRun> analysisRuns = saveProjectsAndAnalysisRuns(user, serverId, gitLabProjectIdList, startDateTime, endDateTime);
         return saveProjectDataForAnalysisRuns(analysisRuns);
     }
 
-    public List<AnalysisRun> saveProjectsAndAnalysisRuns(User user, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+    public List<AnalysisRun> saveProjectsAndAnalysisRuns(User user, Long serverId, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         List<AnalysisRun> analysisRuns = new ArrayList<>();
         gitLabProjectIdList.forEach(gitLabProjectId -> {
-            Project project = projectService.saveProjectInfo(user, gitLabProjectId);
+            Project project = projectService.saveProjectInfo(user, serverId, gitLabProjectId);
             analysisRuns.add(this.analysisRunService.createAnalysisRun(user, project, AnalysisRun.Status.InProgress, startDateTime, endDateTime));
         });
         return analysisRuns;

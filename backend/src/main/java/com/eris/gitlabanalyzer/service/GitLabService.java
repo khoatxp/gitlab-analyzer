@@ -1,7 +1,11 @@
 package com.eris.gitlabanalyzer.service;
 
+import com.eris.gitlabanalyzer.error.GitLabServiceConfigurationException;
 import com.eris.gitlabanalyzer.model.gitlabresponse.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpHeaders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -11,11 +15,17 @@ import reactor.core.publisher.Mono;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 
+// NOTE: do not make this an auto wired @Service.
+// This class needs to be instantiated with correct serverUrl and accessToken OR
+// instantiated with no arg constructor and serverUrl, accessToken set via setters
+// The injected GitLabService you see in various places is a request scope bean that is created in GitLabServiceConfig
+// and set in a GitLabServiceConfigInterceptor preHandle HandlerInterceptor
 public class GitLabService {
     private final WebClient webClient;
     private final String projectPath = "api/v4/projects/";
-    private String serverUrl;
-    private String accessToken;
+
+    @Setter private String serverUrl;
+    @Setter private String accessToken;
 
     public GitLabService(String serverUrl, String accessToken) {
         this.webClient = WebClient.create();
@@ -23,19 +33,35 @@ public class GitLabService {
         this.accessToken = accessToken;
     }
 
+    public GitLabService() {
+        this.webClient = WebClient.create();
+    }
+
+    private void validateConfiguration() {
+        if (serverUrl == null) {
+            throw new GitLabServiceConfigurationException("GitLabService not instantiated correctly, serverUrl is null");
+        }
+        if (accessToken == null) {
+            throw new GitLabServiceConfigurationException("GitLabService not instantiated correctly, accessToken is null");
+        }
+    }
+
+    @Transactional(timeout = 240)
     public Flux<GitLabProject> getProjects(){
+        validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath)
                 .queryParam("per_page", 100)
+                .queryParam("membership", true)
                 .build()
                 .encode()
                 .toUri()
                 .toString();
-
         return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabProject.class));
     }
 
     public Mono<GitLabProject> getProject(Long projectId) {
+        validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId)
                 .build()
@@ -48,6 +74,7 @@ public class GitLabService {
     }
 
     public Flux<GitLabMember> getMembers(Long projectId) {
+        validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/members")
                 .queryParam("per_page", 100)
@@ -60,6 +87,7 @@ public class GitLabService {
     }
 
     public Flux<GitLabMergeRequest> getMergeRequests(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests")
                 .queryParam("state", "merged")
@@ -75,6 +103,7 @@ public class GitLabService {
     }
 
     public Flux<GitLabCommit> getMergeRequestCommits(Long projectId, Long mergeRequestIid) {
+        validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/commits")
                 .queryParam("per_page", 100)
@@ -87,6 +116,7 @@ public class GitLabService {
     }
 
     public Flux<GitLabCommit> getCommits(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/repository/commits")
                 .queryParam("since", startDateTime.toInstant().toString())
@@ -101,6 +131,7 @@ public class GitLabService {
     }
 
     public Mono<GitLabCommit> getCommit(Long projectId, String sha) {
+        validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/repository/commits/" + sha)
                 .build()
@@ -113,6 +144,7 @@ public class GitLabService {
     }
 
     public Flux<GitLabFileChange> getCommitDiff(Long projectId, String sha) {
+        validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/repository/commits/" + sha + "/diff")
                 .queryParam("per_page", 100)
@@ -125,6 +157,7 @@ public class GitLabService {
     }
 
     public Flux<GitLabCommitComment> getCommitComments(Long projectId, String sha) {
+        validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/repository/commits/" + sha + "/comments")
                 .queryParam("per_page", 100)
@@ -137,6 +170,7 @@ public class GitLabService {
     }
 
     public Flux<GitLabFileChange> getMergeRequestDiff(Long projectId, Long mergeRequestIid) {
+        validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/changes")
                 .queryParam("access_raw_diffs", true)
@@ -151,6 +185,7 @@ public class GitLabService {
     }
 
     public Flux<GitLabMergeRequestNote> getMergeRequestNotes(Long projectId, Long mergeRequestIid) {
+        validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/notes")
                 .queryParam("per_page", 100)
@@ -164,6 +199,7 @@ public class GitLabService {
     }
 
     public Flux<GitLabIssue> getIssues(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/issues")
                 .queryParam("created_after", startDateTime.toInstant().toString())
@@ -179,6 +215,7 @@ public class GitLabService {
     }
 
     public Flux<GitLabIssueNote> getIssueNotes(Long projectId, Long issue_iid) {
+        validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/issues/" + issue_iid + "/notes")
                 .queryParam("per_page", 100)

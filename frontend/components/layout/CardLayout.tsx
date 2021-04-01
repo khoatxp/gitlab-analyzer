@@ -23,9 +23,6 @@ const CardLayout = ({children, size, logoType = "center", backLink, backLabel}: 
     width = size == "md" ? "60vw" : width;
     width = size == "lg" ? "80vw" : width;
 
-    let height = "60vh"
-    height = size == "lg" ? "80vh" : height;
-
     let logoSize = logoType === "center" ? "120" : "80";
 
     return (
@@ -34,7 +31,6 @@ const CardLayout = ({children, size, logoType = "center", backLink, backLabel}: 
                 bgcolor="primary.contrastText"
                 boxShadow={20}
                 width={width}
-                height="60vh"
                 minWidth="250px"
                 minHeight="450px"
                 borderRadius={45}
