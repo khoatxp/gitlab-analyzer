@@ -16,6 +16,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
     >
       <WithStyles(WithStyles(ForwardRef(Button)))
         disableRipple={true}
+        id="memberButton0"
         onClick={[Function]}
         variant="contained"
       >
@@ -26,6 +27,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
             }
           }
           disableRipple={true}
+          id="memberButton0"
           onClick={[Function]}
           variant="contained"
         >
@@ -64,6 +66,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
               }
             }
             disableRipple={true}
+            id="memberButton0"
             onClick={[Function]}
             variant="contained"
           >
@@ -74,6 +77,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
               disabled={false}
               focusRipple={true}
               focusVisibleClassName="Mui-focusVisible"
+              id="memberButton0"
               onClick={[Function]}
               type="button"
             >
@@ -91,12 +95,14 @@ exports[`Project Folder Snapshot serverId 1`] = `
                 disabled={false}
                 focusRipple={true}
                 focusVisibleClassName="Mui-focusVisible"
+                id="memberButton0"
                 onClick={[Function]}
                 type="button"
               >
                 <button
                   className="MuiButtonBase-root MuiButton-root WithStyles(ForwardRef(Button))-root-3 MuiButton-contained"
                   disabled={false}
+                  id="memberButton0"
                   onBlur={[Function]}
                   onClick={[Function]}
                   onDragLeave={[Function]}
