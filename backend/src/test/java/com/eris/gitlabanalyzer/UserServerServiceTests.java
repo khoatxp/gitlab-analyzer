@@ -46,4 +46,27 @@ class UserServerServiceTests {
         assertThrows(IllegalStateException.class,
                 () -> {userServerService.createUserServer(user, userServer.getServer().getServerUrl(), "diff_access_token_than_the_original");});
     }
+
+    @Test
+    void testUpdateUserServers()  {
+        var user = userRepository.findById(1l).get();
+        var accessToken = "12345678901234567890";
+        var userServer = userServerService.createUserServer(user, "https://example.com", accessToken);
+        assertEquals(accessToken, userServer.getAccessToken());
+
+        var updatedAccessToken = "qwertyuiopasdfghjkl";
+        userServerService.updateUserServer(user, userServer.getServer().getId(), updatedAccessToken);
+        var updatedUserServer = userServerService.getUserServer(user, userServer.getServer().getId()).get();
+        assertEquals(updatedAccessToken, updatedUserServer.getAccessToken());
+    }
+
+    @Test
+    void testDeleteUserServers()  {
+        var user = userRepository.findById(1l).get();
+        var userServer = userServerService.createUserServer(user, "https://example.com","12345678901234567890");
+        var userServers = userServerService.getUserServers(user);
+        assertEquals(2, userServers.size());
+        userServerService.deleteUserServer(user, userServer.getServer().getId());
+        assertEquals(1l, userServers.get(0).getServer().getId());
+    }
 }
