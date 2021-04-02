@@ -72,6 +72,10 @@ const index = () => {
                     setOpen(true);
                     setIsLoading(false);
                 }
+                else{
+                    setIsLoading(false);
+                    enqueueSnackbar(`Failed to analyze ${projectIds.length > 0 ? 'projects' : 'project'}`, {variant: 'error',});
+                }
             }).catch(() => {
                 setIsLoading(false);
                 enqueueSnackbar('Failed to generate projects runs.', {variant: 'error',});

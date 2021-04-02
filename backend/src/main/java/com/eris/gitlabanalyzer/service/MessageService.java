@@ -35,7 +35,6 @@ public class MessageService {
         Matcher matcher = pattern.matcher(channel);
         if(matcher.find()){
             Long analysisRunId = Long.parseLong(matcher.group());
-            System.out.println(analysisRunId+"haha");
             AnalysisRun analysisRun = analysisRunRepository.findById(analysisRunId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to fetch analysis run progress"));
             messagingTemplate.convertAndSend(channel, AnalysisRunView.progressFromAnalysisRun(analysisRun));
         }
