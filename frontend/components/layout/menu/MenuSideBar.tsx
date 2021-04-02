@@ -19,19 +19,23 @@ const MenuSideBar = () => {
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const [gitLabMemberNames, setGitLabMemberNames] = React.useState<[]>([]);
 
-    const {projectId, startDateTime, endDateTime} = router.query;
+    const {projectId, gitManagementUserId, startDateTime, endDateTime} = router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/${projectId}/managementusers/members`;
 
     const handleClick = (id: number) => {
-        let prevSelected = document.getElementsByClassName('selected');
-        prevSelected[0]?.classList.remove('selected');
-        document.getElementById(`memberButton${id}`)?.classList.add('selected');
+        setActive(id);
         const route = router.route;
         router.push({
             pathname: route,
             query: {projectId: projectId, gitManagementUserId: id, startDateTime: startDateTime, endDateTime: endDateTime}
         })
     };
+
+    const setActive = (id: number | string) => {
+        let prevSelected = document.getElementsByClassName('selected');
+        prevSelected[0]?.classList.remove('selected');
+        document.getElementById(`memberButton${id}`)?.classList.add('selected');
+    }
 
 
     useEffect(() => {
@@ -41,6 +45,7 @@ const MenuSideBar = () => {
                 .then((resp: AxiosResponse) => {
                     setGitLabMemberNames(resp.data);
                 });
+            setActive(Array.isArray(gitManagementUserId) || gitManagementUserId == undefined? "0" : gitManagementUserId)
         }
     }, [projectId]);
 

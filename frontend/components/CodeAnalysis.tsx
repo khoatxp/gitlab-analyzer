@@ -89,6 +89,7 @@ const CodeAnalysis = () => {
         commitScore: commitScore,
         mergeRequestScore: mergeRequestScore,
         sharedMergeRequestScore: sharedMergeRequestScore,
+        gitManagementUserId: getParameter(gitManagementUserId),
     }
 
     return (

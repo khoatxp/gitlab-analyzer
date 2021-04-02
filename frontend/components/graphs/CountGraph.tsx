@@ -12,7 +12,8 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import {ScoreDigest} from "../../interfaces/ScoreDigest";
-import { formatDay, setBackground, getMember } from "./GraphHelpers"
+import { formatDay, setBackground } from "./GraphHelpers"
+import getMember from "../../utils/memberName";
 
 interface Props {
     data: ScoreDigest[],
