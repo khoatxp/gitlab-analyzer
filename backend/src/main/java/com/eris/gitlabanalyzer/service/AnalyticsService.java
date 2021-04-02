@@ -42,13 +42,8 @@ public class AnalyticsService {
     public Stream<AnalysisRunView> saveProjectsAndAnalysisRuns(User user, Long serverId, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         List<AnalysisRun> analysisRuns = new ArrayList<>();
         gitLabProjectIdList.forEach(gitLabProjectId -> {
-            try{
-                Project project = projectService.saveProjectInfo(user, serverId, gitLabProjectId);
-                analysisRuns.add(this.analysisRunService.createAnalysisRun(user, project, AnalysisRun.Status.InProgress, startDateTime, endDateTime));
-            } catch(Exception e){
-                System.out.println("yo"+e);
-            }
-
+            Project project = projectService.saveProjectInfo(user, serverId, gitLabProjectId);
+            analysisRuns.add(this.analysisRunService.createAnalysisRun(user, project, AnalysisRun.Status.InProgress, startDateTime, endDateTime));
         });
         return analysisRuns.stream().map(AnalysisRunView::fromAnalysisRun);
     }
@@ -78,7 +73,7 @@ public class AnalyticsService {
                 analysisRun.setStatus(AnalysisRun.Status.Completed);
                 analysisRunService.updateProgress(analysisRun,"Analysis done for "+project.getNameWithNamespace(), AnalysisRun.Progress.Done.getValue(), true);
             } catch(Exception e) {
-                System.out.println("yo" + e);
+                System.err.println(e);
                 analysisRun.setStatus(AnalysisRun.Status.Error);
                 analysisRunService.updateProgress(analysisRun,"Error",0.0, true);
             }

@@ -67,7 +67,7 @@ const index = () => {
                     })
                 if(res.data.length > 1){
                     router.push(`/server/${serverId}/analyses`);
-                } else if (res.data[0]){
+                } else if (res.data.length === 1){
                     setGeneratedAnalysisRun(res.data[0]);
                     setOpen(true);
                     setIsLoading(false);
