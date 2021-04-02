@@ -43,6 +43,10 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
             enqueueSnackbar("Failed to copy score summary to clipboard", {variant: "error"})
         }
     }
+    const displayMerge = () => {
+
+    }
+
 
     return <Box display="flex" alignItems="center" padding={4}>
         <Avatar className={styles.avatar} variant='rounded' src={project?.avatar_url ?? ''}>
@@ -68,7 +72,10 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
 
         <Box display="flex" alignItems="center">
             <Box>
-                <Typography variant="h6"><b>Merge Request Score:</b> {mergeRequestScore} + {sharedMergeRequestScore}</Typography>
+                <Typography variant="h6"><b>Merge Request Score:</b></Typography>
+                <Typography >{gitManagementUserId != '0' && gitManagementUserId != undefined? `Own: ${mergeRequestScore}` : ""}</Typography>
+                <Typography >{gitManagementUserId != '0' && gitManagementUserId != undefined? `Shared: ${sharedMergeRequestScore}` : ""}</Typography>
+                <Typography >Total: {sharedMergeRequestScore + mergeRequestScore}</Typography>
                 <Typography variant="h6"><b>Commit Score:</b> {commitScore}</Typography>
             </Box>
             <Box ml={2}>
