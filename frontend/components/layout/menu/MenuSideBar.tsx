@@ -10,19 +10,19 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 const useStyles = makeStyles((theme) => ({
- background: {
-      background: theme.palette.primary.main,
+    background: {
+        background: theme.palette.primary.main,
     },
     sidebar: {
-     background: theme.palette.primary.main,
+        background: theme.palette.primary.main,
         overflow: 'auto',
         position: 'relative',
         left: '-100%',
-        transition: '700ms',
+        transition: '600ms',
     },
     displaySidebar: {
-         left: '0',
-           transition: '350ms',
+        left: '0',
+        transition: '350ms',
     },
     hideBar: {
         display: 'none',
@@ -60,7 +60,7 @@ const MenuSideBar = () => {
         <Box
             classes={classes.background}
             width={sidebarState ? '16vw' : '3vw'}
-            height="auto"
+            height="100vh"
             display="flex"
             flexDirection="column"
             justifyContent="flex-start"
@@ -74,13 +74,13 @@ const MenuSideBar = () => {
                     <Tab
                         className={classes.sidebarTitle}
                         onClick={showSidebar}
-                        label={sidebarState ? '<' : '>'}
+                        label={sidebarState ? '< Hide' : '>'}
                     />
                 </Tabs>
             </AppBar>
             <Box
                 className={`${classes.sidebar} ${sidebarState === true && classes.displaySidebar}`}
-                height="auto"
+                height="100vh"
                 width="100%"
                 display="flex"
                 flexDirection="column"
