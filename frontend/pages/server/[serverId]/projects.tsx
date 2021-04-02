@@ -61,12 +61,16 @@ const index = () => {
                 if (analyzedProjectIds.length > 1) {
                     // Multiple projects analyzed, go to analyses page
                     router.push(`/server/${serverId}/analyses`);
-                } else {
+                } else if (analyzedProjectIds.length === 1) {
                     // Single project analyzed, go to overview for the project
                     router.push(`/project/${analyzedProjectIds[0]}/overview?${dateQuery}`);
+                } else {
+                    setIsLoading(false);
+                    enqueueSnackbar(`Failed to analyze ${projectIds.length > 0 ? 'projects' : 'project'}`, {variant: 'error',});
                 }
             }).catch(() => {
-            enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});
+                setIsLoading(false);
+                enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});
         });
     }
 
