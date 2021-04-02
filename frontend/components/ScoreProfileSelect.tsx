@@ -29,11 +29,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface Props {
-    scoreProfile: ScoreProfile | undefined
-    onScoreProfileSelect: (event: any, profile: ScoreProfile) => void
+    onScoreProfileSelect: (id: number) => void
 }
 
-const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
+const ScoreProfileSelector = ({onScoreProfileSelect}:Props) => {
 
 
 
@@ -42,13 +41,14 @@ const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
+    const [scoreProfile, setScoreProfile] = useState<number>();
     const [profiles, setProfiles] =  useState<ScoreProfile[]>([]);
     const [isIconVisible, setIconVisible] = useState(false);
     const [open, setOpen] = useState(false);
+    const [selectOpen, setSelectOpen] = useState(false);
     const [isNewProfile, setIsNewProfile] = useState(true);
     const [selectedProfile, setSelectedProfile] = useState<ScoreProfile | null>(null);
     const [id,setId] = useState<number>(0)
-
 
     useEffect(() => {
         if (router.isReady) {
@@ -60,7 +60,36 @@ const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
                     enqueueSnackbar('Failed to retrieve score profiles', {variant: 'error',});
                 })
         }
-    });
+    },[]);
+
+    const handleDelete = (id : number) =>{
+        if (router.isReady) {
+            axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile/${id}`, getAxiosAuthConfig())
+                .then((resp: AxiosResponse) => {
+                    console.log(resp.data);
+                    if(scoreProfile == id){
+                        setScoreProfile(undefined);
+                    }
+                    update();
+                }).catch(() => {
+                enqueueSnackbar('Failed to delete score profile', {variant: 'error',});
+            })
+        }
+
+    };
+
+    const update = () => {
+        if (router.isReady) {
+            axios
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile`, getAxiosAuthConfig())
+                .then((resp: AxiosResponse) => {
+                    setSelectOpen(false);
+                    setProfiles(resp.data);
+                }).catch(() => {
+                enqueueSnackbar('Failed to retrieve score profiles', {variant: 'error',});
+            })
+        }
+    }
 
     const handleNew = () => {
         setId(0);
@@ -80,27 +109,17 @@ const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
         setOpen(false);
     };
 
-    const handleDelete = (id : number) =>{
-        if (router.isReady) {
-            axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile/${id}`, getAxiosAuthConfig())
-                .then((resp: AxiosResponse) => {
-                    console.log(resp.data);
-                }).catch(() => {
-                    enqueueSnackbar('Failed to delete score profile', {variant: 'error',});
-                })
-        }
-    };
-
     return (
         <Box display="flex" flexDirection="row" justifyContent="center" marginLeft={4}>
             <FormControl className={classes.formControl}>
                     <InputLabel id="score-options">Score Options</InputLabel>
                     <Select
-                        labelId="score-options"
-                        onOpen={() => setIconVisible(true)}
-                        onClose={() => setIconVisible(false)}
-                        value={scoreProfile}
-                        onChange={onScoreProfileSelect}
+                        labelId={"score-options"}
+                        open={selectOpen}
+                        onOpen={() => {setIconVisible(true); setSelectOpen(true)}}
+                        onClose={() => {setIconVisible(false); setSelectOpen(false)}}
+                        value={scoreProfile || ""}
+                        onChange={(e) => {setScoreProfile(Number(e.target.value)); onScoreProfileSelect(Number(e.target.value))}}
                         MenuProps={{
                             anchorOrigin: {vertical: "top", horizontal: "left"},
                             transformOrigin: {vertical: "top", horizontal: "left"},
@@ -108,15 +127,15 @@ const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
                             classes: {paper: classes.menuPaper }}}
                     >
                         {profiles.length > 0 ? (
-                            profiles.map(profile => (
-                                <MenuItem value={profile.id} key={profile.id}>
+                            profiles.map((profile, index :number) => (
+                                <MenuItem value={profile.id} key={index}>
                                     {profile.name}
                                     {isIconVisible ? (
                                         <ListItemSecondaryAction >
                                             <IconButton edge="end" aria-label="edit" onClick={() => { handleEdit(profile);}} >
                                                 <EditIcon style={{ fontSize: "25px", color: "grey" }} />
                                             </IconButton>
-                                            <ScoreProfileModal  open={open} handleClose={handleClose} id={id} profile={selectedProfile} isNewProfile={isNewProfile}/>
+                                            <ScoreProfileModal  open={open} handleClose={handleClose} id={id} profile={selectedProfile} isNewProfile={isNewProfile} update={update}/>
                                             <IconButton edge="end" aria-label="delete"  onClick={() => { handleDelete(profile.id);}}>
                                                 <DeleteIcon style={{ fontSize: "25px", color: "#CC160B" }}/>
                                             </IconButton>
@@ -130,7 +149,7 @@ const ScoreProfileSelector = ({scoreProfile, onScoreProfileSelect}:Props) => {
             <IconButton edge={false} aria-label="add" onClick={handleNew} >
                 <AddBoxIcon style={{ fontSize: "25px", color: "green" }}/>
             </IconButton>
-            <ScoreProfileModal  open={open} handleClose={handleClose} id={id} profile={selectedProfile} isNewProfile={isNewProfile}/>
+            <ScoreProfileModal  open={open} handleClose={handleClose} id={id} profile={selectedProfile} isNewProfile={isNewProfile} update={update}/>
 
 
         </Box>
