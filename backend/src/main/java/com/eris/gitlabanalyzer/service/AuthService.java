@@ -1,7 +1,5 @@
 package com.eris.gitlabanalyzer.service;
 
-import com.eris.gitlabanalyzer.model.Project;
-import com.eris.gitlabanalyzer.model.Server;
 import com.eris.gitlabanalyzer.model.User;
 import com.eris.gitlabanalyzer.repository.UserProjectPermissionRepository;
 import com.eris.gitlabanalyzer.repository.UserRepository;
@@ -19,8 +17,8 @@ import java.util.Optional;
 @Service
 public class AuthService implements UserDetailsService {
 
-    private UserRepository userRepository;
-    private UserProjectPermissionRepository userProjectPermissionRepository;
+    private final UserRepository userRepository;
+    private final UserProjectPermissionRepository userProjectPermissionRepository;
 
     public AuthService(UserRepository userRepository, UserProjectPermissionRepository userProjectPermissionRepository) {
         this.userRepository = userRepository;
@@ -37,11 +35,11 @@ public class AuthService implements UserDetailsService {
                 AuthorityUtils.createAuthorityList()
         );
     }
-    public User getLoggedInUser(Principal principle) {
-        if (principle == null) {
+    public User getLoggedInUser(Principal principal) {
+        if (principal == null) {
             throw new AccessDeniedException("User not logged in.");
         }
-        return userRepository.findUserByUsername(principle.getName()).orElseThrow(() -> new AccessDeniedException("User not found."));
+        return userRepository.findUserByUsername(principal.getName()).orElseThrow(() -> new AccessDeniedException("User not found."));
     }
 
     public boolean hasProjectPermission(Long userId, Long serverId, Long projectId) {

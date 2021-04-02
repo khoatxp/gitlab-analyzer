@@ -27,15 +27,7 @@ public class CalculateDiffMetrics {
     private final MergeRequestRepository mergeRequestRepository;
     private final ProjectRepository projectRepository;
     private final CommitRepository commitRepository;
-
-
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
-
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
+    private final GitLabService requestScopeGitLabService;
 
     public enum lineTypes {
         code,
@@ -53,12 +45,13 @@ public class CalculateDiffMetrics {
 
     public CalculateDiffMetrics(FileScoreRepository fileScoreRepository,
                                 MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository,
-                                CommitRepository commitRepository){
+                                CommitRepository commitRepository, GitLabService requestScopeGitLabService){
         initializeCommentCharacters();
         this.fileScoreRepository = fileScoreRepository;
         this.mergeRequestRepository = mergeRequestRepository;
         this.projectRepository = projectRepository;
         this.commitRepository = commitRepository;
+        this.requestScopeGitLabService = requestScopeGitLabService;
     }
 
     private void initializeCommentCharacters(){
@@ -72,11 +65,10 @@ public class CalculateDiffMetrics {
     }
 
     public void storeMetricsCommit(Commit commit){
-        var gitLabService = new GitLabService(serverUrl, accessToken);
         if(fileScoreRepository.findByCommitId(commit.getId()).isEmpty()){
             Project project = projectRepository.findById(commit.getProject().getId()).orElse(null);
             if(project != null ){
-                Iterable<GitLabFileChange> commitDiff = gitLabService.getCommitDiff(project.getGitLabProjectId(), commit.getSha()).toIterable();
+                Iterable<GitLabFileChange> commitDiff = requestScopeGitLabService.getCommitDiff(project.getGitLabProjectId(), commit.getSha()).toIterable();
 
                 // todo find a way to simpilfy this
                 for(GitLabFileChange file : commitDiff){
@@ -93,11 +85,10 @@ public class CalculateDiffMetrics {
 
     public void storeMetricsMerge(MergeRequest mergeRequest){
         if(fileScoreRepository.findByMergeId(mergeRequest.getId()).isEmpty()){
-            var gitLabService = new GitLabService(serverUrl, accessToken);
             Project project = mergeRequest.getProject();
 
             if(project != null){
-                Iterable<GitLabFileChange> merge = gitLabService.getMergeRequestDiff(project.getGitLabProjectId(), mergeRequest.getIid()).toIterable();
+                Iterable<GitLabFileChange> merge = requestScopeGitLabService.getMergeRequestDiff(project.getGitLabProjectId(), mergeRequest.getIid()).toIterable();
 
                 for(GitLabFileChange file : merge){
                     String fileType = findFileType(file);

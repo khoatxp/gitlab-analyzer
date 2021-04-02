@@ -17,32 +17,27 @@ import java.util.stream.Stream;
 
 @Service
 public class CommitService {
-    MergeRequestRepository mergeRequestRepository;
-    CommitRepository commitRepository;
-    ProjectRepository projectRepository;
-    GitManagementUserRepository gitManagementUserRepository;
-    CommitCommentRepository commitCommentRepository;
-    ScoreService scoreService;
-    CommitAuthorRepository commitAuthorRepository;
-    AnalysisRunService analysisRunService;
+    private final MergeRequestRepository mergeRequestRepository;
+    private final CommitRepository commitRepository;
+    private final ProjectRepository projectRepository;
+    private final GitManagementUserRepository gitManagementUserRepository;
+    private final CommitCommentRepository commitCommentRepository;
+    private final ScoreService scoreService;
+    private final CommitAuthorRepository commitAuthorRepository;
+    private final AnalysisRunService analysisRunService;
+    private final GitLabService requestScopeGitLabService;
 
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
-
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
-
-    public CommitService(MergeRequestRepository mergeRequestRepository, CommitRepository commitRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, CommitCommentRepository commitCommentRepository, ScoreService scoreService, CommitAuthorRepository commitAuthorRepository, AnalysisRunService analysisRunService) {
+    public CommitService(MergeRequestRepository mergeRequestRepository, CommitRepository commitRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, CommitCommentRepository commitCommentRepository, ScoreService scoreService, CommitAuthorRepository commitAuthorRepository, AnalysisRunService analysisRunService,GitLabService requestScopeGitLabService) {
         this.mergeRequestRepository = mergeRequestRepository;
         this.commitRepository = commitRepository;
         this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
         this.commitCommentRepository = commitCommentRepository;
+        this.commitAuthorRepository = commitAuthorRepository;
         this.scoreService = scoreService;
         this.commitAuthorRepository = commitAuthorRepository;
         this.analysisRunService = analysisRunService;
+        this.requestScopeGitLabService = requestScopeGitLabService;
     }
 
     public String splitEmail(String email) {
@@ -66,12 +61,12 @@ public class CommitService {
         for(int i = 0; i < mergeRequestList.size();i++){
             progress = startOfProgressRange + (endOfProgressRange-startOfProgressRange) * (i+1)/mergeRequestList.size();
             analysisRunService.updateProgress(analysisRun, "Importing commits for "+ (i+1) +"/"+mergeRequestList.size() + " merge requests",progress, false);
-            var gitLabCommits = gitLabService.getMergeRequestCommits(project.getGitLabProjectId(), mergeRequestList.get(i).getIid());
+            var gitLabCommits = requestScopeGitLabService.getMergeRequestCommits(project.getGitLabProjectId(), mergeRequest.getIid());
             saveCommitHelper(project, mergeRequestList.get(i), gitLabCommits, mrCommitShas);
         }
 
         //Save orphan commits
-        var gitLabCommits = gitLabService.getCommits(project.getGitLabProjectId(), startDateTime, endDateTime)
+        var gitLabCommits = requestScopeGitLabService.getCommits(project.getGitLabProjectId(), startDateTime, endDateTime)
                                                            .filter(gitLabCommit -> !mrCommitShas.contains(gitLabCommit.getSha()));
         analysisRunService.updateProgress(analysisRun, "Importing orphan commits", AnalysisRun.Progress.AtStartOfImportingOrphanCommits.getValue(), false);
         saveCommitHelper(project, null, gitLabCommits, mrCommitShas);
@@ -126,11 +121,11 @@ public class CommitService {
 
         //First attempt using author username extracted from email
         String username = splitEmail(gitLabCommit.getAuthorEmail());
-        GitManagementUser gitManagementUser = gitManagementUserRepository.findByUsernameAndServerUrl(username, serverUrl);
+        GitManagementUser gitManagementUser = gitManagementUserRepository.findByUsernameAndServerId(username, project.getServer().getId());
 
         if(gitManagementUser == null){
             //Second attempt using author name
-            gitManagementUser = gitManagementUserRepository.findByUsernameAndServerUrl(gitLabCommit.getAuthorName(),serverUrl);
+            gitManagementUser = gitManagementUserRepository.findByUsernameAndServerId(gitLabCommit.getAuthorName(),project.getServer().getId());
         }
 
         if(gitManagementUser != null){
@@ -141,13 +136,11 @@ public class CommitService {
     }
 
     public void saveCommitComment(Project project, Commit commit){
-        // TODO use an internal projectId to find the correct server
-        var gitLabService = new GitLabService(serverUrl, accessToken);
-        var gitLabCommitComments = gitLabService.getCommitComments(project.getGitLabProjectId(), commit.getSha());
+        var gitLabCommitComments = requestScopeGitLabService.getCommitComments(project.getGitLabProjectId(), commit.getSha());
         var gitLabCommitCommentList = gitLabCommitComments.collectList().block();
 
         gitLabCommitCommentList.parallelStream().forEach(gitLabCommitComment -> {
-            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabCommitComment.getAuthor().getId(),serverUrl);
+            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabCommitComment.getAuthor().getId(),project.getServer().getId());
             if(gitManagementUser == null){
                 return;
             }

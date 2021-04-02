@@ -20,7 +20,6 @@ exports[`Cardlayout Snapshot CardLayout 1`] = `
           boxShadow={20}
           display="flex"
           flexDirection="column"
-          height="60vh"
           justifyContent="center"
           minHeight="450px"
           minWidth="250px"

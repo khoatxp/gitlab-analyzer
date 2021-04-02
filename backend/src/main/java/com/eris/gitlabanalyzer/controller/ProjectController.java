@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RestController
-@RequestMapping(path = "/api/v1/projects")
+@RequestMapping(path = "/api/v1")
 public class ProjectController {
     private final ProjectService projectService;
     private final AnalyticsService analyticsService;
@@ -31,7 +31,7 @@ public class ProjectController {
         this.authService = authService;
     }
 
-    @GetMapping(path = "/{projectId}/rawdata")
+    @GetMapping(path = "/projects/{projectId}/rawdata")
     public RawTimeLineProjectData analyzeProject(
             @PathVariable("projectId") Long projectId,
             @RequestParam("startDateTime")
@@ -41,22 +41,23 @@ public class ProjectController {
         return projectService.getTimeLineProjectData(projectId, startDateTime, endDateTime);
     }
 
-    @GetMapping
+    @GetMapping(path = "/projects")
     public List<Project> getProjects(){
         return projectService.getProjects();
     }
 
-    @PostMapping(path = "/analytics/save_all")
+    @PostMapping(path = "/{serverId}/projects/analytics/save_all")
     public List<Long> saveProjectDataForAnalysisRuns(
             @RequestBody List<AnalysisRunView> analysisRuns){
         List<Long> analysisRunIds = analysisRuns.stream().map(AnalysisRunView::getId).collect(Collectors.toList());
         return analyticsService.saveProjectDataForAnalysisRuns(analysisRunIds);
     }
 
-    @PostMapping(path = "/analytics/generate_analysis_runs")
+    @PostMapping(path = "/{serverId}/projects/analytics/generate_analysis_runs")
     public Stream<AnalysisRunView> generateAnalysisRuns(
             Principal principal,
-            @RequestBody List<Long> projectIdList,
+            @PathVariable("serverId") Long serverId,
+            @RequestBody List<Long> gitLabProjectIdList,
             @RequestParam("startDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
@@ -64,5 +65,4 @@ public class ProjectController {
         var user = authService.getLoggedInUser(principal);
         return analyticsService.saveProjectsAndAnalysisRuns(user, projectIdList, startDateTime, endDateTime);
     }
-
 }

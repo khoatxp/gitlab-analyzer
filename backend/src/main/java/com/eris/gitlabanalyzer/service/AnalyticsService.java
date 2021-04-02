@@ -42,7 +42,7 @@ public class AnalyticsService {
     public Stream<AnalysisRunView> saveProjectsAndAnalysisRuns(User user, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         List<AnalysisRun> analysisRuns = new ArrayList<>();
         gitLabProjectIdList.forEach(gitLabProjectId -> {
-            Project project = projectService.saveProjectInfo(user, gitLabProjectId);
+            Project project = projectService.saveProjectInfo(user, serverId, gitLabProjectId);
             analysisRuns.add(this.analysisRunService.createAnalysisRun(user, project, AnalysisRun.Status.InProgress, startDateTime, endDateTime));
         });
         return analysisRuns.stream().map(AnalysisRunView::fromAnalysisRun);
