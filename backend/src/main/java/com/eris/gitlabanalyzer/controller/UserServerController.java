@@ -26,7 +26,7 @@ public class UserServerController {
 
     @GetMapping
     public Stream<UserServerView> getUserServers(Principal principal) {
-        var user = authService.getLoggedInUser(principal);
+        var user =  authService.getLoggedInUser(principal);
         var userServers = userServerService.getUserServers(user);
         return userServers.stream().map(UserServerView::fromUserServer);
     }
