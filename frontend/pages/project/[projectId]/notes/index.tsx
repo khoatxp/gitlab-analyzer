@@ -160,8 +160,8 @@ const NotesList = ({mergeRequestNotes, issueNotes}: {
               className={classes.notesList}
         >
             {(noteType === NoteType.MergeRequest ? mergeRequestNotes : issueNotes).map((note) => (
-                hideOwnNotes && note.own ? <></> :
-                    <ListItem key={note.id}>
+                hideOwnNotes && note.own ? null :
+                    <ListItem key={`${note.id}`}>
                         <ListItemText
                             primary={
                                 <>
