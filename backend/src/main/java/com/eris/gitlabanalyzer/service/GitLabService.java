@@ -24,8 +24,10 @@ public class GitLabService {
     private final WebClient webClient;
     private final String projectPath = "api/v4/projects/";
 
-    @Setter private String serverUrl;
-    @Setter private String accessToken;
+    @Setter
+    private String serverUrl;
+    @Setter
+    private String accessToken;
 
     private WebClient createWebclient() {
         // setting the default buffer size to 16MB
@@ -57,7 +59,7 @@ public class GitLabService {
     }
 
     @Transactional(timeout = 240)
-    public Flux<GitLabProject> getProjects(){
+    public Flux<GitLabProject> getProjects() {
         validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath)
@@ -254,8 +256,8 @@ public class GitLabService {
 
     private WebClient.RequestHeadersSpec<?> authorizedGetRequestHeadersSpec(String url) {
         return webClient.get()
-            .uri(url)
-            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+                .uri(url)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
     }
 
     // Based on https://github.com/eclipse/egit-github/blob/master/org.eclipse.egit.github.core/src/org/eclipse/egit/github/core/client/PageLinks.java
@@ -293,7 +295,7 @@ public class GitLabService {
                 if (relValue.startsWith("\"") && relValue.endsWith("\""))
                     relValue = relValue.substring(1, relValue.length() - 1); // get the rel string inside the double quotes
 
-                relUrls.put(relValue,  url);
+                relUrls.put(relValue, url);
             }
         }
 
