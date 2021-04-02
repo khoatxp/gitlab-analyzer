@@ -48,6 +48,7 @@ public class ProjectController {
 
     @PostMapping(path = "/{serverId}/projects/analytics/save_all")
     public List<Long> saveProjectDataForAnalysisRuns(
+            @PathVariable("serverId") Long serverId,
             @RequestBody List<AnalysisRunView> analysisRuns){
         List<Long> analysisRunIds = analysisRuns.stream().map(AnalysisRunView::getId).collect(Collectors.toList());
         return analyticsService.saveProjectDataForAnalysisRuns(analysisRunIds);
@@ -63,6 +64,6 @@ public class ProjectController {
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
         var user = authService.getLoggedInUser(principal);
-        return analyticsService.saveProjectsAndAnalysisRuns(user, projectIdList, startDateTime, endDateTime);
+        return analyticsService.saveProjectsAndAnalysisRuns(user, serverId, gitLabProjectIdList, startDateTime, endDateTime);
     }
 }

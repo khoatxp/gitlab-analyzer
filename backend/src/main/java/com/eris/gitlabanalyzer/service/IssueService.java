@@ -40,7 +40,7 @@ public class IssueService {
             analysisRunService.updateProgress(analysisRun, "Importing "+ (i+1) +"/"+gitLabIssueList.size() + " issues",progress, false);
 
             var gitLabIssue = gitLabIssueList.get(i);
-            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabIssue.getAuthor().getId(), serverUrl);
+            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabIssue.getAuthor().getId(), project.getServer().getId());
             Issue issue = issueRepository.findByIidAndProjectId(gitLabIssue.getIid(),project.getId());
             if(issue == null){
                 issue = new Issue(

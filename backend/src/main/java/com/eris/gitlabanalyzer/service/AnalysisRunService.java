@@ -6,9 +6,8 @@ import com.eris.gitlabanalyzer.model.User;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabProject;
 import com.eris.gitlabanalyzer.repository.AnalysisRunRepository;
 import com.eris.gitlabanalyzer.viewmodel.AnalysisRunView;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ import java.util.stream.Stream;
 @Service
 public class AnalysisRunService {
     private AnalysisRunRepository analysisRunRepository;
-    private UserServerService userServerService;
     private final MessageService messageService;
     private final GitLabService requestScopeGitLabService;
 

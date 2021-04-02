@@ -27,13 +27,12 @@ public class CommitService {
     private final AnalysisRunService analysisRunService;
     private final GitLabService requestScopeGitLabService;
 
-    public CommitService(MergeRequestRepository mergeRequestRepository, CommitRepository commitRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, CommitCommentRepository commitCommentRepository, ScoreService scoreService, CommitAuthorRepository commitAuthorRepository, AnalysisRunService analysisRunService,GitLabService requestScopeGitLabService) {
+    public CommitService(MergeRequestRepository mergeRequestRepository, CommitRepository commitRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, CommitCommentRepository commitCommentRepository, ScoreService scoreService, CommitAuthorRepository commitAuthorRepository, AnalysisRunService analysisRunService, GitLabService requestScopeGitLabService) {
         this.mergeRequestRepository = mergeRequestRepository;
         this.commitRepository = commitRepository;
         this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
         this.commitCommentRepository = commitCommentRepository;
-        this.commitAuthorRepository = commitAuthorRepository;
         this.scoreService = scoreService;
         this.commitAuthorRepository = commitAuthorRepository;
         this.analysisRunService = analysisRunService;
@@ -51,18 +50,16 @@ public class CommitService {
         List<MergeRequest> mergeRequestList = mergeRequestRepository.findAllByProjectId(project.getId());
         List<String> mrCommitShas = new ArrayList<>(); //Used to filter for the case of orphan commits
 
-        // TODO use an internal projectId to find the correct server
-        var gitLabService = new GitLabService(serverUrl, accessToken);
-
         Double progress;
         Double startOfProgressRange = AnalysisRun.Progress.AtStartOfImportingCommits.getValue();
         Double endOfProgressRange = AnalysisRun.Progress.AtStartOfImportingOrphanCommits.getValue();
 
         for(int i = 0; i < mergeRequestList.size();i++){
+            MergeRequest mergeRequest = mergeRequestList.get(i);
             progress = startOfProgressRange + (endOfProgressRange-startOfProgressRange) * (i+1)/mergeRequestList.size();
             analysisRunService.updateProgress(analysisRun, "Importing commits for "+ (i+1) +"/"+mergeRequestList.size() + " merge requests",progress, false);
             var gitLabCommits = requestScopeGitLabService.getMergeRequestCommits(project.getGitLabProjectId(), mergeRequest.getIid());
-            saveCommitHelper(project, mergeRequestList.get(i), gitLabCommits, mrCommitShas);
+            saveCommitHelper(project, mergeRequest, gitLabCommits, mrCommitShas);
         }
 
         //Save orphan commits

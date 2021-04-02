@@ -61,13 +61,13 @@ const index = () => {
             .post(`${process.env.NEXT_PUBLIC_API_URL}/${serverId}/projects/analytics/generate_analysis_runs/?${dateQuery}`, projectIds, getAxiosAuthConfig())
             .then((res) => {
                 axios
-                    .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics/save_all`, res.data, getAxiosAuthConfig())
+                    .post(`${process.env.NEXT_PUBLIC_API_URL}/${serverId}/projects/analytics/save_all`, res.data, getAxiosAuthConfig())
                     .catch(()=>{
                         enqueueSnackbar('Failed to load analysis from server.', {variant: 'error'});
                     })
                 if(res.data.length > 1){
                     router.push(`/server/${serverId}/analyses`);
-                } else{
+                } else if (res.data[0]){
                     setGeneratedAnalysisRun(res.data[0]);
                     setOpen(true);
                     setIsLoading(false);
