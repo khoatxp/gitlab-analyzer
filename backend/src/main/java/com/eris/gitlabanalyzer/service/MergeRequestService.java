@@ -16,37 +16,29 @@ import java.util.List;
 
 @Service
 public class MergeRequestService {
-    MergeRequestRepository mergeRequestRepository;
-    ProjectRepository projectRepository;
-    GitManagementUserRepository gitManagementUserRepository;
-    MergeRequestCommentRepository mergeRequestCommentRepository;
-    ScoreService scoreService;
+    private final MergeRequestRepository mergeRequestRepository;
+    private final ProjectRepository projectRepository;
+    private final GitManagementUserRepository gitManagementUserRepository;
+    private final MergeRequestCommentRepository mergeRequestCommentRepository;
+    private final ScoreService scoreService;
+    private final GitLabService requestScopeGitLabService;
 
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
-
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
-
-    public MergeRequestService(MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, MergeRequestCommentRepository mergeRequestCommentRepository, ScoreService scoreService) {
+    public MergeRequestService(MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, MergeRequestCommentRepository mergeRequestCommentRepository, ScoreService scoreService, GitLabService requestScopeGitLabService) {
         this.mergeRequestRepository = mergeRequestRepository;
         this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
         this.mergeRequestCommentRepository = mergeRequestCommentRepository;
         this.scoreService = scoreService;
+        this.requestScopeGitLabService = requestScopeGitLabService;
     }
 
     public void saveMergeRequestInfo(Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        // TODO use an internal projectId to find the correct server
-        var gitLabService = new GitLabService(serverUrl, accessToken);
 
-        var gitLabMergeRequests = gitLabService.getMergeRequests(project.getGitLabProjectId(), startDateTime, endDateTime);
+        var gitLabMergeRequests = requestScopeGitLabService.getMergeRequests(project.getGitLabProjectId(), startDateTime, endDateTime);
         var gitLabMergeRequestList = gitLabMergeRequests.collectList().block();
 
         gitLabMergeRequestList.forEach(gitLabMergeRequest -> {
-                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabMergeRequest.getAuthor().getId(), serverUrl);
+                    GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabMergeRequest.getAuthor().getId(), project.getServer().getId());
                     MergeRequest mergeRequest = mergeRequestRepository.findByIidAndProjectId(gitLabMergeRequest.getIid(),project.getId());
                     if(mergeRequest == null){
                         mergeRequest = new MergeRequest(
@@ -68,14 +60,12 @@ public class MergeRequestService {
     }
 
     public void saveMergeRequestComments (Project project, MergeRequest mergeRequest){
-        // TODO use an internal projectId to find the correct server
-        var gitLabService = new GitLabService(serverUrl, accessToken);
 
-        var gitLabMergeRequestComments = gitLabService.getMergeRequestNotes(project.getGitLabProjectId(), mergeRequest.getIid());
+        var gitLabMergeRequestComments = requestScopeGitLabService.getMergeRequestNotes(project.getGitLabProjectId(), mergeRequest.getIid());
         var gitLabMergeRequestCommentList = gitLabMergeRequestComments.collectList().block();
 
         gitLabMergeRequestCommentList.parallelStream().forEach(gitLabMergeRequestComment -> {
-            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabMergeRequestComment.getAuthor().getId(),serverUrl);
+            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabMergeRequestComment.getAuthor().getId(),project.getServer().getId());
             MergeRequestComment mergeRequestComment = mergeRequestCommentRepository.findByGitLabMergeRequestNoteIdAndMergeRequestId(gitLabMergeRequestComment.getId(),mergeRequest.getId());
             if(mergeRequestComment == null){
                 mergeRequestComment = new MergeRequestComment(
@@ -88,10 +78,5 @@ public class MergeRequestService {
             }
             mergeRequestCommentRepository.save(mergeRequestComment);
         });
-    }
-
-    public List<MergeRequest> getMergeRequestsByProjectId(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        // TODO ensure user has permissions for project
-        return mergeRequestRepository.findAllByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
     }
 }

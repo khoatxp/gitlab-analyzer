@@ -2,8 +2,7 @@ package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
@@ -60,6 +59,12 @@ public class MergeRequest {
 
     )
     private String webUrl;
+
+    @ElementCollection
+    @Column(
+            name="shared_with"
+        )
+    private Set<Long> sharedWith = new LinkedHashSet<>();
 
     @ManyToOne
     @JoinColumn(
@@ -129,6 +134,10 @@ public class MergeRequest {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public void setSharedWith(Set<Long> sharedWith) {
+        this.sharedWith = sharedWith;
     }
 
     public void setGitManagementUser(GitManagementUser gitManagementUser) {

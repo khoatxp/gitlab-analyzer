@@ -10,6 +10,7 @@ import ProjectSelect from "../../../components/ProjectSelect";
 import LoadingBar from "../../../components/LoadingBar";
 import {formatISO} from "date-fns";
 
+
 const index = () => {
     const router = useRouter();
     const {enqueueSnackbar} = useSnackbar();
@@ -26,13 +27,18 @@ const index = () => {
     }, [serverId]);
 
     const loadProjects = () => {
-        // TODO need to pass serverId into this call to get the correct gitlab url and access code from db
-        // when that information is available in db
         setItemBeingLoaded("Projects");
         axios
             .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/${serverId}/projects`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
-                setProjects(resp.data);
+                // Couple of times I have seen this endpoint return a list of one item with all nulls. Have not been
+                // able to reproduce consistently. Adding a condition check here to at least handle it on frontend
+                if (resp.data.length === 1 && resp.data[0].id === null) {
+                    setProjects([]);
+                }
+                else {
+                    setProjects(resp.data);
+                }
                 setIsLoading(false);
             }).catch(() => {
             enqueueSnackbar('Failed to get server projects.', {variant: 'error',});
@@ -49,19 +55,28 @@ const index = () => {
         const end = formatISO(endDateTime);
         const dateQuery = `startDateTime=${start}&endDateTime=${end}`;
         axios
-            .post(`${process.env.NEXT_PUBLIC_API_URL}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
+            .post(`${process.env.NEXT_PUBLIC_API_URL}/${serverId}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
             .then((res) => {
-                const analyizedInternalProjectId = res.data[0];
-                console.log(res.data);
-                router.push(`/project/${analyizedInternalProjectId}/overview?${dateQuery}`);
+                let analyzedProjectIds = res.data;
+                if (analyzedProjectIds.length > 1) {
+                    // Multiple projects analyzed, go to analyses page
+                    router.push(`/server/${serverId}/analyses`);
+                } else if (analyzedProjectIds.length === 1) {
+                    // Single project analyzed, go to overview for the project
+                    router.push(`/project/${analyzedProjectIds[0]}/overview?${dateQuery}`);
+                } else {
+                    setIsLoading(false);
+                    enqueueSnackbar(`Failed to analyze ${projectIds.length > 0 ? 'projects' : 'project'}`, {variant: 'error',});
+                }
             }).catch(() => {
-            enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});
+                setIsLoading(false);
+                enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});
         });
     }
 
     return (
         <AuthView>
-            <CardLayout backLink={"/server"} logoType="header">
+            <CardLayout backLink={`/server/${serverId}`} logoType="header">
                 {isLoading && <LoadingBar itemBeingLoaded={itemBeingLoaded}/>}
                 {!isLoading && <ProjectSelect projects={projects} onAnalyzeClick={handleAnalyze}/>}
             </CardLayout>

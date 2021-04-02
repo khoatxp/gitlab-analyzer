@@ -1,9 +1,11 @@
-import {Box, TextField} from "@material-ui/core";
+import {Box, Chip, TextField} from "@material-ui/core";
 import React, {useState} from "react";
 import {GitLabProject} from "../interfaces/GitLabProject";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import AppDateTimePicker from "./app/AppDateTimePicker";
 import AppButton from "./app/AppButton";
+import ScoreProfileSelect from "./ScoreProfileSelect";
+import ScoreProfile from "../interfaces/ScoreProfile";
 
 type ProjectSelectProps = {
     projects: GitLabProject[]
@@ -12,12 +14,33 @@ type ProjectSelectProps = {
 
 const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
     const now = new Date();
-    const [selectedProjectId, setSelectedProjectId] = useState<number>(0);
+    const [selectedProjects, setSelectedProjects] = useState<GitLabProject[]>([]);
     const [startDateTime, setStartDateTime] = useState<Date>(new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()));
     const [endDateTime, setEndDateTime] = useState<Date>(now);
+    const [scoreProfile, setScoreProfile] = useState<ScoreProfile | undefined>();
+    const [scoreProfileId, setScoreProfileId] = useState<number | null>();
 
     const onProjectSelect = (_event: any, value: GitLabProject) => {
-        setSelectedProjectId(value ? value.id: 0); // Value will be null when the clear button is pressed. Ensure we have a number
+        if (!value) { return; } // Value will be null when the clear button is pressed. Ensure we have a number
+
+        // Check if we are already set to analyze the selected project
+        if (selectedProjects.some(proj => proj.id == value.id)) {
+            return;
+        }
+
+        const projectIds = [...selectedProjects, value]
+        setSelectedProjects(projectIds)
+    }
+
+    const handleDeleteChip = (index: number) => {
+        let newProjects = [...selectedProjects];
+        newProjects.splice(index, 1);
+        setSelectedProjects(newProjects);
+    }
+
+    const onProfileSelect = (event: any, profile: ScoreProfile) => {
+        setScoreProfile(profile);
+        setScoreProfileId(profile ? profile.id: 0);
     }
 
     return (
@@ -29,7 +52,17 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
                 getOptionLabel={(proj) => proj.name_with_namespace}
                 renderInput={(params) => <TextField {...params} label="Search Projects" variant="outlined"/>}
             />
-
+            <Box m={1.5} display="flex" flexWrap="wrap">
+                {selectedProjects.map((project, index) =>
+                    <Box m={0.5} key={project.id}>
+                        <Chip
+                            label={project.name_with_namespace}
+                            onDelete={() => handleDeleteChip(index)}
+                            color="primary"
+                        />
+                    </Box>
+                )}
+            </Box>
             <Box
                 marginLeft="5px"
                 marginRight="5px"
@@ -39,9 +72,9 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
                 width="56vw"
                 minWidth="260px"
                 display="flex"
-                flexDirection="column"
-                justifyContent="column"
-                alignItems="column"
+                flexDirection="row"
+                justifyContent="row"
+                alignItems="center"
             >
                 <AppDateTimePicker
                     onStartDateTimeChange={dateTime => setStartDateTime(dateTime)}
@@ -49,6 +82,12 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
                     startDateTime={startDateTime}
                     endDateTime={endDateTime}
                 />
+
+                <ScoreProfileSelect
+                    scoreProfile={scoreProfile}
+                    onScoreProfileSelect={onProfileSelect}
+                 />
+
             </Box>
             <Box
                 alignSelf="center"
@@ -56,8 +95,8 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
             >
                 <AppButton
                     color="primary"
-                    disabled={selectedProjectId === 0}
-                    onClick={() => onAnalyzeClick([selectedProjectId], startDateTime, endDateTime)}
+                    disabled={selectedProjects.length === 0}
+                    onClick={() => onAnalyzeClick(selectedProjects.map(project => project.id), startDateTime, endDateTime)}
                 >
                     Analyze
                 </AppButton>
