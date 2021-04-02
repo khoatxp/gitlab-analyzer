@@ -5,14 +5,14 @@ exports[`Cardlayout Snapshot CardLayout 1`] = `
   <AppGradientBackground>
     <Styled(MuiBox)
       alignItems="center"
-      className="makeStyles-backgroundGradient-2"
+      className="makeStyles-backgroundGradient-1"
       display="flex"
       height="100vh"
       justifyContent="center"
       width="100vw"
     >
       <div
-        className="MuiBox-root MuiBox-root-4 makeStyles-backgroundGradient-2"
+        className="MuiBox-root MuiBox-root-3 makeStyles-backgroundGradient-1"
       >
         <Styled(MuiBox)
           bgcolor="primary.contrastText"
@@ -28,7 +28,7 @@ exports[`Cardlayout Snapshot CardLayout 1`] = `
           width="60vw"
         >
           <div
-            className="MuiBox-root MuiBox-root-5"
+            className="MuiBox-root MuiBox-root-4"
           >
             <Styled(MuiBox)
               id="card-header"
@@ -36,7 +36,7 @@ exports[`Cardlayout Snapshot CardLayout 1`] = `
               textAlign="center"
             >
               <div
-                className="MuiBox-root MuiBox-root-6"
+                className="MuiBox-root MuiBox-root-5"
                 id="card-header"
               >
                 <Image
@@ -168,7 +168,7 @@ exports[`Cardlayout Snapshot CardLayout 1`] = `
               justifyContent="center"
             >
               <div
-                className="MuiBox-root MuiBox-root-7"
+                className="MuiBox-root MuiBox-root-6"
               >
                 <div />
               </div>
