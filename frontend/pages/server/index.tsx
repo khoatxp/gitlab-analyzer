@@ -3,11 +3,11 @@ import axios, {AxiosResponse} from "axios";
 import {
     Box, Dialog, DialogActions, DialogContent, DialogContentText,
     DialogTitle,
-    Icon,
+    Icon, IconButton,
     List,
     ListItem,
     ListItemSecondaryAction,
-    ListItemText,
+    ListItemText, Tooltip,
     Typography
 } from "@material-ui/core";
 import Button from '@material-ui/core/Button';
@@ -21,18 +21,19 @@ import AppButton from "../../components/app/AppButton";
 import {makeStyles} from "@material-ui/styles";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
+import {PlayArrow} from "@material-ui/icons";
 
 const useStyles = makeStyles({
+    listItemSecondaryAction: {
+        paddingRight: 160,
+    },
     itemName: {
         fontWeight: 500,
-        color: "#333333"
+        color: "#333333",
+        overflowWrap: 'break-word',
     },
     deleteButton: {
-        color: 'white',
-        backgroundColor: '#ff4569',
-        '&:hover': {
-            backgroundColor: '#ff1744',
-        },
+        color: '#ff4569',
     }
 })
 
@@ -43,7 +44,6 @@ type DialogProps = {
 }
 
 const RemoveConfirmationDialog = ({open, handleClose, handleConfirm}: DialogProps) => {
-
     return (
         <Dialog
             open={open}
@@ -118,26 +118,40 @@ const Server = () => {
         <AuthView>
             {!isLoading && <CardLayout size="md" logoType="header">
                 <Typography align="center" variant="h5">Manage Servers</Typography>
-                <List>
-                    {servers.map((server) => {
-                        return (
-                            <ListItem key={server.serverId}>
-                                <ListItemText
-                                    primary={server.serverUrl}
-                                    classes={{primary: classes.itemName}}
-                                />
-                                <ListItemSecondaryAction>
-                                    <NextLink href={`/server/${server.serverId}/`} passHref>
-                                        <AppButton size="medium" color="primary">Select</AppButton>
-                                    </NextLink>
-                                    <NextLink href={`/server/${server.serverId}/edit`} passHref>
-                                        <AppButton size="medium" startIcon={<EditIcon />}>Edit</AppButton>
-                                    </NextLink>
-                                    <AppButton size="medium" classes={{ root: classes.deleteButton }} startIcon={<DeleteIcon />} onClick={() => openRemoveConfirmation(server.serverId)}>Remove</AppButton>
-                                </ListItemSecondaryAction>
-                            </ListItem>);
-                    })}
-                </List>
+                <Box maxHeight="50vh" overflow="auto">
+                    <List>
+                        {servers.map((server) => {
+                            return (
+                                <ListItem key={server.serverId} classes={{secondaryAction: classes.listItemSecondaryAction}}>
+                                    <ListItemText
+                                        primary={server.serverUrl}
+                                        classes={{primary: classes.itemName}}
+                                    />
+                                    <ListItemSecondaryAction>
+                                        <NextLink href={`/server/${server.serverId}/`} passHref>
+                                            <Tooltip title="Select">
+                                                <IconButton color="primary" aria-label="Select">
+                                                    <PlayArrow />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </NextLink>
+                                        <NextLink href={`/server/${server.serverId}/edit`} passHref>
+                                            <Tooltip title="Edit">
+                                                <IconButton aria-label="Edit">
+                                                    <EditIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </NextLink>
+                                        <Tooltip title="Delete">
+                                            <IconButton classes={{ root: classes.deleteButton }} aria-label="Delete" onClick={() => openRemoveConfirmation(server.serverId)}>
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </ListItemSecondaryAction>
+                                </ListItem>);
+                        })}
+                    </List>
+                </Box>
                 <Box textAlign="center" marginTop="10px">
                     <NextLink href={`/server/add`} passHref>
                         <Button>
