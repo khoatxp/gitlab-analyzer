@@ -50,14 +50,17 @@ class UserServerServiceTests {
     @Test
     void testUpdateUserServers()  {
         var user = userRepository.findById(1l).get();
-        var accessToken = "12345678901234567890";
-        var userServer = userServerService.createUserServer(user, "https://example.com", accessToken);
-        assertEquals(accessToken, userServer.getAccessToken());
+        var newAccessToken = "12345678901234567890";
+        var userServer = userServerService.getUserServer(user, 1L).get();
+        var oldAccessToken = userServer.getAccessToken();
 
-        var updatedAccessToken = "qwertyuiopasdfghjkl";
-        userServerService.updateUserServer(user, userServer.getServer().getId(), updatedAccessToken);
+        userServerService.updateUserServer(user, userServer.getServer().getId(), newAccessToken);
         var updatedUserServer = userServerService.getUserServer(user, userServer.getServer().getId()).get();
-        assertEquals(updatedAccessToken, updatedUserServer.getAccessToken());
+        assertEquals(newAccessToken, updatedUserServer.getAccessToken());
+
+        userServerService.updateUserServer(user, userServer.getServer().getId(), oldAccessToken);
+        updatedUserServer = userServerService.getUserServer(user, userServer.getServer().getId()).get();
+        assertEquals(oldAccessToken, updatedUserServer.getAccessToken());
     }
 
     @Test
