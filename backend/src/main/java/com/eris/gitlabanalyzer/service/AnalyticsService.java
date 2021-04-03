@@ -66,6 +66,7 @@ public class AnalyticsService {
                 analysisRun.setStatus(AnalysisRun.Status.Completed);
                 analysisRunRepository.save(analysisRun);
             } catch(Exception e) {
+                System.err.println(e);
                 analysisRun.setStatus(AnalysisRun.Status.Error);
                 analysisRunRepository.save(analysisRun);
             }
