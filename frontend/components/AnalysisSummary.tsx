@@ -50,7 +50,7 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
             </Avatar>
 
             <Box ml={3} flexGrow={1}>
-                <Typography variant="h3">{project?.name_with_namespace ?? "Loading..."}</Typography>
+                <Typography variant="h5">{project?.name_with_namespace ?? "Loading..."}</Typography>
                 <Typography variant="subtitle2">
                     {commitCount} Commit(s) -{' '}
                     {mergeRequestCount} Merge Request(s)
@@ -63,13 +63,12 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
                 </Box>
             </Box>
 
-            <Box display="flex" alignItems="center">
+            <Box display="flex" align="right">
                 <Box>
-                    <Typography variant="h6"><b>Merge Request Score:</b> {mergeRequestScore}</Typography>
-                    <Typography variant="h6"><b>Commit Score:</b> {commitScore}</Typography>
-                </Box>
-                <Box ml={2}>
+                    <Typography variant="subtitle1"><b>Merge Request Score:</b> {mergeRequestScore}</Typography>
+                    <Typography variant="subtitle1"><b>Commit Score:</b> {commitScore}</Typography>
                     <IconButton color="primary" size="medium" onClick={handleCopyScore} disabled={!project}>
+                        <Typography variant="subtitle1">Copy Score: </Typography>
                         <FileCopyIcon/>
                     </IconButton>
                 </Box>
