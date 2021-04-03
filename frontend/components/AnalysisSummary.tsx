@@ -42,7 +42,7 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
     }
 
     return (
-        <Box display="flex" alignItems="center" padding={4}>
+        <Box display="flex" alignItems="center" padding={3}>
             <Avatar className={styles.avatar} variant='rounded' src={project?.avatar_url ?? ''}>
                 <Typography variant="h3">
                     {getAvatarText(project?.avatar_url ?? '', project?.name ?? '')}
