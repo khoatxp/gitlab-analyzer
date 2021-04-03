@@ -5,7 +5,6 @@ import com.eris.gitlabanalyzer.viewmodel.CommitAuthorRequestBody;
 import com.eris.gitlabanalyzer.viewmodel.CommitAuthorView;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
 import com.eris.gitlabanalyzer.repository.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -189,7 +188,14 @@ public class CommitService {
         return commits;
     }
 
+    public List<Commit> getCommitsInDateRangeByMergeRequestId(Long mergeRequestId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        List<Commit> commits = commitRepository.findAllByMergeRequestIdAndDateRange(mergeRequestId, startDateTime, endDateTime);
+        return commits;
+    }
 
+    public List<Commit> getCommitsOfGitManagementUserInDateRangeByMergeRequestId(Long mergeRequestId, Long gitManagementUserId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        return commitRepository.findAllByMergeRequestIdAndDateRangeAndGitManagementUserId(mergeRequestId,gitManagementUserId, startDateTime, endDateTime);
+    }
 
     public void setAllSharedMergeRequests(Long projectId){
         List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByProjectId(projectId);
