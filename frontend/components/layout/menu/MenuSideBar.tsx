@@ -8,17 +8,22 @@ import {MenuButton} from "./MenuButton";
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import {GitManagementUser} from "../interfaces/GitManagementUser";
+import {useSnackbar} from "notistack";
 
 const useStyles = makeStyles((theme) => ({
-    background: {
-        background: theme.palette.primary.main,
-    },
     sidebar: {
         background: theme.palette.primary.main,
         overflow: 'auto',
         position: 'relative',
         left: '-100%',
         transition: '600ms',
+             height: "100%",
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "flex-start",
+                        alignItems: "center",
     },
     displaySidebar: {
         left: '0',
@@ -37,20 +42,23 @@ const useStyles = makeStyles((theme) => ({
 const MenuSideBar = () => {
     const router = useRouter();
     const classes = useStyles();
+    const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
-    const [gitLabMemberNames, setGitLabMemberNames] = React.useState<[]>([]);
+    const [gitLabMemberUserNames, setGitLabMemberUserNames] = React.useState<[]>([]);
     const [sidebarState, setSidebarState] = React.useState(false);
 
     const {projectId} = router.query;
-    const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/members`;
+    const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/${projectId}/managementusers/members`;
 
     useEffect(() => {
         if (router.isReady) {
             axios
                 .get(PROJECT_ID_URL, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
-                    setGitLabMemberNames(resp.data);
-                });
+                    setGitLabMemberUserNames(resp.data);
+                }).catch((err: AxiosError)=>{
+                    enqueueSnackbar(`Failed to get members: ${err.message}`, {variant: 'error',});
+            })
         }
     }, [projectId]);
 
@@ -58,15 +66,10 @@ const MenuSideBar = () => {
 
     return (
         <Box
-            classes={classes.background}
-            width={sidebarState ? '16vw' : '3vw'}
-            height="100vh"
-            display="flex"
-            flexDirection="column"
-            justifyContent="flex-start"
-            alignItems="center"
+
+            width={sidebarState ? '16%' : '3%'}
         >
-            <AppBar position="static" >
+            <AppBar position="static" className >
                 <Tabs
                     variant="fullWidth"
                     aria-label="nav tabs"
@@ -74,26 +77,30 @@ const MenuSideBar = () => {
                     <Tab
                         className={classes.sidebarTitle}
                         onClick={showSidebar}
-                        label={sidebarState ? '< Hide' : '>'}
+                        label={sidebarState ? '<' : '>Show    >'}
                     />
                 </Tabs>
             </AppBar>
             <Box
                 className={`${classes.sidebar} ${sidebarState === true && classes.displaySidebar}`}
-                height="100vh"
-                width="100%"
-                display="flex"
-                flexDirection="column"
-                justifyContent="flex-start"
-                alignItems="center"
             >
-                <MenuButton variant="contained" disableRipple>
+                <MenuButton variant="contained" disableRipple >
                     Everyone
                 </MenuButton>
-                {gitLabMemberNames.map(member => {
-                    const {name} = member;
-                    return <MenuButton key={name} variant="contained" disableRipple> {name}</MenuButton>;
+                <MenuButton variant="contained" disableRipple >
+                    mahekk
+                </MenuButton>
+                <MenuButton variant="contained" disableRipple >
+                    idanok
+                </MenuButton>
+                <MenuButton variant="contained" disableRipple >
+                    aturner
+                </MenuButton>
+                {gitLabMemberUserNames.map(member => {
+                    const {userName} = member;
+                    return <MenuButton key={userName} variant="contained" disableRipple > {userName}</MenuButton>;
                 })}
+
             </Box>
         </Box>
     );
