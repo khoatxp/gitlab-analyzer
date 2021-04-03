@@ -104,7 +104,7 @@ const index = () => {
         setIsLoading(true);
         setItemBeingLoaded(`Overview page for ${projectNameWithNamespace}`);
 
-        router.push(`/project/${projectId}/overview?${dateQuery}`);
+        router.push(`/project/${projectId}/0/overview?${dateQuery}`);
     };
 
     return (
