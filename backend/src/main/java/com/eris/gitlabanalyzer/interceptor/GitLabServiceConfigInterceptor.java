@@ -41,28 +41,33 @@ public class GitLabServiceConfigInterceptor implements HandlerInterceptor {
         User user = authService.getLoggedInUser(principal);
 
         var pathParameters = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        if (pathParameters != null && pathParameters.containsKey("serverId")) {
-            Long serverId = Long.parseLong(pathParameters.get("serverId"));
-            var userServer = userServerService.getUserServer(user, serverId).orElseThrow(
-                    () -> new AccessDeniedException("User does not have server permission.")
-            );
-            var server = serverRepository.findById(serverId).get();
-            gitLabService.setServerUrl(server.getServerUrl());
-            gitLabService.setAccessToken(userServer.getAccessToken());
-        }
-        else if (pathParameters != null && pathParameters.containsKey("projectId")) {
-            Long projectId = Long.parseLong(pathParameters.get("projectId"));
-            var project = projectService.getProjectById(projectId);
-            var server = project.getServer();
-
-            if (!authService.hasProjectPermission(user.getId(), server.getId(), projectId)) {
-                throw new AccessDeniedException("User does not have project permission.");
+        try {
+            if (pathParameters != null && pathParameters.containsKey("serverId")) {
+                Long serverId = Long.parseLong(pathParameters.get("serverId"));
+                var userServer = userServerService.getUserServer(user, serverId).orElseThrow(
+                        () -> new AccessDeniedException("User does not have server permission.")
+                );
+                var server = serverRepository.findById(serverId).get();
+                gitLabService.setServerUrl(server.getServerUrl());
+                gitLabService.setAccessToken(userServer.getAccessToken());
             }
-            var userServer = userServerService.getUserServer(user, server.getId()).orElseThrow(
-                    () -> new AccessDeniedException("User does not have server permission.")
-            );
-            gitLabService.setServerUrl(server.getServerUrl());
-            gitLabService.setAccessToken(userServer.getAccessToken());
+            else if (pathParameters != null && pathParameters.containsKey("projectId")) {
+                Long projectId = Long.parseLong(pathParameters.get("projectId"));
+                var project = projectService.getProjectById(projectId);
+                var server = project.getServer();
+
+                if (!authService.hasProjectPermission(user.getId(), server.getId(), projectId)) {
+                    throw new AccessDeniedException("User does not have project permission.");
+                }
+                var userServer = userServerService.getUserServer(user, server.getId()).orElseThrow(
+                        () -> new AccessDeniedException("User does not have server permission.")
+                );
+                gitLabService.setServerUrl(server.getServerUrl());
+                gitLabService.setAccessToken(userServer.getAccessToken());
+            }
+        }
+        catch (NumberFormatException e) {
+            throw new AccessDeniedException("Invalid serverId or projectId");
         }
         return true;
     }

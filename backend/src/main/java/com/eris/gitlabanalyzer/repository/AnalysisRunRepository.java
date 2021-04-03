@@ -11,4 +11,7 @@ public interface AnalysisRunRepository extends JpaRepository<AnalysisRun, Long> 
 
     @Query("SELECT a FROM AnalysisRun a WHERE a.ownerUser.id <> ?1 AND a.server.id = ?2 AND a.project.gitLabProjectId IN ?3")
     List<AnalysisRun> findOthersByServerIdAndGitLabProjectIds(Long userId, Long serverId, List<Long> gitlabProjectIds);
+
+    @Query("SELECT a FROM AnalysisRun a WHERE a.id IN ?1")
+    List<AnalysisRun> findByIds(List<Long> analysisRunIds);
 }

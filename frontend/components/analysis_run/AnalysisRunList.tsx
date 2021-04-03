@@ -1,17 +1,28 @@
 import {Avatar, Box, Paper, Typography} from "@material-ui/core";
 import formatDate from "../../utils/DateFormatter";
 import AnalysisRunStatusIndicator from "./AnalysisRunStatusIndicator";
+import AnalysisProgressModal from "../AnalysisProgressModal";
 import AppButton from "../app/AppButton";
 import {AnalysisRun, AnalysisRunStatus} from "../../interfaces/AnalysisRun";
-import React from "react";
+import React, {useState} from "react";
 import {useRouter} from "next/router";
 
 type AnalysisRunListProps = { isLoading: boolean, analysisRuns: AnalysisRun[], loadAnalysisRuns: () => void }
 const AnalysisRunList = ({isLoading, analysisRuns, loadAnalysisRuns}: AnalysisRunListProps) => {
     const router = useRouter();
+    const [open, setOpen] = useState(false);
+    const [selectedAnalysisRun, setSelectedAnalysisRun] = useState<AnalysisRun | null>(null);
+    const handleClose = () => {
+        setOpen(false);
+    };
+    const handleViewProgress = (analysisRun: AnalysisRun) =>{
+        setSelectedAnalysisRun(analysisRun);
+        setOpen(true);
+    }
 
     return (
         <Box>
+            {open && <AnalysisProgressModal open={open} handleClose={handleClose} handleWhenProgressIsDone={loadAnalysisRuns} handleError={loadAnalysisRuns} analysisRun={selectedAnalysisRun}/>}
             <Box maxHeight="50vh" overflow="auto">
                 {
                     analysisRuns.map((analysis: any) =>
@@ -34,13 +45,24 @@ const AnalysisRunList = ({isLoading, analysisRuns, loadAnalysisRuns}: AnalysisRu
                                 </Box>
                                 <Box display="flex" alignItems="center">
                                     <AnalysisRunStatusIndicator status={analysis.status}/>
-                                    <AppButton
-                                        color="primary"
-                                        onClick={() => router.push(`/project/${analysis.projectId}/0/overview?startDateTime=${analysis.startDateTime}&endDateTime=${analysis.endDateTime}`)}
-                                        disabled={analysis.status != AnalysisRunStatus.Completed}
-                                    >
-                                        View
-                                    </AppButton>
+                                    {
+                                        analysis.status == AnalysisRunStatus.InProgress &&
+                                        <AppButton
+                                            color="primary"
+                                            onClick={() => handleViewProgress(analysis)}
+                                        >
+                                            View Progress
+                                        </AppButton>
+                                    }
+                                    {
+                                        analysis.status == AnalysisRunStatus.Completed &&
+                                        <AppButton
+                                            color="primary"
+                                            onClick={() => router.push(`/project/${analysis.projectId}/0/overview?startDateTime=${analysis.startDateTime}&endDateTime=${analysis.endDateTime}`)}
+                                        >
+                                            View
+                                        </AppButton>
+                                    }
                                 </Box>
                             </Box>
                         </Paper>
@@ -61,7 +83,7 @@ const AnalysisRunList = ({isLoading, analysisRuns, loadAnalysisRuns}: AnalysisRu
                 </AppButton>
             </Box>
         </Box>
-    )
+    );
 }
 
 export default AnalysisRunList;

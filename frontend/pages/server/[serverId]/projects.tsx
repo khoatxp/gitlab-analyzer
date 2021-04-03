@@ -9,13 +9,17 @@ import {useSnackbar} from 'notistack';
 import ProjectSelect from "../../../components/ProjectSelect";
 import LoadingBar from "../../../components/LoadingBar";
 import {formatISO} from "date-fns";
+import AnalysisProgressModal from "../../../components/AnalysisProgressModal";
+import {AnalysisRun} from "../../../interfaces/AnalysisRun";
 
 
 const index = () => {
+    const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const router = useRouter();
     const {enqueueSnackbar} = useSnackbar();
-    const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const [projects, setProjects] = useState<GitLabProject[]>([]);
+    const [generatedAnalysisRun, setGeneratedAnalysisRun] = useState<AnalysisRun | null>(null);
+    const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [itemBeingLoaded, setItemBeingLoaded] = useState<string>('');
     const {serverId} = router.query;
@@ -46,32 +50,66 @@ const index = () => {
     }
 
     const handleAnalyze = (projectIds: number[], startDateTime: Date, endDateTime: Date) => {
-        // Display loading bar again
-        setItemBeingLoaded("Analysis");
+        setItemBeingLoaded("");
         setIsLoading(true);
 
-        // Make callout and redirect after it is done. Note that the API call may take a while.
         const start = formatISO(startDateTime);
         const end = formatISO(endDateTime);
         const dateQuery = `startDateTime=${start}&endDateTime=${end}`;
+
         axios
-            .post(`${process.env.NEXT_PUBLIC_API_URL}/${serverId}/projects/analytics?${dateQuery}`, projectIds, getAxiosAuthConfig())
+            .post(`${process.env.NEXT_PUBLIC_API_URL}/${serverId}/projects/analytics/generate_analysis_runs/?${dateQuery}`, projectIds, getAxiosAuthConfig())
             .then((res) => {
-                let analyzedProjectIds = res.data;
-                if (analyzedProjectIds.length > 1) {
-                    // Multiple projects analyzed, go to analyses page
+                axios
+                    .post(`${process.env.NEXT_PUBLIC_API_URL}/${serverId}/projects/analytics/save_all`, res.data, getAxiosAuthConfig())
+                    .catch(()=>{
+                        enqueueSnackbar('Failed to load analysis from server.', {variant: 'error'});
+                    })
+                if(res.data.length > 1){
                     router.push(`/server/${serverId}/analyses`);
-                } else {
-                    // Single project analyzed, go to overview for the project
-                    router.push(`/project/${analyzedProjectIds[0]}/0/overview?${dateQuery}`);
+                } else if (res.data.length === 1){
+                    setGeneratedAnalysisRun(res.data[0]);
+                    setOpen(true);
+                    setIsLoading(false);
+                }
+                else{
+                    setIsLoading(false);
+                    enqueueSnackbar(`Failed to analyze ${projectIds.length > 0 ? 'projects' : 'project'}`, {variant: 'error',});
                 }
             }).catch(() => {
-            enqueueSnackbar('Failed to load analysis from server.', {variant: 'error',});
+                setIsLoading(false);
+                enqueueSnackbar('Failed to generate projects runs.', {variant: 'error',});
         });
     }
 
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleError = () => {
+        setOpen(false);
+        const projectNameWithNamespace = generatedAnalysisRun?.projectNameWithNamespace;
+        enqueueSnackbar(`Failed to analyze project ${projectNameWithNamespace}`,{variant: 'error'})
+    };
+
+    const redirectToOverviewPage = () => {
+        const projectNameWithNamespace = generatedAnalysisRun?.projectNameWithNamespace;
+        const projectId = generatedAnalysisRun?.projectId;
+        const start = generatedAnalysisRun?.startDateTime;
+        const end = generatedAnalysisRun?.endDateTime;
+        const dateQuery = `startDateTime=${start}&endDateTime=${end}`;
+
+        //Sometimes it is delayed for a few seconds until the page is redirected so we inform the user
+        setOpen(false);
+        setIsLoading(true);
+        setItemBeingLoaded(`Overview page for ${projectNameWithNamespace}`);
+
+        router.push(`/project/${projectId}/overview?${dateQuery}`);
+    };
+
     return (
         <AuthView>
+            {open && <AnalysisProgressModal open={open} handleClose={handleClose} handleWhenProgressIsDone={redirectToOverviewPage} handleError={handleError} analysisRun={generatedAnalysisRun}/>}
             <CardLayout backLink={`/server/${serverId}`} logoType="header">
                 {isLoading && <LoadingBar itemBeingLoaded={itemBeingLoaded}/>}
                 {!isLoading && <ProjectSelect projects={projects} onAnalyzeClick={handleAnalyze}/>}
