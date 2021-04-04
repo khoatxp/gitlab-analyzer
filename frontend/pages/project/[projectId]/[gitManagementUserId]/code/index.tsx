@@ -45,8 +45,9 @@ const index = () => {
 
             // Merge requests
             // If orphan commits exist, add the OrphanCommitMergeRequest to the merge request array
-            const mrResp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_requests?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+            const mrResp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_request/user/${gitManagementUserId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
             let mergeRequests: MergeRequest[] = mrResp.data;
+            console.log(mergeRequests);
             mergeRequests = hasOrphanCommits ? [...mergeRequests, OrphanCommitMergeRequest] : mergeRequests;
             setMergeRequests(mergeRequests);
         } catch (e) {
