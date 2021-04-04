@@ -4,6 +4,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import {Box, Card, Divider, ListSubheader} from "@material-ui/core";
 import formatDate from "../../utils/DateFormatter";
+import {OrphanCommitMergeRequest} from "../../interfaces/GitLabMergeRequest";
 
 type DiffItemListProps = {
     diffItems: DiffItem[]
@@ -49,7 +50,11 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                             >
                                 <ListItemText
                                     primary={diffItem.title}
-                                    secondary={`#${diffItem.id} · opened ${formatDate(diffItem.createdAt)} by ${diffItem.authorName}`}
+                                    secondary={
+                                        diffItem.id == OrphanCommitMergeRequest.id.toString() ?
+                                            OrphanCommitMergeRequest.secondaryText :
+                                            `#${diffItem.id} · opened ${formatDate(diffItem.createdAt)} by ${diffItem.authorName}`
+                                    }
                                 />
                             </ListItem>
                         ))

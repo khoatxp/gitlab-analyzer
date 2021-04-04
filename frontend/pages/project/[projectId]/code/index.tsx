@@ -4,7 +4,7 @@ import MenuLayout from "../../../../components/layout/menu/MenuLayout";
 import {AuthContext} from "../../../../components/AuthContext";
 import axios, {AxiosResponse} from "axios";
 import {useRouter} from "next/router";
-import {MergeRequest} from "../../../../interfaces/GitLabMergeRequest";
+import {MergeRequest, OrphanCommitMergeRequest} from "../../../../interfaces/GitLabMergeRequest";
 import {useSnackbar} from "notistack";
 import DiffViewer from "../../../../components/diff/DiffViewer";
 import {FileChange} from "../../../../interfaces/GitLabFileChange";
@@ -19,21 +19,34 @@ const index = () => {
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const [mergeRequests, setMergeRequests] = React.useState<MergeRequest[]>([]);
     const [commits, setCommits] = React.useState<Commit[]>([]);
+    const [orphanCommits, setOrphanCommits] = React.useState<Commit[]>([]);
     const [fileChanges, setFileChanges] = React.useState<FileChange[]>([]);
     const [linkToFileChanges, setLinkToFileChanges] = React.useState<string>('');
     const {projectId, startDateTime, endDateTime} = router.query;
 
     useEffect(() => {
         if (router.isReady) {
-            axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_requests?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
-                .then((resp: AxiosResponse) => {
-                    setMergeRequests(resp.data);
-                }).catch(() => {
-                enqueueSnackbar("Failed to load data", {variant: 'error'});
-            });
+            loadMergeData();
         }
     }, [projectId]);
+
+    const loadMergeData = async () => {
+        try {
+            // Orphan commits
+            const orphanCommitResp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/${projectId}/commits/orphan/0?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+            const hasOrphanCommits = orphanCommitResp.data.length > 0;
+            setOrphanCommits(orphanCommitResp.data);
+
+            // Merge requests
+            // If orphan commits exist, add the OrphanCommitMergeRequest to the merge request array
+            const mrResp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_requests?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+            let mergeRequests: MergeRequest[] = mrResp.data;
+            mergeRequests = hasOrphanCommits ? [...mergeRequests, OrphanCommitMergeRequest] : mergeRequests;
+            setMergeRequests(mergeRequests);
+        } catch (e) {
+            enqueueSnackbar("Failed to load data", {variant: 'error'});
+        }
+    }
 
     const fetchDiffDataFromUrl = (url: string) => {
         axios
