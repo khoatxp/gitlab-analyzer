@@ -77,7 +77,6 @@ const index = () => {
     };
 
     const handleSelectMergeRequest = (mergeRequest: MergeRequest) => {
-
         if (mergeRequest.id == OrphanCommitMergeRequest.id) {
             handleSelectOrphanCommits();
         } else {
