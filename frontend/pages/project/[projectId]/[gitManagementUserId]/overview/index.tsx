@@ -1,11 +1,11 @@
 import React, {useEffect} from "react";
-import CodeAnalysis from "../../../../components/CodeAnalysis";
-import AuthView from "../../../../components/AuthView";
-import MenuLayout from "../../../../components/layout/menu/MenuLayout";
+import CodeAnalysis from "../../../../../components/CodeAnalysis";
+import AuthView from "../../../../../components/AuthView";
+import MenuLayout from "../../../../../components/layout/menu/MenuLayout";
 import {useSnackbar} from "notistack";
 import {useRouter} from "next/router";
 import axios, {AxiosError, AxiosResponse} from "axios";
-import {AuthContext} from "../../../../components/AuthContext";
+import {AuthContext} from "../../../../../components/AuthContext";
 
 const index = () => {
     const {enqueueSnackbar, closeSnackbar} = useSnackbar();

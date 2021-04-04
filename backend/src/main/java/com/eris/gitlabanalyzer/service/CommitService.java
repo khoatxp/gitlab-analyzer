@@ -187,6 +187,18 @@ public class CommitService {
         return commitRepository.findByProjectIdAndGitManagementUserId(projectId, gitManagementUserId);
     }
 
+    public List<Commit> getCommitsInDateRange(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        List<Commit> commits = commitRepository.findAllByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
+
+        return commits;
+    }
+
+    public List<Commit> getCommitsOfGitManagementUserInDateRange(Long projectId, Long gitManagementUserId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        List<Commit> commits = commitRepository.findAllByProjectIdAndDateRangeAndGitManagementUserId(projectId, gitManagementUserId, startDateTime, endDateTime);
+        return commits;
+    }
+
+
 
     public void setAllSharedMergeRequests(Long projectId){
         List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByProjectId(projectId);
