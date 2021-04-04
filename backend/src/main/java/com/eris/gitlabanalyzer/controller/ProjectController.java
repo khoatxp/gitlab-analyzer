@@ -4,7 +4,9 @@ import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.RawTimeLineProjectData;
 import com.eris.gitlabanalyzer.service.AnalyticsService;
 import com.eris.gitlabanalyzer.service.AuthService;
+import com.eris.gitlabanalyzer.service.MessageService;
 import com.eris.gitlabanalyzer.service.ProjectService;
+import com.eris.gitlabanalyzer.viewmodel.AnalysisRunView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping(path = "/api/v1")
@@ -42,8 +46,16 @@ public class ProjectController {
         return projectService.getProjects();
     }
 
-    @PostMapping(path = "/{serverId}/projects/analytics")
-    public List<Long> saveAllFromGitlab(
+    @PostMapping(path = "/{serverId}/projects/analytics/save_all")
+    public List<Long> saveProjectDataForAnalysisRuns(
+            @PathVariable("serverId") Long serverId,
+            @RequestBody List<AnalysisRunView> analysisRuns){
+        List<Long> analysisRunIds = analysisRuns.stream().map(AnalysisRunView::getId).collect(Collectors.toList());
+        return analyticsService.saveProjectDataForAnalysisRuns(analysisRunIds);
+    }
+
+    @PostMapping(path = "/{serverId}/projects/analytics/generate_analysis_runs")
+    public Stream<AnalysisRunView> generateAnalysisRuns(
             Principal principal,
             @PathVariable("serverId") Long serverId,
             @RequestBody List<Long> gitLabProjectIdList,
@@ -52,6 +64,6 @@ public class ProjectController {
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
         var user = authService.getLoggedInUser(principal);
-        return analyticsService.saveAllFromGitlab(user, serverId, gitLabProjectIdList, startDateTime, endDateTime);
+        return analyticsService.saveProjectsAndAnalysisRuns(user, serverId, gitLabProjectIdList, startDateTime, endDateTime);
     }
 }

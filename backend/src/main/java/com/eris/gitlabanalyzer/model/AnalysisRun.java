@@ -1,10 +1,8 @@
 package com.eris.gitlabanalyzer.model;
 
 import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
 import java.time.OffsetDateTime;
-
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "AnalysisRun")
@@ -57,6 +55,9 @@ public class AnalysisRun {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    private String message;
+    private Double progress;
+
     public AnalysisRun(
             User ownerUser,
             Project project,
@@ -72,6 +73,8 @@ public class AnalysisRun {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.status = Status.InProgress;
+        this.progress = 0.0;
+        this.message = "Waiting for other projects";
     }
 
     public enum Status {
@@ -87,6 +90,32 @@ public class AnalysisRun {
 
         public String toString() {
             return this.status;
+        }
+    }
+
+    public enum Progress {
+        AtStartOfImportingMembers(0.0),
+        AtStartOfImportingMergeRequests(5.0),
+        AtStartOfImportingCommits(25.0),
+        AtStartOfImportingOrphanCommits(70.0),
+        AtStartOfImportingIssues(85.0),
+        Done(100.0);
+
+        private final Double progress;
+
+        Progress(Double progress) {
+            this.progress = progress;
+        }
+
+        public Double getValue() {
+            return progress;
+        }
+
+        @Override
+        public String toString() {
+            return "Progress{" +
+                    "progress=" + progress +
+                    '}';
         }
     }
 }
