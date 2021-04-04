@@ -37,7 +37,6 @@ const index = () => {
         });
     }
 
-    console.log(analysisRuns);
     return (
         <AuthView>
             <CardLayout backLink={`/server/${serverId}`} logoType="header" size="lg">

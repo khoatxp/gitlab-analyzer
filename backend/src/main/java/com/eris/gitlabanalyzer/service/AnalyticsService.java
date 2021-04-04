@@ -4,11 +4,13 @@ import com.eris.gitlabanalyzer.model.AnalysisRun;
 import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.User;
 import com.eris.gitlabanalyzer.repository.AnalysisRunRepository;
+import com.eris.gitlabanalyzer.viewmodel.AnalysisRunView;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class AnalyticsService {
@@ -37,37 +39,43 @@ public class AnalyticsService {
         this.analysisRunRepository = analysisRunRepository;
     }
 
-    public List<Long> saveAllFromGitlab(User user, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        List<AnalysisRun> analysisRuns = saveProjectsAndAnalysisRuns(user, gitLabProjectIdList, startDateTime, endDateTime);
-        return saveProjectDataForAnalysisRuns(analysisRuns);
-    }
-
-    public List<AnalysisRun> saveProjectsAndAnalysisRuns(User user, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+    public Stream<AnalysisRunView> saveProjectsAndAnalysisRuns(User user, Long serverId, List<Long> gitLabProjectIdList, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         List<AnalysisRun> analysisRuns = new ArrayList<>();
         gitLabProjectIdList.forEach(gitLabProjectId -> {
-            Project project = projectService.saveProjectInfo(user, gitLabProjectId);
+            Project project = projectService.saveProjectInfo(user, serverId, gitLabProjectId);
             analysisRuns.add(this.analysisRunService.createAnalysisRun(user, project, AnalysisRun.Status.InProgress, startDateTime, endDateTime));
         });
-        return analysisRuns;
+        return analysisRuns.stream().map(AnalysisRunView::fromAnalysisRun);
     }
 
-    public List<Long> saveProjectDataForAnalysisRuns(List<AnalysisRun> analysisRuns) {
+    public List<Long> saveProjectDataForAnalysisRuns(List<Long> analysisRunIds) {
         List<Long> projectIds = new ArrayList<>();
+        List<AnalysisRun> analysisRuns = analysisRunRepository.findByIds(analysisRunIds);
         analysisRuns.forEach(analysisRun -> {
             try {
                 var project = analysisRun.getProject();
                 var startDateTime = analysisRun.getStartDateTime();
                 var endDateTime = analysisRun.getEndDateTime();
+
+                analysisRunService.updateProgress(analysisRun,"Importing members",AnalysisRun.Progress.AtStartOfImportingMembers.getValue(), true);
                 gitManagementUserService.saveGitManagementUserInfo(project);
-                mergeRequestService.saveMergeRequestInfo(project, startDateTime, endDateTime);
-                commitService.saveCommitInfo(project, startDateTime, endDateTime);
-                issueService.saveIssueInfo(project, startDateTime, endDateTime);
+
+                analysisRunService.updateProgress(analysisRun,"Importing merge requests for "+project.getNameWithNamespace(),AnalysisRun.Progress.AtStartOfImportingMergeRequests.getValue(), true);
+                mergeRequestService.saveMergeRequestInfo(analysisRun, project, startDateTime, endDateTime);
+
+                analysisRunService.updateProgress(analysisRun,"Importing commits for "+project.getNameWithNamespace(),AnalysisRun.Progress.AtStartOfImportingCommits.getValue(), true);
+                commitService.saveCommitInfo(analysisRun, project, startDateTime, endDateTime);
+
+                analysisRunService.updateProgress(analysisRun,"Importing issues for "+project.getNameWithNamespace(),AnalysisRun.Progress.AtStartOfImportingIssues.getValue(), true);
+                issueService.saveIssueInfo(analysisRun, project, startDateTime, endDateTime);
                 projectIds.add(project.getId());
+
                 analysisRun.setStatus(AnalysisRun.Status.Completed);
-                analysisRunRepository.save(analysisRun);
+                analysisRunService.updateProgress(analysisRun,"Analysis done for "+project.getNameWithNamespace(), AnalysisRun.Progress.Done.getValue(), true);
             } catch(Exception e) {
+                System.err.println(e);
                 analysisRun.setStatus(AnalysisRun.Status.Error);
-                analysisRunRepository.save(analysisRun);
+                analysisRunService.updateProgress(analysisRun,"Error",0.0, true);
             }
         });
         return projectIds;

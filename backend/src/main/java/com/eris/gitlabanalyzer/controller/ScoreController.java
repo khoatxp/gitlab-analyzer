@@ -4,8 +4,6 @@ import com.eris.gitlabanalyzer.service.ScoreService;
 import com.eris.gitlabanalyzer.viewmodel.ScoreDigest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
@@ -31,37 +29,13 @@ public class ScoreController {
     public ScoreController(ScoreService scoreService) {
         this.scoreService = scoreService;
     }
-    // todo remove once we are passing profileId with every call
-    @GetMapping(path ="/merge_request/{merge_request_id}/diff/score")
-    public double getMergeDiffScore (@PathVariable("merge_request_id") Long merge_request_id){
-        return scoreService.getMergeDiffScore(merge_request_id, 0L);
-    }
-    // todo remove once we are passing profileId with every call
-    @GetMapping(path ="/{projectId}/merge_requests/score")
-    public double getTotalMergeDiffScore (@PathVariable("projectId") Long projectId,
-                                       @RequestParam("startDateTime")
-                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
-                                       @RequestParam("endDateTime")
-                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
-        return scoreService.getTotalMergeDiffScore(projectId, 0L, startDateTime, endDateTime);
-    }
 
     @GetMapping(path ="/merge_request/{merge_request_id}/diff/score/{scoreProfileId}")
     public double getMergeDiffScore (@PathVariable("merge_request_id") Long merge_request_id,
                                      @PathVariable("scoreProfileId") Long scoreProfileId){
         return scoreService.getMergeDiffScore(merge_request_id, scoreProfileId);
     }
-
-    @GetMapping(path ="/{projectId}/merge_requests/score/{scoreProfileId}")
-    public double getTotalMergeDiffScore (@PathVariable("projectId") Long projectId,
-                                       @PathVariable("scoreProfileId") Long scoreProfileId,
-                                       @RequestParam("startDateTime")
-                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
-                                       @RequestParam("endDateTime")
-                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
-        return scoreService.getTotalMergeDiffScore(projectId, scoreProfileId, startDateTime, endDateTime);
-    }
-
+    // gitManagementUserId of 0 return project total for date range
     @GetMapping(path ="/{projectId}/merge_request/user/{gitManagementUserId}/diff/score/{scoreProfileId}")
     public MergeReturnObject getUserMergeScore (@PathVariable("gitManagementUserId") Long gitManagementUserId,
                                                                @PathVariable("scoreProfileId") Long scoreProfileId,
@@ -70,25 +44,14 @@ public class ScoreController {
                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
                                                                @RequestParam("endDateTime")
                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
-        double [] mergeValues = scoreService.getUserMergeScore(gitManagementUserId, projectId, scoreProfileId, startDateTime, endDateTime);
-        MergeReturnObject mergeReturnObject = new MergeReturnObject(mergeValues[0], mergeValues[1]);
-        return mergeReturnObject;
-    }
+        if(gitManagementUserId != 0L){
+            double [] mergeValues = scoreService.getUserMergeScore(gitManagementUserId, projectId, scoreProfileId, startDateTime, endDateTime);
+            return new MergeReturnObject(mergeValues[0], mergeValues[1]);
+        }else {
+            double mergeScore = scoreService.getTotalMergeDiffScore(projectId, scoreProfileId, startDateTime, endDateTime);
+            return new MergeReturnObject(mergeScore, 0);
+        }
 
-    // todo remove once we are passing profileId with every call
-    @GetMapping(path ="/commit/{commitId}/diff/score")
-    public double getCommitDiffScore (@PathVariable("commitId") Long commitId){
-        return scoreService.getCommitDiffScore(commitId, 0L);
-    }
-
-    // todo remove once we are passing profileId with every call
-    @GetMapping(path ="/{projectId}/commits/score")
-    public double getTotalCommitDiffScore (@PathVariable("projectId") Long projectId,
-                                       @RequestParam("startDateTime")
-                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
-                                       @RequestParam("endDateTime")
-                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
-        return scoreService.getTotalCommitDiffScore(projectId, 0L, startDateTime, endDateTime);
     }
 
     @GetMapping(path ="/commit/{commitId}/diff/score/{scoreProfileId}")
@@ -96,6 +59,7 @@ public class ScoreController {
                                       @PathVariable("scoreProfileId") Long scoreProfileId){
         return scoreService.getCommitDiffScore(commitId, scoreProfileId);
     }
+    // gitManagementUserId of 0 return total commits of project for date range
     @GetMapping(path ="/{projectId}/commit/user/{gitManagementUserId}/diff/score/{scoreProfileId}")
     public double getUserCommitScore (@PathVariable("gitManagementUserId") Long gitManagementUserId,
                                        @PathVariable("scoreProfileId") Long scoreProfileId,
@@ -104,26 +68,21 @@ public class ScoreController {
                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
                                        @RequestParam("endDateTime")
                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
-        return scoreService.getUserCommitScore(projectId, gitManagementUserId, scoreProfileId, startDateTime, endDateTime);
+        if(gitManagementUserId != 0L){
+            return scoreService.getUserCommitScore(projectId, gitManagementUserId, scoreProfileId, startDateTime, endDateTime);
+        } else {
+            return scoreService.getTotalCommitDiffScore(projectId, scoreProfileId, startDateTime, endDateTime);
+        }
     }
 
-    @GetMapping(path ="/{projectId}/commits/score/{scoreProfileId}")
-    public double getTotalCommitDiffScore (@PathVariable("projectId") Long projectId,
-                                       @PathVariable("scoreProfileId") Long scoreProfileId,
-                                       @RequestParam("startDateTime")
-                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
-                                       @RequestParam("endDateTime")
-                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
-        return scoreService.getTotalCommitDiffScore(projectId, scoreProfileId, startDateTime, endDateTime);
-    }
-
-    @GetMapping(path ="/{projectId}/score_digest/{scoreProfileId}")
+    @GetMapping(path ="/{projectId}/score_digest/user/{gitManagementUserId}/{scoreProfileId}")
     public List<ScoreDigest> getDailyScoreDigest (@PathVariable("projectId") Long projectId,
+                                                  @PathVariable("gitManagementUserId") Long gitManagementUserId,
                                                   @PathVariable("scoreProfileId") Long scoreProfileId,
                                                   @RequestParam("startDateTime")
                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
                                                   @RequestParam("endDateTime")
                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
-        return scoreService.getDailyScoreDigest(projectId, scoreProfileId, startDateTime, endDateTime);
+        return scoreService.getDailyScoreDigest(projectId, gitManagementUserId, scoreProfileId, startDateTime, endDateTime);
     }
 }
