@@ -1,15 +1,6 @@
 import React, {useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
-import {
-    Box, Dialog, DialogActions, DialogContent, DialogContentText,
-    DialogTitle,
-    Icon, IconButton,
-    List,
-    ListItem,
-    ListItemSecondaryAction,
-    ListItemText, Tooltip,
-    Typography
-} from "@material-ui/core";
+import {Box, Icon, IconButton, List, ListItem, ListItemSecondaryAction, ListItemText, Tooltip, Typography} from "@material-ui/core";
 import Button from '@material-ui/core/Button';
 import {useSnackbar} from 'notistack';
 import AuthView from "../../components/AuthView";
@@ -17,11 +8,11 @@ import {AuthContext} from "../../components/AuthContext";
 import NextLink from 'next/link'
 import {UserServerView} from "../../interfaces/UserServerView";
 import CardLayout from "../../components/layout/CardLayout";
-import AppButton from "../../components/app/AppButton";
 import {makeStyles} from "@material-ui/styles";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import {PlayArrow} from "@material-ui/icons";
+import ConfirmationDialog from "../../components/ConfirmationDialog";
 
 const useStyles = makeStyles({
     listItemSecondaryAction: {
@@ -36,38 +27,6 @@ const useStyles = makeStyles({
         color: '#ff4569',
     }
 })
-
-type DialogProps = {
-    open: boolean
-    handleClose: () => void
-    handleConfirm: () => void
-}
-
-const RemoveConfirmationDialog = ({open, handleClose, handleConfirm}: DialogProps) => {
-    return (
-        <Dialog
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-        >
-            <DialogTitle id="alert-dialog-title">{"Remove Server?"}</DialogTitle>
-            <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                    Are you sure you want to remove the server?
-                </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <AppButton onClick={handleClose} size="medium">
-                    Cancel
-                </AppButton>
-                <AppButton onClick={handleConfirm} size="medium" color="primary" autoFocus>
-                    Remove
-                </AppButton>
-            </DialogActions>
-        </Dialog>
-    );
-}
 
 const Server = () => {
     const classes = useStyles();
@@ -112,8 +71,8 @@ const Server = () => {
             }).catch(() => {
             enqueueSnackbar('Failed to remove server.', {variant: 'error',});
         });
-
     }
+
     return (
         <AuthView>
             {!isLoading && <CardLayout size="md" logoType="header">
@@ -159,7 +118,13 @@ const Server = () => {
                         </Button>
                     </NextLink>
                 </Box>
-                <RemoveConfirmationDialog open={dialogOpen} handleClose={closeRemoveConfirmation} handleConfirm={removeServer}/>
+                <ConfirmationDialog
+                    title="Remove Server?"
+                    content="Are you sure you want to remove the server?"
+                    confirmLabel="Remove"
+                    open={dialogOpen}
+                    handleClose={closeRemoveConfirmation}
+                    handleConfirm={removeServer}/>
             </CardLayout>
             }
         </AuthView>
