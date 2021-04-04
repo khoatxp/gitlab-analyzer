@@ -20,17 +20,23 @@ const index = () => {
     const [mergeRequests, setMergeRequests] = React.useState<MergeRequest[]>([]);
     const [commits, setCommits] = React.useState<Commit[]>([]);
     const [orphanCommits, setOrphanCommits] = React.useState<Commit[]>([]);
+    const [isOrphanCommitsSelected, setIsOrphanCommitsSelected] = React.useState<boolean>(false);
     const [fileChanges, setFileChanges] = React.useState<FileChange[]>([]);
     const [linkToFileChanges, setLinkToFileChanges] = React.useState<string>('');
     const {projectId, startDateTime, endDateTime} = router.query;
 
     useEffect(() => {
         if (router.isReady) {
-            loadMergeData();
+            fetchMergeData();
         }
     }, [projectId]);
 
-    const loadMergeData = async () => {
+    useEffect(() => {
+        // New file changes have come in, ensure orphan commits are not marked as selected
+        setIsOrphanCommitsSelected(false);
+    }, [fileChanges]);
+
+    const fetchMergeData = async () => {
         try {
             // Orphan commits
             const orphanCommitResp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/${projectId}/commits/orphan/0?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
@@ -48,16 +54,6 @@ const index = () => {
         }
     }
 
-    const fetchDiffDataFromUrl = (url: string) => {
-        axios
-            .get(url, getAxiosAuthConfig())
-            .then((resp: AxiosResponse) => {
-                setFileChanges(resp.data);
-            }).catch(() => {
-            enqueueSnackbar("Failed to load data", {variant: 'error'});
-        });
-    };
-
     const fetchCommitData = (mergeRequest: MergeRequest) => {
         axios
             .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${mergeRequest.iid}/commits`, getAxiosAuthConfig())
@@ -68,15 +64,36 @@ const index = () => {
         });
     }
 
-    const handleSelectMergeRequest = (mergeRequest: MergeRequest) => {
-        fetchCommitData(mergeRequest);
-        setLinkToFileChanges(mergeRequest.web_url);
-        fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${mergeRequest.iid}/diff`);
+    const fetchDiffDataFromUrl = (url: string) => {
+        axios
+            .get(url, getAxiosAuthConfig())
+            .then((resp: AxiosResponse) => {
+                setFileChanges(resp.data);
+            }).catch(() => {
+            enqueueSnackbar("Failed to load data", {variant: 'error'});
+        });
     };
+
+    const handleSelectMergeRequest = (mergeRequest: MergeRequest) => {
+        if (mergeRequest.id == OrphanCommitMergeRequest.id) {
+            handleSelectOrphanCommits();
+        } else {
+            fetchCommitData(mergeRequest);
+            setLinkToFileChanges(mergeRequest.web_url);
+            fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${mergeRequest.iid}/diff`);
+        }
+    };
+
+    const handleSelectOrphanCommits = () => {
+        setIsOrphanCommitsSelected(true);
+        setCommits(orphanCommits);
+        setLinkToFileChanges('');
+    }
 
     const handleSelectCommit = (commit: Commit) => {
         setLinkToFileChanges(commit.web_url);
-        fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commit/${commit.id}/diff`);
+        // Gitlab retrieved data will have sha in id, but our own backend will place in sha field
+        fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commit/${commit.sha || commit.id}/diff`);
     };
 
     return (
@@ -92,7 +109,11 @@ const index = () => {
                     </Grid>
 
                     <Grid item xs={9}>
-                        <DiffViewer fileChanges={fileChanges} linkToFileChanges={linkToFileChanges}/>
+                        <DiffViewer
+                            fileChanges={fileChanges}
+                            linkToFileChanges={linkToFileChanges}
+                            isOrphanCommitsSelected={isOrphanCommitsSelected}
+                        />
                     </Grid>
                 </Grid>
             </MenuLayout>

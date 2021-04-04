@@ -10,6 +10,7 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class CommitView {
     Long id;
+    String sha;
     String author_email;
     String author_name;
     OffsetDateTime created_at;
@@ -19,6 +20,7 @@ public class CommitView {
     public static CommitView fromCommit(Commit commit) {
         return new CommitView(
                 commit.getId(),
+                commit.getSha(),
                 commit.getAuthorEmail(),
                 commit.getAuthorName(),
                 commit.getCreatedAt(),
