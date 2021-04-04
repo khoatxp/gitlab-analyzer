@@ -36,7 +36,7 @@ public class MergeRequestController {
     }
 
     @GetMapping(path ="{projectId}/merge_request/user/{gitManagementUserId}")
-    public Stream<MergeRequestView> MergeRequest(@PathVariable("projectId") Long projectId,
+    public Stream<MergeRequestView> GetMergeRequests(@PathVariable("projectId") Long projectId,
                                                  @PathVariable("gitManagementUserId") Long gitManagementUserId,
                                                  @RequestParam("startDateTime")
                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
