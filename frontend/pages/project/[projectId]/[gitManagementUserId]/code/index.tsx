@@ -91,6 +91,7 @@ const index = () => {
         setIsOrphanCommitsSelected(true);
         setCommits(orphanCommits);
         setLinkToFileChanges('');
+        setFileChanges([]);
     }
 
     const handleSelectCommit = (commit: Commit) => {
