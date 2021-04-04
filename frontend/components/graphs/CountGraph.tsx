@@ -13,14 +13,16 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import {ScoreDigest} from "../../interfaces/ScoreDigest";
 import { formatDay, setBackground } from "./GraphHelpers"
+import getMember from "../../utils/memberName";
 
 interface Props {
     data: ScoreDigest[],
     startDateTime: string | undefined,
     endDateTime: string | undefined,
+    gitManagementUserId: string | undefined,
 }
 
-const Chart = ({data, startDateTime, endDateTime}: Props) => {
+const Chart = ({data, startDateTime, endDateTime, gitManagementUserId}: Props) => {
     const [commitCheckboxChecked, setCommitCheckboxChecked] = useState(true);
     const [mergeCheckboxChecked, setMergeCheckboxChecked] = useState(true);
 
@@ -34,7 +36,7 @@ const Chart = ({data, startDateTime, endDateTime}: Props) => {
 
     return (
         <div style={{display: "flex", flexDirection: "column"}}>
-            <p style={{textAlign: "center"}}>Daily Total Commits and Merge Requests Made By Everyone</p>
+            <p style={{textAlign: "center"}}>Daily Total Commits and Merge Requests Made By {getMember(gitManagementUserId)}</p>
             <div style={{display: "flex"}}>
                 <ResponsiveContainer width="100%" height={400} minWidth="0">
                     <BarChart

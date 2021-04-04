@@ -9,23 +9,21 @@ import java.time.OffsetDateTime;
 @Getter
 @AllArgsConstructor
 public class CommitView {
-    Long id;
-    String sha;
-    String author_email;
-    String author_name;
-    OffsetDateTime created_at;
-    String title;
-    String web_url;
+    private final String id;
+    private final String title;
+    private final String webUrl;
+    private final OffsetDateTime createdAt;
+    private final String authorEmail;
+    private final String authorName;
 
-    public static CommitView fromCommit(Commit commit) {
+    public static CommitView fromCommit(Commit commit){
         return new CommitView(
-                commit.getId(),
                 commit.getSha(),
-                commit.getAuthorEmail(),
-                commit.getAuthorName(),
-                commit.getCreatedAt(),
                 commit.getTitle(),
-                commit.getWebUrl()
+                commit.getWebUrl(),
+                commit.getCreatedAt(),
+                commit.getAuthorEmail(),
+                commit.getAuthorName()
         );
     }
 }

@@ -5,7 +5,6 @@ import com.eris.gitlabanalyzer.viewmodel.CommitAuthorRequestBody;
 import com.eris.gitlabanalyzer.viewmodel.CommitAuthorView;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabCommit;
 import com.eris.gitlabanalyzer.repository.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -187,6 +186,26 @@ public class CommitService {
         return commitRepository.findByProjectIdAndGitManagementUserId(projectId, gitManagementUserId);
     }
 
+    public List<Commit> getCommitsInDateRange(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        List<Commit> commits = commitRepository.findAllByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
+
+        return commits;
+    }
+
+    public List<Commit> getCommitsOfGitManagementUserInDateRange(Long projectId, Long gitManagementUserId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        List<Commit> commits = commitRepository.findAllByProjectIdAndDateRangeAndGitManagementUserId(projectId, gitManagementUserId, startDateTime, endDateTime);
+        return commits;
+    }
+
+    public List<Commit> getCommitsInDateRangeByMergeRequestId(Long mergeRequestId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        List<Commit> commits = commitRepository.findAllByMergeRequestIdAndDateRange(mergeRequestId, startDateTime, endDateTime);
+        return commits;
+    }
+
+    public List<Commit> getCommitsOfGitManagementUserInDateRangeByMergeRequestId(Long mergeRequestId, Long gitManagementUserId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        return commitRepository.findAllByMergeRequestIdAndDateRangeAndGitManagementUserId(mergeRequestId,gitManagementUserId, startDateTime, endDateTime);
+    }
+
     public List<Commit> getOrphanCommitsInDateRange(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
         return commitRepository.findAllOrphanByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
     }
@@ -194,7 +213,6 @@ public class CommitService {
     public List<Commit> getOrphanCommitsOfGitManagementUserInDateRange(Long projectId, Long gitManagementUserId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         return commitRepository.findOrphanByProjectIdAndGitManagementUserIdAndDateRange(projectId, gitManagementUserId, startDateTime, endDateTime);
     }
-
 
     public void setAllSharedMergeRequests(Long projectId){
         List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByProjectId(projectId);
