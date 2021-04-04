@@ -11,10 +11,10 @@ import java.util.Optional;
 
 @Repository
 public interface IssueCommentRepository extends JpaRepository<Note, Long> {
-    @Query("select n from Note n where n.projectId = ?1 and n.noteableType='Issue' order by n.createdAt asc")
+    @Query("select n from Note n where n.projectId = ?1 and n.noteableType='Issue' order by n.createdAt desc")
     List<Note> findAllByProjectId(Long projectId);
 
-    @Query("select n from Note n where n.projectId = ?1 and n.createdAt >= ?2 and n.createdAt <= ?3 and n.noteableType='Issue' order by n.createdAt asc")
+    @Query("select n from Note n where n.projectId = ?1 and n.createdAt >= ?2 and n.createdAt <= ?3 and n.noteableType='Issue' order by n.createdAt desc")
     List<Note> findAllByProjectIdAndDateRange(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
 
     @Query("select n from Note n where n.gitLabNoteId = ?1 and n.projectId = ?2 and n.noteableType='Issue'")
