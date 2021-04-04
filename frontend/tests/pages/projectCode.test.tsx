@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Index from '../../pages/project/[projectId]/code';
+import Index from '../../pages/project/[projectId]/[gitManagementUserId]/code';
 import {mount} from "enzyme";
 
 
