@@ -18,12 +18,12 @@ const useStyles = makeStyles((theme) => ({
         position: 'relative',
         left: '-100%',
         transition: '600ms',
-             height: "100%",
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "flex-start",
-                        alignItems: "center",
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "center",
     },
     displaySidebar: {
         left: '0',
@@ -44,7 +44,7 @@ const MenuSideBar = () => {
     const classes = useStyles();
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
-    const [gitLabMemberUserNames, setGitLabMemberUserNames] = React.useState<[]>([]);
+    const [gitLabMemberUserNames, setGitLabMemberUserNames] = React.useState<GitManagementUser[]>([]);
     const [sidebarState, setSidebarState] = React.useState(false);
 
     const {projectId} = router.query;
@@ -65,10 +65,7 @@ const MenuSideBar = () => {
     const showSidebar = () => setSidebarState(!sidebarState);
 
     return (
-        <Box
-
-            width={sidebarState ? '16%' : '3%'}
-        >
+        <Box width={sidebarState ? '16%' : '3%'} >
             <AppBar position="static" className >
                 <Tabs
                     variant="fullWidth"
@@ -77,30 +74,20 @@ const MenuSideBar = () => {
                     <Tab
                         className={classes.sidebarTitle}
                         onClick={showSidebar}
-                        label={sidebarState ? '<' : '>Show    >'}
+                        label={sidebarState ? '<' : '>'}
                     />
                 </Tabs>
             </AppBar>
-            <Box
-                className={`${classes.sidebar} ${sidebarState === true && classes.displaySidebar}`}
-            >
+            <Box className={`${classes.sidebar} ${sidebarState === true && classes.displaySidebar}`} >
                 <MenuButton variant="contained" disableRipple >
                     Everyone
                 </MenuButton>
-                <MenuButton variant="contained" disableRipple >
-                    mahekk
-                </MenuButton>
-                <MenuButton variant="contained" disableRipple >
-                    idanok
-                </MenuButton>
-                <MenuButton variant="contained" disableRipple >
-                    aturner
-                </MenuButton>
-                {gitLabMemberUserNames.map(member => {
-                    const {userName} = member;
-                    return <MenuButton key={userName} variant="contained" disableRipple > {userName}</MenuButton>;
-                })}
+                {gitLabMemberUserNames.map(gitManagementUser => {
 
+                    <MenuButton key={gitManagementUser.id} variant="contained" disableRipple >
+                        {gitManagementUser.username}
+                    </MenuButton>;
+                })}
             </Box>
         </Box>
     );
