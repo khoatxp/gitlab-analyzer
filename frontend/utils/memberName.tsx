@@ -3,7 +3,11 @@ import React, {useState} from "react";
 import {AuthContext} from "../components/AuthContext";
 import axios, {AxiosResponse} from "axios";
 
-const getMember =  (id: string | undefined) => {
+interface Props {
+  id: string | undefined
+}
+
+const MemberText =  ({id}: Props) => {
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const [gitManagementUser, setGitManagementUser] = useState<string>();
@@ -21,7 +25,7 @@ const getMember =  (id: string | undefined) => {
         setGitManagementUser(`Member ??`);
     }
 
-    return gitManagementUser;
+    return <text>{gitManagementUser}</text>;
 }
 
-export default getMember;
+export default MemberText;
