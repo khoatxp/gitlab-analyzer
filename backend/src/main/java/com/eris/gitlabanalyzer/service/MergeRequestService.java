@@ -71,6 +71,7 @@ public class MergeRequestService {
                         gitLabNote.getBody(),
                         gitManagementUser,
                         gitLabNote.getCreatedAt(),
+                        mergeRequest.getMergedAt(),
                         project.getId(),
                         isOwn,
                         mergeRequest.getIid(),

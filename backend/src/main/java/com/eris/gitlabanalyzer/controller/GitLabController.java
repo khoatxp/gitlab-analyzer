@@ -33,7 +33,6 @@ public class GitLabController {
         return requestScopeGitLabService.getProjects().collectList().block();
     }
 
-    // Used in notes page for now
     @GetMapping(path ="/projects/{projectId}")
     public Mono<GitLabProject> getProject(@PathVariable("projectId") Long projectId) {
         var project = projectService.getProjectById(projectId);

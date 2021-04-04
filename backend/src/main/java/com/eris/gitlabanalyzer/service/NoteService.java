@@ -5,6 +5,7 @@ import com.eris.gitlabanalyzer.repository.MergeRequestCommentRepository;
 import com.eris.gitlabanalyzer.viewmodel.NoteView;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,17 +15,17 @@ public class NoteService {
     private final MergeRequestCommentRepository mergeRequestCommentRepository;
     private final IssueCommentRepository issueCommentRepository;
 
-    public List<NoteView> getMergeRequestNotes(Long projectId) {
+    public List<NoteView> getMergeRequestNotes(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         return mergeRequestCommentRepository
-                .findAllByProjectId(projectId)
+                .findAllByProjectIdAndDateRange(projectId, startDateTime, endDateTime)
                 .stream()
                 .map(NoteView::fromNote)
                 .collect(Collectors.toList());
     }
 
-    public List<NoteView> getIssueNotes(Long projectId) {
+    public List<NoteView> getIssueNotes(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         return issueCommentRepository
-                .findAllByProjectId(projectId)
+                .findAllByProjectIdAndDateRange(projectId, startDateTime, endDateTime)
                 .stream()
                 .map(NoteView::fromNote)
                 .collect(Collectors.toList());

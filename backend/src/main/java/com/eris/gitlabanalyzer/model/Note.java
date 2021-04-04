@@ -54,6 +54,11 @@ public class Note {
     private OffsetDateTime createdAt;
 
     @Column(
+            name = "merged_at"
+    )
+    private OffsetDateTime mergedAt;
+
+    @Column(
             name = "project_id",
             nullable = false
     )
@@ -88,6 +93,7 @@ public class Note {
                 String body,
                 GitManagementUser gitManagementUser,
                 OffsetDateTime createdAt,
+                OffsetDateTime mergedAt,
                 Long projectId,
                 boolean own,
                 Long parentIid,
@@ -97,6 +103,7 @@ public class Note {
         this.body = body;
         this.gitManagementUser = gitManagementUser;
         this.createdAt = createdAt;
+        this.mergedAt = mergedAt;
         this.projectId = projectId;
         this.own = own;
         this.parentIid = parentIid;

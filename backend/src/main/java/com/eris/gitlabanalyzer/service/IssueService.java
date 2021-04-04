@@ -65,6 +65,7 @@ public class IssueService {
                         gitLabNote.getBody(),
                         gitManagementUser,
                         gitLabNote.getCreatedAt(),
+                        null,
                         project.getId(),
                         isOwn,
                         issue.getIid(),

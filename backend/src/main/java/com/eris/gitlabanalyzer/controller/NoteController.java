@@ -5,12 +5,15 @@ import com.eris.gitlabanalyzer.service.NoteService;
 import com.eris.gitlabanalyzer.service.ProjectService;
 import com.eris.gitlabanalyzer.viewmodel.NoteView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @RestController
@@ -30,19 +33,27 @@ public class NoteController {
     @GetMapping(path = "/api/v1/{projectId}/merge_request_notes")
     public List<NoteView> getMergeRequestNotes(
             Principal principal,
-            @PathVariable("projectId") Long projectId) {
+            @PathVariable("projectId") Long projectId,
+            @RequestParam("startDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
+            @RequestParam("endDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
         validatePermission(principal, projectId);
-        return noteService.getMergeRequestNotes(projectId);
+        return noteService.getMergeRequestNotes(projectId, startDateTime, endDateTime);
     }
 
     @GetMapping(path = "/api/v1/{projectId}/issue_notes")
     public List<NoteView> getIssueNotes(
             Principal principal,
-            @PathVariable("projectId") Long projectId) {
+            @PathVariable("projectId") Long projectId,
+            @RequestParam("startDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
+            @RequestParam("endDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
         validatePermission(principal, projectId);
-        return noteService.getIssueNotes(projectId);
+        return noteService.getIssueNotes(projectId, startDateTime, endDateTime);
     }
 
     private void validatePermission(Principal principal, Long projectId) {
