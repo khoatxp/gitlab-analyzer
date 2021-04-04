@@ -4,8 +4,7 @@ import MenuLayout from "../../../../../components/layout/menu/MenuLayout";
 import {AuthContext} from "../../../../../components/AuthContext";
 import axios, {AxiosResponse} from "axios";
 import {useRouter} from "next/router";
-import {MergeRequest} from "../../../../../interfaces/MergeRequest";
-import {OrphanCommitMergeRequest} from "../../../../interfaces/GitLabMergeRequest";
+import {MergeRequest, OrphanCommitMergeRequest} from "../../../../../interfaces/MergeRequest";
 import {useSnackbar} from "notistack";
 import DiffViewer from "../../../../../components/diff/DiffViewer";
 import {FileChange} from "../../../../../interfaces/GitLabFileChange";
@@ -40,7 +39,7 @@ const index = () => {
             await setLinkToFileChanges('');
 
             // Orphan commits
-            const orphanCommitResp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_request/user/${gitManagementUserId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+            const orphanCommitResp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/${projectId}/commits/${gitManagementUserId}/orphan?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
             const hasOrphanCommits = orphanCommitResp.data.length > 0;
             setOrphanCommits(orphanCommitResp.data);
 
@@ -57,11 +56,11 @@ const index = () => {
 
     const fetchCommitData = (mergeRequest: MergeRequest) => {
         axios
-            .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${mergeRequest.iid}/commits`, getAxiosAuthConfig())
+            .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_request/${mergeRequest.id}/commits/user/${gitManagementUserId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
                 setCommits(resp.data);
-            }).catch(() => {
-            enqueueSnackbar("Failed to load data", {variant: 'error'});
+            }).catch((err) => {
+            enqueueSnackbar(`Failed to load data ${err}`, {variant: 'error'});
         });
     }
 
@@ -70,20 +69,11 @@ const index = () => {
             .get(url, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
                 setFileChanges(resp.data);
+                setIsOrphanCommitsSelected(false);
             }).catch(() => {
             enqueueSnackbar("Failed to load data", {variant: 'error'});
         });
     };
-
-    const fetchCommitData = (mergeRequest: MergeRequest) => {
-        axios
-            .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_request/${mergeRequest.id}/commits/user/${gitManagementUserId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
-            .then((resp: AxiosResponse) => {
-                setCommits(resp.data);
-            }).catch((err) => {
-            enqueueSnackbar(`Failed to load data ${err}`, {variant: 'error'});
-        });
-    }
 
     const handleSelectMergeRequest = (mergeRequest: MergeRequest) => {
 
@@ -104,7 +94,7 @@ const index = () => {
 
     const handleSelectCommit = (commit: Commit) => {
         setLinkToFileChanges(commit.webUrl);
-        fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commit/${commit.id}/diff`);
+        fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commit/${commit.sha}/diff`);
     };
 
     return (

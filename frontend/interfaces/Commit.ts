@@ -3,6 +3,7 @@ export interface Commit {
     authorName: string;
     createdAt: string;
     id: string;
+    sha: string;
     title: string;
     webUrl: string;
 }

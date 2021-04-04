@@ -34,13 +34,12 @@ public class CommitController {
     }
 
     @GetMapping("{projectId}/commits")
-    public List<Commit> getCommits(
+    public Stream<CommitView> getCommits(
             @PathVariable("projectId") Long projectId) {
-        return commitService.getCommits(projectId);
+        return commitService.getCommits(projectId).stream().map(CommitView::fromCommit);
     }
 
-    @GetMapping("{projectId}/commits/{gitManagementUserId}")
-    @GetMapping("/api/v1/{projectId}/commits/orphan/{gitManagementUserId}")
+    @GetMapping("{projectId}/commits/{gitManagementUserId}/orphan")
     public Stream<CommitView> getOrphanCommits(
             @PathVariable("projectId") Long projectId,
             @PathVariable("gitManagementUserId") Long gitManagementUserId,
@@ -58,10 +57,12 @@ public class CommitController {
     }
 
     @GetMapping("/api/v1/{projectId}/commits/{gitManagementUserId}")
-    public List<Commit> getCommitsOfGitManagementUser(
+    public Stream<CommitView> getCommitsOfGitManagementUser(
             @PathVariable("projectId") Long projectId,
             @PathVariable("gitManagementUserId") Long gitManagementUserId) {
-        return commitService.getCommitsOfGitManagementUser(projectId, gitManagementUserId);
+        return commitService
+                .getCommitsOfGitManagementUser(projectId, gitManagementUserId)
+                .stream().map(CommitView::fromCommit);
     }
 
     @GetMapping("data/projects/{projectId}/commits/user/{gitManagementUserId}/count")
@@ -70,7 +71,7 @@ public class CommitController {
                                   @RequestParam("startDateTime")
                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
                                   @RequestParam("endDateTime")
-                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
+                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
         if(gitManagementUserId != 0L){
             return commitService.getCommitsOfGitManagementUserInDateRange(projectId, gitManagementUserId, startDateTime, endDateTime).size();
 
@@ -87,13 +88,13 @@ public class CommitController {
                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
                                      @RequestParam("endDateTime")
                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
+        List<Commit> commits;
         if(gitManagementUserId != 0L){
-            return commitService.getCommitsOfGitManagementUserInDateRangeByMergeRequestId(mergeRequestId, gitManagementUserId, startDateTime, endDateTime)
-                    .stream().map(CommitView::fromCommit);
+            commits = commitService.getCommitsOfGitManagementUserInDateRangeByMergeRequestId(mergeRequestId, gitManagementUserId, startDateTime, endDateTime);
         } else {
-            return commitService.getCommitsInDateRangeByMergeRequestId(mergeRequestId,startDateTime,endDateTime)
-                    .stream().map(CommitView::fromCommit);
+            commits = commitService.getCommitsInDateRangeByMergeRequestId(mergeRequestId,startDateTime,endDateTime);
         }
+        return commits.stream().map(CommitView::fromCommit);
     }
 
     @PostMapping("{projectId}/commits/mapping")

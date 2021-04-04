@@ -4,7 +4,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import {Box, Card, Divider, ListSubheader} from "@material-ui/core";
 import formatDate from "../../utils/DateFormatter";
-import {OrphanCommitMergeRequest} from "../../interfaces/GitLabMergeRequest";
+import {OrphanCommitMergeRequest} from "../../interfaces/MergeRequest";
 
 type DiffItemListProps = {
     diffItems: DiffItem[]
