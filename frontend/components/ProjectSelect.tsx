@@ -17,7 +17,7 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
     const [selectedProjects, setSelectedProjects] = useState<GitLabProject[]>([]);
     const [startDateTime, setStartDateTime] = useState<Date>(new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()));
     const [endDateTime, setEndDateTime] = useState<Date>(now);
-    const [scoreProfileId, setScoreProfileId] = useState<number>();
+    const [scoreProfileId, setScoreProfileId] = useState<number>(0);
 
     const onProjectSelect = (_event: any, value: GitLabProject) => {
         if (!value) { return; } // Value will be null when the clear button is pressed. Ensure we have a number
