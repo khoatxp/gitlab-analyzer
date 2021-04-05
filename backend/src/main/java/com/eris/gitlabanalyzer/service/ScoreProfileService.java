@@ -1,15 +1,8 @@
 package com.eris.gitlabanalyzer.service;
-
 import com.eris.gitlabanalyzer.model.ScoreProfile;
-import com.eris.gitlabanalyzer.model.Server;
 import com.eris.gitlabanalyzer.model.User;
-import com.eris.gitlabanalyzer.model.UserServer;
-import com.eris.gitlabanalyzer.repository.UserServerRepository;
 import com.eris.gitlabanalyzer.repository.ScoreProfileRepository;
-import com.eris.gitlabanalyzer.repository.UserServerRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +11,7 @@ public class ScoreProfileService {
 
     private final ScoreProfileRepository scoreProfileRepository;
 
-    public ScoreProfileService(ScoreProfileRepository scoreProfileRepository, UserServerRepository userServerRepository) {
+    public ScoreProfileService(ScoreProfileRepository scoreProfileRepository) {
         this.scoreProfileRepository = scoreProfileRepository;
     }
 
