@@ -1,5 +1,5 @@
 export interface GitManagementUser{
-    id: string,
+    id: number,
     name: string,
     username: string;
 }

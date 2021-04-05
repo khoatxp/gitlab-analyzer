@@ -2,16 +2,15 @@ import React, {useEffect} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import {Box, Button, Icon } from "@material-ui/core";
 import {useRouter} from "next/router";
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import {AuthContext} from "../../AuthContext";
 import {MenuButton} from "./MenuButton";
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import {GitManagementUser} from "../interfaces/GitManagementUser";
+import {GitManagementUser} from "../../../interfaces/GitManagementUser";
 import {useSnackbar} from "notistack";
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import MenuIcon from '@material-ui/icons/Menu';
 
 const useStyles = makeStyles((theme) => ({
@@ -47,7 +46,7 @@ const MenuSideBar = () => {
     const classes = useStyles();
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
-    const [gitLabMemberUserNames, setGitLabMemberUserNames] = React.useState<GitManagementUser[]>([]);
+    const [gitManagementUsers, setGitManagementUsers] = React.useState<GitManagementUser[]>([]);
     const [sidebarState, setSidebarState] = React.useState(false);
 
     const {projectId, gitManagementUserId, startDateTime, endDateTime} = router.query;
@@ -73,29 +72,20 @@ const MenuSideBar = () => {
             axios
                 .get(PROJECT_ID_URL, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
-                    setGitLabMemberUserNames(resp.data);
-                 }).catch((err: AxiosError)=>{
-                    enqueueSnackbar(`Failed to get member user names: ${err.message}`, {variant: 'error',});
+                    setGitManagementUsers(resp.data);
+                 }).catch((err:AxiosError)=>{
+                    enqueueSnackbar(`Failed to get members: ${err}`, {variant: 'error',});
             })
             setActive(Array.isArray(gitManagementUserId) || gitManagementUserId == undefined? "0" : gitManagementUserId)
         }
     }, [projectId]);
 
     const showSidebar = () => setSidebarState(!sidebarState);
-    
-    function sort_by_key(array: any, key){
-        return array.sort(function(a, b){
-            let x = a[key];
-            let y = b[key];
-        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-        });
-    };
 
-    const gitLabMemberUserNamesSorted = sort_by_key(gitLabMemberUserNames, 'username');
 
     return (
         <Box width={sidebarState ? '16%' : '3%'} >
-            <AppBar position="static" className >
+            <AppBar position="static">
                 <Tabs
                     variant="fullWidth"
                     aria-label="nav tabs"
@@ -111,19 +101,16 @@ const MenuSideBar = () => {
                 <MenuButton variant="contained" id={'memberButton0'} disableRipple onClick={() => handleClick(0)}>
                     Everyone
                 </MenuButton>
-                {gitLabMemberUserNamesSorted.map(gitManagementUser => {
-                    const {username} = gitManagementUser;
-                    const {id} = gitManagementUser;
-                    return
-                        <MenuButton key={gitManagementUser.id}
-                                    value={[gitManagementUser.id,gitManagementUser.username]}
-                                    id={`memberButton${{id}.id}`}
-                                    variant="contained" disableRipple
-                                    onClick={() => handleClick(+{id}.id)}
-                        >
-                            {gitManagementUser.username}
-                        </MenuButton>;
-                })}
+                {gitManagementUsers.map(gitManagementUser =>
+                    <MenuButton key={gitManagementUser.id}
+                                value={[gitManagementUser.id,gitManagementUser.username]}
+                                id={`memberButton${gitManagementUser.id}`}
+                                variant="contained" disableRipple
+                                onClick={() => handleClick(gitManagementUser.id)}
+                    >
+                        {gitManagementUser.username}
+                    </MenuButton>
+                )}
             </Box>
         </Box>
     );
