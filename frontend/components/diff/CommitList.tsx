@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Commit} from "../../interfaces/GitLabCommit";
+import {Commit} from "../../interfaces/Commit";
 import DiffItemList, {DiffItem} from "./DiffItemList";
 
 type CommitListProps = {
@@ -17,8 +17,8 @@ const CommitList = ({commits, handleSelectCommit}: CommitListProps) => {
     const diffItems = commits.map((commit) => {
         let diffItem: DiffItem = {
             id: commit.id,
-            createdAt: commit.created_at,
-            authorName: commit.author_name,
+            createdAt: commit.createdAt,
+            authorName: commit.authorName,
             title: commit.title,
         }
         return diffItem;

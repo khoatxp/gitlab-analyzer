@@ -4,12 +4,14 @@ import com.eris.gitlabanalyzer.model.Commit;
 import com.eris.gitlabanalyzer.service.CommitService;
 import com.eris.gitlabanalyzer.viewmodel.CommitAuthorRequestBody;
 import com.eris.gitlabanalyzer.viewmodel.CommitAuthorView;
+import com.eris.gitlabanalyzer.viewmodel.CommitView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping(path = "/api/v1/")
@@ -44,7 +46,7 @@ public class CommitController {
         return commitService.getCommitsOfGitManagementUser(projectId,(Long)gitManagementUserId);
     }
 
-    @GetMapping("data/projects/{projectId}/commits/user/{gitManagementUserId}")
+    @GetMapping("data/projects/{projectId}/commits/user/{gitManagementUserId}/count")
     public int CommitCount( @PathVariable("projectId") Long projectId,
                                   @PathVariable("gitManagementUserId") Long gitManagementUserId,
                                   @RequestParam("startDateTime")
@@ -56,6 +58,23 @@ public class CommitController {
 
         } else {
             return commitService.getCommitsInDateRange(projectId, startDateTime, endDateTime).size();
+        }
+    }
+
+    @GetMapping("data/projects/{projectId}/merge_request/{mergeRequestId}/commits/user/{gitManagementUserId}")
+    public Stream<CommitView> getCommitsOfGitManagementUserByMergeRequest(@PathVariable("projectId") Long projectId,
+                                     @PathVariable("mergeRequestId") Long mergeRequestId,
+                                     @PathVariable("gitManagementUserId") Long gitManagementUserId,
+                                     @RequestParam("startDateTime")
+                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
+                                     @RequestParam("endDateTime")
+                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
+        if(gitManagementUserId != 0L){
+            return commitService.getCommitsOfGitManagementUserInDateRangeByMergeRequestId(mergeRequestId, gitManagementUserId, startDateTime, endDateTime)
+                    .stream().map(CommitView::fromCommit);
+        } else {
+            return commitService.getCommitsInDateRangeByMergeRequestId(mergeRequestId,startDateTime,endDateTime)
+                    .stream().map(CommitView::fromCommit);
         }
     }
 
