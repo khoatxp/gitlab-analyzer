@@ -137,14 +137,15 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
             enqueueSnackbar('Profile must have a name', {variant: 'error',});
             return;
         }
-        if(lineWeight != undefined && lineWeight < 0 || commentsWeight != undefined && commentsWeight < 0 || deleteWeight != undefined && deleteWeight < 0 || syntaxWeight != undefined && syntaxWeight < 0){
-            enqueueSnackbar('Weights cannot be negative', {variant: 'error',});
-            return;
-        }
         if(lineWeight == undefined || commentsWeight == undefined || deleteWeight == undefined || syntaxWeight == undefined){
             enqueueSnackbar('Text fields must not be empty', {variant: 'error',});
             return;
         }
+        if(lineWeight < 0 || commentsWeight < 0 || deleteWeight < 0 || syntaxWeight < 0){
+            enqueueSnackbar('Weights cannot be negative', {variant: 'error',});
+            return;
+        }
+
        
         if (validateExtensions()){
 
@@ -247,6 +248,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                         <Box marginLeft={1} marginRight={1}>
                                             
                                             <AppTextField label="extension"
+                                            placeholder="Do not include the dot"
                                             value={extension[0] ?? ""}
                                             onChange={(e) => handleExtensionChange(e.target.value ,index)}
                                             />

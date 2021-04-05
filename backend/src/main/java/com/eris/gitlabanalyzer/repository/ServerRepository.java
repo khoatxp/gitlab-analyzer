@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ServerRepository extends JpaRepository<Server, Long> {
-    // TODO use serverId instead of serverUrl
+    // Only to be used for testing
     @Query("select s from Server s join s.userServers us where s.serverUrl=?1 and us.accessToken=?2")
     Optional<Server> findByServerUrlAndAccessToken(String serverUrl, String accessToken);
 

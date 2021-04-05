@@ -6,11 +6,13 @@ import com.eris.gitlabanalyzer.model.*;
 import com.eris.gitlabanalyzer.repository.*;
 import com.eris.gitlabanalyzer.service.GitLabService;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.transaction.Transactional;
 import java.time.OffsetDateTime;
@@ -23,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Transactional
+@WebAppConfiguration
 class ScoreCalculationTests {
 
     @Autowired
@@ -41,7 +44,10 @@ class ScoreCalculationTests {
     private CalculateDiffMetrics calculateDiffMetrics;
     @Autowired
     private ScoreProfileRepository scoreProfileRepository;
+    @Autowired
+    private GitLabService requestScopeGitLabService;
 
+    @Autowired
     private GitLabService gitLabService;
 
     @Value("${gitlab.SERVER_URL}")
@@ -88,8 +94,12 @@ class ScoreCalculationTests {
         project = new Project(projectId, "Test", "TestNameSpace", "webURl", server);
         projectRepository.save(project);
         gitLabService =  new GitLabService(serverUrl, accessToken);
+    }
 
-
+    @BeforeEach
+    void setupEach() {
+        requestScopeGitLabService.setServerUrl(serverUrl);
+        requestScopeGitLabService.setAccessToken(accessToken);
     }
 
     @Test
@@ -107,6 +117,7 @@ class ScoreCalculationTests {
 
     @Test
     void check_CommitDiff()  {
+
         String sha = gitLabService.getCommits(projectId, startTime, endTime).toIterable().iterator().next().getSha();
         Commit commit = new Commit(sha, "testTitle", "Author", "email", startTime, "weburl", project);
         commitRepository.save(commit);

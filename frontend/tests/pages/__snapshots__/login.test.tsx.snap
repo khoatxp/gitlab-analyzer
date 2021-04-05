@@ -8,14 +8,14 @@ exports[`Login Folder Snapshot Index 1`] = `
     <AppGradientBackground>
       <Styled(MuiBox)
         alignItems="center"
-        className="makeStyles-backgroundGradient-2"
+        className="makeStyles-backgroundGradient-1"
         display="flex"
         height="100vh"
         justifyContent="center"
         width="100vw"
       >
         <div
-          className="MuiBox-root MuiBox-root-4 makeStyles-backgroundGradient-2"
+          className="MuiBox-root MuiBox-root-3 makeStyles-backgroundGradient-1"
         >
           <Styled(MuiBox)
             bgcolor="primary.contrastText"
@@ -23,7 +23,6 @@ exports[`Login Folder Snapshot Index 1`] = `
             boxShadow={20}
             display="flex"
             flexDirection="column"
-            height="60vh"
             justifyContent="center"
             minHeight="450px"
             minWidth="250px"
@@ -31,7 +30,7 @@ exports[`Login Folder Snapshot Index 1`] = `
             width="20vw"
           >
             <div
-              className="MuiBox-root MuiBox-root-5"
+              className="MuiBox-root MuiBox-root-4"
             >
               <Styled(MuiBox)
                 id="card-header"
@@ -39,7 +38,7 @@ exports[`Login Folder Snapshot Index 1`] = `
                 textAlign="center"
               >
                 <div
-                  className="MuiBox-root MuiBox-root-6"
+                  className="MuiBox-root MuiBox-root-5"
                   id="card-header"
                 >
                   <Image
@@ -171,20 +170,20 @@ exports[`Login Folder Snapshot Index 1`] = `
                 justifyContent="center"
               >
                 <div
-                  className="MuiBox-root MuiBox-root-7"
+                  className="MuiBox-root MuiBox-root-6"
                 >
                   <Styled(MuiBox)
                     alignSelf="center"
                   >
                     <div
-                      className="MuiBox-root MuiBox-root-8"
+                      className="MuiBox-root MuiBox-root-7"
                     >
                       <ForwardRef
                         color="primary"
                         onClick={[Function]}
                       >
                         <WithStyles(ForwardRef(Button))
-                          className="makeStyles-button-9"
+                          className="makeStyles-button-8"
                           color="primary"
                           disableElevation={true}
                           onClick={[Function]}
@@ -192,7 +191,7 @@ exports[`Login Folder Snapshot Index 1`] = `
                           variant="contained"
                         >
                           <ForwardRef(Button)
-                            className="makeStyles-button-9"
+                            className="makeStyles-button-8"
                             classes={
                               Object {
                                 "colorInherit": "MuiButton-colorInherit",
@@ -233,7 +232,7 @@ exports[`Login Folder Snapshot Index 1`] = `
                             variant="contained"
                           >
                             <WithStyles(ForwardRef(ButtonBase))
-                              className="MuiButton-root MuiButton-contained makeStyles-button-9 MuiButton-containedPrimary MuiButton-containedSizeLarge MuiButton-sizeLarge MuiButton-disableElevation"
+                              className="MuiButton-root MuiButton-contained makeStyles-button-8 MuiButton-containedPrimary MuiButton-containedSizeLarge MuiButton-sizeLarge MuiButton-disableElevation"
                               component="button"
                               disabled={false}
                               focusRipple={true}
@@ -242,7 +241,7 @@ exports[`Login Folder Snapshot Index 1`] = `
                               type="button"
                             >
                               <ForwardRef(ButtonBase)
-                                className="MuiButton-root MuiButton-contained makeStyles-button-9 MuiButton-containedPrimary MuiButton-containedSizeLarge MuiButton-sizeLarge MuiButton-disableElevation"
+                                className="MuiButton-root MuiButton-contained makeStyles-button-8 MuiButton-containedPrimary MuiButton-containedSizeLarge MuiButton-sizeLarge MuiButton-disableElevation"
                                 classes={
                                   Object {
                                     "disabled": "Mui-disabled",
@@ -258,7 +257,7 @@ exports[`Login Folder Snapshot Index 1`] = `
                                 type="button"
                               >
                                 <button
-                                  className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-button-9 MuiButton-containedPrimary MuiButton-containedSizeLarge MuiButton-sizeLarge MuiButton-disableElevation"
+                                  className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-button-8 MuiButton-containedPrimary MuiButton-containedSizeLarge MuiButton-sizeLarge MuiButton-disableElevation"
                                   disabled={false}
                                   onBlur={[Function]}
                                   onClick={[Function]}
