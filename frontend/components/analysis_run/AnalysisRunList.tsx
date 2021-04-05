@@ -58,11 +58,18 @@ const AnalysisRunList = ({isLoading, analysisRuns, loadAnalysisRuns}: AnalysisRu
                                         analysis.status == AnalysisRunStatus.Completed &&
                                         <AppButton
                                             color="primary"
-                                            onClick={() => router.push(`/project/${analysis.projectId}/overview?startDateTime=${analysis.startDateTime}&endDateTime=${analysis.endDateTime}`)}
+                                            onClick={() => router.push(`/project/${analysis.projectId}/0/overview?startDateTime=${analysis.startDateTime}&endDateTime=${analysis.endDateTime}`)}
                                         >
                                             View
                                         </AppButton>
                                     }
+                                    <AppButton
+                                        color="primary"
+                                        onClick={() => router.push(`/project/${analysis.projectId}/0/overview?startDateTime=${analysis.startDateTime}&endDateTime=${analysis.endDateTime}`)}
+                                        disabled={analysis.status != AnalysisRunStatus.Completed}
+                                    >
+                                        View
+                                    </AppButton>
                                 </Box>
                             </Box>
                         </Paper>

@@ -1,16 +1,16 @@
 import React, {useEffect} from "react";
-import AuthView from "../../../../components/AuthView";
-import MenuLayout from "../../../../components/layout/menu/MenuLayout";
-import {AuthContext} from "../../../../components/AuthContext";
+import AuthView from "../../../../../components/AuthView";
+import MenuLayout from "../../../../../components/layout/menu/MenuLayout";
+import {AuthContext} from "../../../../../components/AuthContext";
 import axios, {AxiosResponse} from "axios";
 import {useRouter} from "next/router";
-import {MergeRequest} from "../../../../interfaces/GitLabMergeRequest";
+import {MergeRequest} from "../../../../../interfaces/MergeRequest";
 import {useSnackbar} from "notistack";
-import DiffViewer from "../../../../components/diff/DiffViewer";
-import {FileChange} from "../../../../interfaces/GitLabFileChange";
-import MergeRequestList from "../../../../components/diff/MergeRequestList";
-import CommitList from "../../../../components/diff/CommitList";
-import {Commit} from "../../../../interfaces/GitLabCommit";
+import DiffViewer from "../../../../../components/diff/DiffViewer";
+import {FileChange} from "../../../../../interfaces/GitLabFileChange";
+import MergeRequestList from "../../../../../components/diff/MergeRequestList";
+import CommitList from "../../../../../components/diff/CommitList";
+import {Commit} from "../../../../../interfaces/Commit";
 import {Grid} from "@material-ui/core";
 
 const index = () => {
@@ -21,19 +21,22 @@ const index = () => {
     const [commits, setCommits] = React.useState<Commit[]>([]);
     const [fileChanges, setFileChanges] = React.useState<FileChange[]>([]);
     const [linkToFileChanges, setLinkToFileChanges] = React.useState<string>('');
-    const {projectId, startDateTime, endDateTime} = router.query;
+    const {projectId, gitManagementUserId, startDateTime, endDateTime} = router.query;
 
     useEffect(() => {
         if (router.isReady) {
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_requests?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_request/user/${gitManagementUserId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setMergeRequests(resp.data);
                 }).catch(() => {
                 enqueueSnackbar("Failed to load data", {variant: 'error'});
             });
+            setCommits([]);
+            setFileChanges([]);
+            setLinkToFileChanges('');
         }
-    }, [projectId]);
+    }, [projectId, gitManagementUserId]);
 
     const fetchDiffDataFromUrl = (url: string) => {
         axios
@@ -47,22 +50,22 @@ const index = () => {
 
     const fetchCommitData = (mergeRequest: MergeRequest) => {
         axios
-            .get(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${mergeRequest.iid}/commits`, getAxiosAuthConfig())
+            .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_request/${mergeRequest.id}/commits/user/${gitManagementUserId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
                 setCommits(resp.data);
-            }).catch(() => {
-            enqueueSnackbar("Failed to load data", {variant: 'error'});
+            }).catch((err) => {
+            enqueueSnackbar(`Failed to load data ${err}`, {variant: 'error'});
         });
     }
 
     const handleSelectMergeRequest = (mergeRequest: MergeRequest) => {
         fetchCommitData(mergeRequest);
-        setLinkToFileChanges(mergeRequest.web_url);
+        setLinkToFileChanges(mergeRequest.webUrl);
         fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${mergeRequest.iid}/diff`);
     };
 
     const handleSelectCommit = (commit: Commit) => {
-        setLinkToFileChanges(commit.web_url);
+        setLinkToFileChanges(commit.webUrl);
         fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commit/${commit.id}/diff`);
     };
 

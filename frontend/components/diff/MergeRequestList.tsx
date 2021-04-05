@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {MergeRequest} from "../../interfaces/GitLabMergeRequest";
+import {MergeRequest} from "../../interfaces/MergeRequest";
 import DiffItemList, {DiffItem} from "./DiffItemList";
 
 type MergeRequestListProps = {
@@ -13,8 +13,8 @@ const MergeRequestList = ({mergeRequests, handleSelectMergeRequest}: MergeReques
     const diffItems = mergeRequests.map((mergeRequest) => {
         let diffItem: DiffItem = {
             id: mergeRequest.id.toString(),
-            createdAt: mergeRequest.created_at,
-            authorName: mergeRequest.author.name,
+            createdAt: mergeRequest.createdAt,
+            authorName: mergeRequest.authorName,
             title: mergeRequest.title,
         }
         return diffItem;

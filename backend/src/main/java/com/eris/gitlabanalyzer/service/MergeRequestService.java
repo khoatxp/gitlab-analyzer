@@ -7,8 +7,9 @@ import com.eris.gitlabanalyzer.repository.MergeRequestRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class MergeRequestService {
@@ -85,5 +86,21 @@ public class MergeRequestService {
                 ));
             }
         });
+    }
+
+    public List<MergeRequest> getMergeRequestsByProjectId(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        return mergeRequestRepository.findAllByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
+    }
+
+    public List<MergeRequest> getMergeRequestsByProjectIdAndGitManagementUserId(Long projectId, Long gitManagementUserId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        return mergeRequestRepository.findAllByGitManagementUserIdAndDateRange(projectId, gitManagementUserId, startDateTime, endDateTime);
+    }
+
+    public List<MergeRequest> getMergeRequestsWhereGitManagementUserHasCommitsIn(Long projectId, Long gitManagementUserId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        List<MergeRequest> ownerMergeRequests = mergeRequestRepository.findAllByGitManagementUserIdAndDateRange(projectId,gitManagementUserId, startDateTime, endDateTime);
+        List<MergeRequest> notOwnerSharedMergeRequests = mergeRequestRepository.findParticipantSharedMergeRequests(projectId, gitManagementUserId, startDateTime, endDateTime);
+        return Stream.of(ownerMergeRequests , notOwnerSharedMergeRequests).flatMap(Collection::stream)
+                .sorted(Comparator.comparing(MergeRequest::getMergedAt))
+                .collect(Collectors.toList());
     }
 }

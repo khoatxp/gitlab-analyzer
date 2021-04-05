@@ -16,12 +16,12 @@ import {
     RadioGroup,
     Typography
 } from "@material-ui/core";
-import {Note} from "../../../../interfaces/GitLabNote";
+import {Note} from "../../../../../interfaces/GitLabNote";
 import {useRouter} from "next/router";
-import {AuthContext} from "../../../../components/AuthContext";
-import AuthView from "../../../../components/AuthView";
-import MenuLayout from "../../../../components/layout/menu/MenuLayout";
-import formatDate from "../../../../utils/DateFormatter";
+import {AuthContext} from "../../../../../components/AuthContext";
+import AuthView from "../../../../../components/AuthView";
+import MenuLayout from "../../../../../components/layout/menu/MenuLayout";
+import formatDate from "../../../../../utils/DateFormatter"
 import {useSnackbar} from "notistack";
 
 const useStyles = makeStyles(() =>

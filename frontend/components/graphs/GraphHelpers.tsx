@@ -1,7 +1,6 @@
-import React from "react";
+import React, {useState} from "react";
 import {parseISO} from "date-fns";
 import {Bar} from "recharts";
-
 
 const formatDay = (day:string) => {
     return parseISO(day).toLocaleDateString('en-Us', {month: 'short', day: 'numeric'});

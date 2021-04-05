@@ -56,4 +56,7 @@ public class GitManagementUserService {
     public List<GitManagementUserView> getMembers(Long projectId){
         return gitManagementUserRepository.findByProjectId(projectId);
     }
+    public GitManagementUserView getMember(Long gitManagementUserId){
+        return gitManagementUserRepository.findByGitManagementUserId(gitManagementUserId);
+    }
 }
