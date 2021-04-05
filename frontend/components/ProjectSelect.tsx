@@ -17,8 +17,7 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
     const [selectedProjects, setSelectedProjects] = useState<GitLabProject[]>([]);
     const [startDateTime, setStartDateTime] = useState<Date>(new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()));
     const [endDateTime, setEndDateTime] = useState<Date>(now);
-    const [scoreProfile, setScoreProfile] = useState<ScoreProfile | undefined>();
-    const [scoreProfileId, setScoreProfileId] = useState<number | null>();
+    const [scoreProfileId, setScoreProfileId] = useState<number>(0);
 
     const onProjectSelect = (_event: any, value: GitLabProject) => {
         if (!value) { return; } // Value will be null when the clear button is pressed. Ensure we have a number
@@ -38,9 +37,8 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
         setSelectedProjects(newProjects);
     }
 
-    const onProfileSelect = (event: any, profile: ScoreProfile) => {
-        setScoreProfile(profile);
-        setScoreProfileId(profile ? profile.id: 0);
+    const onScoreProfileSelect = (id: number) => {
+        setScoreProfileId(id);
     }
 
     return (
@@ -84,8 +82,7 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
                 />
 
                 <ScoreProfileSelect
-                    scoreProfile={scoreProfile}
-                    onScoreProfileSelect={onProfileSelect}
+                    onScoreProfileSelect={onScoreProfileSelect}
                  />
 
             </Box>

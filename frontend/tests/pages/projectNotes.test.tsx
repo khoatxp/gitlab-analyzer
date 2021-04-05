@@ -1,5 +1,5 @@
 import React from 'react';
-import Index from '../../pages/project/[projectId]/notes';
+import Index from '../../pages/project/[projectId]/[gitManagementUserId]/notes';
 import {mount, ReactWrapper} from "enzyme";
 import {act} from "react-dom/test-utils";
 

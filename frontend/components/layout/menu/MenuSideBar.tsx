@@ -44,21 +44,38 @@ const MenuSideBar = () => {
     const classes = useStyles();
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
-    const [gitLabMemberUserNames, setGitLabMemberUserNames] = React.useState<GitManagementUser[]>([]);
+    const [gitLabMemberNames, setGitLabMemberNames] = React.useState<GitManagementUser[]>([]);
     const [sidebarState, setSidebarState] = React.useState(false);
 
-    const {projectId} = router.query;
+    const {projectId, gitManagementUserId, startDateTime, endDateTime} = router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/${projectId}/managementusers/members`;
+
+    const handleClick = (id: number) => {
+        setActive(id);
+        const route = router.route;
+        router.push({
+            pathname: route,
+            query: {projectId: projectId, gitManagementUserId: id, startDateTime: startDateTime, endDateTime: endDateTime}
+        })
+    };
+
+    const setActive = (id: number | string) => {
+        let prevSelected = document.getElementsByClassName('selected');
+        prevSelected[0]?.classList.remove('selected');
+        document.getElementById(`memberButton${id}`)?.classList.add('selected');
+    }
+
 
     useEffect(() => {
         if (router.isReady) {
             axios
                 .get(PROJECT_ID_URL, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
-                    setGitLabMemberUserNames(resp.data);
-                }).catch((err: AxiosError)=>{
+                    setGitLabMemberNames(resp.data);
+                 }).catch((err: AxiosError)=>{
                     enqueueSnackbar(`Failed to get members: ${err.message}`, {variant: 'error',});
             })
+            setActive(Array.isArray(gitManagementUserId) || gitManagementUserId == undefined? "0" : gitManagementUserId)
         }
     }, [projectId]);
 
@@ -79,14 +96,13 @@ const MenuSideBar = () => {
                 </Tabs>
             </AppBar>
             <Box className={`${classes.sidebar} ${sidebarState === true && classes.displaySidebar}`} >
-                <MenuButton variant="contained" disableRipple >
+                <MenuButton variant="contained" id={'memberButton0'} disableRipple onClick={() => handleClick(0)}>
                     Everyone
                 </MenuButton>
-                {gitLabMemberUserNames.map(gitManagementUser => {
-
-                    <MenuButton key={gitManagementUser.id} variant="contained" disableRipple >
-                        {gitManagementUser.username}
-                    </MenuButton>;
+                {gitLabMemberNames.map(member => {
+                    const {name} = member;
+                    const {id} = member;
+                    return <MenuButton key={name} id={`memberButton${{id}.id}`} variant="contained" disableRipple onClick={() => handleClick(+{id}.id)}>{name}</MenuButton>;
                 })}
             </Box>
         </Box>
