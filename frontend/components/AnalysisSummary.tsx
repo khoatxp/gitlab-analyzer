@@ -70,16 +70,17 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
 
             <Box display="flex" align="right">
                 <Box>
-                    <Typography variant="subtitle1"><b>Merge Request Score</b></Typography>
                     <Divider/>
-                    <Typography variant="body2">{gitManagementUserId != '0' && gitManagementUserId != undefined? `Own: ${mergeRequestScore}` : ""}</Typography>
+                    <Typography variant="subtitle1"><b>Merge Request Score:</b> {sharedMergeRequestScore + mergeRequestScore}</Typography>
+                    <Divider/>
+                    <Typography variant="body2">{gitManagementUserId != '0' && gitManagementUserId != undefined? `Individual: ${mergeRequestScore}` : ""}</Typography>
                     <Typography variant="body2">{gitManagementUserId != '0' && gitManagementUserId != undefined? `Shared: ${sharedMergeRequestScore}` : ""}</Typography>
-                    <Typography variant="body2">Total: {sharedMergeRequestScore + mergeRequestScore}</Typography>
-
+                    <Divider/>
                     <Typography variant="subtitle1"><b>Commit Score:</b> {commitScore}</Typography>
+                    <Divider/>
                     <IconButton color="primary" size="medium" onClick={handleCopyScore} disabled={!project}>
-                        <Typography variant="subtitle1">Copy Score: </Typography>
-                        <FileCopyIcon/>
+                        <Typography variant="body2">Copy Score: </Typography>
+                        <FileCopyIcon fontSize="small"/>
                     </IconButton>
                 </Box>
             </Box>
