@@ -1,58 +1,41 @@
 import React from "react";
 import axios, {AxiosError, AxiosResponse} from "axios";
-import AppTextField from "../../components/app/AppTextField";
-import AppButton from "../../components/app/AppButton";
-import CardLayout from "../../components/layout/CardLayout";
+import AppTextField from "../../../components/app/AppTextField";
+import AppButton from "../../../components/app/AppButton";
+import CardLayout from "../../../components/layout/CardLayout";
 import {Box, Typography} from "@material-ui/core";
 import {useSnackbar} from 'notistack';
 import {useRouter} from "next/router";
-import AuthView from "../../components/AuthView";
-import {AuthContext} from "../../components/AuthContext";
+import AuthView from "../../../components/AuthView";
+import {AuthContext} from "../../../components/AuthContext";
 
-const AddServer = () => {
+const EditServer = () => {
     const {enqueueSnackbar} = useSnackbar();
     const router = useRouter();
+    const {serverId} = router.query;
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
-    const [serverUrl, setServerUrl] = React.useState<string>("");
     const [serverAccessToken, setServerAccessToken] = React.useState<string>("");
-    const [isValidServerUrl, setIsValidServerUrl] = React.useState<boolean>(true);
     const [isValidAccessToken, setIsValidAccessToken] = React.useState<boolean>(true);
 
-    const validateUrl = (url:string) => {
-        if (url && (url.startsWith("http://") || url.startsWith("https://"))){
-            return true;
-        }
-        return false;
-    }
     const validateToken = (token:string) => {
         return token.length >= 20
     }
-
-    const removeTrailingSlash = (url:string) => {
-        return url.replace(/\/+$/, "");
-    }
     const saveServer = () => {
-        let trimmedUrl = removeTrailingSlash(serverUrl.trim());
-        let isValidUrl = validateUrl(trimmedUrl);
-        setIsValidServerUrl(isValidUrl);
-
         let trimmedAccessToken= serverAccessToken.trim();
         let isValidToken = validateToken(trimmedAccessToken);
         setIsValidAccessToken(isValidToken);
 
-        if (isValidUrl && isValidToken) {
+        if (isValidToken) {
             axios
-                .post(`${process.env.NEXT_PUBLIC_API_URL}/servers`,
-                    {
-                        serverUrl: trimmedUrl,
-                        accessToken: trimmedAccessToken
-                    },
+                .put(`${process.env.NEXT_PUBLIC_API_URL}/servers/${serverId}`,
+                     trimmedAccessToken,
                     getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
+                    enqueueSnackbar('Access token saved', {variant: 'success',});
                     router.push(`/server`)
                 }).catch((error: AxiosError) => {
                     let data = error.response?.data;
-                    let errMsg = data && data.message ? data.message : 'Failed to save server.';
+                    let errMsg = data && data.message ? data.message : 'Failed to save server access token.';
                     enqueueSnackbar(errMsg, {variant: 'error',});
             });
         }
@@ -61,14 +44,7 @@ const AddServer = () => {
     return (
         <AuthView>
             <CardLayout size="md" backLink={"/server"} logoType="header">
-                <Typography align="center"  variant="h5">Add New Server</Typography>
-                <AppTextField
-                    id="server-url"
-                    placeholder="Server Url"
-                    value={serverUrl}
-                    error={!isValidServerUrl}
-                    helperText={isValidServerUrl ? "" : "Url is missing scheme"}
-                    onChange={(e) => setServerUrl(e.target.value)}/>
+                <Typography align="center"  variant="h5">Edit Server Access Token</Typography>
                 <AppTextField
                     id="access-token"
                     placeholder="Access Token"
@@ -85,4 +61,4 @@ const AddServer = () => {
 }
 
 
-export default AddServer;
+export default EditServer;

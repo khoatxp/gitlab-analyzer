@@ -11,8 +11,7 @@ import java.util.Optional;
 @Repository
 public interface UserServerRepository extends JpaRepository<UserServer, Long> {
     List<UserServer> findUserServerByUserId(Long userId);
-    Optional<UserServer> findUserServerByAccessToken(String accessToken);
     @Query("select u from UserServer u where u.user.id = ?1 and u.server.id = ?2")
-    Optional<UserServer> findUserServerByUserIdAndProjectId(Long userId, Long serverId);
+    Optional<UserServer> findUserServerByUserIdAndServerId(Long userId, Long serverId);
 }
 
