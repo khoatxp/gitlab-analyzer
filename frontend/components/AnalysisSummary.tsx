@@ -7,7 +7,7 @@ import StarIcon from '@material-ui/icons/Star';
 import RestaurantIcon from '@material-ui/icons/Restaurant';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import {useSnackbar} from "notistack";
-import getMember from "../utils/memberName";
+import MemberText from "../utils/memberName";
 
 const useStyles = makeStyles(theme => ({
     avatar: {
@@ -43,10 +43,6 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
             enqueueSnackbar("Failed to copy score summary to clipboard", {variant: "error"})
         }
     }
-    const displayMerge = () => {
-
-    }
-
 
     return <Box display="flex" alignItems="center" padding={4}>
         <Avatar className={styles.avatar} variant='rounded' src={project?.avatar_url ?? ''}>
@@ -57,7 +53,7 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
 
         <Box ml={3} flexGrow={1}>
             <Typography variant="h3">{project?.name_with_namespace ?? "Loading..."}</Typography>
-            <Typography variant="h5">{getMember(`${gitManagementUserId}`) ?? "Loading..."}</Typography>
+            <Typography variant="h5">{MemberText({id:gitManagementUserId}) ?? "Loading..."}</Typography>
             <Typography variant="subtitle2">
                 {commitCount} Commit(s) -{' '}
                 {mergeRequestCount} Merge Request(s)

@@ -13,7 +13,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import {ScoreDigest} from "../../interfaces/ScoreDigest";
 import { formatDay, setBackground } from "./GraphHelpers"
-import getMember from "../../utils/memberName";
+import MemberText from "../../utils/memberName";
 
 interface Props {
     data: ScoreDigest[],
@@ -36,7 +36,7 @@ const Chart = ({data, startDateTime, endDateTime, gitManagementUserId}: Props) =
 
     return (
         <div style={{display: "flex", flexDirection: "column"}}>
-            <p style={{textAlign: "center"}}>Daily Total Commits and Merge Requests Made By {getMember(gitManagementUserId)}</p>
+            <p style={{textAlign: "center"}}>Daily Total Commits and Merge Requests Made By {MemberText({id:gitManagementUserId})}</p>
             <div style={{display: "flex"}}>
                 <ResponsiveContainer width="100%" height={400} minWidth="0">
                     <BarChart
