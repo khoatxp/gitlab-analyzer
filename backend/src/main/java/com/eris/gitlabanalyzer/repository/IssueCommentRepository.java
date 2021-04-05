@@ -17,6 +17,14 @@ public interface IssueCommentRepository extends JpaRepository<Note, Long> {
     @Query("select n from Note n where n.projectId = ?1 and n.createdAt >= ?2 and n.createdAt <= ?3 and n.noteableType='Issue' order by n.createdAt desc")
     List<Note> findAllByProjectIdAndDateRange(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime);
 
+    @Query("select n from Note n where n.projectId = ?1 " +
+            "and n.gitManagementUser.id = ?2 " +
+            "and n.createdAt >= ?3 and n.createdAt <= ?4 " +
+            "and n.noteableType='Issue' order by n.createdAt desc")
+    List<Note> findAllByProjectIdAndGitManagementUserIdAndDateRange(
+            Long projectId, Long gitManagementUserId, OffsetDateTime startDateTime, OffsetDateTime endDateTime
+    );
+
     @Query("select n from Note n where n.gitLabNoteId = ?1 and n.projectId = ?2 and n.noteableType='Issue'")
     Optional<Note> findByGitLabNoteIdAndProjectId(Long gitLabNoteId, Long projectId);
 }

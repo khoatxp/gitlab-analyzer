@@ -51,28 +51,30 @@ const NotesPage = () => {
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
     const router = useRouter();
-    const {projectId, startDateTime, endDateTime} = router.query;
+    const {projectId, gitManagementUserId, startDateTime, endDateTime} = router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/${projectId}`;
 
     useEffect(() => {
-        if (projectId) {
+        if (router.isReady) {
             const dateQuery = `startDateTime=${startDateTime}&endDateTime=${endDateTime}`;
             axios
-                .get(`${PROJECT_ID_URL}/merge_request_notes?${dateQuery}`, getAxiosAuthConfig())
+                .get(`${PROJECT_ID_URL}/merge_request_notes/${gitManagementUserId}?${dateQuery}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setMergeRequestNotes(resp.data);
+                    console.log(resp.data);
                 }).catch(() => {
                 enqueueSnackbar('Failed to get merge requests notes.', {variant: 'error',});
             });
             axios
-                .get(`${PROJECT_ID_URL}/issue_notes?${dateQuery}`, getAxiosAuthConfig())
+                .get(`${PROJECT_ID_URL}/issue_notes/${gitManagementUserId}?${dateQuery}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
+                    console.log(resp.data);
                     setIssueNotes(resp.data);
                 }).catch(() => {
                 enqueueSnackbar('Failed to get issue notes.', {variant: 'error',});
             });
         }
-    }, [projectId]);
+    }, [projectId, gitManagementUserId]);
 
     return (
         <AuthView>
