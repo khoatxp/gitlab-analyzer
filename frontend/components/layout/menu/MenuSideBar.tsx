@@ -10,6 +10,9 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {GitManagementUser} from "../interfaces/GitManagementUser";
 import {useSnackbar} from "notistack";
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import MenuIcon from '@material-ui/icons/Menu';
 
 const useStyles = makeStyles((theme) => ({
     sidebar: {
@@ -44,7 +47,7 @@ const MenuSideBar = () => {
     const classes = useStyles();
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
-    const [gitLabMemberNames, setGitLabMemberNames] = React.useState<GitManagementUser[]>([]);
+    const [gitLabMemberUserNames, setGitLabMemberUserNames] = React.useState<GitManagementUser[]>([]);
     const [sidebarState, setSidebarState] = React.useState(false);
 
     const {projectId, gitManagementUserId, startDateTime, endDateTime} = router.query;
@@ -65,21 +68,30 @@ const MenuSideBar = () => {
         document.getElementById(`memberButton${id}`)?.classList.add('selected');
     }
 
-
     useEffect(() => {
         if (router.isReady) {
             axios
                 .get(PROJECT_ID_URL, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
-                    setGitLabMemberNames(resp.data);
+                    setGitLabMemberUserNames(resp.data);
                  }).catch((err: AxiosError)=>{
-                    enqueueSnackbar(`Failed to get members: ${err.message}`, {variant: 'error',});
+                    enqueueSnackbar(`Failed to get member user names: ${err.message}`, {variant: 'error',});
             })
             setActive(Array.isArray(gitManagementUserId) || gitManagementUserId == undefined? "0" : gitManagementUserId)
         }
     }, [projectId]);
 
     const showSidebar = () => setSidebarState(!sidebarState);
+    
+    function sort_by_key(array: any, key){
+        return array.sort(function(a, b){
+            let x = a[key];
+            let y = b[key];
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+    };
+
+    const gitLabMemberUserNamesSorted = sort_by_key(gitLabMemberUserNames, 'username');
 
     return (
         <Box width={sidebarState ? '16%' : '3%'} >
@@ -91,7 +103,7 @@ const MenuSideBar = () => {
                     <Tab
                         className={classes.sidebarTitle}
                         onClick={showSidebar}
-                        label={sidebarState ? '<' : '>'}
+                        label={sidebarState ? <ChevronLeftIcon /> : <MenuIcon />}
                     />
                 </Tabs>
             </AppBar>
@@ -99,10 +111,18 @@ const MenuSideBar = () => {
                 <MenuButton variant="contained" id={'memberButton0'} disableRipple onClick={() => handleClick(0)}>
                     Everyone
                 </MenuButton>
-                {gitLabMemberNames.map(member => {
-                    const {name} = member;
-                    const {id} = member;
-                    return <MenuButton key={name} id={`memberButton${{id}.id}`} variant="contained" disableRipple onClick={() => handleClick(+{id}.id)}>{name}</MenuButton>;
+                {gitLabMemberUserNamesSorted.map(gitManagementUser => {
+                    const {username} = gitManagementUser;
+                    const {id} = gitManagementUser;
+                    return
+                        <MenuButton key={gitManagementUser.id}
+                                    value={[gitManagementUser.id,gitManagementUser.username]}
+                                    id={`memberButton${{id}.id}`}
+                                    variant="contained" disableRipple
+                                    onClick={() => handleClick(+{id}.id)}
+                        >
+                            {gitManagementUser.username}
+                        </MenuButton>;
                 })}
             </Box>
         </Box>
