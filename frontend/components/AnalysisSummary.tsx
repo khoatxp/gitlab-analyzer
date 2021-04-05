@@ -8,6 +8,7 @@ import RestaurantIcon from '@material-ui/icons/Restaurant';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import {useSnackbar} from "notistack";
 import MemberText from "../utils/memberName";
+import Divider from '@material-ui/core/Divider';
 
 const useStyles = makeStyles(theme => ({
     avatar: {
@@ -45,35 +46,16 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
     }
 
     return (
-        <Box display="flex" alignItems="center" padding={3}>
+        <Box display="flex" alignItems="center" padding={1}>
             <Avatar className={styles.avatar} variant='rounded' src={project?.avatar_url ?? ''}>
                 <Typography variant="h3">
                     {getAvatarText(project?.avatar_url ?? '', project?.name ?? '')}
                 </Typography>
             </Avatar>
-    return <Box display="flex" alignItems="center" padding={4}>
-        <Avatar className={styles.avatar} variant='rounded' src={project?.avatar_url ?? ''}>
-            <Typography variant="h3">
-                {getAvatarText(project?.avatar_url ?? '', project?.name ?? '')}
-            </Typography>
-        </Avatar>
 
-        <Box ml={3} flexGrow={1}>
-            <Typography variant="h3">{project?.name_with_namespace ?? "Loading..."}</Typography>
-            <Typography variant="h5">{MemberText({id:gitManagementUserId}) ?? "Loading..."}</Typography>
-            <Typography variant="subtitle2">
-                {commitCount} Commit(s) -{' '}
-                {mergeRequestCount} Merge Request(s)
-            </Typography>
-            <Box pt={1}>
-                <Chip style={{marginRight: "5px"}} color="primary" size="small" icon={<StarIcon/>}
-                      label={`Stars: ${project?.star_count ?? 0}`}/>
-                <Chip color="primary" size="small" icon={<RestaurantIcon/>}
-                      label={`Forks: ${project?.forks_count ?? 0}`}/>
-            </Box>
-        </Box>
             <Box ml={3} flexGrow={1}>
                 <Typography variant="h5">{project?.name_with_namespace ?? "Loading..."}</Typography>
+                <Typography variant="subtitle1">{MemberText({id:gitManagementUserId}) ?? "Loading..."}</Typography>
                 <Typography variant="subtitle2">
                     {commitCount} Commit(s) -{' '}
                     {mergeRequestCount} Merge Request(s)
@@ -88,18 +70,20 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
 
             <Box display="flex" align="right">
                 <Box>
-                    <Typography variant="subtitle1"><b>Merge Request Score:</b> {mergeRequestScore}</Typography>
-                                    <Typography >{gitManagementUserId != '0' && gitManagementUserId != undefined? `Own: ${mergeRequestScore}` : ""}</Typography>
-                                    <Typography >{gitManagementUserId != '0' && gitManagementUserId != undefined? `Shared: ${sharedMergeRequestScore}` : ""}</Typography>
-                                    <Typography >Total: {sharedMergeRequestScore + mergeRequestScore}</Typography>
+                    <Typography variant="subtitle1"><b>Merge Request Score</b></Typography>
+                    <Divider/>
+                    <Typography variant="body2">{gitManagementUserId != '0' && gitManagementUserId != undefined? `Own: ${mergeRequestScore}` : ""}</Typography>
+                    <Typography variant="body2">{gitManagementUserId != '0' && gitManagementUserId != undefined? `Shared: ${sharedMergeRequestScore}` : ""}</Typography>
+                    <Typography variant="body2">Total: {sharedMergeRequestScore + mergeRequestScore}</Typography>
+
                     <Typography variant="subtitle1"><b>Commit Score:</b> {commitScore}</Typography>
                     <IconButton color="primary" size="medium" onClick={handleCopyScore} disabled={!project}>
                         <Typography variant="subtitle1">Copy Score: </Typography>
                         <FileCopyIcon/>
                     </IconButton>
                 </Box>
-
-    </Box>
+            </Box>
+        </Box>
     );
 };
 
