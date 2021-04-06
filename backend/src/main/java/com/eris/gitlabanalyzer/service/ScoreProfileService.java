@@ -24,7 +24,12 @@ public class ScoreProfileService {
     public ScoreProfile getScoreProfile(User user, Long id) {
         var userScoreProfiles = this.getScoreProfiles(user);
         Optional<ScoreProfile> scoreProfile = userScoreProfiles.stream().filter(s -> s.getId() == id).findFirst();
-        return scoreProfile.get();
+        if (scoreProfile.isPresent()){
+            return scoreProfile.get();
+        }
+        else{
+            throw new NoSuchElementException("Score Profile not found");
+        }
     }
 
 
