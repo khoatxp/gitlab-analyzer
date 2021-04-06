@@ -89,7 +89,7 @@ public class FileScore {
         this.commentLineAdded = commentLineAdded;
         this.codeLineRemoved = codeLineRemoved;
         this.syntaxLineRemoved = syntaxLineRemoved;
-        this. commentLineRemoved = commentLineRemoved;
+        this.commentLineRemoved = commentLineRemoved;
     }
 
     public FileScore(Commit commit, String fileType, String filePath,
