@@ -40,10 +40,27 @@ public class UserServerController {
     }
 
     @PostMapping
-    public UserServerView AddNewUserServer(Principal principal, @RequestBody UserServerRequestBody requestBody) {
+    public UserServerView addNewUserServer(Principal principal, @RequestBody UserServerRequestBody requestBody) {
         var user = authService.getLoggedInUser(principal);
-        var userServer = userServerService.createServer(user, requestBody.getServerUrl(), requestBody.getAccessToken());
+        var userServer = userServerService.createUserServer(user, requestBody.getServerUrl(), requestBody.getAccessToken());
         return UserServerView.fromUserServer(userServer);
+    }
+
+    @PutMapping(path = "/{serverId}")
+    public UserServerView updateUserServer(
+            Principal principal,
+            @PathVariable("serverId") Long serverId,
+            @RequestBody String accessToken){
+        var user = authService.getLoggedInUser(principal);
+        var userServer = userServerService.updateUserServer(user, serverId, accessToken);
+        return UserServerView.fromUserServer(userServer);
+    }
+
+    @DeleteMapping(path = "/{serverId}")
+    public Long deleteUserServer(Principal principal, @PathVariable("serverId") Long serverId) {
+        var user = authService.getLoggedInUser(principal);
+        userServerService.deleteUserServer(user, serverId);
+        return serverId;
     }
 
 }
