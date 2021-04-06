@@ -3,32 +3,27 @@ import React from "react";
 import Image from "next/image";
 import AppGradientBackground from "../app/AppGradientBackground";
 import ChildrenProps from "../../interfaces/ChildrenProps";
-import NextLink from 'next/link'
-import {makeStyles} from "@material-ui/styles";
+import AppButton from "../app/AppButton";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import {useRouter} from "next/router";
 
-type CardLayoutProps =  ChildrenProps & {
-    size?: "sm" | "md"
+type CardLayoutProps = ChildrenProps & {
+    size?: "sm" | "md" | "lg"
     logoType?: "center" | "header"
     backLink?: string
     backLabel?: string
 }
 
-const useStyles = makeStyles({
-    linkBack: {
-        display: 'flex',
-        alignItems: 'center',
-        flexWrap: 'wrap'
-    }
-})
-
 const CardLayout = ({children, size, logoType = "center", backLink, backLabel}: CardLayoutProps) => {
+    const router = useRouter();
+
     // Change card width based on size prop
     let width = "60vw";
-    width = size == "sm" ? "20vw": width;
-    width = size == "md" ? "60vw": width;
+    width = size == "sm" ? "20vw" : width;
+    width = size == "md" ? "60vw" : width;
+    width = size == "lg" ? "80vw" : width;
 
-    let logoSize = logoType === "center" ? "120" : "80" ;
-    const classes = useStyles();
+    let logoSize = logoType === "center" ? "120" : "80";
 
     return (
         <AppGradientBackground>
@@ -36,7 +31,6 @@ const CardLayout = ({children, size, logoType = "center", backLink, backLabel}: 
                 bgcolor="primary.contrastText"
                 boxShadow={20}
                 width={width}
-                height="60vh"
                 minWidth="250px"
                 minHeight="450px"
                 borderRadius={45}
@@ -65,14 +59,15 @@ const CardLayout = ({children, size, logoType = "center", backLink, backLabel}: 
                     {children}
                 </Box>
                 {backLink &&
-                    <Box>
-                        <NextLink href={backLink} passHref>
-                            <Link classes={{root:classes.linkBack}}>
-                                <Icon fontSize="small">arrow_back</Icon>
-                                <Typography variant="button"> {backLabel ? backLabel : 'back' }</Typography>
-                            </Link>
-                        </NextLink>
-                    </Box>
+                <Box>
+                    <AppButton
+                        color="primary"
+                        startIcon={<ArrowBackIcon/>}
+                        onClick={() => router.push(backLink)}
+                    >
+                        {backLabel ? backLabel : 'back'}
+                    </AppButton>
+                </Box>
                 }
             </Box>
         </AppGradientBackground>

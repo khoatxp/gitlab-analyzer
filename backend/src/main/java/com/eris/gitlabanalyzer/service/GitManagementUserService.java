@@ -8,44 +8,31 @@ import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class GitManagementUserService {
     private final GitManagementUserRepository gitManagementUserRepository;
     private final ProjectRepository projectRepository;
     private final ServerRepository serverRepository;
+    private final GitLabService requestScopeGitLabService;
 
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
-
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
-
-    public GitManagementUserService(GitManagementUserRepository gitManagementUserRepository, ProjectRepository projectRepository, ServerRepository serverRepository) {
+    public GitManagementUserService(GitManagementUserRepository gitManagementUserRepository, ProjectRepository projectRepository, ServerRepository serverRepository, GitLabService requestScopeGitLabService) {
         this.gitManagementUserRepository = gitManagementUserRepository;
         this.projectRepository = projectRepository;
         this.serverRepository = serverRepository;
+        this.requestScopeGitLabService = requestScopeGitLabService;
     }
 
     public void saveGitManagementUserInfo(Project project){
-        // TODO use an internal projectId to find the correct server
-        var gitLabService = new GitLabService(serverUrl, accessToken);
+        Server server = project.getServer();
 
-        Server server = serverRepository.findByServerUrl(serverUrl)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Server with URL " + serverUrl + " does not exist"));
-
-        var gitLabMembers = gitLabService.getMembers(project.getGitLabProjectId());
+        var gitLabMembers = requestScopeGitLabService.getMembers(project.getGitLabProjectId());
         var gitLabMemberList= gitLabMembers.collectList().block();
         gitLabMemberList.forEach(gitLabMember -> {
-                    GitManagementUser gitManagementUser= gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabMember.getId(),serverUrl);
+                    GitManagementUser gitManagementUser= gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabMember.getId(), server.getId());
                     if (gitManagementUser == null){
                         gitManagementUser = new GitManagementUser(
                                 gitLabMember.getId(),
@@ -68,5 +55,8 @@ public class GitManagementUserService {
 
     public List<GitManagementUserView> getMembers(Long projectId){
         return gitManagementUserRepository.findByProjectId(projectId);
+    }
+    public GitManagementUserView getMember(Long gitManagementUserId){
+        return gitManagementUserRepository.findByGitManagementUserId(gitManagementUserId);
     }
 }

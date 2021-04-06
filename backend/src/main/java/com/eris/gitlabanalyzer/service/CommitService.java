@@ -17,31 +17,26 @@ import java.util.stream.Stream;
 
 @Service
 public class CommitService {
+    private final MergeRequestRepository mergeRequestRepository;
+    private final CommitRepository commitRepository;
+    private final ProjectRepository projectRepository;
+    private final GitManagementUserRepository gitManagementUserRepository;
+    private final CommitCommentRepository commitCommentRepository;
+    private final ScoreService scoreService;
+    private final CommitAuthorRepository commitAuthorRepository;
+    private final AnalysisRunService analysisRunService;
+    private final GitLabService requestScopeGitLabService;
 
-    MergeRequestRepository mergeRequestRepository;
-    CommitRepository commitRepository;
-    ProjectRepository projectRepository;
-    GitManagementUserRepository gitManagementUserRepository;
-    CommitCommentRepository commitCommentRepository;
-    ScoreService scoreService;
-    CommitAuthorRepository commitAuthorRepository;
-
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.SERVER_URL}")
-    String serverUrl;
-
-    // TODO Remove after server info is correctly retrieved based on internal projectId
-    @Value("${gitlab.ACCESS_TOKEN}")
-    String accessToken;
-
-    public CommitService(MergeRequestRepository mergeRequestRepository, CommitRepository commitRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, CommitCommentRepository commitCommentRepository, ScoreService scoreService, CommitAuthorRepository commitAuthorRepository ) {
+    public CommitService(MergeRequestRepository mergeRequestRepository, CommitRepository commitRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, CommitCommentRepository commitCommentRepository, ScoreService scoreService, CommitAuthorRepository commitAuthorRepository, AnalysisRunService analysisRunService, GitLabService requestScopeGitLabService) {
         this.mergeRequestRepository = mergeRequestRepository;
         this.commitRepository = commitRepository;
         this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
         this.commitCommentRepository = commitCommentRepository;
-        this.commitAuthorRepository = commitAuthorRepository;
         this.scoreService = scoreService;
+        this.commitAuthorRepository = commitAuthorRepository;
+        this.analysisRunService = analysisRunService;
+        this.requestScopeGitLabService = requestScopeGitLabService;
     }
 
     public String splitEmail(String email) {
@@ -50,22 +45,27 @@ public class CommitService {
     }
 
 
-    public void saveCommitInfo(Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+    public void saveCommitInfo(AnalysisRun analysisRun, Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         //Save commits associated with each merge request
         List<MergeRequest> mergeRequestList = mergeRequestRepository.findAllByProjectId(project.getId());
         List<String> mrCommitShas = new ArrayList<>(); //Used to filter for the case of orphan commits
 
-        // TODO use an internal projectId to find the correct server
-        var gitLabService = new GitLabService(serverUrl, accessToken);
+        Double progress;
+        Double startOfProgressRange = AnalysisRun.Progress.AtStartOfImportingCommits.getValue();
+        Double endOfProgressRange = AnalysisRun.Progress.AtStartOfImportingOrphanCommits.getValue();
 
-        mergeRequestList.forEach(mergeRequest -> {
-            var gitLabCommits = gitLabService.getMergeRequestCommits(project.getGitLabProjectId(), mergeRequest.getIid());
+        for(int i = 0; i < mergeRequestList.size();i++){
+            MergeRequest mergeRequest = mergeRequestList.get(i);
+            progress = startOfProgressRange + (endOfProgressRange-startOfProgressRange) * (i+1)/mergeRequestList.size();
+            analysisRunService.updateProgress(analysisRun, "Importing commits for "+ (i+1) +"/"+mergeRequestList.size() + " merge requests",progress, false);
+            var gitLabCommits = requestScopeGitLabService.getMergeRequestCommits(project.getGitLabProjectId(), mergeRequest.getIid());
             saveCommitHelper(project, mergeRequest, gitLabCommits, mrCommitShas);
-        });
+        }
 
         //Save orphan commits
-        var gitLabCommits = gitLabService.getCommits(project.getGitLabProjectId(), startDateTime, endDateTime)
+        var gitLabCommits = requestScopeGitLabService.getCommits(project.getGitLabProjectId(), startDateTime, endDateTime)
                                                            .filter(gitLabCommit -> !mrCommitShas.contains(gitLabCommit.getSha()));
+        analysisRunService.updateProgress(analysisRun, "Importing orphan commits", AnalysisRun.Progress.AtStartOfImportingOrphanCommits.getValue(), false);
         saveCommitHelper(project, null, gitLabCommits, mrCommitShas);
     }
 
@@ -118,11 +118,11 @@ public class CommitService {
 
         //First attempt using author username extracted from email
         String username = splitEmail(gitLabCommit.getAuthorEmail());
-        GitManagementUser gitManagementUser = gitManagementUserRepository.findByUsernameAndServerUrl(username, serverUrl);
+        GitManagementUser gitManagementUser = gitManagementUserRepository.findByUsernameAndServerId(username, project.getServer().getId());
 
         if(gitManagementUser == null){
             //Second attempt using author name
-            gitManagementUser = gitManagementUserRepository.findByUsernameAndServerUrl(gitLabCommit.getAuthorName(),serverUrl);
+            gitManagementUser = gitManagementUserRepository.findByUsernameAndServerId(gitLabCommit.getAuthorName(),project.getServer().getId());
         }
 
         if(gitManagementUser != null){
@@ -133,13 +133,11 @@ public class CommitService {
     }
 
     public void saveCommitComment(Project project, Commit commit){
-        // TODO use an internal projectId to find the correct server
-        var gitLabService = new GitLabService(serverUrl, accessToken);
-        var gitLabCommitComments = gitLabService.getCommitComments(project.getGitLabProjectId(), commit.getSha());
+        var gitLabCommitComments = requestScopeGitLabService.getCommitComments(project.getGitLabProjectId(), commit.getSha());
         var gitLabCommitCommentList = gitLabCommitComments.collectList().block();
 
         gitLabCommitCommentList.parallelStream().forEach(gitLabCommitComment -> {
-            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerUrl(gitLabCommitComment.getAuthor().getId(),serverUrl);
+            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabCommitComment.getAuthor().getId(),project.getServer().getId());
             if(gitManagementUser == null){
                 return;
             }
@@ -188,6 +186,18 @@ public class CommitService {
     public List<Commit> getCommitsOfGitManagementUser(Long projectId, Long gitManagementUserId){
         return commitRepository.findByProjectIdAndGitManagementUserId(projectId, gitManagementUserId);
     }
+
+    public List<Commit> getCommitsInDateRange(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        List<Commit> commits = commitRepository.findAllByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
+
+        return commits;
+    }
+
+    public List<Commit> getCommitsOfGitManagementUserInDateRange(Long projectId, Long gitManagementUserId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        List<Commit> commits = commitRepository.findAllByProjectIdAndDateRangeAndGitManagementUserId(projectId, gitManagementUserId, startDateTime, endDateTime);
+        return commits;
+    }
+
 
 
     public void setAllSharedMergeRequests(Long projectId){
