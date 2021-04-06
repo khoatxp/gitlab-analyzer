@@ -4,6 +4,7 @@ import com.eris.gitlabanalyzer.model.User;
 import com.eris.gitlabanalyzer.repository.ScoreProfileRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -22,8 +23,7 @@ public class ScoreProfileService {
 
     public ScoreProfile getScoreProfile(User user, Long id) {
         var userScoreProfiles = this.getScoreProfiles(user);
-        Optional<ScoreProfile> scoreProfile = userScoreProfiles.stream().filter(s -> s.getId() == id).findFirst();
-        return scoreProfile.get();
+        return userScoreProfiles.stream().filter(s -> s.getId() == id).findFirst();
     }
 
 
@@ -36,17 +36,28 @@ public class ScoreProfileService {
 
         var userScoreProfiles = this.getScoreProfiles(user);
         Optional<ScoreProfile> oldProfile = userScoreProfiles.stream().filter(s -> s.getId() == id).findFirst();
-        scoreProfile.setId(oldProfile.get().getId());
-        scoreProfile.setUser(user);
-        return this.scoreProfileRepository.save(scoreProfile);
+        if(oldProfile.isPresent()) {
+            scoreProfile.setId(oldProfile.get().getId());
+            scoreProfile.setUser(user);
+            return this.scoreProfileRepository.save(scoreProfile);
+        }
+        else{
+            throw new NoSuchElementException("Score Profile not found");
+        }
+
     }
 
 
     public Long deleteScoreProfile(User user, Long id) {
         var userScoreProfiles = this.getScoreProfiles(user);
         Optional<ScoreProfile> scoreProfile = userScoreProfiles.stream().filter(s -> s.getId() == id).findFirst();
-        scoreProfileRepository.delete(scoreProfile.get());
-        return id;
+        if(scoreProfile.isPresent()) {
+            scoreProfileRepository.delete(scoreProfile.get());
+            return id;
+        }
+        else{
+            throw new NoSuchElementException("Score Profile not found") ;
+        }
     }
 
 
