@@ -64,30 +64,46 @@ public class FileScore {
     private int commentLineAdded;
 
     @Column(
-            name = "line_remove"
+            name = "code_line_remove"
     )
-    private int lineRemoved;
+    private int codeLineRemoved;
+
+    @Column(
+            name = "syntax_line_remove"
+    )
+    private int syntaxLineRemoved;
+
+    @Column(
+            name = "comment_line_remove"
+    )
+    private int commentLineRemoved;
 
     public FileScore(MergeRequest mergeRequest, String fileType, String filePath,
-                     int codeLineAdded, int syntaxLineAdded, int commentLineAdded, int lineRemoved){
+                     int codeLineAdded, int syntaxLineAdded, int commentLineAdded, int codeLineRemoved,
+                     int syntaxLineRemoved, int commentLineRemoved){
         this.mergeRequest = mergeRequest;
         this.fileType = fileType;
         this.filePath = filePath;
         this.codeLineAdded = codeLineAdded;
         this.syntaxLineAdded = syntaxLineAdded;
         this.commentLineAdded = commentLineAdded;
-        this.lineRemoved = lineRemoved;
+        this.codeLineRemoved = codeLineRemoved;
+        this.syntaxLineRemoved = syntaxLineRemoved;
+        this. commentLineRemoved = commentLineRemoved;
     }
 
     public FileScore(Commit commit, String fileType, String filePath,
-                     int codeLineAdded, int syntaxLineAdded, int commentLineAdded, int lineRemoved){
+                     int codeLineAdded, int syntaxLineAdded, int commentLineAdded, int codeLineRemoved,
+                     int syntaxLineRemoved, int commentLineRemoved){
         this.commit = commit;
         this.fileType = fileType;
         this.filePath = filePath;
         this.codeLineAdded = codeLineAdded;
         this.syntaxLineAdded = syntaxLineAdded;
         this.commentLineAdded = commentLineAdded;
-        this.lineRemoved = lineRemoved;
+        this.codeLineRemoved = codeLineRemoved;
+        this.syntaxLineRemoved = syntaxLineRemoved;
+        this.commentLineRemoved = commentLineRemoved;
     }
 
 }
