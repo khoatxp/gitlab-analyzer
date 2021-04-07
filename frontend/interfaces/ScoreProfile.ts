@@ -6,5 +6,5 @@ export default interface ScoreProfile {
     syntaxWeight: number,
     commentsWeight: number,
     extensionWeights: Map<string,number>,
-    blackList: [],
+    blackList: string[],
 }
