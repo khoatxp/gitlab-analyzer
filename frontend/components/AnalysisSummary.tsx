@@ -68,7 +68,7 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
                 </Box>
             </Box>
 
-            <Box display="flex" align="right">
+            <Box display="flex" flexDirection="column" textAlign="right">
                 <Box>
                     <Divider/>
                     <Typography variant="subtitle1"><b>Merge Request Score:</b> {sharedMergeRequestScore + mergeRequestScore}</Typography>
