@@ -15,6 +15,8 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class UserServerService {
@@ -36,22 +38,23 @@ public class UserServerService {
     }
 
     public UserServer createUserServer(User user, String serverUrl, String accessToken) {
-        Optional<Server> serverByUser = serverRepository.findByServerUrlAndUserId(serverUrl, user.getId());
+        String trimmedUrl = stripSlashAndTagsFromURL(serverUrl);
+        Optional<Server> serverByUser = serverRepository.findByServerUrlAndUserId(trimmedUrl, user.getId());
         if (serverByUser.isPresent()) {
             throw new IllegalStateException("Server already registered.");
         }
-        if (!validateAccessToken(serverUrl, accessToken)) {
+        if (!validateAccessToken(trimmedUrl, accessToken)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Given access token is not valid.");
         }
         UserServer userServer = new UserServer(accessToken);
         userServer.setUser(user);
 
-        Optional<Server> ServerByUrl = serverRepository.findByServerUrl(serverUrl);
+        Optional<Server> ServerByUrl = serverRepository.findByServerUrl(trimmedUrl);
         if (ServerByUrl.isPresent()) {
             userServer.setServer(ServerByUrl.get());
         }
         else {
-            var server = serverRepository.save(new Server(serverUrl));
+            var server = serverRepository.save(new Server(trimmedUrl));
             userServer.setServer(server);
         }
         return userServerRepository.save(userServer);
@@ -108,8 +111,16 @@ public class UserServerService {
         return false;
     }
 
-    public String stripSlashFromURL(String serverUrl) {
-        String trimmed = serverUrl;
+    public String stripSlashAndTagsFromURL(String serverUrl) {
+
+        if (serverUrl == null || serverUrl.length() == 0) {
+            return serverUrl;
+        }
+
+        Pattern REMOVE_TAGS = Pattern.compile("<.+?>");
+        Matcher m = REMOVE_TAGS.matcher(serverUrl);
+        String trimmed =  m.replaceAll("");
+
         while(trimmed.endsWith("/")) {
             trimmed = trimmed.substring(0, trimmed.length() - 1);
         }
