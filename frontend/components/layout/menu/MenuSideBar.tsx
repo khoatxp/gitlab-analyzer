@@ -80,8 +80,7 @@ const MenuSideBar = () => {
         }
     }, [projectId]);
 
-    const showSidebar = () => setSidebarState(!sidebarState);
-
+    const toggleSidebar = () => setSidebarState(!sidebarState);
 
     return (
         <Box width={sidebarState ? '16%' : '3.5%'} >
@@ -89,11 +88,10 @@ const MenuSideBar = () => {
                 <Tabs
                     variant="fullWidth"
                     aria-label="nav tabs"
-                    alignItems="flex-start"
                 >
                     <Tab
                         className={classes.sidebarTitle}
-                        onClick={showSidebar}
+                        onClick={toggleSidebar}
                         label={sidebarState ? <ChevronLeftIcon /> : <MenuIcon /> }
                     />
                 </Tabs>
