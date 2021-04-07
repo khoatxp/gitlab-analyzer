@@ -8,6 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +40,9 @@ public class UserServerService {
         if (serverByUser.isPresent()) {
             throw new IllegalStateException("Server already registered.");
         }
-
+        if (!validateAccessToken(serverUrl, accessToken)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Given Access Token is not valid.");
+        }
         UserServer userServer = new UserServer(accessToken);
         userServer.setUser(user);
 
@@ -51,6 +58,12 @@ public class UserServerService {
     }
 
     public UserServer updateUserServer(User user, Long serverId, String accessToken) {
+        var server = serverRepository.findServerById(serverId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Server not found."));
+        String serverUrl =  server.getServerUrl();
+        if (!validateAccessToken(serverUrl, accessToken)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Given Access Token is not valid.");
+        }
         var userServer = userServerRepository.findUserServerByUserIdAndServerId(user.getId(), serverId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User server not found."));
         userServer.setAccessToken(accessToken);
@@ -63,4 +76,35 @@ public class UserServerService {
         userServerRepository.delete(userServer);
     }
 
+    public boolean validateAccessToken(String serverUrl, String accessToken) {
+        HttpURLConnection connection = null;
+        try {
+            String request = "/api/v4/user";
+            System.out.println(serverUrl + request);
+            URL url = new URL(serverUrl + request);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestProperty("PRIVATE-TOKEN", accessToken);
+            connection.setRequestMethod("GET");
+            connection.connect();
+            int code = connection.getResponseCode();
+            if ((200 <= code) && (code <= 299)) {
+                connection.disconnect();
+                return true;
+            }
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+            connection.disconnect();
+            return false;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            connection.disconnect();
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            connection.disconnect();
+            return false;
+        }
+        connection.disconnect();
+        return false;
+    }
 }
