@@ -48,6 +48,7 @@ public class ScoreProfile {
     @Column(name="weight")
     private Map<String, Double> extensionWeights = new HashMap<String, Double>();
 
+    @ElementCollection
     @Column(name="blackList")
     private List<String> blackList = new ArrayList<>();
 

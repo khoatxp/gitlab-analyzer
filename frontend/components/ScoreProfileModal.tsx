@@ -45,7 +45,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
 
     const [savedArray, setSavedArray] = useState({});
     const [extensions, setExtensions] = useState<[string, number][]>([]);
-    const [blackList, setBlackList] useState<[]>([])
+    const [blackList, setBlackList] = useState<[]>([]);
     const [syntaxWeight, setSyntaxWeight] = useState<number>()
     const [commentsWeight, setCommentsWeight] = useState<number>();
     const [name, setName] = useState<string>()
@@ -113,7 +113,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
         setExtensions(list);
     }
 
-    const addToBlackList = (extension: string) => {
+    const addToBlackList = () => {
         const list = blackList.slice();
         list.push("")
         setBlackList(list);
@@ -132,8 +132,8 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
     }
 
     const validateBlackList= () => {
-        const uniqueBlackList = new Set(blackList.map(blackList => blackList));
-        if(uniqueExtension.size < blackList.length){ //checks for duplicates
+        const uniqueBlackList = new Set(blackList.map(extension => extension));
+        if(uniqueBlackList.size < blackList.length){ //checks for duplicates
            enqueueSnackbar('Duplicate ignored extensions entered', {variant: 'error',});
            return false;
         }
@@ -181,7 +181,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
         }
 
        
-        if (validateExtensions() && validateBLackList()){
+        if (validateExtensions() && validateBlackList()){
 
             if (router.isReady) {
 
@@ -323,7 +323,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                         display="flex"
                                         marginRight={3}
                                         marginLeft={3}
-                                        flexDirection="column"
+                                        flexDirection="row"
                                         justifyContent="space-between"
                                         alignItems="center"
                                     >
@@ -337,7 +337,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                         </Box>
                                         <div>
 
-                                            <IconButton edge={false} aria-label="deleteextension" onClick={()=>removeFromBlacklist(index)}>
+                                            <IconButton edge={false} aria-label="deleteextension" onClick={()=>removeFromBlackList(index)}>
                                                 <DeleteIcon style={{ fontSize: "25px", color:"grey" }} />
                                             </IconButton>
                                         </div>
@@ -346,7 +346,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                             }): "No ignored extensions set for this profile"}
                         </Box>
                         <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
-                            <IconButton edge={false} aria-label="addextension" onClick={addToBlacklist}>
+                            <IconButton edge={false} aria-label="addextension" onClick={addToBlackList}>
                                 <AddCircleIcon style={{ fontSize: "30px", color: "green" }} />
                             </IconButton>
                         </div>
