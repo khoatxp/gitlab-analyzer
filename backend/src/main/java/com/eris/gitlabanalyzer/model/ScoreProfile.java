@@ -1,9 +1,11 @@
 package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.ObjectNotFoundException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,15 +71,28 @@ public class ScoreProfile {
         }
     }
 
-    public void addBlacklist(List<String> newBlackList){
+    public boolean ExtensionContains(String extension){
+        return extensionWeights.containsKey(extension);
+    }
+
+    public double getExtensionWeight(String extension){
+        return extensionWeights.get(extension);
+    }
+
+    public void addBlackList(List<String> newBlackList){
         blackList.addAll(newBlackList);
     }
 
 
-    public void deleteFromBlacklist(String extension){
+    public void deleteFromBlackList(String extension){
         if (blackList.contains(extension)){
             blackList.remove(extension);
         }
     }
+
+    public boolean BlackListContains(String extension){
+        return blackList.contains(extension);
+    }
+
 
 }
