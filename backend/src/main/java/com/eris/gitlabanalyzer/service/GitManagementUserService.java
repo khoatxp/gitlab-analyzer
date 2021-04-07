@@ -3,30 +3,20 @@ package com.eris.gitlabanalyzer.service;
 import com.eris.gitlabanalyzer.model.GitManagementUser;
 import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.Server;
-import com.eris.gitlabanalyzer.viewmodel.GitManagementUserView;
 import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
-import com.eris.gitlabanalyzer.repository.ProjectRepository;
-import com.eris.gitlabanalyzer.repository.ServerRepository;
-import com.sun.istack.NotNull;
-import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Value;
+import com.eris.gitlabanalyzer.viewmodel.GitManagementUserView;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class GitManagementUserService {
     private final GitManagementUserRepository gitManagementUserRepository;
-    private final ProjectRepository projectRepository;
-    private final ServerRepository serverRepository;
     private final GitLabService requestScopeGitLabService;
 
-    public GitManagementUserService(GitManagementUserRepository gitManagementUserRepository, ProjectRepository projectRepository, ServerRepository serverRepository, GitLabService requestScopeGitLabService) {
+    public GitManagementUserService(GitManagementUserRepository gitManagementUserRepository, GitLabService requestScopeGitLabService) {
         this.gitManagementUserRepository = gitManagementUserRepository;
-        this.projectRepository = projectRepository;
-        this.serverRepository = serverRepository;
         this.requestScopeGitLabService = requestScopeGitLabService;
     }
 
@@ -36,7 +26,7 @@ public class GitManagementUserService {
         var gitLabMembers = requestScopeGitLabService.getMembers(project.getGitLabProjectId());
         var gitLabLeftMembers = requestScopeGitLabService.getMembersThatLeftProject(project.getGitLabProjectId());
 
-        var gitLabMemberList= gitLabMembers.collectList().blockOptional().orElse(new ArrayList<>());
+        var gitLabMemberList = gitLabMembers.collectList().blockOptional().orElse(new ArrayList<>());
         gitLabMemberList.addAll(gitLabLeftMembers.collectList().blockOptional().orElse(new ArrayList<>()));
 
         gitLabMemberList.forEach(gitLabMember -> {
@@ -58,8 +48,6 @@ public class GitManagementUserService {
                     gitManagementUserRepository.save(gitManagementUser);
                 }
         );
-
-
     }
 
 
