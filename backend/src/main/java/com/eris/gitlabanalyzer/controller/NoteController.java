@@ -30,30 +30,39 @@ public class NoteController {
         this.noteService = noteService;
     }
 
-    @GetMapping(path = "/api/v1/{projectId}/merge_request_notes")
+    @GetMapping(path = "/api/v1/{projectId}/merge_request_notes/{gitManagementUserId}")
     public List<NoteView> getMergeRequestNotes(
             Principal principal,
             @PathVariable("projectId") Long projectId,
+            @PathVariable("gitManagementUserId") Long gitManagementUserId,
             @RequestParam("startDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
-
         validatePermission(principal, projectId);
-        return noteService.getMergeRequestNotes(projectId, startDateTime, endDateTime);
+        if(gitManagementUserId == 0L) {
+            return noteService.getMergeRequestNotes(projectId, startDateTime, endDateTime);
+        } else {
+            return noteService.getGitManagementUserMergeRequestNotes(projectId, gitManagementUserId, startDateTime, endDateTime);
+        }
     }
 
-    @GetMapping(path = "/api/v1/{projectId}/issue_notes")
+    @GetMapping(path = "/api/v1/{projectId}/issue_notes/{gitManagementUserId}")
     public List<NoteView> getIssueNotes(
             Principal principal,
             @PathVariable("projectId") Long projectId,
+            @PathVariable("gitManagementUserId") Long gitManagementUserId,
             @RequestParam("startDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
         validatePermission(principal, projectId);
-        return noteService.getIssueNotes(projectId, startDateTime, endDateTime);
+        if(gitManagementUserId == 0L) {
+            return noteService.getIssueNotes(projectId, startDateTime, endDateTime);
+        } else {
+            return noteService.getGitManagementUserIssueNotes(projectId, gitManagementUserId, startDateTime, endDateTime);
+        }
     }
 
     private void validatePermission(Principal principal, Long projectId) {
