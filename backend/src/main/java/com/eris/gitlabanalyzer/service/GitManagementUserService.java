@@ -7,10 +7,14 @@ import com.eris.gitlabanalyzer.viewmodel.GitManagementUserView;
 import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
+import com.sun.istack.NotNull;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class GitManagementUserService {
@@ -30,7 +34,11 @@ public class GitManagementUserService {
         Server server = project.getServer();
 
         var gitLabMembers = requestScopeGitLabService.getMembers(project.getGitLabProjectId());
-        var gitLabMemberList= gitLabMembers.collectList().block();
+        var gitLabLeftMembers = requestScopeGitLabService.getMembersThatLeftProject(project.getGitLabProjectId());
+
+        var gitLabMemberList= gitLabMembers.collectList().blockOptional().orElse(new ArrayList<>());
+        gitLabMemberList.addAll(gitLabLeftMembers.collectList().blockOptional().orElse(new ArrayList<>()));
+
         gitLabMemberList.forEach(gitLabMember -> {
                     GitManagementUser gitManagementUser= gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabMember.getId(), server.getId());
                     if (gitManagementUser == null){
@@ -50,6 +58,8 @@ public class GitManagementUserService {
                     gitManagementUserRepository.save(gitManagementUser);
                 }
         );
+
+
     }
 
 
