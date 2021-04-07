@@ -29,7 +29,7 @@ public class MergeRequestService {
         this.analysisRunService = analysisRunService;
     }
 
-    public void saveMergeRequestInfo(AnalysisRun analysisRun, Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+    public List<MergeRequest> saveMergeRequestInfo(AnalysisRun analysisRun, Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         var gitLabMergeRequests = requestScopeGitLabService.getMergeRequests(project.getGitLabProjectId(), startDateTime, endDateTime);
         var gitLabMergeRequestList = gitLabMergeRequests.collectList().block();
 
@@ -37,6 +37,7 @@ public class MergeRequestService {
         Double startOfProgressRange = AnalysisRun.Progress.AtStartOfImportingMergeRequests.getValue();
         Double endOfProgressRange = AnalysisRun.Progress.AtStartOfImportingCommits.getValue();
 
+        List<MergeRequest> mergeRequests = new ArrayList<>();
         for(int i=0; i< gitLabMergeRequestList.size();i++) {
             progress = startOfProgressRange + (endOfProgressRange-startOfProgressRange) * (i+1)/gitLabMergeRequestList.size();
             analysisRunService.updateProgress(analysisRun, "Importing "+ (i+1) +"/"+gitLabMergeRequestList.size() + " merge requests",progress,false);
@@ -59,7 +60,9 @@ public class MergeRequestService {
             mergeRequest = mergeRequestRepository.save(mergeRequest);
             saveMergeRequestComments(project, mergeRequest);
             scoreService.saveMergeDiffMetrics(mergeRequest);
+            mergeRequests.add(mergeRequest);
         }
+        return mergeRequests;
     }
 
     public void saveMergeRequestComments(Project project, MergeRequest mergeRequest) {
