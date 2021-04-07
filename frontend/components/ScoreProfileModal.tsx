@@ -45,7 +45,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
 
     const [savedArray, setSavedArray] = useState({});
     const [extensions, setExtensions] = useState<[string, number][]>([]);
-    const [blackList, setBlackList] = useState<[]>([]);
+    const [blackList, setBlackList] = useState<string[]>([]);
     const [syntaxWeight, setSyntaxWeight] = useState<number>()
     const [commentsWeight, setCommentsWeight] = useState<number>();
     const [name, setName] = useState<string>()
@@ -119,7 +119,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
         setBlackList(list);
     }
 
-    const deleteFromBlackList = (index: number) => {
+    const removeFromBlackList = (index: number) => {
         const list = blackList.slice();
         list.splice(index,1);
         setBlackList(list);
