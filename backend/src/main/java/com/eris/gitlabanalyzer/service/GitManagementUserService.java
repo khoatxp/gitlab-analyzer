@@ -29,7 +29,7 @@ public class GitManagementUserService {
         var gitLabMemberList = gitLabMembers.collectList().blockOptional().orElse(new ArrayList<>());
         gitLabMemberList.addAll(gitLabLeftMembers.collectList().blockOptional().orElse(new ArrayList<>()));
 
-        gitLabMemberList.forEach(gitLabMember -> {
+        gitLabMemberList.stream().distinct().forEach(gitLabMember -> {
                     GitManagementUser gitManagementUser= gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabMember.getId(), server.getId());
                     if (gitManagementUser == null){
                         gitManagementUser = new GitManagementUser(
