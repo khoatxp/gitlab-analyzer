@@ -54,17 +54,14 @@ public class CommitService {
         Double startOfProgressRange = AnalysisRun.Progress.AtStartOfImportingCommits.getValue();
         Double endOfProgressRange = AnalysisRun.Progress.AtStartOfImportingOrphanCommits.getValue();
 
-        var mergeCommitIds = requestScopeGitLabService.getMergeCommits(project.getGitLabProjectId(), startDateTime, endDateTime).block();
-
         for(int i = 0; i < mergeRequestList.size();i++){
             MergeRequest mergeRequest = mergeRequestList.get(i);
             progress = startOfProgressRange + (endOfProgressRange-startOfProgressRange) * (i+1)/mergeRequestList.size();
             analysisRunService.updateProgress(analysisRun, "Importing commits for "+ (i+1) +"/"+mergeRequestList.size() + " merge requests",progress, false);
             var mergeRequestCommits = requestScopeGitLabService.getMergeRequestCommits(project.getGitLabProjectId(), mergeRequest.getIid());
-            mergeRequestCommits = mergeRequestCommits.filter(gitLabCommit -> !mergeCommitIds.contains(gitLabCommit.getSha()));
             saveCommitHelper(project, mergeRequest, mergeRequestCommits, mrCommitShas);
         }
-        
+
         var orphanCommits = requestScopeGitLabService.getCommits(project.getGitLabProjectId(), startDateTime, endDateTime)
                                                            .filter(gitLabCommit -> !mrCommitShas.contains(gitLabCommit.getSha()) && gitLabCommit.getParentShas().size() <= 1);
         analysisRunService.updateProgress(analysisRun, "Importing orphan commits", AnalysisRun.Progress.AtStartOfImportingOrphanCommits.getValue(), false);
@@ -77,6 +74,13 @@ public class CommitService {
         gitLabCommitList.forEach(gitLabCommit -> {
                     Commit commit = commitRepository.findByCommitShaAndProjectId(gitLabCommit.getSha(),project.getId());
                     if(commit != null){return;}
+
+                    // Having no parents means it is either the very first init commit or
+                    // a merge request commit because that endpoint doesn't return parents.
+                    if (gitLabCommit.getParentShas().size() == 0) {
+                        // getting the commit from the gitlab api commit endpoint to make sure it has parent information
+                        gitLabCommit = requestScopeGitLabService.getCommit(project.getGitLabProjectId(), gitLabCommit.getSha()).block();
+                    }
                     // Having more than one parent makes the commit a merge, skipping merge commits
                     if (gitLabCommit.getParentShas().size() > 1) {return;}
 

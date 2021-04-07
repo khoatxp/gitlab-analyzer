@@ -141,20 +141,6 @@ public class GitLabService {
         return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabCommit.class));
     }
 
-    public Mono<Set<String>> getMergeCommits(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        validateConfiguration();
-        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
-                .path(projectPath + projectId + "/repository/commits")
-                .queryParam("until", endDateTime.toInstant().toString())
-                .queryParam("per_page", 100)
-                .build()
-                .encode()
-                .toUri()
-                .toString();
-        return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabCommit.class))
-                .filter(gitLabCommit -> gitLabCommit.getParentShas().size() > 1).map(commit -> commit.getSha()).collect(Collectors.toSet());
-    }
-
     public Mono<GitLabCommit> getCommit(Long projectId, String sha) {
         validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
