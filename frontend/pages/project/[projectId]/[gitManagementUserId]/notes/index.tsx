@@ -61,14 +61,12 @@ const NotesPage = () => {
                 .get(`${PROJECT_ID_URL}/merge_request_notes/${gitManagementUserId}?${dateQuery}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setMergeRequestNotes(resp.data);
-                    console.log(resp.data);
                 }).catch(() => {
                 enqueueSnackbar('Failed to get merge requests notes.', {variant: 'error',});
             });
             axios
                 .get(`${PROJECT_ID_URL}/issue_notes/${gitManagementUserId}?${dateQuery}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
-                    console.log(resp.data);
                     setIssueNotes(resp.data);
                 }).catch(() => {
                 enqueueSnackbar('Failed to get issue notes.', {variant: 'error',});
