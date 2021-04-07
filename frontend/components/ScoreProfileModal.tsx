@@ -45,6 +45,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
 
     const [savedArray, setSavedArray] = useState({});
     const [extensions, setExtensions] = useState<[string, number][]>([]);
+    const [blackList, setBlackList] useState<[]>([])
     const [syntaxWeight, setSyntaxWeight] = useState<number>()
     const [commentsWeight, setCommentsWeight] = useState<number>();
     const [name, setName] = useState<string>()
@@ -61,6 +62,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
             setSyntaxWeight(profile.syntaxWeight);
             setSavedArray({});
             setExtensions(Object.entries(profile.extensionWeights));
+            setBlackList(profile.blackList);
             
         }
         else{
@@ -70,7 +72,8 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
             setLineWeight(undefined);
             setSyntaxWeight(undefined);
             setExtensions([]);  
-            setSavedArray({}); 
+            setSavedArray({});
+            setBlackList([]);
         }
 
     },[open])
@@ -108,8 +111,39 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
         const list = extensions.slice();
         list[index][1] = weight;
         setExtensions(list);
-
     }
+
+    const addToBlackList = (extension: string) => {
+        const list = blackList.slice();
+        list.push([""])
+        setBlackList(list);
+    }
+
+    const deleteFromBlackList = (index: number) => {
+        const list = blackList.slice();
+        list.splice(index,1);
+        setBlackList(list);
+    }
+
+    const handleBlacklistChange = (index: number, extension: string) => {
+        const list = blackList.slice();
+        list[index] = extension;
+        setBlackList(list);
+    }
+
+    const validateBlackList= () => {
+        const uniqueBlackList = new Set(blackList.map(blackList => blackList));
+        if(uniqueExtension.size < blackList.length){ //checks for duplicates
+           enqueueSnackbar('Duplicate ignored extensions entered', {variant: 'error',});
+           return false;
+        }
+        if (blackList.some( blackList => blackList === "" || blackList < 0)){
+            enqueueSnackbar('Ignore extension names must not be empty', {variant: 'error',});
+            return false;
+        }
+        return true;
+    }
+
 
     const validateExtensions = () =>  {
 
@@ -147,7 +181,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
         }
 
        
-        if (validateExtensions()){
+        if (validateExtensions() && validateBLackList()){
 
             if (router.isReady) {
 
@@ -158,6 +192,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                     syntaxWeight: syntaxWeight,
                     commentsWeight: commentsWeight,
                     extensionWeights: savedArray,
+                    blackList: blackList,
                 }
 
                 if (isNewProfile == false) {
@@ -273,6 +308,45 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                         </Box>
                         <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
                             <IconButton edge={false} aria-label="addextension" onClick={handleAddExtension}>
+                                <AddCircleIcon style={{ fontSize: "30px", color: "green" }} />
+                            </IconButton>
+                        </div>
+                        <DialogTitle id="blacklist-dialog-title" style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>{"Ignored Extensions"}</DialogTitle>
+                        <Box  style={{ display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}} >
+                            {blackList && blackList.length > 0 ?
+                            blackList.map((extension, index: number) => {
+                                return (
+
+                                    <Box
+                                        key={index}
+                                        boxShadow={0}
+                                        display="flex"
+                                        marginRight={3}
+                                        marginLeft={3}
+                                        flexDirection="row"
+                                        justifyContent="space-between"
+                                        alignItems="center"
+                                    >
+                                        <Box marginLeft={1} marginRight={1}>
+
+                                            <AppTextField label="extension"
+                                            placeholder="Do not include the dot"
+                                            value={extension ?? ""}
+                                            onChange={(e) => handleBlacklistChange(index, e.target.value)}
+                                            />
+                                        </Box>
+                                        <div>
+
+                                            <IconButton edge={false} aria-label="deleteextension" onClick={()=>removeFromBlacklist(index)}>
+                                                <DeleteIcon style={{ fontSize: "25px", color:"grey" }} />
+                                            </IconButton>
+                                        </div>
+                                    </Box>
+                                );
+                            }): "No ignored extensions set for this profile"}
+                        </Box>
+                        <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
+                            <IconButton edge={false} aria-label="addextension" onClick={addToBlacklist}>
                                 <AddCircleIcon style={{ fontSize: "30px", color: "green" }} />
                             </IconButton>
                         </div>

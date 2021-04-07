@@ -4,7 +4,10 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 // TODO: Map score profile to their users
@@ -45,6 +48,9 @@ public class ScoreProfile {
     @Column(name="weight")
     private Map<String, Double> extensionWeights = new HashMap<String, Double>();
 
+    @Column(name="blackList")
+    private List<String> blackList = new ArrayList<>();
+
     public ScoreProfile(String name, double lineWeight, double deleteWeight, double syntaxWeight, double commentsWeight){
         this.name = name;
         this.lineWeight = lineWeight;
@@ -60,6 +66,17 @@ public class ScoreProfile {
     public void deleteExtension(String file){
         if(extensionWeights.containsKey(file)) {
             extensionWeights.remove(file);
+        }
+    }
+
+    public void addBlacklist(List<String> newBlackList){
+        blackList.addAll(newBlackList);
+    }
+
+
+    public void deleteFromBlacklist(String extension){
+        if (blackList.contains(extension)){
+            blackList.remove(extension);
         }
     }
 
