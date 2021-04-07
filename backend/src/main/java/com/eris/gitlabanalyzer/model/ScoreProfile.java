@@ -90,7 +90,7 @@ public class ScoreProfile {
         }
     }
 
-    public boolean BlackListContains(String extension){
+    public boolean blackListContains(String extension){
         return blackList.contains(extension);
     }
 
