@@ -14,8 +14,8 @@ const index = () => {
             <CardLayout backLink={"/server"} logoType="header">
                 <Box display="flex" flexDirection="column">
                     <AppButton color="primary" onClick={() => router.push(`/server/${serverId}/projects`)}>Create a new analysis</AppButton>
-                    <AppButton color="primary" onClick={() => router.push(`/server/${serverId}/analyses/all`)}>Analyses from others</AppButton>
                     <AppButton color="primary" onClick={() => router.push(`/server/${serverId}/analyses`)}>My previous Analyses</AppButton>
+                    <AppButton color="primary" onClick={() => router.push(`/server/${serverId}/analyses/all`)}>Analyses from others</AppButton>
                 </Box>
             </CardLayout>
         </AuthView>
