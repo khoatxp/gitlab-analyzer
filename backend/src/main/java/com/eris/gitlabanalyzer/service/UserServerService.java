@@ -41,7 +41,7 @@ public class UserServerService {
             throw new IllegalStateException("Server already registered.");
         }
         if (!validateAccessToken(serverUrl, accessToken)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Given Access Token is not valid.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Given access token is not valid.");
         }
         UserServer userServer = new UserServer(accessToken);
         userServer.setUser(user);
@@ -62,7 +62,7 @@ public class UserServerService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Server not found."));
         String serverUrl =  server.getServerUrl();
         if (!validateAccessToken(serverUrl, accessToken)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Given Access Token is not valid.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Given access token is not valid.");
         }
         var userServer = userServerRepository.findUserServerByUserIdAndServerId(user.getId(), serverId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User server not found."));
