@@ -35,9 +35,9 @@ const useStyles = makeStyles((theme) => ({
         display: 'none',
     },
     sidebarTitle: {
-        color: "black",
-        justifyContent: "flex-start",
-        alignItems: 'flex-start',
+        '& .MuiTab-wrapper': {
+          alignItems: 'flex-start',
+        },
     },
 }));
 
@@ -47,7 +47,7 @@ const MenuSideBar = () => {
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const [gitManagementUsers, setGitManagementUsers] = React.useState<GitManagementUser[]>([]);
-    const [sidebarState, setSidebarState] = React.useState(false);
+    const [sidebarState, setSidebarState] = React.useState(true);
 
     const {projectId, gitManagementUserId, startDateTime, endDateTime} = router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/${projectId}/managementusers/members`;
@@ -84,16 +84,17 @@ const MenuSideBar = () => {
 
 
     return (
-        <Box width={sidebarState ? '16%' : '3%'} >
+        <Box width={sidebarState ? '16%' : '3.5%'} >
             <AppBar position="static">
                 <Tabs
                     variant="fullWidth"
                     aria-label="nav tabs"
+                    alignItems="flex-start"
                 >
                     <Tab
                         className={classes.sidebarTitle}
                         onClick={showSidebar}
-                        label={sidebarState ? <ChevronLeftIcon /> : <MenuIcon />}
+                        label={sidebarState ? <ChevronLeftIcon /> : <MenuIcon /> }
                     />
                 </Tabs>
             </AppBar>
@@ -103,7 +104,7 @@ const MenuSideBar = () => {
                 </MenuButton>
                 {gitManagementUsers.map(gitManagementUser =>
                     <MenuButton key={gitManagementUser.id}
-                                value={[gitManagementUser.id,gitManagementUser.username]}
+                                value={[gitManagementUser.id.toString(),gitManagementUser.username]}
                                 id={`memberButton${gitManagementUser.id}`}
                                 variant="contained" disableRipple
                                 onClick={() => handleClick(gitManagementUser.id)}
