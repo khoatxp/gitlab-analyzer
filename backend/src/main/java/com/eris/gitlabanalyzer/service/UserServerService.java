@@ -107,4 +107,12 @@ public class UserServerService {
         connection.disconnect();
         return false;
     }
+
+    public String stripSlashFromURL(String serverUrl) {
+        String trimmed = serverUrl;
+        while(trimmed.endsWith("/")) {
+            trimmed = trimmed.substring(0, trimmed.length() - 1);
+        }
+        return trimmed;
+    }
 }
