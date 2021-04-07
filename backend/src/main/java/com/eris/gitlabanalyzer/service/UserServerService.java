@@ -4,6 +4,7 @@ import com.eris.gitlabanalyzer.model.*;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
 import com.eris.gitlabanalyzer.repository.UserServerRepository;
 import com.eris.gitlabanalyzer.viewmodel.UserServerRequestBody;
+import org.jsoup.Jsoup;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -116,10 +117,7 @@ public class UserServerService {
         if (serverUrl == null || serverUrl.length() == 0) {
             return serverUrl;
         }
-
-        Pattern REMOVE_TAGS = Pattern.compile("<.+?>");
-        Matcher m = REMOVE_TAGS.matcher(serverUrl);
-        String trimmed =  m.replaceAll("");
+        String trimmed =  Jsoup.parse(serverUrl).text();
 
         while(trimmed.endsWith("/")) {
             trimmed = trimmed.substring(0, trimmed.length() - 1);
