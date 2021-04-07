@@ -98,6 +98,20 @@ public class GitLabService {
         return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabMember.class));
     }
 
+    public Flux<GitLabMember> getMembersThatLeftProject(Long projectId) {
+        validateConfiguration();
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/events")
+                .queryParam("action", "left")
+                .queryParam("per_page", 100)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+
+        return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabEvent.class).map(GitLabEvent::getMember));
+    }
+
     public Flux<GitLabMergeRequest> getMergeRequests(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
