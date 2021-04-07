@@ -66,7 +66,6 @@ const ScoreProfileSelector = ({onScoreProfileSelect}:Props) => {
         if (router.isReady) {
             axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile/${id}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
-                    console.log(resp.data);
                     if(scoreProfile == id){
                         setScoreProfile(undefined);
                     }
