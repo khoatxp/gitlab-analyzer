@@ -3,11 +3,14 @@ import React, {useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import {
     Box,
-    Card, Checkbox,
+    Card,
+    Checkbox,
     Container,
     FormControl,
-    FormControlLabel, FormGroup,
-    Grid, Link,
+    FormControlLabel,
+    FormGroup,
+    Grid,
+    Link,
     List,
     ListItem,
     ListItemText,
@@ -21,7 +24,7 @@ import {useRouter} from "next/router";
 import {AuthContext} from "../../../../../components/AuthContext";
 import AuthView from "../../../../../components/AuthView";
 import MenuLayout from "../../../../../components/layout/menu/MenuLayout";
-import formatDate from "../../../../../utils/DateFormatter"
+import formatDate from "../../../../../utils/DateFormatter";
 import {useSnackbar} from "notistack";
 
 const useStyles = makeStyles(() =>
@@ -48,28 +51,28 @@ const NotesPage = () => {
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
     const router = useRouter();
-    const {projectId, startDateTime, endDateTime} = router.query;
+    const {projectId, gitManagementUserId, startDateTime, endDateTime} = router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/${projectId}`;
 
     useEffect(() => {
-        if (projectId) {
+        if (router.isReady) {
             const dateQuery = `startDateTime=${startDateTime}&endDateTime=${endDateTime}`;
             axios
-                .get(`${PROJECT_ID_URL}/merge_request_notes?${dateQuery}`, getAxiosAuthConfig())
+                .get(`${PROJECT_ID_URL}/merge_request_notes/${gitManagementUserId}?${dateQuery}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setMergeRequestNotes(resp.data);
                 }).catch(() => {
                 enqueueSnackbar('Failed to get merge requests notes.', {variant: 'error',});
             });
             axios
-                .get(`${PROJECT_ID_URL}/issue_notes?${dateQuery}`, getAxiosAuthConfig())
+                .get(`${PROJECT_ID_URL}/issue_notes/${gitManagementUserId}?${dateQuery}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setIssueNotes(resp.data);
                 }).catch(() => {
                 enqueueSnackbar('Failed to get issue notes.', {variant: 'error',});
             });
         }
-    }, [projectId]);
+    }, [projectId, gitManagementUserId]);
 
     return (
         <AuthView>
