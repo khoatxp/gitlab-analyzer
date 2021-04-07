@@ -5,8 +5,6 @@ import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.ObjectNotFoundException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

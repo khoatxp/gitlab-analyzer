@@ -115,7 +115,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
 
     const addToBlackList = (extension: string) => {
         const list = blackList.slice();
-        list.push([""])
+        list.push("")
         setBlackList(list);
     }
 
@@ -137,8 +137,8 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
            enqueueSnackbar('Duplicate ignored extensions entered', {variant: 'error',});
            return false;
         }
-        if (blackList.some( blackList => blackList === "" || blackList < 0)){
-            enqueueSnackbar('Ignore extension names must not be empty', {variant: 'error',});
+        if (blackList.some( extension => extension === "" )){
+            enqueueSnackbar('Ignored extension names must not be empty', {variant: 'error',});
             return false;
         }
         return true;
@@ -323,7 +323,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                         display="flex"
                                         marginRight={3}
                                         marginLeft={3}
-                                        flexDirection="row"
+                                        flexDirection="column"
                                         justifyContent="space-between"
                                         alignItems="center"
                                     >
