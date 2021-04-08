@@ -15,8 +15,6 @@ import reactor.core.publisher.Mono;
 
 import java.time.OffsetDateTime;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 // NOTE: do not make this an auto wired @Service.
 // This class needs to be instantiated with correct serverUrl and accessToken OR
@@ -61,7 +59,6 @@ public class GitLabService {
         }
     }
 
-    @Transactional(timeout = 240)
     public Flux<GitLabProject> getProjects() {
         validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
