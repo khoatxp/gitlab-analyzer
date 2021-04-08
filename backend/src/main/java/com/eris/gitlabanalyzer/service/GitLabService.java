@@ -328,15 +328,10 @@ public class GitLabService {
                 .encode()
                 .toUri()
                 .toString();
-        Mono<HttpStatus> status = webClient.get()
-                .uri(gitlabUrl)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .exchange()
-                .map(response -> response.statusCode());
-        HttpStatus result = status.block();
-        if (result == HttpStatus.OK) {
-            return true;
-        }
-        return false;
+        var headersSpec = authorizedGetRequestHeadersSpec(gitlabUrl);
+        return headersSpec.exchangeToMono(response -> {
+            var isOk = response.statusCode().equals(HttpStatus.OK);
+            return Mono.just(isOk);
+        }).block();
     }
 }
