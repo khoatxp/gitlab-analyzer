@@ -4,6 +4,7 @@ import com.eris.gitlabanalyzer.error.GitLabServiceConfigurationException;
 import com.eris.gitlabanalyzer.model.gitlabresponse.*;
 import lombok.Setter;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -121,8 +122,8 @@ public class GitLabService {
 
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests")
-                .queryParam("state", project.getDefaultBranch())
-                .queryParam("target_branch", "merged")
+                .queryParam("state", "merged")
+                .queryParam("target_branch", project.getDefaultBranch())
                 .queryParam("created_after", startDateTime.toInstant().toString())
                 .queryParam("updated_before", endDateTime.toInstant().toString())
                 .queryParam("per_page", 100)
@@ -263,6 +264,11 @@ public class GitLabService {
     private Flux<ClientResponse> fetchPages(String url) {
         var headersSpec = authorizedGetRequestHeadersSpec(url);
         return headersSpec.exchangeToFlux(response -> {
+            if (!response.statusCode().equals(HttpStatus.OK)) {
+                // now if the response is not 200 it will throw and exception instead of dying
+                // silently and returning a null object
+                return (response.createException()).flux().flatMap(Flux::error);
+            }
             var nextPage = getResponseHeaderNextLink(response);
 
             if (nextPage != null) {
