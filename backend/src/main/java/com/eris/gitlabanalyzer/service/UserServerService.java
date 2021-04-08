@@ -31,8 +31,8 @@ public class UserServerService {
     }
 
     public UserServer createUserServer(User user, String serverUrl, String accessToken) {
-        String trimmedUrl = stripSlashAndTagsFromURL(serverUrl);
-        String trimmedToken = stripSlashAndTagsFromURL(accessToken);
+        String trimmedUrl = sanitizeUrl(serverUrl);
+        String trimmedToken = trimAndStripTags(accessToken);
         Optional<Server> serverByUser = serverRepository.findByServerUrlAndUserId(trimmedUrl, user.getId());
         if (serverByUser.isPresent()) {
             throw new IllegalStateException("Server already registered.");
@@ -60,7 +60,7 @@ public class UserServerService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Server not found."));
         String serverUrl =  server.getServerUrl();
         GitLabService gitLabService = new GitLabService(serverUrl, accessToken);
-        String trimmedToken = stripSlashAndTagsFromURL(accessToken);
+        String trimmedToken = trimAndStripTags(accessToken);
         if (!gitLabService.validateAccessToken()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Given access token is not valid.");
         }
@@ -76,11 +76,17 @@ public class UserServerService {
         userServerRepository.delete(userServer);
     }
 
-    public String stripSlashAndTagsFromURL(String serverUrl) {
-        if (serverUrl == null || serverUrl.length() == 0) {
-            return serverUrl;
+    public String trimAndStripTags(String string) {
+        if (string == null || string.length() == 0) {
+            return string;
         }
-        String trimmed =  Jsoup.parse(serverUrl).text();
+        String result = string.trim();
+        result = Jsoup.parse(result).text();
+        return result;
+    }
+
+    public String sanitizeUrl(String url) {
+        String trimmed = trimAndStripTags(url);
         while(trimmed.endsWith("/")) {
             trimmed = trimmed.substring(0, trimmed.length() - 1);
         }
