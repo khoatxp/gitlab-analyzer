@@ -37,7 +37,7 @@ public class UserServerService {
         if (serverByUser.isPresent()) {
             throw new IllegalStateException("Server already registered.");
         }
-        GitLabService gitLabService = new GitLabService(serverUrl, trimmedToken);
+        GitLabService gitLabService = new GitLabService(trimmedUrl, trimmedToken);
         if (!gitLabService.validateAccessToken()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Given access token is not valid.");
         }
