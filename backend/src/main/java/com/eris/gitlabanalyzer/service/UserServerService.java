@@ -3,17 +3,11 @@ package com.eris.gitlabanalyzer.service;
 import com.eris.gitlabanalyzer.model.*;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
 import com.eris.gitlabanalyzer.repository.UserServerRepository;
-import com.eris.gitlabanalyzer.viewmodel.UserServerRequestBody;
 import org.jsoup.Jsoup;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,14 +32,16 @@ public class UserServerService {
 
     public UserServer createUserServer(User user, String serverUrl, String accessToken) {
         String trimmedUrl = stripSlashAndTagsFromURL(serverUrl);
+        String trimmedToken = stripSlashAndTagsFromURL(accessToken);
         Optional<Server> serverByUser = serverRepository.findByServerUrlAndUserId(trimmedUrl, user.getId());
         if (serverByUser.isPresent()) {
             throw new IllegalStateException("Server already registered.");
         }
-        if (!validateAccessToken(trimmedUrl, accessToken)) {
+        GitLabService gitLabService = new GitLabService(serverUrl, trimmedToken);
+        if (!gitLabService.validateAccessToken()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Given access token is not valid.");
         }
-        UserServer userServer = new UserServer(accessToken);
+        UserServer userServer = new UserServer(trimmedToken);
         userServer.setUser(user);
 
         Optional<Server> ServerByUrl = serverRepository.findByServerUrl(trimmedUrl);
@@ -63,12 +59,14 @@ public class UserServerService {
         var server = serverRepository.findServerById(serverId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Server not found."));
         String serverUrl =  server.getServerUrl();
-        if (!validateAccessToken(serverUrl, accessToken)) {
+        GitLabService gitLabService = new GitLabService(serverUrl, accessToken);
+        String trimmedToken = stripSlashAndTagsFromURL(accessToken);
+        if (!gitLabService.validateAccessToken()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Given access token is not valid.");
         }
         var userServer = userServerRepository.findUserServerByUserIdAndServerId(user.getId(), serverId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User server not found."));
-        userServer.setAccessToken(accessToken);
+        userServer.setAccessToken(trimmedToken);
         return userServerRepository.save(userServer);
     }
 
@@ -78,45 +76,11 @@ public class UserServerService {
         userServerRepository.delete(userServer);
     }
 
-    public boolean validateAccessToken(String serverUrl, String accessToken) {
-        HttpURLConnection connection = null;
-        try {
-            String request = "/api/v4/user";
-            System.out.println(serverUrl + request);
-            URL url = new URL(serverUrl + request);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("PRIVATE-TOKEN", accessToken);
-            connection.setRequestMethod("GET");
-            connection.connect();
-            int code = connection.getResponseCode();
-            if ((200 <= code) && (code <= 299)) {
-                connection.disconnect();
-                return true;
-            }
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-            connection.disconnect();
-            return false;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            connection.disconnect();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            connection.disconnect();
-            return false;
-        }
-        connection.disconnect();
-        return false;
-    }
-
     public String stripSlashAndTagsFromURL(String serverUrl) {
-
         if (serverUrl == null || serverUrl.length() == 0) {
             return serverUrl;
         }
         String trimmed =  Jsoup.parse(serverUrl).text();
-
         while(trimmed.endsWith("/")) {
             trimmed = trimmed.substring(0, trimmed.length() - 1);
         }

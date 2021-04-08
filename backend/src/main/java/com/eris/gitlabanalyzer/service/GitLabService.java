@@ -4,6 +4,7 @@ import com.eris.gitlabanalyzer.error.GitLabServiceConfigurationException;
 import com.eris.gitlabanalyzer.model.gitlabresponse.*;
 import lombok.Setter;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -14,6 +15,9 @@ import reactor.core.publisher.Mono;
 
 import java.time.OffsetDateTime;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 // NOTE: do not make this an auto wired @Service.
 // This class needs to be instantiated with correct serverUrl and accessToken OR
@@ -314,5 +318,25 @@ public class GitLabService {
         }
 
         return relUrls;
+    }
+    public boolean validateAccessToken() {
+        validateConfiguration();
+        String request = "/api/v4/user";
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(request)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+        Mono<HttpStatus> status = webClient.get()
+                .uri(gitlabUrl)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .exchange()
+                .map(response -> response.statusCode());
+        HttpStatus result = status.block();
+        if (result == HttpStatus.OK) {
+            return true;
+        }
+        return false;
     }
 }
