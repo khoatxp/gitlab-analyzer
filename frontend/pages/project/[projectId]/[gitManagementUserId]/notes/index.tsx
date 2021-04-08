@@ -2,11 +2,15 @@ import {createStyles, makeStyles} from "@material-ui/core/styles";
 import React, {useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import {
+    Box,
     Card,
+    Checkbox,
     Container,
     FormControl,
     FormControlLabel,
-    Grid, Link,
+    FormGroup,
+    Grid,
+    Link,
     List,
     ListItem,
     ListItemText,
@@ -16,21 +20,19 @@ import {
     Typography
 } from "@material-ui/core";
 import {Note} from "../../../../../interfaces/GitLabNote";
-import {MergeRequest} from "../../../../../interfaces/GitLabMergeRequest";
-import {Issue} from "../../../../../interfaces/GitLabIssue";
 import {useRouter} from "next/router";
 import {AuthContext} from "../../../../../components/AuthContext";
 import AuthView from "../../../../../components/AuthView";
 import MenuLayout from "../../../../../components/layout/menu/MenuLayout";
-import formatDate from "../../../../../utils/DateFormatter"
+import formatDate from "../../../../../utils/DateFormatter";
 import {useSnackbar} from "notistack";
-import {Task} from "../../../../../interfaces/GitLabTask";
 
 const useStyles = makeStyles(() =>
     createStyles({
         notesList: {
             overflow: 'auto',
             height: '80vh',
+            width: '80vw',
         },
     }),
 );
@@ -43,75 +45,34 @@ enum NoteType {
 const NotesPage = () => {
     const {enqueueSnackbar} = useSnackbar();
 
-    const [mergeRequests, setMergeRequests] = useState<MergeRequest[]>([]);
-    const [issues, setIssues] = useState<Issue[]>([]);
-    const [mergeRequestNotes, setMergeRequestNotes] = useState<Note[][]>([]);
-    const [issueNotes, setIssueNotes] = useState<Note[][]>([]);
-
-    const [noteType, setNoteType] = useState(NoteType.MergeRequest);
+    const [mergeRequestNotes, setMergeRequestNotes] = useState<Note[]>([]);
+    const [issueNotes, setIssueNotes] = useState<Note[]>([]);
 
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
 
     const router = useRouter();
-    const {projectId, startDateTime, endDateTime} = router.query;
-    const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}`;
-
-    const handleSelectNoteType = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setNoteType(Number((event.target as HTMLInputElement).value));
-
-    };
+    const {projectId, gitManagementUserId, startDateTime, endDateTime} = router.query;
+    const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/${projectId}`;
 
     useEffect(() => {
-        if (projectId) {
-            const dateQuery = `?startDateTime=${startDateTime}&endDateTime=${endDateTime}`;
+        if (router.isReady) {
+            const dateQuery = `startDateTime=${startDateTime}&endDateTime=${endDateTime}`;
             axios
-                .get(`${PROJECT_ID_URL}/merge_requests${dateQuery}`, getAxiosAuthConfig())
+                .get(`${PROJECT_ID_URL}/merge_request_notes/${gitManagementUserId}?${dateQuery}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
-                    setMergeRequests(resp.data);
+                    setMergeRequestNotes(resp.data);
                 }).catch(() => {
-                enqueueSnackbar('Failed to get merge requests data.', {variant: 'error',});
+                enqueueSnackbar('Failed to get merge requests notes.', {variant: 'error',});
             });
             axios
-                .get(`${PROJECT_ID_URL}/issues${dateQuery}`, getAxiosAuthConfig())
+                .get(`${PROJECT_ID_URL}/issue_notes/${gitManagementUserId}?${dateQuery}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
-                    setIssues(resp.data);
+                    setIssueNotes(resp.data);
                 }).catch(() => {
-                enqueueSnackbar('Failed to get issues data.', {variant: 'error',});
+                enqueueSnackbar('Failed to get issue notes.', {variant: 'error',});
             });
         }
-    }, [projectId]);
-
-    useEffect(() => {
-        getAllMergeRequestNotes();
-    }, [mergeRequests]);
-
-    useEffect(() => {
-        getAllIssueNotes();
-    }, [issues]);
-
-    const getAllMergeRequestNotes = () => {
-        axios.all(mergeRequests.map(
-            (mergeRequest) => (
-                axios
-                    .get(`${PROJECT_ID_URL}/merge_requests/${mergeRequest.iid}/notes`, getAxiosAuthConfig()))
-            )
-        ).then((responses) => {
-            setMergeRequestNotes(responses.map((resp) => (resp.data)));
-        }).catch(() => {
-            enqueueSnackbar('Failed to get merge request notes.', {variant: 'error',});
-        });
-    };
-
-    const getAllIssueNotes = () => {
-        axios.all(issues.map((issue) => (
-            axios
-                .get(`${PROJECT_ID_URL}/issues/${issue.iid}/notes`, getAxiosAuthConfig())))
-        ).then((responses) => {
-            setIssueNotes(responses.map((resp) => (resp.data)));
-        }).catch(() => {
-            enqueueSnackbar('Failed to get issue notes.', {variant: 'error',});
-        });
-    };
+    }, [projectId, gitManagementUserId]);
 
     return (
         <AuthView>
@@ -120,15 +81,8 @@ const NotesPage = () => {
                     <Grid container spacing={2}>
                         <Card>
                             <NotesList
-                                noteArrays={noteType === NoteType.MergeRequest ?
-                                    mergeRequestNotes : issueNotes
-                                }
-                                noteParents={
-                                    noteType === NoteType.MergeRequest ?
-                                        mergeRequests : issues
-                                }
-                                noteType={noteType}
-                                handleChangeNoteType={handleSelectNoteType}
+                                mergeRequestNotes={mergeRequestNotes}
+                                issueNotes={issueNotes}
                             />
                         </Card>
                     </Grid>
@@ -166,27 +120,52 @@ const RadioGroupSelectMergeRequestsOrIssues = ({value, handleChange}
     );
 };
 
-
-const NotesList = ({noteArrays, noteParents, noteType, handleChangeNoteType}: {
-    noteArrays: Note[][],
-    noteParents: Task[],
-    noteType: NoteType,
-    handleChangeNoteType: React.Dispatch<React.ChangeEvent<HTMLInputElement>>,
+const HideOwnCheckbox = ({hidden, handleChange}
+                             : {
+    hidden: boolean,
+    handleChange: React.Dispatch<React.ChangeEvent<HTMLInputElement>>,
 }) => {
+    return (
+        <FormControl component="fieldset">
+            <FormGroup>
+                <FormControlLabel
+                    control={<Checkbox checked={hidden} onChange={handleChange} name="hide own" size="small"/>}
+                    label='Hide "(Own)" notes'
+                />
+            </FormGroup>
+        </FormControl>
+    );
+};
+
+const NotesList = ({mergeRequestNotes, issueNotes}: {
+    mergeRequestNotes: Note[],
+    issueNotes: Note[],
+}) => {
+
+    const [noteType, setNoteType] = useState(NoteType.MergeRequest);
+    const [hideOwnNotes, setHideOwnNotes] = useState(false);
+
+    const handleChangeNoteType = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setNoteType(Number((event.target as HTMLInputElement).value));
+    };
+
 
     const classes = useStyles();
     return (
         <List subheader={<ListSubheader color={"primary"}>{
-            <RadioGroupSelectMergeRequestsOrIssues
-                value={noteType}
-                handleChange={handleChangeNoteType}
-            />
+            <Box bgcolor="white">
+                <RadioGroupSelectMergeRequestsOrIssues
+                    value={noteType}
+                    handleChange={handleChangeNoteType}
+                />
+                <HideOwnCheckbox hidden={hideOwnNotes} handleChange={() => setHideOwnNotes(!hideOwnNotes)}/>
+            </Box>
         }</ListSubheader>}
               className={classes.notesList}
         >
-            {noteArrays?.map((noteArray, i) => (
-                noteArray.map((note) => (
-                    <ListItem key={note.id}>
+            {(noteType === NoteType.MergeRequest ? mergeRequestNotes : issueNotes).map((note) => (
+                hideOwnNotes && note.own ? null :
+                    <ListItem key={`${note.id}`}>
                         <ListItemText
                             primary={
                                 <>
@@ -197,14 +176,22 @@ const NotesList = ({noteArrays, noteParents, noteType, handleChangeNoteType}: {
                                         color="textSecondary"
                                     >
                                         {`@${note.author.username}
-                                         · ${formatDate(note.created_at)}
+                                         · ${formatDate(note.createdAt)}
                                          · ${getWordCount(note.body)} words · `
                                         }
                                     </Typography>
                                     <Link variant="body2"
                                           rel="noopener noreferrer"
                                           target="_blank"
-                                          href={noteParents[i].web_url}>{`#${noteParents[i].iid}`}</Link>
+                                          href={note.parentWebUrl}>{`#${note.parentIid}`}
+                                    </Link>
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                        color="textSecondary"
+                                    >
+                                        {note.own ? " · (Own)" : " · (Other)"}
+                                    </Typography>
                                 </>}
                             secondary={
                                 <>
@@ -212,13 +199,14 @@ const NotesList = ({noteArrays, noteParents, noteType, handleChangeNoteType}: {
                                         component="span"
                                         variant="body2"
                                         color="textPrimary"
+                                        style={{wordWrap: 'break-word'}}
                                     >
                                         {note.body}
                                     </Typography>
                                 </>}
                         />
                     </ListItem>
-                ))))}
+            ))}
         </List>
     );
 };

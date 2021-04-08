@@ -5,9 +5,13 @@ import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.Server;
 import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
 import org.springframework.http.HttpStatus;
+import com.eris.gitlabanalyzer.repository.ProjectRepository;
+import com.eris.gitlabanalyzer.repository.ServerRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service

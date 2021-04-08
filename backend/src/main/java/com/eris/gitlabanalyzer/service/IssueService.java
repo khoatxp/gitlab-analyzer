@@ -4,24 +4,23 @@ import com.eris.gitlabanalyzer.model.*;
 import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
 import com.eris.gitlabanalyzer.repository.IssueCommentRepository;
 import com.eris.gitlabanalyzer.repository.IssueRepository;
-import com.eris.gitlabanalyzer.repository.ProjectRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import java.time.OffsetDateTime;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class IssueService {
     private final IssueRepository issueRepository;
     private final IssueCommentRepository issueCommentRepository;
-    private final ProjectRepository projectRepository;
     private final GitManagementUserRepository gitManagementUserRepository;
-    private final GitLabService requestScopeGitLabService;;
+    private final GitLabService requestScopeGitLabService;
     private final AnalysisRunService analysisRunService;
 
-    public IssueService(IssueRepository issueRepository, IssueCommentRepository issueCommentRepository, ProjectRepository projectRepository, GitManagementUserRepository gitManagementUserRepository, AnalysisRunService analysisRunService,GitLabService requestScopeGitLabService) {
+    public IssueService(IssueRepository issueRepository, IssueCommentRepository issueCommentRepository, GitManagementUserRepository gitManagementUserRepository, GitLabService requestScopeGitLabService, AnalysisRunService analysisRunService) {
         this.issueRepository = issueRepository;
         this.issueCommentRepository = issueCommentRepository;
-        this.projectRepository = projectRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
         this.requestScopeGitLabService = requestScopeGitLabService;
         this.analysisRunService = analysisRunService;
@@ -58,26 +57,30 @@ public class IssueService {
         }
     }
 
-    public void saveIssueComments (Project project, Issue issue){
+    public void saveIssueComments(Project project, Issue issue) {
         var gitLabIssueComments = requestScopeGitLabService.getIssueNotes(project.getGitLabProjectId(), issue.getIid());
         var gitLabIssueCommentList = gitLabIssueComments.collectList().block();
 
-        gitLabIssueCommentList.parallelStream().forEach(gitLabIssueComment -> {
-            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabIssueComment.getAuthor().getId(),project.getServer().getId());
-            IssueComment issueComment = issueCommentRepository.findByGitLabIssueNoteIdAndIssueId(gitLabIssueComment.getId(),issue.getIid());
-            if(issueComment == null){
-                issueComment = new IssueComment(
-                        gitLabIssueComment.getId(),
-                        gitLabIssueComment.getBody(),
-                        gitLabIssueComment.getCreatedAt(),
+        Objects.requireNonNull(gitLabIssueCommentList).parallelStream().forEach(gitLabNote -> {
+            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabNote.getAuthor().getId(), project.getServer().getId());
+            Optional<Note> note = issueCommentRepository.findByGitLabNoteIdAndProjectId(gitLabNote.getId(), project.getId());
+            if (note.isEmpty() && !gitLabNote.isSystem()) {
+                boolean isOwn = gitLabNote.getAuthor().getId().equals(issue.getGitManagementUser().getGitLabUserId());
+                issueCommentRepository.save(new Note(
+                        gitLabNote.getId(),
+                        gitLabNote.getBody(),
                         gitManagementUser,
-                        issue
-                );
+                        gitLabNote.getCreatedAt(),
+                        null,
+                        project.getId(),
+                        isOwn,
+                        issue.getIid(),
+                        issue.getWebUrl(),
+                        gitLabNote.getNoteableType()
+                ));
             }
-            issueCommentRepository.save(issueComment);
         });
-
     }
-    
-    
+
+
 }

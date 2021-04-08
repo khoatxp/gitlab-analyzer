@@ -131,7 +131,6 @@ class ScoreCalculationTests {
 
     @Test
     void check_ScoreCalculations() {
-        // TODO get actual values being set so test pass if point values change
         double codeValue = 2;
         double commentValue = 1;
         double syntaxValue = 1;
