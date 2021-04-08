@@ -203,7 +203,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
                                     <span
                                       className="MuiTab-wrapper"
                                     >
-                                      <ForwardRef(ChevronLeftIcon)>
+                                      <ForwardRef(MenuOpenIcon)>
                                         <WithStyles(ForwardRef(SvgIcon))>
                                           <ForwardRef(SvgIcon)
                                             classes={
@@ -227,12 +227,12 @@ exports[`Project Folder Snapshot serverId 1`] = `
                                               viewBox="0 0 24 24"
                                             >
                                               <path
-                                                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"
+                                                d="M3 18h13v-2H3v2zm0-5h10v-2H3v2zm0-7v2h13V6H3zm18 9.59L17.42 12 21 8.41 19.59 7l-5 5 5 5L21 15.59z"
                                               />
                                             </svg>
                                           </ForwardRef(SvgIcon)>
                                         </WithStyles(ForwardRef(SvgIcon))>
-                                      </ForwardRef(ChevronLeftIcon)>
+                                      </ForwardRef(MenuOpenIcon)>
                                     </span>
                                     <WithStyles(memo)
                                       center={false}

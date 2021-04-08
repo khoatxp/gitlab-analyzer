@@ -102,7 +102,7 @@ const MenuSideBar = () => {
                 </MenuButton>
                 {gitManagementUsers.map(gitManagementUser =>
                     <MenuButton key={gitManagementUser.id}
-                                value={[gitManagementUser.id,gitManagementUser.username]}
+                                value={[gitManagementUser.id.toString(),gitManagementUser.username]}
                                 id={`memberButton${gitManagementUser.id}`}
                                 variant="contained" disableRipple
                                 onClick={() => handleClick(gitManagementUser.id)}
