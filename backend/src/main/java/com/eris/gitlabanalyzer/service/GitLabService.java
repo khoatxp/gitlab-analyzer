@@ -100,9 +100,13 @@ public class GitLabService {
 
     public Flux<GitLabMergeRequest> getMergeRequests(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         validateConfiguration();
+
+        var project  = getProject(projectId).block();
+
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests")
-                .queryParam("state", "merged")
+                .queryParam("state", project.getDefaultBranch())
+                .queryParam("target_branch", "merged")
                 .queryParam("created_after", startDateTime.toInstant().toString())
                 .queryParam("updated_before", endDateTime.toInstant().toString())
                 .queryParam("per_page", 100)

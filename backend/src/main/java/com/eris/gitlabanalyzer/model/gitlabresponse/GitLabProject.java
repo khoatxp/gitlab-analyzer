@@ -15,4 +15,6 @@ public class GitLabProject {
     private String avatarUrl;
     @JsonProperty("star_count")
     private String starCount;
+    @JsonProperty("default_branch")
+    private String defaultBranch;
 }
