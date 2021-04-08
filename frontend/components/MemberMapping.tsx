@@ -144,7 +144,7 @@ const MemberMapping = () => {
                                             </em>
                                         </MenuItem>
                                         {gitManagementUsers.map(gitManagementUser =>(
-                                            <MenuItem key={gitManagementUser.id} value={[gitManagementUser.id,gitManagementUser.name]}>
+                                            <MenuItem key={gitManagementUser.id} value={[gitManagementUser.id.toString(),gitManagementUser.name]}>
                                                 {gitManagementUser.name}
                                             </MenuItem>
                                         ))}
