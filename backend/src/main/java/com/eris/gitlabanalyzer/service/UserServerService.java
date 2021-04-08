@@ -39,7 +39,7 @@ public class UserServerService {
         }
         GitLabService gitLabService = new GitLabService(trimmedUrl, trimmedToken);
         if (!gitLabService.validateAccessToken()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Given access token is not valid.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Given URL or the access token is not valid.");
         }
         UserServer userServer = new UserServer(trimmedToken);
         userServer.setUser(user);
@@ -56,16 +56,14 @@ public class UserServerService {
     }
 
     public UserServer updateUserServer(User user, Long serverId, String accessToken) {
-        var server = serverRepository.findServerById(serverId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Server not found."));
-        String serverUrl =  server.getServerUrl();
+        var userServer = userServerRepository.findUserServerByUserIdAndServerId(user.getId(), serverId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User server not found."));
+        String serverUrl =  userServer.getServer().getServerUrl();
         GitLabService gitLabService = new GitLabService(serverUrl, accessToken);
         String trimmedToken = trimAndStripTags(accessToken);
         if (!gitLabService.validateAccessToken()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Given access token is not valid.");
         }
-        var userServer = userServerRepository.findUserServerByUserIdAndServerId(user.getId(), serverId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User server not found."));
         userServer.setAccessToken(trimmedToken);
         return userServerRepository.save(userServer);
     }
