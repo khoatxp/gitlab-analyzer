@@ -10,8 +10,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {GitManagementUser} from "../../../interfaces/GitManagementUser";
 import {useSnackbar} from "notistack";
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MenuIcon from '@material-ui/icons/Menu';
+import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 
 const useStyles = makeStyles((theme) => ({
     sidebar: {
@@ -92,7 +92,7 @@ const MenuSideBar = () => {
                     <Tab
                         className={classes.sidebarTitle}
                         onClick={toggleSidebar}
-                        label={sidebarState ? <ChevronLeftIcon /> : <MenuIcon /> }
+                        label={sidebarState ? <MenuOpenIcon /> : <MenuIcon /> }
                     />
                 </Tabs>
             </AppBar>
