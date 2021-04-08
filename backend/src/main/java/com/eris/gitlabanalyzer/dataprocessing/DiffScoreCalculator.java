@@ -41,12 +41,14 @@ public class DiffScoreCalculator {
     private double calculateFileScore(List<FileScore> fileScores, ScoreProfile scoreProfile){
         double totalScore = 0;
         for(FileScore fileScore : fileScores){
-            double fileWeightModifier = scoreProfile.getExtensionWeights().getOrDefault(fileScore.getFileType(), 1.0);
+            if(!scoreProfile.blackListContains(fileScore.getFileType())) {
+                double fileWeightModifier = scoreProfile.getExtensionWeights().getOrDefault(fileScore.getFileType(), 1.0);
 
-            totalScore += fileScore.getCodeLineAdded() * (fileWeightModifier * scoreProfile.getLineWeight());
-            totalScore += fileScore.getSyntaxLineAdded() * scoreProfile.getSyntaxWeight();
-            totalScore += fileScore.getCommentLineAdded() *  scoreProfile.getCommentsWeight();
-            totalScore += fileScore.getLineRemoved() * scoreProfile.getDeleteWeight();
+                totalScore += fileScore.getCodeLineAdded() * (fileWeightModifier * scoreProfile.getLineWeight());
+                totalScore += fileScore.getSyntaxLineAdded() * scoreProfile.getSyntaxWeight();
+                totalScore += fileScore.getCommentLineAdded() * scoreProfile.getCommentsWeight();
+                totalScore += fileScore.getLineRemoved() * scoreProfile.getDeleteWeight();
+            }
         }
 
         return  totalScore;
