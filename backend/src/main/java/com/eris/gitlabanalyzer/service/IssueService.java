@@ -3,23 +3,21 @@ package com.eris.gitlabanalyzer.service;
 import com.eris.gitlabanalyzer.model.*;
 import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
 import com.eris.gitlabanalyzer.repository.IssueCommentRepository;
-import com.eris.gitlabanalyzer.repository.IssueRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class IssueService {
-    private final IssueRepository issueRepository;
     private final IssueCommentRepository issueCommentRepository;
     private final GitManagementUserRepository gitManagementUserRepository;
     private final GitLabService requestScopeGitLabService;
     private final AnalysisRunService analysisRunService;
 
-    public IssueService(IssueRepository issueRepository, IssueCommentRepository issueCommentRepository, GitManagementUserRepository gitManagementUserRepository, GitLabService requestScopeGitLabService, AnalysisRunService analysisRunService) {
-        this.issueRepository = issueRepository;
+    public IssueService(IssueCommentRepository issueCommentRepository, GitManagementUserRepository gitManagementUserRepository, GitLabService requestScopeGitLabService, AnalysisRunService analysisRunService) {
         this.issueCommentRepository = issueCommentRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
         this.requestScopeGitLabService = requestScopeGitLabService;
@@ -28,7 +26,7 @@ public class IssueService {
 
     public void saveIssueInfo(AnalysisRun analysisRun, Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         var gitLabIssues = requestScopeGitLabService.getIssues(project.getGitLabProjectId(), startDateTime, endDateTime);
-        var gitLabIssueList = gitLabIssues.collectList().block();
+        var gitLabIssueList = gitLabIssues.collectList().blockOptional().orElse(new ArrayList<>());
 
         Double progress;
         Double startOfProgressRange = AnalysisRun.Progress.AtStartOfImportingIssues.getValue();
@@ -40,9 +38,8 @@ public class IssueService {
 
             var gitLabIssue = gitLabIssueList.get(i);
             GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabIssue.getAuthor().getId(), project.getServer().getId());
-            Issue issue = issueRepository.findByIidAndProjectId(gitLabIssue.getIid(),project.getId());
-            if(issue == null){
-                issue = new Issue(
+
+            Issue issue = new Issue(
                         gitLabIssue.getIid(),
                         gitLabIssue.getTitle(),
                         gitLabIssue.getAuthor().getName(),
@@ -51,8 +48,6 @@ public class IssueService {
                         project,
                         gitManagementUser
                 );
-            }
-            issue = issueRepository.save(issue);
             saveIssueComments(project, issue);
         }
     }

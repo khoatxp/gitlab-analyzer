@@ -7,6 +7,9 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "Issue")
 @Table(name = "issue")
+@lombok.Getter
+@lombok.NoArgsConstructor
+@lombok.ToString
 public class Issue {
     @Id
     @SequenceGenerator(
@@ -71,9 +74,6 @@ public class Issue {
             referencedColumnName = "git_management_user_id")
     private GitManagementUser gitManagementUser;
 
-    public Issue() {
-    }
-
     public Issue(Long iid, String title, String authorName, OffsetDateTime createdAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
         this.iid = iid;
         this.title = title;
@@ -82,61 +82,5 @@ public class Issue {
         this.webUrl = webUrl;
         this.project = project;
         this.gitManagementUser = gitManagementUser;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getIid() {
-        return iid;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getAuthorName() {
-        return authorName;
-    }
-
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public String getWebUrl() {
-        return webUrl;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public GitManagementUser getGitManagementUser() {
-        return gitManagementUser;
-    }
-
-    public GitManagementUser getMember() {
-        return gitManagementUser;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    public void setMember(GitManagementUser gitManagementUser) {
-        this.gitManagementUser = gitManagementUser;
-    }
-
-    @Override
-    public String toString() {
-        return "Issue{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", authorName='" + authorName + '\'' +
-                ", createdAt='" + createdAt + '\'' +
-                ", webUrl='" + webUrl + '\'' +
-                ", project=" + project +
-                '}';
     }
 }
