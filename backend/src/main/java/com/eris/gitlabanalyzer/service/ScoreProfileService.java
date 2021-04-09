@@ -16,7 +16,7 @@ public class ScoreProfileService {
         this.scoreProfileRepository = scoreProfileRepository;
     }
 
-    public List<ScoreProfile> getScoreProfiles(User user){
+    public List<ScoreProfile> getUserScoreProfiles(User user){
         return scoreProfileRepository.findScoreProfilesByUserId(user.getId());
     }
 
@@ -40,30 +40,19 @@ public class ScoreProfileService {
 
     public ScoreProfile updateScoreProfile(User user, Long id, ScoreProfile scoreProfile) {
 
-        var userScoreProfiles = this.getScoreProfiles(user);
-        Optional<ScoreProfile> oldProfile = userScoreProfiles.stream().filter(s -> s.getId() == id).findFirst();
-        if(oldProfile.isPresent()) {
-            scoreProfile.setId(oldProfile.get().getId());
-            scoreProfile.setUser(user);
-            return this.scoreProfileRepository.save(scoreProfile);
-        }
-        else{
-            throw new NoSuchElementException("Score Profile not found");
-        }
+        ScoreProfile oldProfile = getScoreProfile(user, id);
+        scoreProfile.setId(oldProfile.getId());
+        scoreProfile.setUser(user);
+        return this.scoreProfileRepository.save(scoreProfile);
 
     }
 
 
     public Long deleteScoreProfile(User user, Long id) {
-        var userScoreProfiles = this.getScoreProfiles(user);
-        Optional<ScoreProfile> scoreProfile = userScoreProfiles.stream().filter(s -> s.getId() == id).findFirst();
-        if(scoreProfile.isPresent()) {
-            scoreProfileRepository.delete(scoreProfile.get());
-            return id;
-        }
-        else{
-            throw new NoSuchElementException("Score Profile not found") ;
-        }
+        
+        ScoreProfile scoreProfile = getScoreProfile(user, id);
+        scoreProfileRepository.delete(scoreProfile);
+        return id;
     }
 
 
