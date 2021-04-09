@@ -56,7 +56,7 @@ public class CommitController {
         return commits.stream().map(CommitView::fromCommit);
     }
 
-    @GetMapping("/api/v1/{projectId}/commits/{gitManagementUserId}")
+    @GetMapping("{projectId}/commits/{gitManagementUserId}")
     public Stream<CommitView> getCommitsOfGitManagementUser(
             @PathVariable("projectId") Long projectId,
             @PathVariable("gitManagementUserId") Long gitManagementUserId) {
