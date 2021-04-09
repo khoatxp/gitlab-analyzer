@@ -48,10 +48,10 @@ public class CommitController {
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
         List<Commit> commits;
-        if (gitManagementUserId == 0L) {
-            commits = commitService.getOrphanCommitsInDateRange(projectId, startDateTime, endDateTime);
-        } else {
+        if (gitManagementUserId != 0L) {
             commits = commitService.getOrphanCommitsOfGitManagementUserInDateRange(projectId, gitManagementUserId, startDateTime, endDateTime);
+        } else {
+            commits = commitService.getOrphanCommitsInDateRange(projectId, startDateTime, endDateTime);
         }
         return commits.stream().map(CommitView::fromCommit);
     }
