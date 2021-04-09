@@ -1,11 +1,6 @@
 import React, {useState} from "react";
 import {parseISO} from "date-fns";
 import {Bar} from "recharts";
-import axios, {AxiosResponse} from "axios";
-import {useSnackbar} from "notistack";
-import {AuthContext} from "../AuthContext";
-
-
 
 const formatDay = (day:string) => {
     return parseISO(day).toLocaleDateString('en-Us', {month: 'short', day: 'numeric'});

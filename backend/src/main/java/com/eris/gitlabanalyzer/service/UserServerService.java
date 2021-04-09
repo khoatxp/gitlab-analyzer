@@ -4,7 +4,9 @@ import com.eris.gitlabanalyzer.model.*;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
 import com.eris.gitlabanalyzer.repository.UserServerRepository;
 import com.eris.gitlabanalyzer.viewmodel.UserServerRequestBody;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +30,7 @@ public class UserServerService {
         return userServerRepository.findUserServerByUserId(user.getId());
     }
 
-    public UserServer createServer(User user, String serverUrl, String accessToken) {
+    public UserServer createUserServer(User user, String serverUrl, String accessToken) {
         Optional<Server> serverByUser = serverRepository.findByServerUrlAndUserId(serverUrl, user.getId());
         if (serverByUser.isPresent()) {
             throw new IllegalStateException("Server already registered.");
@@ -46,6 +48,19 @@ public class UserServerService {
             userServer.setServer(server);
         }
         return userServerRepository.save(userServer);
+    }
+
+    public UserServer updateUserServer(User user, Long serverId, String accessToken) {
+        var userServer = userServerRepository.findUserServerByUserIdAndServerId(user.getId(), serverId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User server not found."));
+        userServer.setAccessToken(accessToken);
+        return userServerRepository.save(userServer);
+    }
+
+    public void deleteUserServer(User user, Long serverId) {
+        var userServer = userServerRepository.findUserServerByUserIdAndServerId(user.getId(), serverId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User server not found."));
+        userServerRepository.delete(userServer);
     }
 
 }

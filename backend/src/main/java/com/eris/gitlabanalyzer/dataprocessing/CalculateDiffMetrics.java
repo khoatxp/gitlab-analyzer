@@ -5,12 +5,9 @@ import com.eris.gitlabanalyzer.model.FileScore;
 import com.eris.gitlabanalyzer.model.MergeRequest;
 import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabFileChange;
-import com.eris.gitlabanalyzer.repository.CommitRepository;
 import com.eris.gitlabanalyzer.repository.FileScoreRepository;
-import com.eris.gitlabanalyzer.repository.MergeRequestRepository;
 import com.eris.gitlabanalyzer.repository.ProjectRepository;
 import com.eris.gitlabanalyzer.service.GitLabService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -24,9 +21,7 @@ public class CalculateDiffMetrics {
     private final Map<String, CommentCharacter> commentCharacters = new HashMap<>();
 
     private final FileScoreRepository fileScoreRepository;
-    private final MergeRequestRepository mergeRequestRepository;
     private final ProjectRepository projectRepository;
-    private final CommitRepository commitRepository;
     private final GitLabService requestScopeGitLabService;
 
     public enum lineTypes {
@@ -34,7 +29,9 @@ public class CalculateDiffMetrics {
         comment,
         blockComment,
         syntax,
-        removed,
+        removedCode,
+        removedSyntax,
+        removedComment,
     }
 
     public enum lineAction {
@@ -43,14 +40,11 @@ public class CalculateDiffMetrics {
         unchanged,
     }
 
-    public CalculateDiffMetrics(FileScoreRepository fileScoreRepository,
-                                MergeRequestRepository mergeRequestRepository, ProjectRepository projectRepository,
-                                CommitRepository commitRepository, GitLabService requestScopeGitLabService){
+    public CalculateDiffMetrics(FileScoreRepository fileScoreRepository, ProjectRepository projectRepository,
+                                 GitLabService requestScopeGitLabService){
         initializeCommentCharacters();
         this.fileScoreRepository = fileScoreRepository;
-        this.mergeRequestRepository = mergeRequestRepository;
         this.projectRepository = projectRepository;
-        this.commitRepository = commitRepository;
         this.requestScopeGitLabService = requestScopeGitLabService;
     }
 
@@ -76,7 +70,8 @@ public class CalculateDiffMetrics {
                     Map<lineTypes, Integer> fileCount = countLineTypes(file.getDiff(), fileType);
                     FileScore fileScore = new FileScore(commit, fileType.toLowerCase(), file.getNewPath(),
                             fileCount.getOrDefault(lineTypes.code, 0), fileCount.getOrDefault(lineTypes.syntax,0),
-                            fileCount.getOrDefault(lineTypes.comment,0), fileCount.getOrDefault(lineTypes.removed,0));
+                            fileCount.getOrDefault(lineTypes.comment,0), fileCount.getOrDefault(lineTypes.removedCode,0),
+                            fileCount.getOrDefault(lineTypes.removedSyntax, 0), fileCount.getOrDefault(lineTypes.removedComment, 0));
                     fileScoreRepository.save(fileScore);
                 }
             }
@@ -96,7 +91,8 @@ public class CalculateDiffMetrics {
 
                     FileScore fileScore = new FileScore(mergeRequest, fileType.toLowerCase(), file.getNewPath(),
                             fileCount.getOrDefault(lineTypes.code, 0), fileCount.getOrDefault(lineTypes.syntax,0),
-                            fileCount.getOrDefault(lineTypes.comment,0), fileCount.getOrDefault(lineTypes.removed,0));
+                            fileCount.getOrDefault(lineTypes.comment,0), fileCount.getOrDefault(lineTypes.removedCode,0),
+                            fileCount.getOrDefault(lineTypes.removedSyntax, 0), fileCount.getOrDefault(lineTypes.removedComment, 0));
 
                     fileScoreRepository.save(fileScore);
                 }
@@ -112,7 +108,8 @@ public class CalculateDiffMetrics {
         Map<lineTypes, Integer> fileCount = countLineTypes(diff,fileType);
         FileScore fileScore = new FileScore(testMr, fileType, "TestPath",
                 fileCount.getOrDefault(lineTypes.code, 0), fileCount.getOrDefault(lineTypes.syntax,0),
-                fileCount.getOrDefault(lineTypes.comment,0), fileCount.getOrDefault(lineTypes.removed,0));
+                fileCount.getOrDefault(lineTypes.comment,0), fileCount.getOrDefault(lineTypes.removedCode,0),
+                fileCount.getOrDefault(lineTypes.removedSyntax, 0), fileCount.getOrDefault(lineTypes.removedComment, 0));
 
         fileScoreRepository.save(fileScore);
     }
@@ -209,7 +206,18 @@ public class CalculateDiffMetrics {
         if(action == lineAction.added){
             lineTotals.put(type, lineTotals.getOrDefault(type, 0) + 1);
         } else if(action == lineAction.removed){
-            lineTotals.put(lineTypes.removed, lineTotals.getOrDefault(lineTypes.removed, 0) + 1);
+            switch (type){
+                case code:
+                    lineTotals.put(lineTypes.removedCode, lineTotals.getOrDefault(lineTypes.removedCode, 0) + 1);
+                    break;
+                case syntax:
+                    lineTotals.put(lineTypes.removedSyntax, lineTotals.getOrDefault(lineTypes.removedSyntax, 0) + 1);
+                    break;
+                case comment:
+                    lineTotals.put(lineTypes.removedComment, lineTotals.getOrDefault(lineTypes.removedComment, 0) + 1);
+                    break;
+            }
+
         }
     }
 

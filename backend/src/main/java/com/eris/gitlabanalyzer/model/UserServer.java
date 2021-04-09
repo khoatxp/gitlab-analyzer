@@ -1,5 +1,7 @@
 package com.eris.gitlabanalyzer.model;
 
+import com.eris.gitlabanalyzer.utils.AttributeEncryptor;
+
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -22,6 +24,7 @@ public class UserServer {
     private Server server;
 
     @Column(name="access_token")
+    @Convert(converter = AttributeEncryptor.class)
     private String accessToken;
 
     public UserServer(){}
@@ -44,6 +47,10 @@ public class UserServer {
 
     public String getAccessToken() {
         return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public void setUser(User user) {
