@@ -121,8 +121,8 @@ public class GitLabService {
                 .path(projectPath + projectId + "/merge_requests")
                 .queryParam("state", "merged")
                 .queryParam("target_branch", project.getDefaultBranch())
-                .queryParam("created_after", startDateTime.toInstant().toString())
-                .queryParam("updated_before", endDateTime.toInstant().toString())
+                .queryParam("updated_after", startDateTime.toInstant().toString())
+                .queryParam("created_before", endDateTime.toInstant().toString())
                 .queryParam("per_page", 100)
                 .build()
                 .encode()
@@ -156,6 +156,7 @@ public class GitLabService {
                 .encode()
                 .toUri()
                 .toString();
+
         return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabCommit.class));
     }
 

@@ -44,19 +44,17 @@ public class CommitService {
     }
 
 
-    public void saveCommitInfo(AnalysisRun analysisRun, Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        //Save commits associated with each merge request
-        List<MergeRequest> mergeRequestList = mergeRequestRepository.findAllByProjectId(project.getId());
+    public void saveCommitInfo(AnalysisRun analysisRun, Project project, List<MergeRequest> mergeRequests, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         List<String> mrCommitShas = new ArrayList<>(); //Used to filter for the case of orphan commits
 
         Double progress;
         Double startOfProgressRange = AnalysisRun.Progress.AtStartOfImportingCommits.getValue();
         Double endOfProgressRange = AnalysisRun.Progress.AtStartOfImportingOrphanCommits.getValue();
 
-        for(int i = 0; i < mergeRequestList.size();i++){
-            MergeRequest mergeRequest = mergeRequestList.get(i);
-            progress = startOfProgressRange + (endOfProgressRange-startOfProgressRange) * (i+1)/mergeRequestList.size();
-            analysisRunService.updateProgress(analysisRun, "Importing commits for "+ (i+1) +"/"+mergeRequestList.size() + " merge requests",progress, false);
+        for(int i = 0; i < mergeRequests.size();i++){
+            MergeRequest mergeRequest = mergeRequests.get(i);
+            progress = startOfProgressRange + (endOfProgressRange-startOfProgressRange) * (i+1)/mergeRequests.size();
+            analysisRunService.updateProgress(analysisRun, "Importing commits for "+ (i+1) +"/"+mergeRequests.size() + " merge requests",progress, false);
             var mergeRequestCommits = requestScopeGitLabService.getMergeRequestCommits(project.getGitLabProjectId(), mergeRequest.getIid());
             saveCommitHelper(project, mergeRequest, mergeRequestCommits, mrCommitShas);
         }
