@@ -5,7 +5,9 @@ import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.Server;
 import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
 import com.eris.gitlabanalyzer.viewmodel.GitManagementUserView;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,10 +52,10 @@ public class GitManagementUserService {
         );
     }
 
-
     public List<GitManagementUserView> getMembers(Long projectId){
         return gitManagementUserRepository.findByProjectId(projectId);
     }
+
     public GitManagementUserView getMember(Long gitManagementUserId){
         return gitManagementUserRepository.findByGitManagementUserId(gitManagementUserId);
     }

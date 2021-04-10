@@ -7,9 +7,11 @@ describe("Project Folder", () =>{
     const mockUseEffect = jest.spyOn(React, 'useEffect');
     const mockAxios = jest.spyOn(require('axios'), 'get');
     let rend:ReactWrapper;
-
+    const mockEnqueue = jest.spyOn(require('notistack'), "useSnackbar");
+    let enqueueSnackbar = jest.fn();
 
     beforeAll(async() =>{
+        mockEnqueue.mockImplementation(() => {return {enqueueSnackbar}});
         useRouter.mockImplementationOnce(() => ({
             query: { projectId: 'TestId' },
         }));
