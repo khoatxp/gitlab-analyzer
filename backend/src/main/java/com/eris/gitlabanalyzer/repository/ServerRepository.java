@@ -15,5 +15,7 @@ public interface ServerRepository extends JpaRepository<Server, Long> {
     Optional<Server> findByServerUrlAndUserId(String serverUrl, Long userId);
 
     Optional<Server> findByServerUrl(String serverUrl);
+
+    Optional<Server> findServerById(Long id);
 }
 

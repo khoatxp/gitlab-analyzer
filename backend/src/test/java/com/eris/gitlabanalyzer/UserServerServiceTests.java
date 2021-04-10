@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Transactional
 class UserServerServiceTests {
 
     @Autowired
@@ -50,7 +51,7 @@ class UserServerServiceTests {
     @Test
     void testUpdateUserServers()  {
         var user = userRepository.findById(1l).get();
-        var newAccessToken = "12345678901234567890";
+        var newAccessToken = "7AX1GEU5hzuyF1NYNRyX";
         var userServer = userServerService.getUserServer(user, 1L).get();
         var oldAccessToken = userServer.getAccessToken();
 
@@ -66,7 +67,7 @@ class UserServerServiceTests {
     @Test
     void testDeleteUserServers()  {
         var user = userRepository.findById(1l).get();
-        var userServer = userServerService.createUserServer(user, "https://example.com","12345678901234567890");
+        var userServer = userServerService.createUserServer(user, "https://csil-git1.cs.surrey.sfu.ca","a_gnyeKkJjiKyGYZW1JD");
         var userServers = userServerService.getUserServers(user);
         assertEquals(2, userServers.size());
         userServerService.deleteUserServer(user, userServer.getServer().getId());
