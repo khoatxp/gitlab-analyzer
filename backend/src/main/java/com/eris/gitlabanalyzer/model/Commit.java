@@ -1,5 +1,7 @@
 package com.eris.gitlabanalyzer.model;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -9,6 +11,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "Commit")
 @Table(name = "commit")
+@Getter
 public class Commit {
     @Id
     @SequenceGenerator(
@@ -106,35 +109,6 @@ public class Commit {
         this.webUrl = webUrl;
         this.project = project;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getSha() {
-        return sha;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getAuthorName() {
-        return authorName;
-    }
-
-    public String getAuthorEmail() {
-        return authorEmail;
-    }
-
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public String getWebUrl() {
-        return webUrl;
-    }
-    public Project getProject(){return project;}
 
     public void setProject(Project project) {
         this.project = project;
