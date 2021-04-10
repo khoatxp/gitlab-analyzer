@@ -39,7 +39,7 @@ public class UserServerService {
         }
         GitLabService gitLabService = new GitLabService(trimmedUrl, trimmedToken);
         if (!gitLabService.validateAccessToken()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Given URL or the access token is not valid.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Given URL or the access token is not valid.");
         }
         UserServer userServer = new UserServer(trimmedToken);
         userServer.setUser(user);
@@ -63,7 +63,7 @@ public class UserServerService {
         String trimmedToken = trimAndStripTags(accessToken);
         GitLabService gitLabService = new GitLabService(serverUrl, trimmedToken);
         if (!gitLabService.validateAccessToken()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Given access token is not valid.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Given access token is not valid.");
         }
         userServer.setAccessToken(trimmedToken);
         return userServerRepository.save(userServer);
