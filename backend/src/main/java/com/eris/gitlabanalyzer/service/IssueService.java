@@ -1,6 +1,7 @@
 package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.*;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabIssue;
 import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
 import com.eris.gitlabanalyzer.repository.IssueCommentRepository;
 import org.springframework.stereotype.Service;
@@ -37,22 +38,11 @@ public class IssueService {
             analysisRunService.updateProgress(analysisRun, "Importing "+ (i+1) +"/"+gitLabIssueList.size() + " issues",progress, false);
 
             var gitLabIssue = gitLabIssueList.get(i);
-            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabIssue.getAuthor().getId(), project.getServer().getId());
-
-            Issue issue = new Issue(
-                        gitLabIssue.getIid(),
-                        gitLabIssue.getTitle(),
-                        gitLabIssue.getAuthor().getName(),
-                        gitLabIssue.getCreatedAt(),
-                        gitLabIssue.getWebUrl(),
-                        project,
-                        gitManagementUser
-                );
-            saveIssueComments(project, issue);
+            saveIssueComments(project, gitLabIssue);
         }
     }
 
-    public void saveIssueComments(Project project, Issue issue) {
+    public void saveIssueComments(Project project, GitLabIssue issue) {
         var gitLabIssueComments = requestScopeGitLabService.getIssueNotes(project.getGitLabProjectId(), issue.getIid());
         var gitLabIssueCommentList = gitLabIssueComments.collectList().block();
 
@@ -60,7 +50,7 @@ public class IssueService {
             GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabNote.getAuthor().getId(), project.getServer().getId());
             Optional<Note> note = issueCommentRepository.findByGitLabNoteIdAndProjectId(gitLabNote.getId(), project.getId());
             if (note.isEmpty() && !gitLabNote.isSystem()) {
-                boolean isOwn = gitLabNote.getAuthor().getId().equals(issue.getGitManagementUser().getGitLabUserId());
+                boolean isOwn = gitLabNote.getAuthor().getId().equals(issue.getAuthor().getId());
                 issueCommentRepository.save(new Note(
                         gitLabNote.getId(),
                         gitLabNote.getBody(),
