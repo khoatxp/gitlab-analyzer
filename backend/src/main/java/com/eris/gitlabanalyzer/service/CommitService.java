@@ -44,28 +44,25 @@ public class CommitService {
     }
 
 
-    public void saveCommitInfo(AnalysisRun analysisRun, Project project, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        //Save commits associated with each merge request
-        List<MergeRequest> mergeRequestList = mergeRequestRepository.findAllByProjectId(project.getId());
+    public void saveCommitInfo(AnalysisRun analysisRun, Project project, List<MergeRequest> mergeRequests, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         List<String> mrCommitShas = new ArrayList<>(); //Used to filter for the case of orphan commits
 
         Double progress;
         Double startOfProgressRange = AnalysisRun.Progress.AtStartOfImportingCommits.getValue();
         Double endOfProgressRange = AnalysisRun.Progress.AtStartOfImportingOrphanCommits.getValue();
 
-        for(int i = 0; i < mergeRequestList.size();i++){
-            MergeRequest mergeRequest = mergeRequestList.get(i);
-            progress = startOfProgressRange + (endOfProgressRange-startOfProgressRange) * (i+1)/mergeRequestList.size();
-            analysisRunService.updateProgress(analysisRun, "Importing commits for "+ (i+1) +"/"+mergeRequestList.size() + " merge requests",progress, false);
-            var gitLabCommits = requestScopeGitLabService.getMergeRequestCommits(project.getGitLabProjectId(), mergeRequest.getIid());
-            saveCommitHelper(project, mergeRequest, gitLabCommits, mrCommitShas);
+        for(int i = 0; i < mergeRequests.size();i++){
+            MergeRequest mergeRequest = mergeRequests.get(i);
+            progress = startOfProgressRange + (endOfProgressRange-startOfProgressRange) * (i+1)/mergeRequests.size();
+            analysisRunService.updateProgress(analysisRun, "Importing commits for "+ (i+1) +"/"+mergeRequests.size() + " merge requests",progress, false);
+            var mergeRequestCommits = requestScopeGitLabService.getMergeRequestCommits(project.getGitLabProjectId(), mergeRequest.getIid());
+            saveCommitHelper(project, mergeRequest, mergeRequestCommits, mrCommitShas);
         }
 
-        //Save orphan commits
-        var gitLabCommits = requestScopeGitLabService.getCommits(project.getGitLabProjectId(), startDateTime, endDateTime)
-                                                           .filter(gitLabCommit -> !mrCommitShas.contains(gitLabCommit.getSha()));
+        var orphanCommits = requestScopeGitLabService.getCommits(project.getGitLabProjectId(), startDateTime, endDateTime)
+                                                           .filter(gitLabCommit -> !mrCommitShas.contains(gitLabCommit.getSha()) && gitLabCommit.getParentShas().size() <= 1);
         analysisRunService.updateProgress(analysisRun, "Importing orphan commits", AnalysisRun.Progress.AtStartOfImportingOrphanCommits.getValue(), false);
-        saveCommitHelper(project, null, gitLabCommits, mrCommitShas);
+        saveCommitHelper(project, null, orphanCommits, mrCommitShas);
     }
 
     public void saveCommitHelper(Project project, MergeRequest mergeRequest,Flux<GitLabCommit> gitLabCommits, List<String> mrCommitShas){
@@ -74,6 +71,15 @@ public class CommitService {
         gitLabCommitList.forEach(gitLabCommit -> {
                     Commit commit = commitRepository.findByCommitShaAndProjectId(gitLabCommit.getSha(),project.getId());
                     if(commit != null){return;}
+
+                    // Having no parents means it is either the very first init commit or
+                    // a merge request commit because that endpoint doesn't return parents.
+                    if (gitLabCommit.getParentShas().size() == 0) {
+                        // getting the commit from the gitlab api commit endpoint to make sure it has parent information
+                        gitLabCommit = requestScopeGitLabService.getCommit(project.getGitLabProjectId(), gitLabCommit.getSha()).block();
+                    }
+                    // Having more than one parent makes the commit a merge, skipping merge commits
+                    if (gitLabCommit.getParentShas().size() > 1) {return;}
 
                     saveCommitAuthor(project,gitLabCommit);
 
@@ -206,6 +212,14 @@ public class CommitService {
         return commitRepository.findAllByMergeRequestIdAndDateRangeAndGitManagementUserId(mergeRequestId,gitManagementUserId, startDateTime, endDateTime);
     }
 
+    public List<Commit> getOrphanCommitsInDateRange(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        return commitRepository.findAllOrphanByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
+    }
+
+    public List<Commit> getOrphanCommitsOfGitManagementUserInDateRange(Long projectId, Long gitManagementUserId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        return commitRepository.findOrphanByProjectIdAndGitManagementUserIdAndDateRange(projectId, gitManagementUserId, startDateTime, endDateTime);
+    }
+
     public void setAllSharedMergeRequests(Long projectId){
         List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByProjectId(projectId);
         for(MergeRequest mr : mergeRequests){
@@ -230,9 +244,7 @@ public class CommitService {
     // checks whether supplied gitManagementUser is the same as one stored in MR
     private boolean isMergeRequestShared(MergeRequest mr, GitManagementUser gitManagementUser){
         if(gitManagementUser != null){
-            if(!mr.getGitManagementUser().getId().equals(gitManagementUser.getId())){
-                return true;
-            }
+            return !mr.getGitManagementUser().getId().equals(gitManagementUser.getId());
         }
         return false;
     }

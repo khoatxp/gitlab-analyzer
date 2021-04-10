@@ -4,7 +4,7 @@ import com.eris.gitlabanalyzer.error.GitLabServiceConfigurationException;
 import com.eris.gitlabanalyzer.model.gitlabresponse.*;
 import lombok.Setter;
 import org.springframework.http.HttpHeaders;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -58,7 +58,6 @@ public class GitLabService {
         }
     }
 
-    @Transactional(timeout = 240)
     public Flux<GitLabProject> getProjects() {
         validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
@@ -98,13 +97,31 @@ public class GitLabService {
         return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabMember.class));
     }
 
+    public Flux<GitLabMember> getMembersThatLeftProject(Long projectId) {
+        validateConfiguration();
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/events")
+                .queryParam("action", "left")
+                .queryParam("per_page", 100)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+
+        return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabEvent.class).map(GitLabEvent::getMember));
+    }
+
     public Flux<GitLabMergeRequest> getMergeRequests(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         validateConfiguration();
+
+        var project  = getProject(projectId).block();
+
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests")
                 .queryParam("state", "merged")
-                .queryParam("created_after", startDateTime.toInstant().toString())
-                .queryParam("updated_before", endDateTime.toInstant().toString())
+                .queryParam("target_branch", project.getDefaultBranch())
+                .queryParam("updated_after", startDateTime.toInstant().toString())
+                .queryParam("created_before", endDateTime.toInstant().toString())
                 .queryParam("per_page", 100)
                 .build()
                 .encode()
@@ -244,6 +261,11 @@ public class GitLabService {
     private Flux<ClientResponse> fetchPages(String url) {
         var headersSpec = authorizedGetRequestHeadersSpec(url);
         return headersSpec.exchangeToFlux(response -> {
+            if (!response.statusCode().equals(HttpStatus.OK)) {
+                // now if the response is not 200 it will throw and exception instead of dying
+                // silently and returning a null object
+                return (response.createException()).flux().flatMap(Flux::error);
+            }
             var nextPage = getResponseHeaderNextLink(response);
 
             if (nextPage != null) {
@@ -300,5 +322,20 @@ public class GitLabService {
         }
 
         return relUrls;
+    }
+    public boolean validateAccessToken() {
+        validateConfiguration();
+        String request = "/api/v4/user";
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(request)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+        var headersSpec = authorizedGetRequestHeadersSpec(gitlabUrl);
+        return headersSpec.exchangeToMono(response -> {
+            var isOk = response.statusCode().equals(HttpStatus.OK);
+            return Mono.just(isOk);
+        }).blockOptional().orElse(false);
     }
 }

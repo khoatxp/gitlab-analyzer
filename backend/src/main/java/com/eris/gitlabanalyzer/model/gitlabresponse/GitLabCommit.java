@@ -3,6 +3,7 @@ package com.eris.gitlabanalyzer.model.gitlabresponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @lombok.Getter
 public class GitLabCommit {
@@ -22,6 +23,9 @@ public class GitLabCommit {
 
     @JsonProperty("web_url")
     private String webUrl;
+
+    @JsonProperty("parent_ids")
+    private List<String> parentShas;
 
     public GitLabCommit() { }
 }

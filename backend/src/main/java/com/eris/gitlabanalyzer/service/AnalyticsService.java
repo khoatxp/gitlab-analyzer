@@ -1,6 +1,7 @@
 package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.AnalysisRun;
+import com.eris.gitlabanalyzer.model.MergeRequest;
 import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.User;
 import com.eris.gitlabanalyzer.repository.AnalysisRunRepository;
@@ -61,10 +62,10 @@ public class AnalyticsService {
                 gitManagementUserService.saveGitManagementUserInfo(project);
 
                 analysisRunService.updateProgress(analysisRun,"Importing merge requests for "+project.getNameWithNamespace(),AnalysisRun.Progress.AtStartOfImportingMergeRequests.getValue(), true);
-                mergeRequestService.saveMergeRequestInfo(analysisRun, project, startDateTime, endDateTime);
+                List<MergeRequest> mergeRequests = mergeRequestService.saveMergeRequestInfo(analysisRun, project, startDateTime, endDateTime);
 
                 analysisRunService.updateProgress(analysisRun,"Importing commits for "+project.getNameWithNamespace(),AnalysisRun.Progress.AtStartOfImportingCommits.getValue(), true);
-                commitService.saveCommitInfo(analysisRun, project, startDateTime, endDateTime);
+                commitService.saveCommitInfo(analysisRun, project, mergeRequests, startDateTime, endDateTime);
 
                 analysisRunService.updateProgress(analysisRun,"Importing issues for "+project.getNameWithNamespace(),AnalysisRun.Progress.AtStartOfImportingIssues.getValue(), true);
                 issueService.saveIssueInfo(analysisRun, project, startDateTime, endDateTime);
@@ -73,7 +74,7 @@ public class AnalyticsService {
                 analysisRun.setStatus(AnalysisRun.Status.Completed);
                 analysisRunService.updateProgress(analysisRun,"Analysis done for "+project.getNameWithNamespace(), AnalysisRun.Progress.Done.getValue(), true);
             } catch(Exception e) {
-                System.err.println(e);
+                e.printStackTrace();
                 analysisRun.setStatus(AnalysisRun.Status.Error);
                 analysisRunService.updateProgress(analysisRun,"Error",0.0, true);
             }
