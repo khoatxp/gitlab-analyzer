@@ -4,6 +4,8 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import {Box, Card, Divider, ListSubheader} from "@material-ui/core";
 import formatDate from "../../utils/DateFormatter";
+import {MergeRequest, OrphanCommitMergeRequest} from "../../interfaces/MergeRequest";
+import {Commit} from "../../interfaces/Commit";
 
 type DiffItemListProps = {
     diffItems: DiffItem[]
@@ -13,12 +15,7 @@ type DiffItemListProps = {
     setSelectedIndex: (index: number) => any;
 }
 
-export interface DiffItem {
-    id: string;
-    createdAt: string;
-    authorName: string
-    title: string;
-}
+export type DiffItem = MergeRequest | Commit;
 
 // A dynamic list made to be able to handle both merge request and commit list rendering
 const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIndex, setSelectedIndex}: DiffItemListProps) => {
@@ -49,7 +46,13 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                             >
                                 <ListItemText
                                     primary={diffItem.title}
-                                    secondary={`#${diffItem.id} · opened ${formatDate(diffItem.createdAt)} by ${diffItem.authorName}`}
+                                    secondary={
+                                        diffItem.id == OrphanCommitMergeRequest.id.toString() ?
+                                            OrphanCommitMergeRequest.secondaryText :
+                                            `#${"sha" in diffItem ? diffItem.sha : diffItem.id} · ` +
+                                            (diffItem.mergedAt ? 'Merged ' : 'Created ') +
+                                            `${formatDate(diffItem.mergedAt || diffItem.createdAt)} by ${diffItem.authorName}`
+                                    }
                                 />
                             </ListItem>
                         ))
