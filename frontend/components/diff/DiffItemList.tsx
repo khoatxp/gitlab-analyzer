@@ -48,8 +48,11 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                                 selected={selectedIndex == i}
                             >
                                 <ListItemText
+                                    secondary={'${formatDate(diffItem.createdAt)}'}
+                                />
+                                <ListItemText
                                     primary={diffItem.title}
-                                    secondary={`#${diffItem.id} · opened ${formatDate(diffItem.createdAt)} by ${diffItem.authorName}`}
+                                    secondary={`#${diffItem.id} · opened by ${diffItem.authorName}`}
                                 />
                             </ListItem>
                         ))
