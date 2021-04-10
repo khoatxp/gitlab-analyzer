@@ -3,6 +3,7 @@ import {useRouter} from "next/router";
 import axios, {AxiosResponse} from "axios";
 import ScoreProfile from "../interfaces/ScoreProfile";
 import { makeStyles } from '@material-ui/core/styles';
+import Typography from "@material-ui/core/Typography";
 import Box from '@material-ui/core/Box';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from "@material-ui/core/DialogContent";
@@ -225,12 +226,12 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
     return (
 
         <React.Fragment>
-            <Dialog open={open} onClose={close} fullWidth maxWidth="sm" classes={{paper: classes.popup}} >
+            <Dialog open={open} onClose={close} fullWidth maxWidth="md" classes={{paper: classes.popup}} >
                 <DialogTitle id="edit-dialog-title" style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>{"Score Profile"}</DialogTitle>
                 <DialogContent>
                     <form onSubmit={handleSave}>
                         <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
-                            <Box width={150}>
+                            <Box width={175}>
                                 <AppTextField label="Name" value={name ?? ""} onChange={(e) => setName( e.target.value)} required/>
                             </Box>
                         </div>
@@ -264,8 +265,17 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                 />
                             </Box>
                         </Box>
-                        <DialogTitle id="extension-dialog-title" style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>{"Extensions"}</DialogTitle>
-                        <Box  style={{ display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}} >
+                        <DialogTitle id="extension-dialog-title" style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
+                            <Box style={{ display:"flex", justifyContent:"center"}}>
+                                {"Extensions"}
+                            </Box>
+                            <Box style={{ display:"flex", justifyContent:"center"}}>
+                                <Typography variant="caption">
+                                    <b>Set weights for file extensions, unset file extensions will be given a default weight of 1 (do not include the dot)</b> 
+                                </Typography>
+                            </Box>
+                        </DialogTitle>
+                        <Box  style={{ display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", flexWrap:"wrap"}} >
                             {extensions && extensions.length > 0 ?
                             extensions.map((extension, index: number) => {
                                 return (
@@ -280,7 +290,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                         justifyContent="space-between"
                                         alignItems="center"
                                     >
-                                        <Box marginLeft={1} marginRight={1}>
+                                        <Box marginLeft={1} marginRight={1} width={100}>
                                             
                                             <AppTextField label="extension"
                                             placeholder="Do not include the dot"
@@ -288,7 +298,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                             onChange={(e) => handleExtensionChange(e.target.value ,index)}
                                             />
                                         </Box>
-                                        <Box marginLeft={1} marginRight={1}>
+                                        <Box marginLeft={1} marginRight={1} width={100}>
                                             
                                             <AppTextField label="weight"
                                             value={extension[1] != undefined ? extension[1].toString() : ""}
@@ -311,8 +321,17 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                 <AddCircleIcon style={{ fontSize: "30px", color: "green" }} />
                             </IconButton>
                         </div>
-                        <DialogTitle id="blacklist-dialog-title" style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>{"Ignored Extensions"}</DialogTitle>
-                        <Box  style={{ display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}} >
+                        <DialogTitle id="blacklist-dialog-title" style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
+                            <Box style={{ display:"flex", justifyContent:"center"}}>
+                            {"Ignored Extensions"}
+                            </Box>
+                            <Box style={{ display:"flex", justifyContent:"center"}}>
+                                <Typography variant="caption">
+                                    <b>Set file extensions to be ignored from score computation (do not include the dot)</b> 
+                                </Typography>
+                            </Box>
+                        </DialogTitle>
+                        <Box  style={{ display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", flexwrap:"wrap"}} >
                             {blackList && blackList.length > 0 ?
                             blackList.map((extension, index: number) => {
                                 return (
@@ -327,10 +346,9 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                         justifyContent="space-between"
                                         alignItems="center"
                                     >
-                                        <Box marginLeft={1} marginRight={1}>
+                                        <Box marginLeft={1} marginRight={1} width={100}>
 
                                             <AppTextField label="extension"
-                                            placeholder="Do not include the dot"
                                             value={extension ?? ""}
                                             onChange={(e) => handleBlacklistChange(index, e.target.value)}
                                             />
