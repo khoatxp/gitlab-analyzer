@@ -2,6 +2,7 @@ import {useSnackbar} from "notistack";
 import React, {useEffect, useState} from "react";
 import {AuthContext} from "../components/AuthContext";
 import axios, {AxiosResponse} from "axios";
+import {Typography} from "@material-ui/core";
 
 interface Props {
   id: string | undefined
@@ -32,7 +33,7 @@ const MemberText =  ({id}: Props) => {
     },[id])
 
 
-    return <text>{gitManagementUser}</text>;
+    return <Typography>{gitManagementUser}</Typography>;
 }
 
 export default MemberText;
