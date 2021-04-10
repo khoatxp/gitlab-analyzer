@@ -5,7 +5,6 @@ import com.eris.gitlabanalyzer.model.gitlabresponse.*;
 import lombok.Setter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -323,5 +322,20 @@ public class GitLabService {
         }
 
         return relUrls;
+    }
+    public boolean validateAccessToken() {
+        validateConfiguration();
+        String request = "/api/v4/user";
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(request)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+        var headersSpec = authorizedGetRequestHeadersSpec(gitlabUrl);
+        return headersSpec.exchangeToMono(response -> {
+            var isOk = response.statusCode().equals(HttpStatus.OK);
+            return Mono.just(isOk);
+        }).blockOptional().orElse(false);
     }
 }

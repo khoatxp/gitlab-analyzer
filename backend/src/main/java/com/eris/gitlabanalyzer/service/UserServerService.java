@@ -3,7 +3,7 @@ package com.eris.gitlabanalyzer.service;
 import com.eris.gitlabanalyzer.model.*;
 import com.eris.gitlabanalyzer.repository.ServerRepository;
 import com.eris.gitlabanalyzer.repository.UserServerRepository;
-import com.eris.gitlabanalyzer.viewmodel.UserServerRequestBody;
+import org.jsoup.Jsoup;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,20 +31,25 @@ public class UserServerService {
     }
 
     public UserServer createUserServer(User user, String serverUrl, String accessToken) {
-        Optional<Server> serverByUser = serverRepository.findByServerUrlAndUserId(serverUrl, user.getId());
+        String trimmedUrl = sanitizeUrl(serverUrl);
+        String trimmedToken = trimAndStripTags(accessToken);
+        Optional<Server> serverByUser = serverRepository.findByServerUrlAndUserId(trimmedUrl, user.getId());
         if (serverByUser.isPresent()) {
             throw new IllegalStateException("Server already registered.");
         }
-
-        UserServer userServer = new UserServer(accessToken);
+        GitLabService gitLabService = new GitLabService(trimmedUrl, trimmedToken);
+        if (!gitLabService.validateAccessToken()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Given URL or the access token is not valid.");
+        }
+        UserServer userServer = new UserServer(trimmedToken);
         userServer.setUser(user);
 
-        Optional<Server> ServerByUrl = serverRepository.findByServerUrl(serverUrl);
+        Optional<Server> ServerByUrl = serverRepository.findByServerUrl(trimmedUrl);
         if (ServerByUrl.isPresent()) {
             userServer.setServer(ServerByUrl.get());
         }
         else {
-            var server = serverRepository.save(new Server(serverUrl));
+            var server = serverRepository.save(new Server(trimmedUrl));
             userServer.setServer(server);
         }
         return userServerRepository.save(userServer);
@@ -53,7 +58,14 @@ public class UserServerService {
     public UserServer updateUserServer(User user, Long serverId, String accessToken) {
         var userServer = userServerRepository.findUserServerByUserIdAndServerId(user.getId(), serverId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User server not found."));
-        userServer.setAccessToken(accessToken);
+        var server = userServer.getServer();
+        String serverUrl =  server.getServerUrl();
+        String trimmedToken = trimAndStripTags(accessToken);
+        GitLabService gitLabService = new GitLabService(serverUrl, trimmedToken);
+        if (!gitLabService.validateAccessToken()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Given access token is not valid.");
+        }
+        userServer.setAccessToken(trimmedToken);
         return userServerRepository.save(userServer);
     }
 
@@ -63,4 +75,20 @@ public class UserServerService {
         userServerRepository.delete(userServer);
     }
 
+    public String trimAndStripTags(String string) {
+        if (string == null || string.length() == 0) {
+            return string;
+        }
+        String result = string.trim();
+        result = Jsoup.parse(result).text();
+        return result;
+    }
+
+    public String sanitizeUrl(String url) {
+        String trimmed = trimAndStripTags(url);
+        while(trimmed.endsWith("/")) {
+            trimmed = trimmed.substring(0, trimmed.length() - 1);
+        }
+        return trimmed;
+    }
 }
