@@ -78,6 +78,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
               >
                 <WithStyles(ForwardRef(Tabs))
                   aria-label="nav tabs"
+                  value={0}
                   variant="fullWidth"
                 >
                   <ForwardRef(Tabs)
@@ -97,6 +98,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
                         "vertical": "MuiTabs-vertical",
                       }
                     }
+                    value={0}
                     variant="fullWidth"
                   >
                     <div
@@ -125,7 +127,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
                             key=".0"
                             label={<Memo />}
                             onClick={[Function]}
-                            selected={false}
+                            selected={true}
                             textColor="inherit"
                             value={0}
                           >
@@ -149,23 +151,23 @@ exports[`Project Folder Snapshot serverId 1`] = `
                               indicator={false}
                               label={<Memo />}
                               onClick={[Function]}
-                              selected={false}
+                              selected={true}
                               textColor="inherit"
                               value={0}
                             >
                               <WithStyles(ForwardRef(ButtonBase))
-                                aria-selected={false}
-                                className="MuiTab-root MuiTab-textColorInherit makeStyles-sidebarTitle-4 MuiTab-fullWidth"
+                                aria-selected={true}
+                                className="MuiTab-root MuiTab-textColorInherit makeStyles-sidebarTitle-4 Mui-selected MuiTab-fullWidth"
                                 disabled={false}
                                 focusRipple={true}
                                 onClick={[Function]}
                                 onFocus={[Function]}
                                 role="tab"
-                                tabIndex={-1}
+                                tabIndex={0}
                               >
                                 <ForwardRef(ButtonBase)
-                                  aria-selected={false}
-                                  className="MuiTab-root MuiTab-textColorInherit makeStyles-sidebarTitle-4 MuiTab-fullWidth"
+                                  aria-selected={true}
+                                  className="MuiTab-root MuiTab-textColorInherit makeStyles-sidebarTitle-4 Mui-selected MuiTab-fullWidth"
                                   classes={
                                     Object {
                                       "disabled": "Mui-disabled",
@@ -178,11 +180,11 @@ exports[`Project Folder Snapshot serverId 1`] = `
                                   onClick={[Function]}
                                   onFocus={[Function]}
                                   role="tab"
-                                  tabIndex={-1}
+                                  tabIndex={0}
                                 >
                                   <button
-                                    aria-selected={false}
-                                    className="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit makeStyles-sidebarTitle-4 MuiTab-fullWidth"
+                                    aria-selected={true}
+                                    className="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit makeStyles-sidebarTitle-4 Mui-selected MuiTab-fullWidth"
                                     disabled={false}
                                     onBlur={[Function]}
                                     onClick={[Function]}
@@ -197,7 +199,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
                                     onTouchMove={[Function]}
                                     onTouchStart={[Function]}
                                     role="tab"
-                                    tabIndex={-1}
+                                    tabIndex={0}
                                     type="button"
                                   >
                                     <span
@@ -283,10 +285,10 @@ exports[`Project Folder Snapshot serverId 1`] = `
                             className="MuiTabs-indicator"
                             classes={
                               Object {
-                                "colorPrimary": "PrivateTabIndicator-colorPrimary-9",
-                                "colorSecondary": "PrivateTabIndicator-colorSecondary-10",
-                                "root": "PrivateTabIndicator-root-8",
-                                "vertical": "PrivateTabIndicator-vertical-11",
+                                "colorPrimary": "PrivateTabIndicator-colorPrimary-7",
+                                "colorSecondary": "PrivateTabIndicator-colorSecondary-8",
+                                "root": "PrivateTabIndicator-root-6",
+                                "vertical": "PrivateTabIndicator-vertical-9",
                               }
                             }
                             color="secondary"
@@ -299,7 +301,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
                             }
                           >
                             <span
-                              className="PrivateTabIndicator-root-8 PrivateTabIndicator-colorSecondary-10 MuiTabs-indicator"
+                              className="PrivateTabIndicator-root-6 PrivateTabIndicator-colorSecondary-8 MuiTabs-indicator"
                               style={
                                 Object {
                                   "left": 0,
@@ -322,7 +324,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
         className="makeStyles-sidebar-1 makeStyles-displaySidebar-2"
       >
         <div
-          className="MuiBox-root MuiBox-root-6 makeStyles-sidebar-1 makeStyles-displaySidebar-2"
+          className="MuiBox-root MuiBox-root-10 makeStyles-sidebar-1 makeStyles-displaySidebar-2"
         >
           <WithStyles(WithStyles(ForwardRef(Button)))
             disableRipple={true}
@@ -333,7 +335,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
             <WithStyles(ForwardRef(Button))
               classes={
                 Object {
-                  "root": "WithStyles(ForwardRef(Button))-root-7",
+                  "root": "WithStyles(ForwardRef(Button))-root-11",
                 }
               }
               disableRipple={true}
@@ -364,7 +366,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
                     "outlinedSecondary": "MuiButton-outlinedSecondary",
                     "outlinedSizeLarge": "MuiButton-outlinedSizeLarge",
                     "outlinedSizeSmall": "MuiButton-outlinedSizeSmall",
-                    "root": "MuiButton-root WithStyles(ForwardRef(Button))-root-7",
+                    "root": "MuiButton-root WithStyles(ForwardRef(Button))-root-11",
                     "sizeLarge": "MuiButton-sizeLarge",
                     "sizeSmall": "MuiButton-sizeSmall",
                     "startIcon": "MuiButton-startIcon",
@@ -381,7 +383,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
                 variant="contained"
               >
                 <WithStyles(ForwardRef(ButtonBase))
-                  className="MuiButton-root WithStyles(ForwardRef(Button))-root-7 MuiButton-contained"
+                  className="MuiButton-root WithStyles(ForwardRef(Button))-root-11 MuiButton-contained"
                   component="button"
                   disableRipple={true}
                   disabled={false}
@@ -392,7 +394,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
                   type="button"
                 >
                   <ForwardRef(ButtonBase)
-                    className="MuiButton-root WithStyles(ForwardRef(Button))-root-7 MuiButton-contained"
+                    className="MuiButton-root WithStyles(ForwardRef(Button))-root-11 MuiButton-contained"
                     classes={
                       Object {
                         "disabled": "Mui-disabled",
@@ -410,7 +412,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
                     type="button"
                   >
                     <button
-                      className="MuiButtonBase-root MuiButton-root WithStyles(ForwardRef(Button))-root-7 MuiButton-contained"
+                      className="MuiButtonBase-root MuiButton-root WithStyles(ForwardRef(Button))-root-11 MuiButton-contained"
                       disabled={false}
                       id="memberButton0"
                       onBlur={[Function]}

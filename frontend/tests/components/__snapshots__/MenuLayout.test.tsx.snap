@@ -1545,6 +1545,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                     >
                       <WithStyles(ForwardRef(Tabs))
                         aria-label="nav tabs"
+                        value={0}
                         variant="fullWidth"
                       >
                         <ForwardRef(Tabs)
@@ -1564,6 +1565,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                               "vertical": "MuiTabs-vertical",
                             }
                           }
+                          value={0}
                           variant="fullWidth"
                         >
                           <div
@@ -1592,7 +1594,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                                   key=".0"
                                   label={<Memo />}
                                   onClick={[Function]}
-                                  selected={false}
+                                  selected={true}
                                   textColor="inherit"
                                   value={0}
                                 >
@@ -1616,23 +1618,23 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                                     indicator={false}
                                     label={<Memo />}
                                     onClick={[Function]}
-                                    selected={false}
+                                    selected={true}
                                     textColor="inherit"
                                     value={0}
                                   >
                                     <WithStyles(ForwardRef(ButtonBase))
-                                      aria-selected={false}
-                                      className="MuiTab-root MuiTab-textColorInherit makeStyles-sidebarTitle-12 MuiTab-fullWidth"
+                                      aria-selected={true}
+                                      className="MuiTab-root MuiTab-textColorInherit makeStyles-sidebarTitle-12 Mui-selected MuiTab-fullWidth"
                                       disabled={false}
                                       focusRipple={true}
                                       onClick={[Function]}
                                       onFocus={[Function]}
                                       role="tab"
-                                      tabIndex={-1}
+                                      tabIndex={0}
                                     >
                                       <ForwardRef(ButtonBase)
-                                        aria-selected={false}
-                                        className="MuiTab-root MuiTab-textColorInherit makeStyles-sidebarTitle-12 MuiTab-fullWidth"
+                                        aria-selected={true}
+                                        className="MuiTab-root MuiTab-textColorInherit makeStyles-sidebarTitle-12 Mui-selected MuiTab-fullWidth"
                                         classes={
                                           Object {
                                             "disabled": "Mui-disabled",
@@ -1645,11 +1647,11 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                                         onClick={[Function]}
                                         onFocus={[Function]}
                                         role="tab"
-                                        tabIndex={-1}
+                                        tabIndex={0}
                                       >
                                         <button
-                                          aria-selected={false}
-                                          className="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit makeStyles-sidebarTitle-12 MuiTab-fullWidth"
+                                          aria-selected={true}
+                                          className="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit makeStyles-sidebarTitle-12 Mui-selected MuiTab-fullWidth"
                                           disabled={false}
                                           onBlur={[Function]}
                                           onClick={[Function]}
@@ -1664,7 +1666,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                                           onTouchMove={[Function]}
                                           onTouchStart={[Function]}
                                           role="tab"
-                                          tabIndex={-1}
+                                          tabIndex={0}
                                           type="button"
                                         >
                                           <span
@@ -1750,10 +1752,10 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                                   className="MuiTabs-indicator"
                                   classes={
                                     Object {
-                                      "colorPrimary": "PrivateTabIndicator-colorPrimary-19",
-                                      "colorSecondary": "PrivateTabIndicator-colorSecondary-20",
-                                      "root": "PrivateTabIndicator-root-18",
-                                      "vertical": "PrivateTabIndicator-vertical-21",
+                                      "colorPrimary": "PrivateTabIndicator-colorPrimary-15",
+                                      "colorSecondary": "PrivateTabIndicator-colorSecondary-16",
+                                      "root": "PrivateTabIndicator-root-14",
+                                      "vertical": "PrivateTabIndicator-vertical-17",
                                     }
                                   }
                                   color="secondary"
@@ -1766,7 +1768,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                                   }
                                 >
                                   <span
-                                    className="PrivateTabIndicator-root-18 PrivateTabIndicator-colorSecondary-20 MuiTabs-indicator"
+                                    className="PrivateTabIndicator-root-14 PrivateTabIndicator-colorSecondary-16 MuiTabs-indicator"
                                     style={
                                       Object {
                                         "left": 0,
@@ -1789,7 +1791,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
               className="makeStyles-sidebar-9 makeStyles-displaySidebar-10"
             >
               <div
-                className="MuiBox-root MuiBox-root-14 makeStyles-sidebar-9 makeStyles-displaySidebar-10"
+                className="MuiBox-root MuiBox-root-18 makeStyles-sidebar-9 makeStyles-displaySidebar-10"
               >
                 <WithStyles(WithStyles(ForwardRef(Button)))
                   disableRipple={true}
@@ -1800,7 +1802,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                   <WithStyles(ForwardRef(Button))
                     classes={
                       Object {
-                        "root": "WithStyles(ForwardRef(Button))-root-15",
+                        "root": "WithStyles(ForwardRef(Button))-root-19",
                       }
                     }
                     disableRipple={true}
@@ -1831,7 +1833,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                           "outlinedSecondary": "MuiButton-outlinedSecondary",
                           "outlinedSizeLarge": "MuiButton-outlinedSizeLarge",
                           "outlinedSizeSmall": "MuiButton-outlinedSizeSmall",
-                          "root": "MuiButton-root WithStyles(ForwardRef(Button))-root-15",
+                          "root": "MuiButton-root WithStyles(ForwardRef(Button))-root-19",
                           "sizeLarge": "MuiButton-sizeLarge",
                           "sizeSmall": "MuiButton-sizeSmall",
                           "startIcon": "MuiButton-startIcon",
@@ -1848,7 +1850,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                       variant="contained"
                     >
                       <WithStyles(ForwardRef(ButtonBase))
-                        className="MuiButton-root WithStyles(ForwardRef(Button))-root-15 MuiButton-contained"
+                        className="MuiButton-root WithStyles(ForwardRef(Button))-root-19 MuiButton-contained"
                         component="button"
                         disableRipple={true}
                         disabled={false}
@@ -1859,7 +1861,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                         type="button"
                       >
                         <ForwardRef(ButtonBase)
-                          className="MuiButton-root WithStyles(ForwardRef(Button))-root-15 MuiButton-contained"
+                          className="MuiButton-root WithStyles(ForwardRef(Button))-root-19 MuiButton-contained"
                           classes={
                             Object {
                               "disabled": "Mui-disabled",
@@ -1877,7 +1879,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                           type="button"
                         >
                           <button
-                            className="MuiButtonBase-root MuiButton-root WithStyles(ForwardRef(Button))-root-15 MuiButton-contained"
+                            className="MuiButtonBase-root MuiButton-root WithStyles(ForwardRef(Button))-root-19 MuiButton-contained"
                             disabled={false}
                             id="memberButton0"
                             onBlur={[Function]}
@@ -1915,13 +1917,13 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
         width="100%"
       >
         <div
-          className="MuiBox-root MuiBox-root-16"
+          className="MuiBox-root MuiBox-root-20"
         >
           <NavTabs
             tabSelected={0}
           >
             <div
-              className="makeStyles-root-17"
+              className="makeStyles-root-21"
             >
               <WithStyles(ForwardRef(AppBar))
                 position="static"
@@ -2405,10 +2407,10 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                                     className="MuiTabs-indicator"
                                     classes={
                                       Object {
-                                        "colorPrimary": "PrivateTabIndicator-colorPrimary-19",
-                                        "colorSecondary": "PrivateTabIndicator-colorSecondary-20",
-                                        "root": "PrivateTabIndicator-root-18",
-                                        "vertical": "PrivateTabIndicator-vertical-21",
+                                        "colorPrimary": "PrivateTabIndicator-colorPrimary-15",
+                                        "colorSecondary": "PrivateTabIndicator-colorSecondary-16",
+                                        "root": "PrivateTabIndicator-root-14",
+                                        "vertical": "PrivateTabIndicator-vertical-17",
                                       }
                                     }
                                     color="secondary"
@@ -2421,7 +2423,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                                     }
                                   >
                                     <span
-                                      className="PrivateTabIndicator-root-18 PrivateTabIndicator-colorSecondary-20 MuiTabs-indicator"
+                                      className="PrivateTabIndicator-root-14 PrivateTabIndicator-colorSecondary-16 MuiTabs-indicator"
                                       style={
                                         Object {
                                           "left": 0,
