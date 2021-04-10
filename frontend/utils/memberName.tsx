@@ -32,7 +32,7 @@ const MemberText =  ({id}: Props) => {
     },[id])
 
 
-    return <text>{gitManagementUser}</text>;
+    return gitManagementUser;
 }
 
 export default MemberText;
