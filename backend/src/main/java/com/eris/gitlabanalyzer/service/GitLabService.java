@@ -336,6 +336,6 @@ public class GitLabService {
         return headersSpec.exchangeToMono(response -> {
             var isOk = response.statusCode().equals(HttpStatus.OK);
             return Mono.just(isOk);
-        }).block();
+        }).blockOptional().orElse(false);
     }
 }
