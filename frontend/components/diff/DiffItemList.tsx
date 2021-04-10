@@ -49,8 +49,9 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                                     secondary={
                                         diffItem.id == OrphanCommitMergeRequest.id.toString() ?
                                             OrphanCommitMergeRequest.secondaryText :
-                                            `#${"sha" in diffItem ? `${diffItem.sha} · Created` : `${diffItem.id} · Opened`} ` +
-                                            `${formatDate(diffItem.createdAt)} by ${diffItem.authorName}`
+                                            `#${"sha" in diffItem ? diffItem.sha : diffItem.id} · ` +
+                                            (diffItem.mergedAt ? 'Merged ' : 'Created ') +
+                                            `${formatDate(diffItem.mergedAt || diffItem.createdAt)} by ${diffItem.authorName}`
                                     }
                                 />
                             </ListItem>

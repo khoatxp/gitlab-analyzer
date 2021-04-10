@@ -1,10 +1,11 @@
 export interface MergeRequest {
     id: number;
     iid: number;
-    authorUsername:string;
+    authorUsername: string;
     authorName: string;
     title: string;
     createdAt: string;
+    mergedAt: string;
     webUrl: string;
 }
 
@@ -21,4 +22,4 @@ export const OrphanCommitMergeRequest = {
     author: {name: ''},
     title: 'Orphan Commits',
     secondaryText: 'Commits pushed directly to the main branch'
-} as unknown as MergeRequest & { secondaryText: string }
+} as unknown as MergeRequest & { secondaryText: string };

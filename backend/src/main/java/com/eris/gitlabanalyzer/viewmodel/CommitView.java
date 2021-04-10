@@ -14,6 +14,7 @@ public class CommitView {
     private final String title;
     private final String webUrl;
     private final OffsetDateTime createdAt;
+    private final OffsetDateTime mergedAt;
     private final String authorEmail;
     private final String authorName;
 
@@ -24,6 +25,7 @@ public class CommitView {
                 commit.getTitle(),
                 commit.getWebUrl(),
                 commit.getCreatedAt(),
+                commit.getMergedAt(),
                 commit.getAuthorEmail(),
                 commit.getAuthorName()
         );
