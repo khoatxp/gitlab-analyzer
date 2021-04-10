@@ -25,7 +25,7 @@ public class ScoreProfileController {
     @GetMapping
     public List<ScoreProfile> getScoreProfiles(Principal principal){
         var user = authService.getLoggedInUser(principal);
-        return scoreProfileService.getScoreProfiles(user);
+        return scoreProfileService.getUserScoreProfiles(user);
     }
 
     @GetMapping("/{id}")

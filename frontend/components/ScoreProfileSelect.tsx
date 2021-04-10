@@ -83,6 +83,7 @@ const ScoreProfileSelector = ({onScoreProfileSelect}:Props) => {
             axios
                 .get(`${process.env.NEXT_PUBLIC_API_URL}/scoreprofile`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
+                    setIconVisible(false);
                     setSelectOpen(false);
                     setProfiles(resp.data);
                 }).catch(() => {
