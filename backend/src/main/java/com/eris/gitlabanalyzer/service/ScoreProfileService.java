@@ -22,7 +22,7 @@ public class ScoreProfileService {
 
 
     public ScoreProfile getScoreProfile(User user, Long id) {
-        var userScoreProfiles = this.getScoreProfiles(user);
+        var userScoreProfiles = this.getUserScoreProfiles(user);
         Optional<ScoreProfile> scoreProfile = userScoreProfiles.stream().filter(s -> s.getId() == id).findFirst();
         if (scoreProfile.isPresent()){
             return scoreProfile.get();
