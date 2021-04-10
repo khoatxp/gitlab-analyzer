@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {makeStyles} from "@material-ui/core/styles";
-import {Box, Button, Icon } from "@material-ui/core";
+import {Box} from "@material-ui/core";
 import {useRouter} from "next/router";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {AuthContext} from "../../AuthContext";
@@ -88,6 +88,7 @@ const MenuSideBar = () => {
                 <Tabs
                     variant="fullWidth"
                     aria-label="nav tabs"
+                    value={0}
                 >
                     <Tab
                         className={classes.sidebarTitle}
@@ -96,7 +97,7 @@ const MenuSideBar = () => {
                     />
                 </Tabs>
             </AppBar>
-            <Box className={`${classes.sidebar} ${sidebarState === true && classes.displaySidebar}`} >
+            <Box className={`${classes.sidebar} ${sidebarState && classes.displaySidebar}`} >
                 <MenuButton variant="contained" id={'memberButton0'} disableRipple onClick={() => handleClick(0)}>
                     Everyone
                 </MenuButton>
