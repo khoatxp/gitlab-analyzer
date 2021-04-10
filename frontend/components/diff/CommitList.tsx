@@ -14,16 +14,6 @@ const CommitList = ({commits, handleSelectCommit}: CommitListProps) => {
         setSelectedIndex(-1);
     }, [commits])
 
-    const diffItems = commits.map((commit) => {
-        let diffItem: DiffItem = {
-            id: commit.id,
-            createdAt: commit.createdAt,
-            authorName: commit.authorName,
-            title: commit.title,
-        }
-        return diffItem;
-    });
-
     const handleSelectDiffItem = (diffItem: DiffItem) => {
         const commit = commits.find((commit) => {
             return commit.id == diffItem.id;
@@ -36,7 +26,7 @@ const CommitList = ({commits, handleSelectCommit}: CommitListProps) => {
 
     return (
         <DiffItemList
-            diffItems={diffItems}
+            diffItems={commits}
             diffItemType="Commit"
             handleSelectDiffItem={handleSelectDiffItem}
             selectedIndex={selectedIndex}

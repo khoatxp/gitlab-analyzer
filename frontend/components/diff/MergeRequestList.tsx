@@ -10,16 +10,6 @@ type MergeRequestListProps = {
 const MergeRequestList = ({mergeRequests, handleSelectMergeRequest}: MergeRequestListProps) => {
     const [selectedIndex, setSelectedIndex] = useState<number>(-1); // Start with invalid index so nothing is selected
 
-    const diffItems = mergeRequests.map((mergeRequest) => {
-        let diffItem: DiffItem = {
-            id: mergeRequest.id.toString(),
-            createdAt: mergeRequest.createdAt,
-            authorName: mergeRequest.authorName,
-            title: mergeRequest.title,
-        }
-        return diffItem;
-    });
-
     const handleSelectDiffItem = (diffItem: DiffItem) => {
         const mergeRequest = mergeRequests.find((mergeRequest) => {
             return mergeRequest.id.toString() == diffItem.id;
@@ -32,7 +22,7 @@ const MergeRequestList = ({mergeRequests, handleSelectMergeRequest}: MergeReques
 
     return (
         <DiffItemList
-            diffItems={diffItems}
+            diffItems={mergeRequests}
             diffItemType="Merge Request"
             handleSelectDiffItem={handleSelectDiffItem}
             selectedIndex={selectedIndex}
