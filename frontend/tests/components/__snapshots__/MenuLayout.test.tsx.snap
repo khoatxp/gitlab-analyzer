@@ -1470,132 +1470,444 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
     >
       <MenuSideBar>
         <Styled(MuiBox)
-          alignItems="center"
-          className="makeStyles-background-9"
-          display="flex"
-          flexDirection="column"
-          height="auto"
-          justifyContent="flex-start"
-          width="16vw"
+          width="16%"
         >
           <div
-            className="MuiBox-root MuiBox-root-10 makeStyles-background-9"
+            className="MuiBox-root MuiBox-root-13"
           >
-            <WithStyles(WithStyles(ForwardRef(Button)))
-              disableRipple={true}
-              id="memberButton0"
-              onClick={[Function]}
-              variant="contained"
+            <WithStyles(ForwardRef(AppBar))
+              position="static"
             >
-              <WithStyles(ForwardRef(Button))
+              <ForwardRef(AppBar)
                 classes={
                   Object {
-                    "root": "WithStyles(ForwardRef(Button))-root-11",
+                    "colorDefault": "MuiAppBar-colorDefault",
+                    "colorInherit": "MuiAppBar-colorInherit",
+                    "colorPrimary": "MuiAppBar-colorPrimary",
+                    "colorSecondary": "MuiAppBar-colorSecondary",
+                    "colorTransparent": "MuiAppBar-colorTransparent",
+                    "positionAbsolute": "MuiAppBar-positionAbsolute",
+                    "positionFixed": "MuiAppBar-positionFixed",
+                    "positionRelative": "MuiAppBar-positionRelative",
+                    "positionStatic": "MuiAppBar-positionStatic",
+                    "positionSticky": "MuiAppBar-positionSticky",
+                    "root": "MuiAppBar-root",
                   }
                 }
-                disableRipple={true}
-                id="memberButton0"
-                onClick={[Function]}
-                variant="contained"
+                position="static"
               >
-                <ForwardRef(Button)
-                  classes={
-                    Object {
-                      "colorInherit": "MuiButton-colorInherit",
-                      "contained": "MuiButton-contained",
-                      "containedPrimary": "MuiButton-containedPrimary",
-                      "containedSecondary": "MuiButton-containedSecondary",
-                      "containedSizeLarge": "MuiButton-containedSizeLarge",
-                      "containedSizeSmall": "MuiButton-containedSizeSmall",
-                      "disableElevation": "MuiButton-disableElevation",
-                      "disabled": "Mui-disabled",
-                      "endIcon": "MuiButton-endIcon",
-                      "focusVisible": "Mui-focusVisible",
-                      "fullWidth": "MuiButton-fullWidth",
-                      "iconSizeLarge": "MuiButton-iconSizeLarge",
-                      "iconSizeMedium": "MuiButton-iconSizeMedium",
-                      "iconSizeSmall": "MuiButton-iconSizeSmall",
-                      "label": "MuiButton-label",
-                      "outlined": "MuiButton-outlined",
-                      "outlinedPrimary": "MuiButton-outlinedPrimary",
-                      "outlinedSecondary": "MuiButton-outlinedSecondary",
-                      "outlinedSizeLarge": "MuiButton-outlinedSizeLarge",
-                      "outlinedSizeSmall": "MuiButton-outlinedSizeSmall",
-                      "root": "MuiButton-root WithStyles(ForwardRef(Button))-root-11",
-                      "sizeLarge": "MuiButton-sizeLarge",
-                      "sizeSmall": "MuiButton-sizeSmall",
-                      "startIcon": "MuiButton-startIcon",
-                      "text": "MuiButton-text",
-                      "textPrimary": "MuiButton-textPrimary",
-                      "textSecondary": "MuiButton-textSecondary",
-                      "textSizeLarge": "MuiButton-textSizeLarge",
-                      "textSizeSmall": "MuiButton-textSizeSmall",
+                <WithStyles(ForwardRef(Paper))
+                  className="MuiAppBar-root MuiAppBar-positionStatic MuiAppBar-colorPrimary"
+                  component="header"
+                  elevation={4}
+                  square={true}
+                >
+                  <ForwardRef(Paper)
+                    className="MuiAppBar-root MuiAppBar-positionStatic MuiAppBar-colorPrimary"
+                    classes={
+                      Object {
+                        "elevation0": "MuiPaper-elevation0",
+                        "elevation1": "MuiPaper-elevation1",
+                        "elevation10": "MuiPaper-elevation10",
+                        "elevation11": "MuiPaper-elevation11",
+                        "elevation12": "MuiPaper-elevation12",
+                        "elevation13": "MuiPaper-elevation13",
+                        "elevation14": "MuiPaper-elevation14",
+                        "elevation15": "MuiPaper-elevation15",
+                        "elevation16": "MuiPaper-elevation16",
+                        "elevation17": "MuiPaper-elevation17",
+                        "elevation18": "MuiPaper-elevation18",
+                        "elevation19": "MuiPaper-elevation19",
+                        "elevation2": "MuiPaper-elevation2",
+                        "elevation20": "MuiPaper-elevation20",
+                        "elevation21": "MuiPaper-elevation21",
+                        "elevation22": "MuiPaper-elevation22",
+                        "elevation23": "MuiPaper-elevation23",
+                        "elevation24": "MuiPaper-elevation24",
+                        "elevation3": "MuiPaper-elevation3",
+                        "elevation4": "MuiPaper-elevation4",
+                        "elevation5": "MuiPaper-elevation5",
+                        "elevation6": "MuiPaper-elevation6",
+                        "elevation7": "MuiPaper-elevation7",
+                        "elevation8": "MuiPaper-elevation8",
+                        "elevation9": "MuiPaper-elevation9",
+                        "outlined": "MuiPaper-outlined",
+                        "root": "MuiPaper-root",
+                        "rounded": "MuiPaper-rounded",
+                      }
                     }
-                  }
+                    component="header"
+                    elevation={4}
+                    square={true}
+                  >
+                    <header
+                      className="MuiPaper-root MuiAppBar-root MuiAppBar-positionStatic MuiAppBar-colorPrimary MuiPaper-elevation4"
+                    >
+                      <WithStyles(ForwardRef(Tabs))
+                        aria-label="nav tabs"
+                        variant="fullWidth"
+                      >
+                        <ForwardRef(Tabs)
+                          aria-label="nav tabs"
+                          classes={
+                            Object {
+                              "centered": "MuiTabs-centered",
+                              "fixed": "MuiTabs-fixed",
+                              "flexContainer": "MuiTabs-flexContainer",
+                              "flexContainerVertical": "MuiTabs-flexContainerVertical",
+                              "indicator": "MuiTabs-indicator",
+                              "root": "MuiTabs-root",
+                              "scrollButtons": "MuiTabs-scrollButtons",
+                              "scrollButtonsDesktop": "MuiTabs-scrollButtonsDesktop",
+                              "scrollable": "MuiTabs-scrollable",
+                              "scroller": "MuiTabs-scroller",
+                              "vertical": "MuiTabs-vertical",
+                            }
+                          }
+                          variant="fullWidth"
+                        >
+                          <div
+                            className="MuiTabs-root"
+                          >
+                            <div
+                              className="MuiTabs-scroller MuiTabs-fixed"
+                              onScroll={[Function]}
+                              style={
+                                Object {
+                                  "marginBottom": null,
+                                  "overflow": "hidden",
+                                }
+                              }
+                            >
+                              <div
+                                aria-label="nav tabs"
+                                className="MuiTabs-flexContainer"
+                                onKeyDown={[Function]}
+                                role="tablist"
+                              >
+                                <WithStyles(ForwardRef(Tab))
+                                  className="makeStyles-sidebarTitle-12"
+                                  fullWidth={true}
+                                  indicator={false}
+                                  key=".0"
+                                  label={<Memo />}
+                                  onClick={[Function]}
+                                  selected={false}
+                                  textColor="inherit"
+                                  value={0}
+                                >
+                                  <ForwardRef(Tab)
+                                    className="makeStyles-sidebarTitle-12"
+                                    classes={
+                                      Object {
+                                        "disabled": "Mui-disabled",
+                                        "fullWidth": "MuiTab-fullWidth",
+                                        "labelIcon": "MuiTab-labelIcon",
+                                        "root": "MuiTab-root",
+                                        "selected": "Mui-selected",
+                                        "textColorInherit": "MuiTab-textColorInherit",
+                                        "textColorPrimary": "MuiTab-textColorPrimary",
+                                        "textColorSecondary": "MuiTab-textColorSecondary",
+                                        "wrapped": "MuiTab-wrapped",
+                                        "wrapper": "MuiTab-wrapper",
+                                      }
+                                    }
+                                    fullWidth={true}
+                                    indicator={false}
+                                    label={<Memo />}
+                                    onClick={[Function]}
+                                    selected={false}
+                                    textColor="inherit"
+                                    value={0}
+                                  >
+                                    <WithStyles(ForwardRef(ButtonBase))
+                                      aria-selected={false}
+                                      className="MuiTab-root MuiTab-textColorInherit makeStyles-sidebarTitle-12 MuiTab-fullWidth"
+                                      disabled={false}
+                                      focusRipple={true}
+                                      onClick={[Function]}
+                                      onFocus={[Function]}
+                                      role="tab"
+                                      tabIndex={-1}
+                                    >
+                                      <ForwardRef(ButtonBase)
+                                        aria-selected={false}
+                                        className="MuiTab-root MuiTab-textColorInherit makeStyles-sidebarTitle-12 MuiTab-fullWidth"
+                                        classes={
+                                          Object {
+                                            "disabled": "Mui-disabled",
+                                            "focusVisible": "Mui-focusVisible",
+                                            "root": "MuiButtonBase-root",
+                                          }
+                                        }
+                                        disabled={false}
+                                        focusRipple={true}
+                                        onClick={[Function]}
+                                        onFocus={[Function]}
+                                        role="tab"
+                                        tabIndex={-1}
+                                      >
+                                        <button
+                                          aria-selected={false}
+                                          className="MuiButtonBase-root MuiTab-root MuiTab-textColorInherit makeStyles-sidebarTitle-12 MuiTab-fullWidth"
+                                          disabled={false}
+                                          onBlur={[Function]}
+                                          onClick={[Function]}
+                                          onDragLeave={[Function]}
+                                          onFocus={[Function]}
+                                          onKeyDown={[Function]}
+                                          onKeyUp={[Function]}
+                                          onMouseDown={[Function]}
+                                          onMouseLeave={[Function]}
+                                          onMouseUp={[Function]}
+                                          onTouchEnd={[Function]}
+                                          onTouchMove={[Function]}
+                                          onTouchStart={[Function]}
+                                          role="tab"
+                                          tabIndex={-1}
+                                          type="button"
+                                        >
+                                          <span
+                                            className="MuiTab-wrapper"
+                                          >
+                                            <ForwardRef(MenuOpenIcon)>
+                                              <WithStyles(ForwardRef(SvgIcon))>
+                                                <ForwardRef(SvgIcon)
+                                                  classes={
+                                                    Object {
+                                                      "colorAction": "MuiSvgIcon-colorAction",
+                                                      "colorDisabled": "MuiSvgIcon-colorDisabled",
+                                                      "colorError": "MuiSvgIcon-colorError",
+                                                      "colorPrimary": "MuiSvgIcon-colorPrimary",
+                                                      "colorSecondary": "MuiSvgIcon-colorSecondary",
+                                                      "fontSizeInherit": "MuiSvgIcon-fontSizeInherit",
+                                                      "fontSizeLarge": "MuiSvgIcon-fontSizeLarge",
+                                                      "fontSizeSmall": "MuiSvgIcon-fontSizeSmall",
+                                                      "root": "MuiSvgIcon-root",
+                                                    }
+                                                  }
+                                                >
+                                                  <svg
+                                                    aria-hidden={true}
+                                                    className="MuiSvgIcon-root"
+                                                    focusable="false"
+                                                    viewBox="0 0 24 24"
+                                                  >
+                                                    <path
+                                                      d="M3 18h13v-2H3v2zm0-5h10v-2H3v2zm0-7v2h13V6H3zm18 9.59L17.42 12 21 8.41 19.59 7l-5 5 5 5L21 15.59z"
+                                                    />
+                                                  </svg>
+                                                </ForwardRef(SvgIcon)>
+                                              </WithStyles(ForwardRef(SvgIcon))>
+                                            </ForwardRef(MenuOpenIcon)>
+                                          </span>
+                                          <WithStyles(memo)
+                                            center={false}
+                                          >
+                                            <ForwardRef(TouchRipple)
+                                              center={false}
+                                              classes={
+                                                Object {
+                                                  "child": "MuiTouchRipple-child",
+                                                  "childLeaving": "MuiTouchRipple-childLeaving",
+                                                  "childPulsate": "MuiTouchRipple-childPulsate",
+                                                  "ripple": "MuiTouchRipple-ripple",
+                                                  "ripplePulsate": "MuiTouchRipple-ripplePulsate",
+                                                  "rippleVisible": "MuiTouchRipple-rippleVisible",
+                                                  "root": "MuiTouchRipple-root",
+                                                }
+                                              }
+                                            >
+                                              <span
+                                                className="MuiTouchRipple-root"
+                                              >
+                                                <TransitionGroup
+                                                  childFactory={[Function]}
+                                                  component={null}
+                                                  exit={true}
+                                                />
+                                              </span>
+                                            </ForwardRef(TouchRipple)>
+                                          </WithStyles(memo)>
+                                        </button>
+                                      </ForwardRef(ButtonBase)>
+                                    </WithStyles(ForwardRef(ButtonBase))>
+                                  </ForwardRef(Tab)>
+                                </WithStyles(ForwardRef(Tab))>
+                              </div>
+                              <WithStyles(ForwardRef(TabIndicator))
+                                className="MuiTabs-indicator"
+                                color="secondary"
+                                orientation="horizontal"
+                                style={
+                                  Object {
+                                    "left": 0,
+                                    "width": 0,
+                                  }
+                                }
+                              >
+                                <ForwardRef(TabIndicator)
+                                  className="MuiTabs-indicator"
+                                  classes={
+                                    Object {
+                                      "colorPrimary": "PrivateTabIndicator-colorPrimary-19",
+                                      "colorSecondary": "PrivateTabIndicator-colorSecondary-20",
+                                      "root": "PrivateTabIndicator-root-18",
+                                      "vertical": "PrivateTabIndicator-vertical-21",
+                                    }
+                                  }
+                                  color="secondary"
+                                  orientation="horizontal"
+                                  style={
+                                    Object {
+                                      "left": 0,
+                                      "width": 0,
+                                    }
+                                  }
+                                >
+                                  <span
+                                    className="PrivateTabIndicator-root-18 PrivateTabIndicator-colorSecondary-20 MuiTabs-indicator"
+                                    style={
+                                      Object {
+                                        "left": 0,
+                                        "width": 0,
+                                      }
+                                    }
+                                  />
+                                </ForwardRef(TabIndicator)>
+                              </WithStyles(ForwardRef(TabIndicator))>
+                            </div>
+                          </div>
+                        </ForwardRef(Tabs)>
+                      </WithStyles(ForwardRef(Tabs))>
+                    </header>
+                  </ForwardRef(Paper)>
+                </WithStyles(ForwardRef(Paper))>
+              </ForwardRef(AppBar)>
+            </WithStyles(ForwardRef(AppBar))>
+            <Styled(MuiBox)
+              className="makeStyles-sidebar-9 makeStyles-displaySidebar-10"
+            >
+              <div
+                className="MuiBox-root MuiBox-root-14 makeStyles-sidebar-9 makeStyles-displaySidebar-10"
+              >
+                <WithStyles(WithStyles(ForwardRef(Button)))
                   disableRipple={true}
                   id="memberButton0"
                   onClick={[Function]}
                   variant="contained"
                 >
-                  <WithStyles(ForwardRef(ButtonBase))
-                    className="MuiButton-root WithStyles(ForwardRef(Button))-root-11 MuiButton-contained"
-                    component="button"
+                  <WithStyles(ForwardRef(Button))
+                    classes={
+                      Object {
+                        "root": "WithStyles(ForwardRef(Button))-root-15",
+                      }
+                    }
                     disableRipple={true}
-                    disabled={false}
-                    focusRipple={true}
-                    focusVisibleClassName="Mui-focusVisible"
                     id="memberButton0"
                     onClick={[Function]}
-                    type="button"
+                    variant="contained"
                   >
-                    <ForwardRef(ButtonBase)
-                      className="MuiButton-root WithStyles(ForwardRef(Button))-root-11 MuiButton-contained"
+                    <ForwardRef(Button)
                       classes={
                         Object {
+                          "colorInherit": "MuiButton-colorInherit",
+                          "contained": "MuiButton-contained",
+                          "containedPrimary": "MuiButton-containedPrimary",
+                          "containedSecondary": "MuiButton-containedSecondary",
+                          "containedSizeLarge": "MuiButton-containedSizeLarge",
+                          "containedSizeSmall": "MuiButton-containedSizeSmall",
+                          "disableElevation": "MuiButton-disableElevation",
                           "disabled": "Mui-disabled",
+                          "endIcon": "MuiButton-endIcon",
                           "focusVisible": "Mui-focusVisible",
-                          "root": "MuiButtonBase-root",
+                          "fullWidth": "MuiButton-fullWidth",
+                          "iconSizeLarge": "MuiButton-iconSizeLarge",
+                          "iconSizeMedium": "MuiButton-iconSizeMedium",
+                          "iconSizeSmall": "MuiButton-iconSizeSmall",
+                          "label": "MuiButton-label",
+                          "outlined": "MuiButton-outlined",
+                          "outlinedPrimary": "MuiButton-outlinedPrimary",
+                          "outlinedSecondary": "MuiButton-outlinedSecondary",
+                          "outlinedSizeLarge": "MuiButton-outlinedSizeLarge",
+                          "outlinedSizeSmall": "MuiButton-outlinedSizeSmall",
+                          "root": "MuiButton-root WithStyles(ForwardRef(Button))-root-15",
+                          "sizeLarge": "MuiButton-sizeLarge",
+                          "sizeSmall": "MuiButton-sizeSmall",
+                          "startIcon": "MuiButton-startIcon",
+                          "text": "MuiButton-text",
+                          "textPrimary": "MuiButton-textPrimary",
+                          "textSecondary": "MuiButton-textSecondary",
+                          "textSizeLarge": "MuiButton-textSizeLarge",
+                          "textSizeSmall": "MuiButton-textSizeSmall",
                         }
                       }
-                      component="button"
                       disableRipple={true}
-                      disabled={false}
-                      focusRipple={true}
-                      focusVisibleClassName="Mui-focusVisible"
                       id="memberButton0"
                       onClick={[Function]}
-                      type="button"
+                      variant="contained"
                     >
-                      <button
-                        className="MuiButtonBase-root MuiButton-root WithStyles(ForwardRef(Button))-root-11 MuiButton-contained"
+                      <WithStyles(ForwardRef(ButtonBase))
+                        className="MuiButton-root WithStyles(ForwardRef(Button))-root-15 MuiButton-contained"
+                        component="button"
+                        disableRipple={true}
                         disabled={false}
+                        focusRipple={true}
+                        focusVisibleClassName="Mui-focusVisible"
                         id="memberButton0"
-                        onBlur={[Function]}
                         onClick={[Function]}
-                        onDragLeave={[Function]}
-                        onFocus={[Function]}
-                        onKeyDown={[Function]}
-                        onKeyUp={[Function]}
-                        onMouseDown={[Function]}
-                        onMouseLeave={[Function]}
-                        onMouseUp={[Function]}
-                        onTouchEnd={[Function]}
-                        onTouchMove={[Function]}
-                        onTouchStart={[Function]}
-                        tabIndex={0}
                         type="button"
                       >
-                        <span
-                          className="MuiButton-label"
+                        <ForwardRef(ButtonBase)
+                          className="MuiButton-root WithStyles(ForwardRef(Button))-root-15 MuiButton-contained"
+                          classes={
+                            Object {
+                              "disabled": "Mui-disabled",
+                              "focusVisible": "Mui-focusVisible",
+                              "root": "MuiButtonBase-root",
+                            }
+                          }
+                          component="button"
+                          disableRipple={true}
+                          disabled={false}
+                          focusRipple={true}
+                          focusVisibleClassName="Mui-focusVisible"
+                          id="memberButton0"
+                          onClick={[Function]}
+                          type="button"
                         >
-                          Everyone
-                        </span>
-                      </button>
-                    </ForwardRef(ButtonBase)>
-                  </WithStyles(ForwardRef(ButtonBase))>
-                </ForwardRef(Button)>
-              </WithStyles(ForwardRef(Button))>
-            </WithStyles(WithStyles(ForwardRef(Button)))>
+                          <button
+                            className="MuiButtonBase-root MuiButton-root WithStyles(ForwardRef(Button))-root-15 MuiButton-contained"
+                            disabled={false}
+                            id="memberButton0"
+                            onBlur={[Function]}
+                            onClick={[Function]}
+                            onDragLeave={[Function]}
+                            onFocus={[Function]}
+                            onKeyDown={[Function]}
+                            onKeyUp={[Function]}
+                            onMouseDown={[Function]}
+                            onMouseLeave={[Function]}
+                            onMouseUp={[Function]}
+                            onTouchEnd={[Function]}
+                            onTouchMove={[Function]}
+                            onTouchStart={[Function]}
+                            tabIndex={0}
+                            type="button"
+                          >
+                            <span
+                              className="MuiButton-label"
+                            >
+                              Everyone
+                            </span>
+                          </button>
+                        </ForwardRef(ButtonBase)>
+                      </WithStyles(ForwardRef(ButtonBase))>
+                    </ForwardRef(Button)>
+                  </WithStyles(ForwardRef(Button))>
+                </WithStyles(WithStyles(ForwardRef(Button)))>
+              </div>
+            </Styled(MuiBox)>
           </div>
         </Styled(MuiBox)>
       </MenuSideBar>
@@ -1603,13 +1915,13 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
         width="100%"
       >
         <div
-          className="MuiBox-root MuiBox-root-12"
+          className="MuiBox-root MuiBox-root-16"
         >
           <NavTabs
             tabSelected={0}
           >
             <div
-              className="makeStyles-root-13"
+              className="makeStyles-root-17"
             >
               <WithStyles(ForwardRef(AppBar))
                 position="static"
@@ -2093,10 +2405,10 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                                     className="MuiTabs-indicator"
                                     classes={
                                       Object {
-                                        "colorPrimary": "PrivateTabIndicator-colorPrimary-15",
-                                        "colorSecondary": "PrivateTabIndicator-colorSecondary-16",
-                                        "root": "PrivateTabIndicator-root-14",
-                                        "vertical": "PrivateTabIndicator-vertical-17",
+                                        "colorPrimary": "PrivateTabIndicator-colorPrimary-19",
+                                        "colorSecondary": "PrivateTabIndicator-colorSecondary-20",
+                                        "root": "PrivateTabIndicator-root-18",
+                                        "vertical": "PrivateTabIndicator-vertical-21",
                                       }
                                     }
                                     color="secondary"
@@ -2109,7 +2421,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                                     }
                                   >
                                     <span
-                                      className="PrivateTabIndicator-root-14 PrivateTabIndicator-colorSecondary-16 MuiTabs-indicator"
+                                      className="PrivateTabIndicator-root-18 PrivateTabIndicator-colorSecondary-20 MuiTabs-indicator"
                                       style={
                                         Object {
                                           "left": 0,
@@ -2131,10 +2443,10 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
             </div>
           </NavTabs>
           <Styled(MuiBox)
-            padding="2em"
+            padding="1.5em"
           >
             <div
-              className="MuiBox-root MuiBox-root-18"
+              className="MuiBox-root MuiBox-root-22"
             >
               <div />
             </div>

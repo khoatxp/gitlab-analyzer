@@ -40,10 +40,10 @@ public class NoteController {
             @RequestParam("endDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
         validatePermission(principal, projectId);
-        if(gitManagementUserId == 0L) {
-            return noteService.getMergeRequestNotes(projectId, startDateTime, endDateTime);
-        } else {
+        if(gitManagementUserId != 0L) {
             return noteService.getGitManagementUserMergeRequestNotes(projectId, gitManagementUserId, startDateTime, endDateTime);
+        } else {
+            return noteService.getMergeRequestNotes(projectId, startDateTime, endDateTime);
         }
     }
 
@@ -58,10 +58,10 @@ public class NoteController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
 
         validatePermission(principal, projectId);
-        if(gitManagementUserId == 0L) {
-            return noteService.getIssueNotes(projectId, startDateTime, endDateTime);
-        } else {
+        if(gitManagementUserId != 0L) {
             return noteService.getGitManagementUserIssueNotes(projectId, gitManagementUserId, startDateTime, endDateTime);
+        } else {
+            return noteService.getIssueNotes(projectId, startDateTime, endDateTime);
         }
     }
 

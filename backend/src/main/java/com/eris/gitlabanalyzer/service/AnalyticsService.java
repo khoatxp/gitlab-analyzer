@@ -74,7 +74,7 @@ public class AnalyticsService {
                 analysisRun.setStatus(AnalysisRun.Status.Completed);
                 analysisRunService.updateProgress(analysisRun,"Analysis done for "+project.getNameWithNamespace(), AnalysisRun.Progress.Done.getValue(), true);
             } catch(Exception e) {
-                System.err.println(e);
+                e.printStackTrace();
                 analysisRun.setStatus(AnalysisRun.Status.Error);
                 analysisRunService.updateProgress(analysisRun,"Error",0.0, true);
             }

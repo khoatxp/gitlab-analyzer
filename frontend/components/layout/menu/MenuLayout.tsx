@@ -15,7 +15,7 @@ const index = ({tabSelected, children}: MenuLayoutProps) => {
                 <MenuSideBar/>
                 <Box width='100%'>
                     <NavTabs tabSelected={tabSelected}/>
-                    <Box padding="2em">
+                    <Box padding="1.5em">
                         {children}
                     </Box>
                 </Box>
