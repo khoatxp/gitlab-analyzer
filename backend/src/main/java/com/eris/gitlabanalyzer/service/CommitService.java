@@ -212,6 +212,14 @@ public class CommitService {
         return commitRepository.findAllByMergeRequestIdAndDateRangeAndGitManagementUserId(mergeRequestId,gitManagementUserId, startDateTime, endDateTime);
     }
 
+    public List<Commit> getOrphanCommitsInDateRange(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
+        return commitRepository.findAllOrphanByProjectIdAndDateRange(projectId, startDateTime, endDateTime);
+    }
+
+    public List<Commit> getOrphanCommitsOfGitManagementUserInDateRange(Long projectId, Long gitManagementUserId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        return commitRepository.findOrphanByProjectIdAndGitManagementUserIdAndDateRange(projectId, gitManagementUserId, startDateTime, endDateTime);
+    }
+
     public void setAllSharedMergeRequests(Long projectId){
         List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByProjectId(projectId);
         for(MergeRequest mr : mergeRequests){
@@ -236,9 +244,7 @@ public class CommitService {
     // checks whether supplied gitManagementUser is the same as one stored in MR
     private boolean isMergeRequestShared(MergeRequest mr, GitManagementUser gitManagementUser){
         if(gitManagementUser != null){
-            if(!mr.getGitManagementUser().getId().equals(gitManagementUser.getId())){
-                return true;
-            }
+            return !mr.getGitManagementUser().getId().equals(gitManagementUser.getId());
         }
         return false;
     }

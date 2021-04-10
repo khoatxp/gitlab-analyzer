@@ -28,7 +28,6 @@ const index = () => {
         axios
             .get(`${process.env.NEXT_PUBLIC_API_URL}/analysis_run/${serverId}/all`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
-                console.log(resp.data);
                 setAnalysisRuns(resp.data)
             }).catch(() => {
             enqueueSnackbar('Failed to get runs.', {variant: 'error',});

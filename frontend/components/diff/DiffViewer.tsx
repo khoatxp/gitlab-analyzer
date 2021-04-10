@@ -8,9 +8,14 @@ import AppButton from "../app/AppButton";
 import FileDiffView from "./FileDiffView";
 
 
-type DiffViewerProps = { fileChanges: FileChange[], linkToFileChanges: string };
-const DiffViewer = ({fileChanges, linkToFileChanges}: DiffViewerProps) => {
+type DiffViewerProps = {
+    fileChanges: FileChange[],
+    linkToFileChanges: string,
+    isOrphanCommitsSelected: boolean,
+};
+const DiffViewer = ({fileChanges, linkToFileChanges, isOrphanCommitsSelected}: DiffViewerProps) => {
     const [isUnified, setUnified] = useState<boolean>(true);
+    let infoText = getInfoText(fileChanges.length, isOrphanCommitsSelected);
     const parsedFileChanges = parseFileChangesForDiffViewer(fileChanges);
     return (
         <Card>
@@ -47,21 +52,19 @@ const DiffViewer = ({fileChanges, linkToFileChanges}: DiffViewerProps) => {
                 <Divider/>
                 <Box p={2} height="75vh" overflow="auto">
                     {
-                        // Display text if no diff data present
-                        parsedFileChanges.length == 0 &&
-                        <Box width="100%" height="100%" display="flex" alignItems="center" justifyContent="center">
-                            <Typography variant="h5">
-                                Please select a merge request or commit to view diffs from.
-                            </Typography>
-                        </Box>
-                    }
-                    {
-                        parsedFileChanges.map((change) => (
-                            <FileDiffView
-                                unified={isUnified}
-                                key={change.newPath + '-' + change.newRevision}
-                                change={change}/>
-                        ))
+                        infoText != '' ?
+                            <Box width="100%" height="100%" display="flex" alignItems="center" justifyContent="center">
+                                <Typography variant="h5">
+                                    {infoText}
+                                </Typography>
+                            </Box>
+                            :
+                            parsedFileChanges.map((change) => (
+                                <FileDiffView
+                                    unified={isUnified}
+                                    key={change.newPath + '-' + change.newRevision}
+                                    change={change}/>
+                            ))
                     }
                 </Box>
             </List>
@@ -69,4 +72,10 @@ const DiffViewer = ({fileChanges, linkToFileChanges}: DiffViewerProps) => {
     )
 }
 
+const getInfoText = (fileChangesLength: number, isOrphanCommitsSelected: boolean) => {
+    let infoText = ''
+    infoText = fileChangesLength == 0 ? 'Please select a merge request or commit to view diffs from.' : infoText;
+    infoText = isOrphanCommitsSelected ? 'Please select an orphan commit from the commit list.' : infoText;
+    return infoText
+}
 export default DiffViewer;
