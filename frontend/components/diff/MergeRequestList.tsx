@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {MergeRequest} from "../../interfaces/MergeRequest";
-import DiffItemList, {DiffItem} from "./DiffItemList";
+
+import Table, {DiffItem} from "./Table";
 
 type MergeRequestListProps = {
     mergeRequests: MergeRequest[]
@@ -31,7 +32,7 @@ const MergeRequestList = ({mergeRequests, handleSelectMergeRequest}: MergeReques
     }
 
     return (
-        <DiffItemList
+        <Table
             diffItems={diffItems}
             diffItemType="Merge Request"
             handleSelectDiffItem={handleSelectDiffItem}
