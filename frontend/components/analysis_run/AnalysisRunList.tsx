@@ -43,7 +43,7 @@ const AnalysisRunList = ({isLoading, analysisRuns, loadAnalysisRuns}: AnalysisRu
                                         <b>Created:</b> {formatDate(analysis.createdDateTime)}
                                     </Typography>
                                     <Typography variant="subtitle2">
-                                        <b>Score profile:</b> {analysis.scoreProfileName)}
+                                        <b>Score profile:</b> {analysis.scoreProfileName}
                                     </Typography>
                                 </Box>
                                 <Box display="flex" alignItems="center">
