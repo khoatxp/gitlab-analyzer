@@ -32,12 +32,12 @@ const useStyles = makeStyles({
 });
 
 const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIndex, setSelectedIndex}: DiffItemListProps) => {
-  const classes = useStyles();
+    const classes = useStyles();
 
   return (
     <Paper className={classes.root}>
         <TableContainer className={classes.container} style={{marginBottom: '1em'}}>
-            <Table stickyHeader aria-label="sticky table" tableLayout= "fixed" >
+            <Table stickyHeader aria-label="sticky table" >
                 <TableHead>
                     <TableRow>
                         <TableCell
