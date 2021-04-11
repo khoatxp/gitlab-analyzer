@@ -4,7 +4,7 @@ import MenuLayout from "../../../../../components/layout/menu/MenuLayout";
 import {AuthContext} from "../../../../../components/AuthContext";
 import axios, {AxiosResponse} from "axios";
 import {useRouter} from "next/router";
-import {MergeRequest, OrphanCommitMergeRequest} from "../../../../../interfaces/MergeRequest";
+import {MergeRequest, MergeReturnObject, OrphanCommitMergeRequest} from "../../../../../interfaces/MergeRequest";
 import {useSnackbar} from "notistack";
 import DiffViewer from "../../../../../components/diff/DiffViewer";
 import {FileChange} from "../../../../../interfaces/GitLabFileChange";
@@ -38,6 +38,7 @@ const index = () => {
             await setCommits([]);
             await setFileChanges([]);
             await setLinkToFileChanges('');
+            await setScoreText('');
 
             // Orphan commits
             const orphanCommitResp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/${projectId}/commits/${gitManagementUserId}/orphan?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
@@ -77,7 +78,22 @@ const index = () => {
     };
 
     const fetchMergeRequestScore = (id: number) => {
-        setScoreText(`Merge Request score: ${"TBD"}`);
+        // TODO Pass correct Score Profile Id
+        let scoreProfileId = 0;
+        axios
+            .get(
+                `${process.env.NEXT_PUBLIC_API_URL}/data/projects/merge_request/${id}/user/${gitManagementUserId}/diff/score/${scoreProfileId}`,
+                getAxiosAuthConfig()
+            )
+            .then((resp: AxiosResponse) => {
+                const mrScores: MergeReturnObject = resp.data;
+                // Merge request scores are either all shared or all individual. Label as shared if we only have shared score
+                let scoreText = `Merge Request score: ${mrScores.mergeScore > 0 ? mrScores.mergeScore : mrScores.sharedMergeScore}`;
+                scoreText += mrScores.sharedMergeScore > 0 ? ' (Shared)' : '';
+                setScoreText(scoreText);
+            }).catch(() => {
+            enqueueSnackbar('Failed to get merge request score.', {variant: 'error',});
+        });
     }
 
     const fetchCommitScore = (commitId: number) => {
