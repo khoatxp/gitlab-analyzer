@@ -331,7 +331,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                 </Typography>
                             </Box>
                         </DialogTitle>
-                        <Box  style={{ display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", flexwrap:"wrap"}} >
+                        <Box  style={{ display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", flexWrap:"wrap"}} >
                             {blackList && blackList.length > 0 ?
                             blackList.map((extension, index: number) => {
                                 return (
