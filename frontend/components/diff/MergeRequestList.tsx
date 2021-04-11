@@ -12,7 +12,7 @@ const MergeRequestList = ({mergeRequests, handleSelectMergeRequest}: MergeReques
 
     const handleSelectDiffItem = (diffItem: DiffItem) => {
         const mergeRequest = mergeRequests.find((mergeRequest) => {
-            return mergeRequest.id.toString() == diffItem.id;
+            return mergeRequest.id == diffItem.id;
         })
         if (!mergeRequest) {
             return;
