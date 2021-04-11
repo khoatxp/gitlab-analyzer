@@ -37,20 +37,22 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
   return (
     <Paper className={classes.root}>
         <TableContainer className={classes.container} style={{marginBottom: '1em'}}>
-            <Table stickyHeader aria-label="sticky table">
+            <Table stickyHeader aria-label="sticky table" tableLayout= "fixed" >
                 <TableHead>
                     <TableRow>
                         <TableCell
                           key="date"
                           align='left'
-                          style={{ minWidth: 80 }}
+                          whiteSpace="nowrap"
+                          style={{ minWidth: 100 }}
                         >
-                            Opened
+                            Date
                         </TableCell>
                         <TableCell
                           key="DiffItem"
                           align='left'
-                          style={{ minWidth: 200 }}
+                          whiteSpace="nowrap"
+                          style={{ minWidth: 100 }}
                         >
                             {diffItems.length.toString()} {diffItemType}(s)
                         </TableCell>
@@ -73,8 +75,7 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                                 </TableCell>
                                 <TableCell key="DiffItem" align='left' style={{ minWidth: 100 }}>
                                     {
-                                        '${diffItem.title}' +
-                                        diffItem.id == OrphanCommitMergeRequest.id.toString() ?
+                                        `${diffItem.title}` + diffItem.id == OrphanCommitMergeRequest.id.toString() ?
                                         OrphanCommitMergeRequest.secondaryText : ` · ` +
                                         (diffItem.mergedAt ? 'Merged ' : 'Created ') +
                                         `by ${diffItem.authorUsername}`
