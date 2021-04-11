@@ -3,7 +3,7 @@ export interface Commit {
     authorName: string;
     createdAt: string;
     mergedAt: string;
-    id: string;
+    id: number;
     sha: string;
     title: string;
     webUrl: string;
