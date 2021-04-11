@@ -37,7 +37,7 @@ public class ProjectService {
         this.requestScopeGitLabService = requestScopeGitLabService;
     }
 
-    private void createUserProjectPermission(User user, Server server, Project project)
+    public void createUserProjectPermission(User user, Server server, Project project)
     {
         var queryPermission = userProjectPermissionRepository.findByUserIdAndServerIdAndProjectId(
                 user.getId(),

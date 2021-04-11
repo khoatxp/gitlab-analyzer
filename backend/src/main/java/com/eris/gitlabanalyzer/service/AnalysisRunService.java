@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,12 +21,14 @@ public class AnalysisRunService {
     private AnalysisRunRepository analysisRunRepository;
     private final MessageService messageService;
     private final GitLabService requestScopeGitLabService;
+    private final ProjectService projectService;
 
     @Autowired
-    public AnalysisRunService(AnalysisRunRepository analysisRunRepository, GitLabService requestScopeGitLabService, MessageService messageService) {
+    public AnalysisRunService(AnalysisRunRepository analysisRunRepository, GitLabService requestScopeGitLabService, MessageService messageService, ProjectService projectService) {
         this.analysisRunRepository = analysisRunRepository;
         this.requestScopeGitLabService = requestScopeGitLabService;
         this.messageService = messageService;
+        this.projectService = projectService;
     }
 
     public AnalysisRun createAnalysisRun(
@@ -49,6 +52,7 @@ public class AnalysisRunService {
     public Stream<AnalysisRunView> getAccessibleAnalysisRuns(User user, Long serverId) {
         List<Long> userAccessibleGitlabProjectIds = getUserAccessibleGitlabProjectIds();
         List<AnalysisRun> analysisRuns = analysisRunRepository.findOthersByServerIdAndGitLabProjectIds(user.getId(), serverId, userAccessibleGitlabProjectIds);
+        createUserProjectPermissionForAnalysisRun(user, analysisRuns);
         return analysisRuns.stream().map(AnalysisRunView::fromAnalysisRun);
     }
 
@@ -64,6 +68,17 @@ public class AnalysisRunService {
                     .collect(Collectors.toList());
         } else {
             return new ArrayList<>();
+        }
+    }
+
+    private void createUserProjectPermissionForAnalysisRun(User user, List<AnalysisRun> analysisRuns) {
+        var projectIdSet = new HashSet<Long>();
+        for (var analysisRun: analysisRuns) {
+            var projectId = analysisRun.getProject().getId();
+            if (!projectIdSet.contains(projectId)) {
+                projectService.createUserProjectPermission(user,analysisRun.getServer(), analysisRun.getProject());
+            }
+            projectIdSet.add(projectId);
         }
     }
 
