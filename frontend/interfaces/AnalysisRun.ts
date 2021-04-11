@@ -7,6 +7,8 @@ export interface AnalysisRun {
     startDateTime: string;
     endDateTime: string;
     createdDateTime: string;
+    scoreProfileId: number;
+    scoreProfileName: string;
 }
 
 export enum AnalysisRunStatus {
