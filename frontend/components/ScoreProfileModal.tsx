@@ -241,6 +241,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                 type="number"
                                 value={lineWeight != undefined ? lineWeight.toString() : ""}
                                 onChange={(e) => setLineWeight(Number(e.target.value))}
+                                required
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
@@ -248,6 +249,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                 type="number"
                                 value={deleteWeight != undefined ? deleteWeight.toString() : ""}
                                 onChange={(e) => setDeleteWeight(Number(e.target.value))}
+                                required
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
@@ -255,6 +257,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                 type="number"
                                 value={syntaxWeight != undefined ? syntaxWeight.toString() : ""}
                                 onChange={(e) => setSyntaxWeight(Number(e.target.value))}
+                                required
                                 />
                             </Box>
                             <Box marginLeft={1} marginRight={1}>
@@ -262,6 +265,7 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                 type="number"
                                 value={commentsWeight != undefined ? commentsWeight.toString() : ""}
                                 onChange={(e) => setCommentsWeight(Number(e.target.value))}
+                                required
                                 />
                             </Box>
                         </Box>
@@ -293,7 +297,6 @@ const ScoreProfileModal = ({ open,handleClose,id,profile,isNewProfile,update }: 
                                         <Box marginLeft={1} marginRight={1} width={100}>
                                             
                                             <AppTextField label="extension"
-                                            placeholder="Do not include the dot"
                                             value={extension[0] ?? ""}
                                             onChange={(e) => handleExtensionChange(e.target.value ,index)}
                                             />
