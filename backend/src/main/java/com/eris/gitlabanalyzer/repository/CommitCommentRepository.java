@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
+import java.util.Optional;
 
 @Repository
 public interface CommitCommentRepository extends JpaRepository<CommitComment, Long> {
     @Query("select c from CommitComment c where c.gitManagementUser.gitLabUserId = ?1 and c.createdAt= ?2 and c.commit.sha = ?3")
-    CommitComment findByGitLabUserIdAndCreatedAtAndCommitSha(Long gitLabUserId, OffsetDateTime createdAt, String sha);
+    Optional<CommitComment> findByGitLabUserIdAndCreatedAtAndCommitSha(Long gitLabUserId, OffsetDateTime createdAt, String sha);
 }
