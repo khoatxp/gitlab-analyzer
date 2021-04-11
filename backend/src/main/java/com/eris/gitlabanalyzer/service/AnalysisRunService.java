@@ -74,15 +74,16 @@ public class AnalysisRunService {
     }
 
     private void createUserProjectPermissionForAnalysisRun(User user, Long serverId, List<AnalysisRun> analysisRuns) {
-        var projectIdSet = new HashSet<Long>();
+        // There can be multiple runs on the same project, creating a set to avoid checking duplicates
+        var analysisRunProjectIds = new HashSet<Long>();
         var userPermittedProjectIds = userProjectPermissionRepository.findProjectIdsByUserIdAndServerId(user.getId(), serverId);
         for (var analysisRun: analysisRuns) {
             var projectId = analysisRun.getProject().getId();
-            if (!projectIdSet.contains(projectId) && !userPermittedProjectIds.contains(projectId)) {
+            if (!analysisRunProjectIds.contains(projectId) && !userPermittedProjectIds.contains(projectId)) {
                 UserProjectPermission userProjectPermission = new UserProjectPermission(user, analysisRun.getProject(), analysisRun.getServer());
                 userProjectPermissionRepository.save(userProjectPermission);
             }
-            projectIdSet.add(projectId);
+            analysisRunProjectIds.add(projectId);
         }
     }
 
