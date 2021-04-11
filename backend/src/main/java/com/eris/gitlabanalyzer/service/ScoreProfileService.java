@@ -22,8 +22,8 @@ public class ScoreProfileService {
 
 
     public ScoreProfile getScoreProfile(User user, Long id) {
-        var userScoreProfiles = this.getUserScoreProfiles(user);
-        Optional<ScoreProfile> scoreProfile = userScoreProfiles.stream().filter(s -> s.getId() == id).findFirst();
+
+        Optional<ScoreProfile> scoreProfile = scoreProfileRepository.findScoreProfileByUserIdandId(user.getId(),id);
         if (scoreProfile.isPresent()){
             return scoreProfile.get();
         }
