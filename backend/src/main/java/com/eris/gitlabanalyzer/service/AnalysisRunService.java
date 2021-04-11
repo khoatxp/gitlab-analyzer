@@ -3,8 +3,10 @@ package com.eris.gitlabanalyzer.service;
 import com.eris.gitlabanalyzer.model.AnalysisRun;
 import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.User;
+import com.eris.gitlabanalyzer.model.UserProjectPermission;
 import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabProject;
 import com.eris.gitlabanalyzer.repository.AnalysisRunRepository;
+import com.eris.gitlabanalyzer.repository.UserProjectPermissionRepository;
 import com.eris.gitlabanalyzer.viewmodel.AnalysisRunView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,14 +23,14 @@ public class AnalysisRunService {
     private AnalysisRunRepository analysisRunRepository;
     private final MessageService messageService;
     private final GitLabService requestScopeGitLabService;
-    private final ProjectService projectService;
+    private final UserProjectPermissionRepository userProjectPermissionRepository;
 
     @Autowired
-    public AnalysisRunService(AnalysisRunRepository analysisRunRepository, GitLabService requestScopeGitLabService, MessageService messageService, ProjectService projectService) {
+    public AnalysisRunService(AnalysisRunRepository analysisRunRepository, GitLabService requestScopeGitLabService, MessageService messageService, UserProjectPermissionRepository userProjectPermissionRepository) {
         this.analysisRunRepository = analysisRunRepository;
         this.requestScopeGitLabService = requestScopeGitLabService;
         this.messageService = messageService;
-        this.projectService = projectService;
+        this.userProjectPermissionRepository = userProjectPermissionRepository;
     }
 
     public AnalysisRun createAnalysisRun(
@@ -52,7 +54,7 @@ public class AnalysisRunService {
     public Stream<AnalysisRunView> getAccessibleAnalysisRuns(User user, Long serverId) {
         List<Long> userAccessibleGitlabProjectIds = getUserAccessibleGitlabProjectIds();
         List<AnalysisRun> analysisRuns = analysisRunRepository.findOthersByServerIdAndGitLabProjectIds(user.getId(), serverId, userAccessibleGitlabProjectIds);
-        createUserProjectPermissionForAnalysisRun(user, analysisRuns);
+        createUserProjectPermissionForAnalysisRun(user, serverId, analysisRuns);
         return analysisRuns.stream().map(AnalysisRunView::fromAnalysisRun);
     }
 
@@ -71,12 +73,14 @@ public class AnalysisRunService {
         }
     }
 
-    private void createUserProjectPermissionForAnalysisRun(User user, List<AnalysisRun> analysisRuns) {
+    private void createUserProjectPermissionForAnalysisRun(User user, Long serverId, List<AnalysisRun> analysisRuns) {
         var projectIdSet = new HashSet<Long>();
+        var userPermittedProjectIds = userProjectPermissionRepository.findProjectIdsByUserIdAndServerId(user.getId(), serverId);
         for (var analysisRun: analysisRuns) {
             var projectId = analysisRun.getProject().getId();
-            if (!projectIdSet.contains(projectId)) {
-                projectService.createUserProjectPermission(user,analysisRun.getServer(), analysisRun.getProject());
+            if (!projectIdSet.contains(projectId) && !userPermittedProjectIds.contains(projectId)) {
+                UserProjectPermission userProjectPermission = new UserProjectPermission(user, analysisRun.getProject(), analysisRun.getServer());
+                userProjectPermissionRepository.save(userProjectPermission);
             }
             projectIdSet.add(projectId);
         }
