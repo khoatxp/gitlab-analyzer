@@ -124,6 +124,8 @@ public class MergeRequest {
         return gitManagementUser;
     }
 
+    public Set<Long> getSharedWith(){return sharedWith;}
+
     public void setProject(Project project) {
         this.project = project;
     }
