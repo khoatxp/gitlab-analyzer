@@ -42,7 +42,6 @@ class ModelTests {
             OffsetDateTime.parse("2016-10-05T08:20:10+05:30"), "URL", testProject);
     private final CommitComment testCommitComment = new CommitComment(testGitManagementUser, testCommit,
             "URL", OffsetDateTime.parse("2014-12-12T08:20:10+05:30"));
-    private final Issue testIssue = new Issue(1L, "Issue", "csl33", OffsetDateTime.parse("2014-12-12T08:20:10+05:30"), "URL", testProject, testGitManagementUser);
 
     @BeforeAll
     void init(){

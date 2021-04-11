@@ -4,7 +4,7 @@ import MenuLayout from "../../../../../components/layout/menu/MenuLayout";
 import {AuthContext} from "../../../../../components/AuthContext";
 import axios, {AxiosResponse} from "axios";
 import {useRouter} from "next/router";
-import {MergeRequest, OrphanCommitMergeRequest} from "../../../../../interfaces/MergeRequest";
+import {MergeRequest, MergeReturnObject, OrphanCommitMergeRequest} from "../../../../../interfaces/MergeRequest";
 import {useSnackbar} from "notistack";
 import DiffViewer from "../../../../../components/diff/DiffViewer";
 import {FileChange} from "../../../../../interfaces/GitLabFileChange";
@@ -20,6 +20,7 @@ const index = () => {
     const [mergeRequests, setMergeRequests] = React.useState<MergeRequest[]>([]);
     const [commits, setCommits] = React.useState<Commit[]>([]);
     const [orphanCommits, setOrphanCommits] = React.useState<Commit[]>([]);
+    const [scoreText, setScoreText] = React.useState<string>('');
     const [isOrphanCommitsSelected, setIsOrphanCommitsSelected] = React.useState<boolean>(false);
     const [fileChanges, setFileChanges] = React.useState<FileChange[]>([]);
     const [linkToFileChanges, setLinkToFileChanges] = React.useState<string>('');
@@ -37,6 +38,7 @@ const index = () => {
             await setCommits([]);
             await setFileChanges([]);
             await setLinkToFileChanges('');
+            await setScoreText('');
 
             // Orphan commits
             const orphanCommitResp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/${projectId}/commits/${gitManagementUserId}/orphan?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
@@ -75,6 +77,35 @@ const index = () => {
         });
     };
 
+    const fetchMergeRequestScore = (id: number) => {
+        // TODO Pass correct Score Profile Id
+        let scoreProfileId = 0;
+        axios
+            .get(
+                `${process.env.NEXT_PUBLIC_API_URL}/data/projects/merge_request/${id}/user/${gitManagementUserId}/diff/score/${scoreProfileId}`,
+                getAxiosAuthConfig()
+            )
+            .then((resp: AxiosResponse) => {
+                const mrScores: MergeReturnObject = resp.data;
+                // Merge request scores are either all shared or all individual. Label as shared if we only have shared score
+                const scoreText= `Merge Request score: ${mrScores.sharedMergeScore > 0 ? mrScores.sharedMergeScore + '(shared)' : mrScores.mergeScore}`;
+                setScoreText(scoreText);
+            }).catch(() => {
+            enqueueSnackbar('Failed to get merge request score.', {variant: 'error',});
+        });
+    }
+
+    const fetchCommitScore = (commitId: number) => {
+        // TODO Pass correct Score Profile Id
+        let scoreProfileId = 0;
+        axios
+            .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/commit/${commitId}/diff/score/${scoreProfileId}`, getAxiosAuthConfig())
+            .then((resp: AxiosResponse) => {
+                setScoreText(`Commit score: ${resp.data.toString()}`);
+            }).catch(() => {enqueueSnackbar('Failed to get commit score.', {variant: 'error',});
+        });
+    };
+
     const handleSelectMergeRequest = (mergeRequest: MergeRequest) => {
         if (mergeRequest.id == OrphanCommitMergeRequest.id) {
             handleSelectOrphanCommits();
@@ -82,6 +113,7 @@ const index = () => {
             fetchCommitData(mergeRequest);
             setLinkToFileChanges(mergeRequest.webUrl);
             fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${mergeRequest.iid}/diff`);
+            fetchMergeRequestScore(mergeRequest.id);
         }
     };
 
@@ -90,10 +122,12 @@ const index = () => {
         setCommits(orphanCommits);
         setLinkToFileChanges('');
         setFileChanges([]);
+        setScoreText('');
     }
 
     const handleSelectCommit = (commit: Commit) => {
         setLinkToFileChanges(commit.webUrl);
+        fetchCommitScore(commit.id);
         fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commit/${commit.sha}/diff`);
     };
 
@@ -114,6 +148,7 @@ const index = () => {
                             fileChanges={fileChanges}
                             linkToFileChanges={linkToFileChanges}
                             isOrphanCommitsSelected={isOrphanCommitsSelected}
+                            scoreText={scoreText}
                         />
                     </Grid>
                 </Grid>

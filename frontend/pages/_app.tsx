@@ -8,6 +8,7 @@ import {AuthProvider} from "../components/AuthContext";
 import "../styles/globals.css";
 import 'react-diff-view/style/index.css';
 import "prism-themes/themes/prism-vs.css";
+import {SideBarProvider} from "../components/SideBarContext";
 
 const snackBarAnchorOrigin: SnackbarOrigin = {
     vertical: 'top',
@@ -26,7 +27,9 @@ function MyApp({Component, pageProps}: AppProps) {
                 <CssBaseline/>
                 <SnackbarProvider maxSnack={3} anchorOrigin={snackBarAnchorOrigin}>
                     <AuthProvider>
-                        <Component {...pageProps} />
+                        <SideBarProvider>
+                            <Component {...pageProps} />
+                        </SideBarProvider>
                     </AuthProvider>
                 </SnackbarProvider>
             </ThemeProvider>
