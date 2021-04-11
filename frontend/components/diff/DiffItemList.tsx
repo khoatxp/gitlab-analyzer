@@ -73,6 +73,7 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                                     </TableCell>
                                     <TableCell key="DiffItem" align='left' style={{ minWidth: 100 }}>
                                         {diffItem.title}
+                                        <br/>
                                         {
                                             diffItem.id == OrphanCommitMergeRequest.id.toString() ?
                                             OrphanCommitMergeRequest.secondaryText : ` · ` +
