@@ -67,7 +67,7 @@ const MemberMapping = () => {
     const classes = useStyles();
     const {enqueueSnackbar} = useSnackbar();
     const router = useRouter();
-    const { projectId, startDateTime, endDateTime } =  router.query;
+    const { projectId, startDateTime, endDateTime, scoreProfileId } =  router.query;
     const dateQuery = `?startDateTime=${startDateTime}&endDateTime=${endDateTime}`;
     const [commitAuthors, setCommitAuthors] = React.useState<CommitAuthor[]>([]);
     const [gitManagementUsers, setGitManagementUsers] = React.useState<GitManagementUser[]>([]);
@@ -157,7 +157,7 @@ const MemberMapping = () => {
                 <TableFooter>
                     <TableRow>
                         <TableCell>
-                            <NextLink href={`/project/${projectId}/0/overview${dateQuery}`} passHref>
+                            <NextLink href={`/project/${projectId}/0/overview${dateQuery}&scoreProfileId=${scoreProfileId}`} passHref>
                                 <Link classes={{root:classes.linkBack}}>
                                     <Icon fontSize="small">arrow_back</Icon>
                                     <Typography variant="button"> BACK</Typography>
