@@ -12,9 +12,9 @@ type DiffViewerProps = {
     fileChanges: FileChange[],
     linkToFileChanges: string,
     isOrphanCommitsSelected: boolean,
-    score: number,
+    scoreText: string,
 };
-const DiffViewer = ({fileChanges, linkToFileChanges, isOrphanCommitsSelected, score}: DiffViewerProps) => {
+const DiffViewer = ({fileChanges, linkToFileChanges, isOrphanCommitsSelected, scoreText}: DiffViewerProps) => {
     const [isUnified, setUnified] = useState<boolean>(true);
     let infoText = getInfoText(fileChanges.length, isOrphanCommitsSelected);
     const parsedFileChanges = parseFileChangesForDiffViewer(fileChanges);
@@ -27,9 +27,9 @@ const DiffViewer = ({fileChanges, linkToFileChanges, isOrphanCommitsSelected, sc
                     <ListSubheader style={{display: 'flex', justifyContent: "space-between"}}>
                         <p>
                             Diff(s)
-                            {score !== 0 && <span> Score: <b>{score}</b></span> }
                         </p>
                         <Box display="flex" alignItems="center" justifyContent="flex-end">
+                            { scoreText }
                             <AppButton
                                 disabled={fileChanges.length === 0}
                                 color="primary"
