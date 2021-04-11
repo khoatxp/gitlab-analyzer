@@ -27,8 +27,7 @@ const useStyles = makeStyles({
     width: '100%',
   },
   container: {
-    maxHeight: 440,
-    minHeight: 440,
+    height: 400,
   },
 });
 
@@ -44,30 +43,16 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                         <TableCell
                           key="date"
                           align='left'
-                          style={{ minWidth: 100 }}
+                          style={{ minWidth: 80 }}
                         >
                             Opened
                         </TableCell>
                         <TableCell
                           key="DiffItem"
                           align='left'
-                          style={{ minWidth: 170 }}
+                          style={{ minWidth: 200 }}
                         >
-                            {diffItems.length.toString()} {diffItemType}s
-                        </TableCell>
-                        <TableCell
-                          key="CreatedBy"
-                          align='left'
-                          style={{ minWidth: 130 }}
-                        >
-                            Created By
-                        </TableCell>
-                        <TableCell
-                          key="ID"
-                          align='left'
-                          style={{ minWidth: 100 }}
-                        >
-                            Issue #
+                            {diffItems.length.toString()} {diffItemType}(s)
                         </TableCell>
                     </TableRow>
                 </TableHead>
@@ -84,16 +69,16 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                                 selected={selectedIndex == i}
                             >
                                 <TableCell key="date" align='left' style={{ minWidth: 100 }}>
-                                    {formatDate(diffItem.createdAt)}
+                                    {formatDate(diffItem.mergedAt || diffItem.createdAt)}
                                 </TableCell>
                                 <TableCell key="DiffItem" align='left' style={{ minWidth: 100 }}>
-                                    {diffItem.title}
-                                </TableCell>
-                                <TableCell key="CreatedBy" align='left' style={{ minWidth: 100 }}>
-                                    {diffItem.authorName}
-                                </TableCell>
-                                <TableCell key="ID" align='left' style={{ minWidth: 100 }}>
-                                    #{diffItem.id}
+                                    {
+                                        '${diffItem.title}' +
+                                        diffItem.id == OrphanCommitMergeRequest.id.toString() ?
+                                        OrphanCommitMergeRequest.secondaryText : ` · ` +
+                                        (diffItem.mergedAt ? 'Merged ' : 'Created ') +
+                                        `by ${diffItem.authorUsername}`
+                                    }
                                 </TableCell>
                             </TableRow>
                         ))
