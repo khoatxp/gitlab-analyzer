@@ -23,6 +23,7 @@ export const AuthProvider = ({children}: ChildrenProps) => {
     const getAxiosAuthConfig = () => {
         return {
             withCredentials: true,
+            headers: {'Content-Type': 'application/json'}
         }
     }
 

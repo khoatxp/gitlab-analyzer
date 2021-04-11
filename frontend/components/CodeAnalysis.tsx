@@ -45,14 +45,14 @@ const CodeAnalysis = () => {
                 enqueueSnackbar('Failed to get project data.', {variant: 'error',});
             });
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_request/user/${gitManagementUserId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/merge_request/user/${gitManagementUserId}/count?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setMergeRequestCount(resp.data);
                 }).catch(() => {
                 enqueueSnackbar('Failed to get merge request count.', {variant: 'error',});
             });
             axios
-                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/commits/user/${gitManagementUserId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
+                .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/${projectId}/commits/user/${gitManagementUserId}/count?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setCommitCount(resp.data);
                 }).catch(() => {

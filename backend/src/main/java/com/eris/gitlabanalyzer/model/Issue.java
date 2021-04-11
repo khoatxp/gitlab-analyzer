@@ -1,9 +1,7 @@
 package com.eris.gitlabanalyzer.model;
 
-import javax.persistence. *;
+import javax.persistence.*;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
@@ -58,14 +56,6 @@ public class Issue {
 
     )
     private String webUrl;
-
-    @OneToMany(
-            mappedBy = "issue",
-            orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            fetch = FetchType.LAZY
-    )
-    private List<IssueComment> issueComments = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(
@@ -122,6 +112,10 @@ public class Issue {
         return project;
     }
 
+    public GitManagementUser getGitManagementUser() {
+        return gitManagementUser;
+    }
+
     public GitManagementUser getMember() {
         return gitManagementUser;
     }
@@ -132,13 +126,6 @@ public class Issue {
 
     public void setMember(GitManagementUser gitManagementUser) {
         this.gitManagementUser = gitManagementUser;
-    }
-
-    public void addIssueComment(IssueComment issueComment) {
-        if (!this.issueComments.contains(issueComment)) {
-            this.issueComments.add(issueComment);
-            issueComment.setIssue(this);
-        }
     }
 
     @Override

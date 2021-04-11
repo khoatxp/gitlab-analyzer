@@ -4,7 +4,7 @@ import com.eris.gitlabanalyzer.error.GitLabServiceConfigurationException;
 import com.eris.gitlabanalyzer.model.gitlabresponse.*;
 import lombok.Setter;
 import org.springframework.http.HttpHeaders;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -24,8 +24,10 @@ public class GitLabService {
     private final WebClient webClient;
     private final String projectPath = "api/v4/projects/";
 
-    @Setter private String serverUrl;
-    @Setter private String accessToken;
+    @Setter
+    private String serverUrl;
+    @Setter
+    private String accessToken;
 
     private WebClient createWebclient() {
         // setting the default buffer size to 16MB
@@ -56,8 +58,7 @@ public class GitLabService {
         }
     }
 
-    @Transactional(timeout = 240)
-    public Flux<GitLabProject> getProjects(){
+    public Flux<GitLabProject> getProjects() {
         validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath)
@@ -96,13 +97,31 @@ public class GitLabService {
         return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabMember.class));
     }
 
+    public Flux<GitLabMember> getMembersThatLeftProject(Long projectId) {
+        validateConfiguration();
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(projectPath + projectId + "/events")
+                .queryParam("action", "left")
+                .queryParam("per_page", 100)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+
+        return fetchPages(gitlabUrl).flatMap(response -> response.bodyToFlux(GitLabEvent.class).map(GitLabEvent::getMember));
+    }
+
     public Flux<GitLabMergeRequest> getMergeRequests(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         validateConfiguration();
+
+        var project  = getProject(projectId).block();
+
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests")
                 .queryParam("state", "merged")
-                .queryParam("created_after", startDateTime.toInstant().toString())
-                .queryParam("updated_before", endDateTime.toInstant().toString())
+                .queryParam("target_branch", project.getDefaultBranch())
+                .queryParam("updated_after", startDateTime.toInstant().toString())
+                .queryParam("created_before", endDateTime.toInstant().toString())
                 .queryParam("per_page", 100)
                 .build()
                 .encode()
@@ -194,7 +213,7 @@ public class GitLabService {
         return headersSpec.retrieve().bodyToMono(GitLabMergeRequestChange.class).flatMapIterable(GitLabMergeRequestChange::getChanges);
     }
 
-    public Flux<GitLabMergeRequestNote> getMergeRequestNotes(Long projectId, Long mergeRequestIid) {
+    public Flux<GitLabNote> getMergeRequestNotes(Long projectId, Long mergeRequestIid) {
         validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/merge_requests/" + mergeRequestIid + "/notes")
@@ -205,7 +224,7 @@ public class GitLabService {
                 .toString();
 
         return fetchPages(gitlabUrl)
-                .flatMap(response -> response.bodyToFlux(GitLabMergeRequestNote.class));
+                .flatMap(response -> response.bodyToFlux(GitLabNote.class));
     }
 
     public Flux<GitLabIssue> getIssues(Long projectId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
@@ -224,7 +243,7 @@ public class GitLabService {
                 .flatMap(response -> response.bodyToFlux(GitLabIssue.class));
     }
 
-    public Flux<GitLabIssueNote> getIssueNotes(Long projectId, Long issue_iid) {
+    public Flux<GitLabNote> getIssueNotes(Long projectId, Long issue_iid) {
         validateConfiguration();
         String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
                 .path(projectPath + projectId + "/issues/" + issue_iid + "/notes")
@@ -235,13 +254,18 @@ public class GitLabService {
                 .toString();
 
         return fetchPages(gitlabUrl)
-                .flatMap(response -> response.bodyToFlux(GitLabIssueNote.class));
+                .flatMap(response -> response.bodyToFlux(GitLabNote.class));
     }
 
     // recursively make a request for the next page and then return a collection of response
     private Flux<ClientResponse> fetchPages(String url) {
         var headersSpec = authorizedGetRequestHeadersSpec(url);
         return headersSpec.exchangeToFlux(response -> {
+            if (!response.statusCode().equals(HttpStatus.OK)) {
+                // now if the response is not 200 it will throw and exception instead of dying
+                // silently and returning a null object
+                return (response.createException()).flux().flatMap(Flux::error);
+            }
             var nextPage = getResponseHeaderNextLink(response);
 
             if (nextPage != null) {
@@ -254,8 +278,8 @@ public class GitLabService {
 
     private WebClient.RequestHeadersSpec<?> authorizedGetRequestHeadersSpec(String url) {
         return webClient.get()
-            .uri(url)
-            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+                .uri(url)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
     }
 
     // Based on https://github.com/eclipse/egit-github/blob/master/org.eclipse.egit.github.core/src/org/eclipse/egit/github/core/client/PageLinks.java
@@ -293,10 +317,25 @@ public class GitLabService {
                 if (relValue.startsWith("\"") && relValue.endsWith("\""))
                     relValue = relValue.substring(1, relValue.length() - 1); // get the rel string inside the double quotes
 
-                relUrls.put(relValue,  url);
+                relUrls.put(relValue, url);
             }
         }
 
         return relUrls;
+    }
+    public boolean validateAccessToken() {
+        validateConfiguration();
+        String request = "/api/v4/user";
+        String gitlabUrl = UriComponentsBuilder.fromUriString(serverUrl)
+                .path(request)
+                .build()
+                .encode()
+                .toUri()
+                .toString();
+        var headersSpec = authorizedGetRequestHeadersSpec(gitlabUrl);
+        return headersSpec.exchangeToMono(response -> {
+            var isOk = response.statusCode().equals(HttpStatus.OK);
+            return Mono.just(isOk);
+        }).blockOptional().orElse(false);
     }
 }

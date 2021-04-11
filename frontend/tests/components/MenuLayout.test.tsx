@@ -9,6 +9,12 @@ describe("MenuLayout", () =>{
     // Dummy child to render CardLayout
     const children: ReactNode = <div/>;
     const useRouter = jest.spyOn(require('next/router'), 'useRouter');
+    const mockEnqueue = jest.spyOn(require('notistack'), "useSnackbar");
+    let enqueueSnackbar = jest.fn();
+
+    beforeAll(async() =>{
+        mockEnqueue.mockImplementation(() => {return {enqueueSnackbar}});
+    })
 
     it("Snapshot MenuLayout", async() => {
         useRouter.mockImplementation(() => ({

@@ -27,8 +27,12 @@ const AddServer = () => {
     const validateToken = (token:string) => {
         return token.length >= 20
     }
+
+    const removeTrailingSlash = (url:string) => {
+        return url.replace(/\/+$/, "");
+    }
     const saveServer = () => {
-        let trimmedUrl = serverUrl.trim();
+        let trimmedUrl = removeTrailingSlash(serverUrl.trim());
         let isValidUrl = validateUrl(trimmedUrl);
         setIsValidServerUrl(isValidUrl);
 

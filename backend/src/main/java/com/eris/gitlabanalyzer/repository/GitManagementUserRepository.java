@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface GitManagementUserRepository extends JpaRepository<GitManagementUser, Long>{
@@ -18,7 +19,7 @@ public interface GitManagementUserRepository extends JpaRepository<GitManagement
     @Query("select g from GitManagementUser g where g.gitLabUserId = ?1 and g.server.id = ?2")
     GitManagementUser findByGitLabUserIdAndServerId(Long gitLabUserId, Long serverId);
 
-    @Query("select g.id as id, g.username as username, g.name as name from GitManagementUser g inner join g.projects project where project.id = ?1 order by g.name asc")
+    @Query("select g.id as id, g.username as username, g.name as name from GitManagementUser g inner join g.projects project where project.id = ?1 order by g.username asc")
     List<GitManagementUserView> findByProjectId(Long projectId);
 
     @Query("select g.id as id, g.username as username, g.name as name from GitManagementUser g where g.id = ?1")
