@@ -47,7 +47,7 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                                 <ListItemText
                                     primary={diffItem.title}
                                     secondary={
-                                        diffItem.id == OrphanCommitMergeRequest.id.toString() ?
+                                        diffItem.id == OrphanCommitMergeRequest.id ?
                                             OrphanCommitMergeRequest.secondaryText :
                                             `#${"sha" in diffItem ? diffItem.sha : diffItem.id} · ` +
                                             (diffItem.mergedAt ? 'Merged ' : 'Created ') +
