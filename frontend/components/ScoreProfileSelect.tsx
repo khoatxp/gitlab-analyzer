@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface Props {
-    onScoreProfileSelect: (id: number) => void
+    onScoreProfileSelect: (id: number, name: string) => void
 }
 
 const ScoreProfileSelector = ({onScoreProfileSelect}:Props) => {
@@ -108,6 +108,14 @@ const ScoreProfileSelector = ({onScoreProfileSelect}:Props) => {
         setOpen(false);
     };
 
+    const scoreProfileName= (id:number) : string => {
+        const profile = profiles.find(profile=> profile.id==id);
+        if (profile != undefined){
+            return profile.name;
+        }
+        return("default");
+    }
+
     return (
         <Box display="flex" flexDirection="row" justifyContent="center" marginLeft={4}>
             <FormControl className={classes.formControl}>
@@ -118,7 +126,7 @@ const ScoreProfileSelector = ({onScoreProfileSelect}:Props) => {
                         onOpen={() => {setIconVisible(true); setSelectOpen(true)}}
                         onClose={() => {setIconVisible(false); setSelectOpen(false)}}
                         value={scoreProfile || ""}
-                        onChange={(e) => {setScoreProfile(Number(e.target.value)); onScoreProfileSelect(Number(e.target.value))}}
+                        onChange={(e) => {setScoreProfile(Number(e.target.value)); onScoreProfileSelect(Number(e.target.value), scoreProfileName(Number(e.target.value)))}}
                         MenuProps={{
                             anchorOrigin: {vertical: "top", horizontal: "left"},
                             transformOrigin: {vertical: "top", horizontal: "left"},

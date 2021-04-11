@@ -42,6 +42,9 @@ const AnalysisRunList = ({isLoading, analysisRuns, loadAnalysisRuns}: AnalysisRu
                                     <Typography variant="subtitle2">
                                         <b>Created:</b> {formatDate(analysis.createdDateTime)}
                                     </Typography>
+                                    <Typography variant="subtitle2">
+                                        <b>Score profile:</b> {analysis.scoreProfileName)}
+                                    </Typography>
                                 </Box>
                                 <Box display="flex" alignItems="center">
                                     <AnalysisRunStatusIndicator status={analysis.status}/>
@@ -56,7 +59,7 @@ const AnalysisRunList = ({isLoading, analysisRuns, loadAnalysisRuns}: AnalysisRu
                                     }
                                     <AppButton
                                         color="primary"
-                                        onClick={() => router.push(`/project/${analysis.projectId}/0/overview?startDateTime=${analysis.startDateTime}&endDateTime=${analysis.endDateTime}`)}
+                                        onClick={() => router.push(`/project/${analysis.projectId}/0/overview?startDateTime=${analysis.startDateTime}&endDateTime=${analysis.endDateTime}&scoreProfileId=${analysis.scoreProfileId}`)}
                                         disabled={analysis.status != AnalysisRunStatus.Completed}
                                     >
                                         View
