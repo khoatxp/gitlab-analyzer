@@ -75,7 +75,7 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                                         {diffItem.title}
                                         <br/>
                                         {
-                                            diffItem.id == OrphanCommitMergeRequest.id.toString() ?
+                                            diffItem.id == OrphanCommitMergeRequest.id ?
                                             OrphanCommitMergeRequest.secondaryText : ` · ` +
                                             (diffItemType=='Merge Request' ? 'Merged ' : 'Committed ') +
                                             `by ${diffItem.authorUsername=='undefined' ? 'Unmapped User' : diffItem.authorUsername}`
