@@ -24,7 +24,7 @@ public class ScoreProfile {
     @Column(name="id", nullable = false)
     private long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private User user;
 
