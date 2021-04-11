@@ -24,12 +24,12 @@ export interface ProjectSummary {
     mergeRequestScore: number;
     sharedMergeRequestScore: number;
     gitManagementUserId: string | undefined,
-    memberName: string,
+    memberUserName: string,
     dateRange: string,
 }
 
 const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) => {
-    const {project, commitCount, mergeRequestCount, commitScore, mergeRequestScore, sharedMergeRequestScore, gitManagementUserId, memberName,dateRange} = projectSummary;
+    const {project, commitCount, mergeRequestCount, commitScore, mergeRequestScore, sharedMergeRequestScore, gitManagementUserId, memberUserName,dateRange} = projectSummary;
     const {enqueueSnackbar} = useSnackbar();
     const styles = useStyles();
 
@@ -56,7 +56,7 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
 
             <Box ml={3} flexGrow={1}>
                 <Typography variant="h5">{project?.name_with_namespace ?? "Loading..."}</Typography>
-                <Typography variant="subtitle1">{memberName ?? "Loading..."}</Typography>
+                <Typography variant="subtitle1">{memberUserName ?? "Loading..."}</Typography>
                 <Typography variant="subtitle1">{dateRange}</Typography>
                 <Typography variant="subtitle2">
                     {commitCount} Commit(s) -{' '}

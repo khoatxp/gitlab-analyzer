@@ -26,7 +26,7 @@ const CodeAnalysis = () => {
     const [sharedMergeRequestScore, setSharedMergeRequestScore] = React.useState<number>(0);
     const [commitScore, setCommitScore] = React.useState<number>(0);
     const [scoreDigest, setScoreDigest] = React.useState<ScoreDigest[]>([]);
-    const [memberName, setMemberName] = React.useState<string>("Loading...");
+    const [memberUserName, setMemberUserName] = React.useState<string>("Loading...");
     const [isRetrieving, setIsRetrieving] = React.useState<boolean>(true);
 
     const getParameter = (queryParameter: string | string[] | undefined) => {
@@ -36,10 +36,10 @@ const CodeAnalysis = () => {
         return queryParameter;
 
     };
-    const getUsername =() =>{
-        const selected = document.getElementsByClassName('selected');
-        const username = selected[0]?.textContent;
-        return username != null ? username : "";
+    const getMemberUsername =() =>{
+        const selected = document.getElementsByClassName('selectedMemberButton');
+        const memberUsername = selected[0]?.textContent;
+        return memberUsername != null ? memberUsername : "";
     }
 
     useEffect(() => {
@@ -72,7 +72,7 @@ const CodeAnalysis = () => {
                 setSharedMergeRequestScore(resp[3].data?.sharedMergeScore);
                 setCommitScore(resp[4].data);
                 setScoreDigest(resp[5].data);
-                setMemberName(getUsername);
+                setMemberUserName(getMemberUsername);
                 setIsRetrieving(false);
             })).catch(() => {
                 enqueueSnackbar('Failed to get project data.', {variant: 'error',});
@@ -90,7 +90,7 @@ const CodeAnalysis = () => {
         mergeRequestScore: mergeRequestScore,
         sharedMergeRequestScore: sharedMergeRequestScore,
         gitManagementUserId: getParameter(gitManagementUserId),
-        memberName: memberName,
+        memberUserName: memberUserName,
         dateRange: `${formatDate(getParameter(startDateTime) ?? "")} - ${formatDate(getParameter(endDateTime) ?? "")}`
     }
 
@@ -101,11 +101,11 @@ const CodeAnalysis = () => {
             <CountGraph data={scoreDigest}
                         startDateTime={getParameter(startDateTime)}
                         endDateTime={getParameter(endDateTime)}
-                        memberName={memberName}/>
+                        memberUserName={memberUserName}/>
             <ScoreGraph data={scoreDigest}
                         startDateTime={getParameter(startDateTime)}
                         endDateTime={getParameter(endDateTime)}
-                        memberName={memberName}/>
+                        memberUserName={memberUserName}/>
         </>
     );
 };

@@ -18,10 +18,10 @@ interface Props {
     data: ScoreDigest[]
     startDateTime: string | undefined,
     endDateTime: string | undefined,
-    memberName: string,
+    memberUserName: string,
 }
 
-const Chart = ({data, startDateTime, endDateTime, memberName}: Props) => {
+const Chart = ({data, startDateTime, endDateTime, memberUserName}: Props) => {
     const [commitCheckboxChecked, setCommitCheckboxChecked] = useState(true);
     const [mergeCheckboxChecked, setMergeCheckboxChecked] = useState(true);
 
@@ -35,7 +35,7 @@ const Chart = ({data, startDateTime, endDateTime, memberName}: Props) => {
 
     return (
         <div style={{display: "flex", flexDirection: "column"}}>
-            <p style={{textAlign: "center"}}>Daily Total Score for Commits and Merge Requests Made By {memberName}</p>
+            <p style={{textAlign: "center"}}>Daily Total Score for Commits and Merge Requests Made By {memberUserName}</p>
             <div style={{display: "flex"}}>
                 <ResponsiveContainer width="100%" height={400} minWidth="0">
                 <BarChart
