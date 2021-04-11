@@ -69,7 +69,7 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                                     selected={selectedIndex == i}
                                 >
                                     <TableCell key="date" align='left' style={{ minWidth: 100 }}>
-                                        {formatDate(diffItem.mergedAt || diffItem.createdAt)}
+                                        {diffItemType=="Merge Request" ? formatDate(diffItem.mergedAt) : formatDate(diffItem.createdAt)}
                                     </TableCell>
                                     <TableCell key="DiffItem" align='left' style={{ minWidth: 100 }}>
                                         {diffItem.title}
