@@ -63,9 +63,9 @@ const MenuSideBar = () => {
     };
 
     const setActive = (id: number | string) => {
-        let prevSelected = document.getElementsByClassName('selected');
-        prevSelected[0]?.classList.remove('selected');
-        document.getElementById(`memberButton${id}`)?.classList.add('selected');
+        let prevSelected = document.getElementsByClassName('selectedMemberButton');
+        prevSelected[0]?.classList.remove('selectedMemberButton');
+        document.getElementById(`memberButton${id}`)?.classList.add('selectedMemberButton');
     }
 
     useEffect(() => {

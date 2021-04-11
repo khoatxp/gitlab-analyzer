@@ -35,7 +35,7 @@ const AnalysisRunList = ({isLoading, analysisRuns, loadAnalysisRuns}: AnalysisRu
                                 </Avatar>
 
                                 <Box ml={3} flexGrow={1}>
-                                    <Typography variant="h4">{analysis.projectNameWithNamespace}</Typography>
+                                    <Typography variant="h5">{analysis.projectNameWithNamespace}</Typography>
                                     <Typography variant="subtitle2">
                                         <b>From:</b> {formatDate(analysis.startDateTime)} - {formatDate(analysis.endDateTime)}
                                     </Typography>
@@ -43,7 +43,7 @@ const AnalysisRunList = ({isLoading, analysisRuns, loadAnalysisRuns}: AnalysisRu
                                         <b>Created:</b> {formatDate(analysis.createdDateTime)}
                                     </Typography>
                                 </Box>
-                                <Box display="flex" alignItems="center">
+                                <Box display="flex" alignItems="center" flexWrap="wrap">
                                     <AnalysisRunStatusIndicator status={analysis.status}/>
                                     {
                                         analysis.status == AnalysisRunStatus.InProgress &&
