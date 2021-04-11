@@ -97,6 +97,7 @@ const MemberMapping = () => {
         let item = {...items[i]}
         item.mappedGitManagementUserId = event.target.value?event.target.value[0]:item.mappedGitManagementUserId;
         item.mappedGitManagementUserName =  event.target.value?event.target.value[1]:item.mappedGitManagementUserName;
+        item.mappedGitManagementUserUsername =  event.target.value?event.target.value[2]:item.mappedGitManagementUserUsername;
         items[i] = item;
         setCommitAuthors(items);
     };
@@ -129,23 +130,23 @@ const MemberMapping = () => {
                             </TableCell>
                             <TableCell>
                                 <FormControl className={classes.formControl}>
-                                    <InputLabel htmlFor="member">{commitAuthor.mappedGitManagementUserName?"Member":""}</InputLabel>
+                                    <InputLabel htmlFor="member">{commitAuthor.mappedGitManagementUserUsername?"Member":""}</InputLabel>
                                     <Select
                                         labelId="member-select-label"
                                         id="member-select"
                                         displayEmpty
-                                        value={commitAuthor.mappedGitManagementUserName}
+                                        value={commitAuthor.mappedGitManagementUserUsername}
                                         MenuProps={{ classes: { paper: classes.dropdownStyle } }}
                                         onChange={event => handleMemberChange(event, i)}
                                     >
-                                        <MenuItem disabled value={commitAuthor.mappedGitManagementUserName}>
-                                            <em className={commitAuthor.mappedGitManagementUserName?'':classes.unmappedAuthorText}>
-                                                {commitAuthor.mappedGitManagementUserName?commitAuthor.mappedGitManagementUserName:"Unmapped"}
+                                        <MenuItem disabled value={commitAuthor.mappedGitManagementUserUsername}>
+                                            <em className={commitAuthor.mappedGitManagementUserUsername?'':classes.unmappedAuthorText}>
+                                                {commitAuthor.mappedGitManagementUserUsername?commitAuthor.mappedGitManagementUserUsername:"Unmapped"}
                                             </em>
                                         </MenuItem>
                                         {gitManagementUsers.map(gitManagementUser =>(
-                                            <MenuItem key={gitManagementUser.id} value={[gitManagementUser.id.toString(),gitManagementUser.name]}>
-                                                {gitManagementUser.name}
+                                            <MenuItem key={gitManagementUser.id} value={[gitManagementUser.id.toString(),gitManagementUser.name, gitManagementUser.username]}>
+                                                {gitManagementUser.username}
                                             </MenuItem>
                                         ))}
                                     </Select>
