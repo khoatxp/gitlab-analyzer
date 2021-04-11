@@ -34,59 +34,59 @@ const useStyles = makeStyles({
 const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIndex, setSelectedIndex}: DiffItemListProps) => {
     const classes = useStyles();
 
-  return (
-    <Paper className={classes.root}>
-        <TableContainer className={classes.container} style={{marginBottom: '1em'}}>
-            <Table stickyHeader aria-label="sticky table" >
-                <TableHead>
-                    <TableRow>
-                        <TableCell
-                          key="date"
-                          align='left'
-                          style={{ minWidth: 100 }}
-                        >
-                            Date
-                        </TableCell>
-                        <TableCell
-                          key="DiffItem"
-                          align='left'
-                          style={{ minWidth: 100 }}
-                        >
-                            {diffItems.length.toString()} {diffItemType}(s)
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {
-                        diffItems.map((diffItem, i) => (
-                            <TableRow
-                                key={`${diffItem.id}`}
-                                hover
-                                onClick={() => {
-                                    setSelectedIndex(i);
-                                    handleSelectDiffItem(diffItem);
-                                }}
-                                selected={selectedIndex == i}
+    return (
+        <Paper className={classes.root}>
+            <TableContainer className={classes.container} style={{marginBottom: '1em'}}>
+                <Table stickyHeader aria-label="sticky table" >
+                    <TableHead>
+                        <TableRow>
+                            <TableCell
+                              key="date"
+                              align='left'
+                              style={{ minWidth: 100 }}
                             >
-                                <TableCell key="date" align='left' style={{ minWidth: 100 }}>
-                                    {formatDate(diffItem.mergedAt || diffItem.createdAt)}
-                                </TableCell>
-                                <TableCell key="DiffItem" align='left' style={{ minWidth: 100 }}>
-                                    {diffItem.title}
-                                    {
-                                        diffItem.id == OrphanCommitMergeRequest.id.toString() ?
-                                        OrphanCommitMergeRequest.secondaryText : ` · ` +
-                                        (diffItem.mergedAt ? 'Merged ' : 'Created ') +
-                                        `by ${diffItem.authorUsername}`
-                                    }
-                                </TableCell>
-                            </TableRow>
-                        ))
-                    }
-                </TableBody>
-            </Table>
-        </TableContainer>
-    </Paper>
+                                Date
+                            </TableCell>
+                            <TableCell
+                              key="DiffItem"
+                              align='left'
+                              style={{ minWidth: 100 }}
+                            >
+                                {diffItems.length.toString()} {diffItemType}(s)
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {
+                            diffItems.map((diffItem, i) => (
+                                <TableRow
+                                    key={`${diffItem.id}`}
+                                    hover
+                                    onClick={() => {
+                                        setSelectedIndex(i);
+                                        handleSelectDiffItem(diffItem);
+                                    }}
+                                    selected={selectedIndex == i}
+                                >
+                                    <TableCell key="date" align='left' style={{ minWidth: 100 }}>
+                                        {formatDate(diffItem.mergedAt || diffItem.createdAt)}
+                                    </TableCell>
+                                    <TableCell key="DiffItem" align='left' style={{ minWidth: 100 }}>
+                                        {diffItem.title}
+                                        {
+                                            diffItem.id == OrphanCommitMergeRequest.id.toString() ?
+                                            OrphanCommitMergeRequest.secondaryText : ` · ` +
+                                            (diffItemType=='Merge Request' ? 'Merged ' : 'Committed ') +
+                                            `by ${diffItem.authorUsername=='undefined' ? 'Unmapped User' : diffItem.authorUsername}`
+                                        }
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        }
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </Paper>
     );
 }
 
