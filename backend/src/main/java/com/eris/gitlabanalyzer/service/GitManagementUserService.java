@@ -5,12 +5,11 @@ import com.eris.gitlabanalyzer.model.Project;
 import com.eris.gitlabanalyzer.model.Server;
 import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
 import com.eris.gitlabanalyzer.viewmodel.GitManagementUserView;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GitManagementUserService {
@@ -32,18 +31,17 @@ public class GitManagementUserService {
         gitLabMemberList.addAll(gitLabLeftMembers.collectList().blockOptional().orElse(new ArrayList<>()));
 
         gitLabMemberList.stream().distinct().forEach(gitLabMember -> {
-                    GitManagementUser gitManagementUser= gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabMember.getId(), server.getId());
-                    if (gitManagementUser == null){
-                        gitManagementUser = new GitManagementUser(
-                                gitLabMember.getId(),
-                                gitLabMember.getUsername(),
-                                gitLabMember.getName(),
-                                server
-                        );
-                    }
+                    GitManagementUser gitManagementUser = gitManagementUserRepository
+                            .findByGitLabUserIdAndServerId(gitLabMember.getId(), server.getId())
+                            .orElse(new GitManagementUser(
+                                    gitLabMember.getId(),
+                                    gitLabMember.getUsername(),
+                                    gitLabMember.getName(),
+                                    server
+                            ));
 
-                    GitManagementUser checkIfAlreadyInProject = gitManagementUserRepository.findByGitLabUserIdAndProjectId(gitLabMember.getId(),project.getId());
-                    if(checkIfAlreadyInProject == null){
+                    Optional<GitManagementUser> checkIfAlreadyInProject = gitManagementUserRepository.findByGitLabUserIdAndProjectId(gitLabMember.getId(),project.getId());
+                    if(checkIfAlreadyInProject.isEmpty()){
                         gitManagementUser.addProject(project);
                     }
 
@@ -57,6 +55,6 @@ public class GitManagementUserService {
     }
 
     public GitManagementUserView getMember(Long gitManagementUserId){
-        return gitManagementUserRepository.findByGitManagementUserId(gitManagementUserId);
+        return gitManagementUserRepository.findByGitManagementUserId(gitManagementUserId).orElseThrow();
     }
 }

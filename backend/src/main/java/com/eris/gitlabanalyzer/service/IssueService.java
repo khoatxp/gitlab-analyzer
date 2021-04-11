@@ -47,7 +47,14 @@ public class IssueService {
         var gitLabIssueCommentList = gitLabIssueComments.collectList().block();
 
         Objects.requireNonNull(gitLabIssueCommentList).parallelStream().forEach(gitLabNote -> {
-            GitManagementUser gitManagementUser = gitManagementUserRepository.findByGitLabUserIdAndServerId(gitLabNote.getAuthor().getId(), project.getServer().getId());
+            GitManagementUser gitManagementUser = gitManagementUserRepository
+                    .findByGitLabUserIdAndServerId(gitLabNote.getAuthor().getId(), project.getServer().getId())
+                    .orElse(new GitManagementUser(
+                            gitLabNote.getAuthor().getId(),
+                            gitLabNote.getAuthor().getUsername(),
+                            gitLabNote.getAuthor().getName(),
+                            project.getServer())
+                    );
             Optional<Note> note = issueCommentRepository.findByGitLabNoteIdAndProjectId(gitLabNote.getId(), project.getId());
             if (note.isEmpty() && !gitLabNote.isSystem()) {
                 boolean isOwn = gitLabNote.getAuthor().getId().equals(issue.getAuthor().getId());

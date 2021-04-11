@@ -1,7 +1,6 @@
 package com.eris.gitlabanalyzer.repository;
 
 import com.eris.gitlabanalyzer.model.ScoreProfile;
-import com.eris.gitlabanalyzer.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
