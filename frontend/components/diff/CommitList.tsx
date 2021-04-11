@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Commit} from "../../interfaces/Commit";
-
-import Table, {DiffItem} from "./Table";
+import DiffItemList, {DiffItem} from "./DiffItemList";
 
 type CommitListProps = {
     commits: Commit[]
@@ -36,7 +35,7 @@ const CommitList = ({commits, handleSelectCommit}: CommitListProps) => {
     }
 
     return (
-        <Table
+        <DiffItemList
             diffItems={diffItems}
             diffItemType="Commit"
             handleSelectDiffItem={handleSelectDiffItem}
