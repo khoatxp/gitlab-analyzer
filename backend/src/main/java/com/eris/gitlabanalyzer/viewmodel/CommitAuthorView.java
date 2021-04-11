@@ -4,5 +4,6 @@ public interface CommitAuthorView {
     String getAuthorEmail();
     String getAuthorName();
     String getMappedGitManagementUserName();
+    String getMappedGitManagementUserUsername();
     String getMappedGitManagementUserId();
 }

@@ -80,7 +80,7 @@ public class CommitService {
                     // Having more than one parent makes the commit a merge, skipping merge commits
                     if (gitLabCommit.getParentShas().size() > 1) {return;}
 
-                    saveCommitAuthor(project,gitLabCommit);
+                    CommitAuthor commitAuthor = saveCommitAuthor(project,gitLabCommit);
 
                     Commit commit = new Commit(
                             gitLabCommit.getSha(),
@@ -91,6 +91,10 @@ public class CommitService {
                             gitLabCommit.getWebUrl(),
                             project
                     );
+
+                    if(commitAuthor.getGitManagementUser() != null){
+                        commit.setAuthorUsername(commitAuthor.getGitManagementUser().getUsername());
+                    }
 
                     if(mergeRequest != null){
                         mergeRequest.addCommit(commit);
@@ -177,6 +181,12 @@ public class CommitService {
                     commitAuthor.getMappedGitManagementUserId(),
                     commitAuthor.getAuthorName(),
                     commitAuthor.getAuthorEmail(),
+                    projectId);
+
+            commitRepository.updateCommitAuthorUsernames(
+                    commitAuthor.getAuthorName(),
+                    commitAuthor.getAuthorEmail(),
+                    commitAuthor.getMappedGitManagementUserUsername(),
                     projectId);
         });
     }

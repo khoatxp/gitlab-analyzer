@@ -53,6 +53,11 @@ public class Commit {
     private String authorName;
 
     @Column(
+            name = "author_username"
+    )
+    private String authorUsername;
+
+    @Column(
             name = "author_email",
             nullable = false
 
@@ -112,6 +117,10 @@ public class Commit {
         this.createdAt = createdAt;
         this.webUrl = webUrl;
         this.project = project;
+    }
+
+    public void setAuthorUsername(String authorUsername) {
+        this.authorUsername = authorUsername;
     }
 
     public void setProject(Project project) {

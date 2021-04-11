@@ -15,7 +15,8 @@ import java.util.Optional;
 public interface CommitAuthorRepository extends JpaRepository<CommitAuthor, Long> {
     Optional<CommitAuthor> findByAuthorNameAndAuthorEmailAndProjectId(String authorName, String authorEmail, Long projectId);
 
-    @Query("select c.authorName as authorName, c.authorEmail as authorEmail, c.gitManagementUser.name as mappedGitManagementUserName, c.gitManagementUser.id as mappedGitManagementUserId  from CommitAuthor c where c.project.id = ?1")
+    @Query("select c.authorName as authorName, c.authorEmail as authorEmail, c.gitManagementUser.name as mappedGitManagementUserName, " +
+            "c.gitManagementUser.username as mappedGitManagementUserUsername, c.gitManagementUser.id as mappedGitManagementUserId  from CommitAuthor c where c.project.id = ?1")
     List<CommitAuthorView> findByProjectId(Long projectId);
 
     @Query("select c.authorName as authorName, c.authorEmail as authorEmail from CommitAuthor c where c.project.id = ?1 and c.gitManagementUser is null")
