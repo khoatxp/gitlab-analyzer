@@ -9,6 +9,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import formatDate from "../../utils/DateFormatter";
+import {MergeRequest, OrphanCommitMergeRequest} from "../../interfaces/MergeRequest";
+import {Commit} from "../../interfaces/Commit";
 
 type DiffItemListProps = {
     diffItems: DiffItem[]
@@ -18,12 +20,7 @@ type DiffItemListProps = {
     setSelectedIndex: (index: number) => any;
 }
 
-export interface DiffItem {
-    id: string;
-    createdAt: string;
-    authorName: string
-    title: string;
-}
+export type DiffItem = MergeRequest | Commit;
 
 const useStyles = makeStyles({
   root: {

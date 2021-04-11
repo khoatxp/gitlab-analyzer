@@ -26,7 +26,7 @@ public class CommitController {
     @GetMapping("{projectId}/commits/authors")
     public List<CommitAuthorView> getCommitAuthors(
             @PathVariable("projectId") Long projectId,
-            @RequestParam(required = false) String state){
+            @RequestParam(required = false) String state) {
         if (state != null && state.equals("unmapped")) {
             return commitService.getUnmappedCommitAuthors(projectId);
         }
@@ -34,16 +34,35 @@ public class CommitController {
     }
 
     @GetMapping("{projectId}/commits")
-    public List<Commit> getCommits(
-            @PathVariable("projectId") Long projectId){
-        return commitService.getCommits(projectId);
+    public Stream<CommitView> getCommits(
+            @PathVariable("projectId") Long projectId) {
+        return commitService.getCommits(projectId).stream().map(CommitView::fromCommit);
+    }
+
+    @GetMapping("{projectId}/commits/{gitManagementUserId}/orphan")
+    public Stream<CommitView> getOrphanCommits(
+            @PathVariable("projectId") Long projectId,
+            @PathVariable("gitManagementUserId") Long gitManagementUserId,
+            @RequestParam("startDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
+            @RequestParam("endDateTime")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
+        List<Commit> commits;
+        if (gitManagementUserId != 0L) {
+            commits = commitService.getOrphanCommitsOfGitManagementUserInDateRange(projectId, gitManagementUserId, startDateTime, endDateTime);
+        } else {
+            commits = commitService.getOrphanCommitsInDateRange(projectId, startDateTime, endDateTime);
+        }
+        return commits.stream().map(CommitView::fromCommit);
     }
 
     @GetMapping("{projectId}/commits/{gitManagementUserId}")
-    public List<Commit> getCommitsOfGitManagementUser(
+    public Stream<CommitView> getCommitsOfGitManagementUser(
             @PathVariable("projectId") Long projectId,
-            @PathVariable("gitManagementUserId") Long gitManagementUserId){
-        return commitService.getCommitsOfGitManagementUser(projectId,(Long)gitManagementUserId);
+            @PathVariable("gitManagementUserId") Long gitManagementUserId) {
+        return commitService
+                .getCommitsOfGitManagementUser(projectId, gitManagementUserId)
+                .stream().map(CommitView::fromCommit);
     }
 
     @GetMapping("data/projects/{projectId}/commits/user/{gitManagementUserId}/count")
@@ -52,7 +71,7 @@ public class CommitController {
                                   @RequestParam("startDateTime")
                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
                                   @RequestParam("endDateTime")
-                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
+                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime) {
         if(gitManagementUserId != 0L){
             return commitService.getCommitsOfGitManagementUserInDateRange(projectId, gitManagementUserId, startDateTime, endDateTime).size();
 
@@ -69,20 +88,20 @@ public class CommitController {
                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
                                      @RequestParam("endDateTime")
                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
+        List<Commit> commits;
         if(gitManagementUserId != 0L){
-            return commitService.getCommitsOfGitManagementUserInDateRangeByMergeRequestId(mergeRequestId, gitManagementUserId, startDateTime, endDateTime)
-                    .stream().map(CommitView::fromCommit);
+            commits = commitService.getCommitsOfGitManagementUserInDateRangeByMergeRequestId(mergeRequestId, gitManagementUserId, startDateTime, endDateTime);
         } else {
-            return commitService.getCommitsInDateRangeByMergeRequestId(mergeRequestId,startDateTime,endDateTime)
-                    .stream().map(CommitView::fromCommit);
+            commits = commitService.getCommitsInDateRangeByMergeRequestId(mergeRequestId,startDateTime,endDateTime);
         }
+        return commits.stream().map(CommitView::fromCommit);
     }
 
     @PostMapping("{projectId}/commits/mapping")
     public void mapNewCommitAuthors(
             @PathVariable("projectId") Long projectId,
             @RequestBody List<CommitAuthorRequestBody> commitAuthors) {
-        commitService.mapNewCommitAuthors(projectId,commitAuthors);
+        commitService.mapNewCommitAuthors(projectId, commitAuthors);
         // update MR shared status to match mapping
         commitService.setAllSharedMergeRequests(projectId);
     }
