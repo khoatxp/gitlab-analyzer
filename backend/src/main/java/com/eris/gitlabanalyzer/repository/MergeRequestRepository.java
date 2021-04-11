@@ -2,19 +2,17 @@ package com.eris.gitlabanalyzer.repository;
 
 import com.eris.gitlabanalyzer.model.MergeRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 @Repository
 public interface MergeRequestRepository extends JpaRepository<MergeRequest, Long> {
     @Query("select m from MergeRequest m where m.iid = ?1 and m.project.id = ?2 order by m.mergedAt asc")
-    MergeRequest findByIidAndProjectId(Long iid, Long projectId);
+    Optional<MergeRequest> findByIidAndProjectId(Long iid, Long projectId);
 
     @Query("select m from MergeRequest m where m.project.id = ?1 order by m.mergedAt asc")
     List<MergeRequest> findAllByProjectId(Long projectId);
