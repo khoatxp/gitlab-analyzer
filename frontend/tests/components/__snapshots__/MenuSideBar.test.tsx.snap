@@ -327,12 +327,14 @@ exports[`Project Folder Snapshot serverId 1`] = `
           className="MuiBox-root MuiBox-root-10 makeStyles-sidebar-1 makeStyles-displaySidebar-2"
         >
           <WithStyles(WithStyles(ForwardRef(Button)))
+            className=""
             disableRipple={true}
             id="memberButton0"
             onClick={[Function]}
             variant="contained"
           >
             <WithStyles(ForwardRef(Button))
+              className=""
               classes={
                 Object {
                   "root": "WithStyles(ForwardRef(Button))-root-11",
@@ -344,6 +346,7 @@ exports[`Project Folder Snapshot serverId 1`] = `
               variant="contained"
             >
               <ForwardRef(Button)
+                className=""
                 classes={
                   Object {
                     "colorInherit": "MuiButton-colorInherit",

@@ -25,9 +25,14 @@ export const MenuButton = withStyles({
             boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
             color: '#005cbf',
         },
-        '&.selected': {
+        '&.selectedMemberButton': {
             boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
-            color: '#005cbf',
+            backgroundColor: '#C5E1F9',
+            borderColor: '#005cbf',
+        },
+        '&.selectedMemberButton:hover': {
+            backgroundColor: '#8FC6F3',
+            borderColor: '#8FC6F3',
         }
     },
 })(Button);
