@@ -1,9 +1,9 @@
 package com.eris.gitlabanalyzer.service;
 
 import com.eris.gitlabanalyzer.model.*;
+import com.eris.gitlabanalyzer.model.gitlabresponse.GitLabIssue;
 import com.eris.gitlabanalyzer.repository.GitManagementUserRepository;
 import com.eris.gitlabanalyzer.repository.IssueCommentRepository;
-import com.eris.gitlabanalyzer.repository.IssueRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -13,14 +13,12 @@ import java.util.Optional;
 
 @Service
 public class IssueService {
-    private final IssueRepository issueRepository;
     private final IssueCommentRepository issueCommentRepository;
     private final GitManagementUserRepository gitManagementUserRepository;
     private final GitLabService requestScopeGitLabService;
     private final AnalysisRunService analysisRunService;
 
-    public IssueService(IssueRepository issueRepository, IssueCommentRepository issueCommentRepository, GitManagementUserRepository gitManagementUserRepository, GitLabService requestScopeGitLabService, AnalysisRunService analysisRunService) {
-        this.issueRepository = issueRepository;
+    public IssueService(IssueCommentRepository issueCommentRepository, GitManagementUserRepository gitManagementUserRepository, GitLabService requestScopeGitLabService, AnalysisRunService analysisRunService) {
         this.issueCommentRepository = issueCommentRepository;
         this.gitManagementUserRepository = gitManagementUserRepository;
         this.requestScopeGitLabService = requestScopeGitLabService;
@@ -40,31 +38,11 @@ public class IssueService {
             analysisRunService.updateProgress(analysisRun, "Importing "+ (i+1) +"/"+gitLabIssueList.size() + " issues",progress, false);
 
             var gitLabIssue = gitLabIssueList.get(i);
-            GitManagementUser gitManagementUser = gitManagementUserRepository
-                    .findByGitLabUserIdAndServerId(gitLabIssue.getAuthor().getId(), project.getServer().getId())
-                    .orElse(new GitManagementUser(
-                            gitLabIssue.getAuthor().getId(),
-                            gitLabIssue.getAuthor().getUsername(),
-                            gitLabIssue.getAuthor().getName(),
-                            project.getServer())
-                    );
-            Issue issue = issueRepository
-                    .findByIidAndProjectId(gitLabIssue.getIid(),project.getId())
-                    .orElse(new Issue(
-                            gitLabIssue.getIid(),
-                            gitLabIssue.getTitle(),
-                            gitLabIssue.getAuthor().getName(),
-                            gitLabIssue.getCreatedAt(),
-                            gitLabIssue.getWebUrl(),
-                            project,
-                            gitManagementUser)
-                    );
-            issue = issueRepository.save(issue);
-            saveIssueComments(project, issue);
+            saveIssueComments(project, gitLabIssue);
         }
     }
 
-    public void saveIssueComments(Project project, Issue issue) {
+    public void saveIssueComments(Project project, GitLabIssue issue) {
         var gitLabIssueComments = requestScopeGitLabService.getIssueNotes(project.getGitLabProjectId(), issue.getIid());
         var gitLabIssueCommentList = gitLabIssueComments.collectList().block();
 
@@ -79,7 +57,7 @@ public class IssueService {
                     );
             Optional<Note> note = issueCommentRepository.findByGitLabNoteIdAndProjectId(gitLabNote.getId(), project.getId());
             if (note.isEmpty() && !gitLabNote.isSystem()) {
-                boolean isOwn = gitLabNote.getAuthor().getId().equals(issue.getGitManagementUser().getGitLabUserId());
+                boolean isOwn = gitLabNote.getAuthor().getId().equals(issue.getAuthor().getId());
                 issueCommentRepository.save(new Note(
                         gitLabNote.getId(),
                         gitLabNote.getBody(),

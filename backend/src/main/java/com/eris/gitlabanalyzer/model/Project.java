@@ -77,14 +77,6 @@ public class Project {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             fetch = FetchType.LAZY
     )
-    private List<Issue> issues = new ArrayList<>();
-
-    @OneToMany(
-            mappedBy = "project",
-            orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            fetch = FetchType.LAZY
-    )
     private List<UserProjectPermission> userProjectPermissions = new ArrayList<>();
 
     @ManyToOne
@@ -147,10 +139,6 @@ public class Project {
         return mergeRequests;
     }
 
-    public List<Issue> getIssues() {
-        return issues;
-    }
-
     public Server getServer() {
         return server;
     }
@@ -181,13 +169,6 @@ public class Project {
         if (!this.mergeRequests.contains(mergeRequest)) {
             this.mergeRequests.add(mergeRequest);
             mergeRequest.setProject(this);
-        }
-    }
-
-    public void addIssue(Issue issue) {
-        if (!this.issues.contains(issue)) {
-            this.issues.add(issue);
-            issue.setProject(this);
         }
     }
 
