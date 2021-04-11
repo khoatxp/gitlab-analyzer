@@ -16,7 +16,7 @@ export default function NavTabs({tabSelected}: { tabSelected: number }) {
     const classes = useStyles();
     const router = useRouter();
 
-    const {projectId, gitManagementUserId, startDateTime, endDateTime} = router.query;
+    const {projectId, gitManagementUserId, startDateTime, endDateTime, scoreProfileId} = router.query;
     const queryStartDateTime = startDateTime ? startDateTime : "2021-01-01T00:00:00-08:00";
     const queryEndDateTime = endDateTime ? endDateTime : "2021-03-21T00:00:00-08:00";
     const queryDate = `?startDateTime=${queryStartDateTime}&endDateTime=${queryEndDateTime}`;
@@ -31,15 +31,15 @@ export default function NavTabs({tabSelected}: { tabSelected: number }) {
                 >
                     <Tab
                         label="Overview"
-                        onClick={() => router.push(`/project/${projectId}/${gitManagementUserId}/overview${queryDate}`)}
+                        onClick={() => router.push(`/project/${projectId}/${gitManagementUserId}/overview${queryDate}&scoreProfileId=${scoreProfileId}`)}
                     />
                     <Tab
                         label="Code"
-                        onClick={() => router.push(`/project/${projectId}/${gitManagementUserId}/code${queryDate}`)}
+                        onClick={() => router.push(`/project/${projectId}/${gitManagementUserId}/code${queryDate}&scoreProfileId=${scoreProfileId}`)}
                     />
                     <Tab
                         label="Notes"
-                        onClick={() => router.push(`/project/${projectId}/${gitManagementUserId}/notes${queryDate}`)}
+                        onClick={() => router.push(`/project/${projectId}/${gitManagementUserId}/notes${queryDate}&scoreProfileId=${scoreProfileId}`)}
                     />
                 </Tabs>
             </AppBar>

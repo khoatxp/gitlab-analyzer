@@ -49,7 +49,7 @@ const MenuSideBar = () => {
     const [gitManagementUsers, setGitManagementUsers] = React.useState<GitManagementUser[]>([]);
     const [sidebarState, setSidebarState] = React.useState(true);
 
-    const {projectId, gitManagementUserId, startDateTime, endDateTime} = router.query;
+    const {projectId, gitManagementUserId, startDateTime, endDateTime, scoreProfileId} = router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/${projectId}/managementusers/members`;
 
     const handleClick = (id: number) => {
@@ -57,7 +57,7 @@ const MenuSideBar = () => {
         const route = router.route;
         router.push({
             pathname: route,
-            query: {projectId: projectId, gitManagementUserId: id, startDateTime: startDateTime, endDateTime: endDateTime}
+            query: {projectId: projectId, gitManagementUserId: id, startDateTime: startDateTime, endDateTime: endDateTime, scoreProfileId: scoreProfileId}
         })
     };
 
