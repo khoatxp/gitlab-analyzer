@@ -18,7 +18,7 @@ type DiffItemListProps = {
     handleSelectDiffItem: (diffItem: DiffItem) => void;
     selectedIndex: number;
     setSelectedIndex: (index: number) => any;
-    handleToggle: (id: string) => void;
+    handleToggle: (diffItem: DiffItem) => void;
 }
 
 export type DiffItem = MergeRequest | Commit;
@@ -94,7 +94,7 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                                         align='left'
                                         style={{ minWidth: 100 }}
                                     >
-                                        <AppButton size="small" onClick={() => handleToggle(diffItem.id)}>
+                                        <AppButton size="small" onClick={() => handleToggle(diffItem)} disabled={diffItem.id == OrphanCommitMergeRequest.id}>
                                             {diffItem.ignored ? 'No' : 'Yes'}
                                         </AppButton>
                                     </TableCell>

@@ -5,7 +5,7 @@ import DiffItemList, {DiffItem} from "./DiffItemList";
 type MergeRequestListProps = {
     mergeRequests: MergeRequest[]
     handleSelectMergeRequest: (mergeRequest: MergeRequest) => void;
-    handleToggle: (id: string) => void;
+    handleToggle: (mergeRequest: MergeRequest) => void;
 }
 
 const MergeRequestList = ({mergeRequests, handleSelectMergeRequest, handleToggle}: MergeRequestListProps) => {

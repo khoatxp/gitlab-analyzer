@@ -109,6 +109,14 @@ public class ScoreService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Merge request of not found with id: " + mergeId));
 
         mergeRequest.setIsIgnored(!mergeRequest.getIsIgnored());
+
+        // Find all related commits and setIsIgnored
+        List<Commit> relatedCommits = this.commitRepository.findCommitByMergeRequest_Id(mergeId);
+        for (Commit commit : relatedCommits ) {
+            commit.setIsIgnored(mergeRequest.getIsIgnored());
+        }
+        this.commitRepository.saveAll(relatedCommits);
+
         this.mergeRequestRepository.save(mergeRequest);
         return mergeRequest;
     }

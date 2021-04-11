@@ -28,18 +28,19 @@ const index = () => {
 
     useEffect(() => {
         if (router.isReady) {
-            fetchMergeData();
+            resetValues().then(() => fetchMergeData());
         }
     }, [projectId, gitManagementUserId]);
 
+    const resetValues = async () => {
+        await setCommits([]);
+        await setFileChanges([]);
+        await setLinkToFileChanges('');
+        await setScoreText('');
+    }
+
     const fetchMergeData = async () => {
         try {
-            // Reset values
-            await setCommits([]);
-            await setFileChanges([]);
-            await setLinkToFileChanges('');
-            await setScoreText('');
-
             // Orphan commits
             const orphanCommitResp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/${projectId}/commits/${gitManagementUserId}/orphan?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
             const hasOrphanCommits = orphanCommitResp.data.length > 0;
@@ -118,14 +119,13 @@ const index = () => {
         }
     };
 
-    const handleToggleIgnoreMerge = (id: string) => {
-        console.log("THE ID", id);
-        axios
-            .post(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/merge_request/${id}/ignore`,{}, getAxiosAuthConfig())
-            .then((resp: AxiosResponse) => {
-                console.log(resp.data);
-            }).catch(() => {enqueueSnackbar('Failed to toggle merge request ignore.', {variant: 'error',});
-        });
+    const handleToggleIgnoreMerge = async (mergeRequest: MergeRequest) => {
+        try {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/merge_request/${mergeRequest.id}/ignore`,{}, getAxiosAuthConfig())
+            await fetchCommitData(mergeRequest);
+        } catch(e) {
+            enqueueSnackbar('Failed to toggle merge request ignore.', {variant: 'error',});
+        }
     }
 
     const handleSelectOrphanCommits = () => {
