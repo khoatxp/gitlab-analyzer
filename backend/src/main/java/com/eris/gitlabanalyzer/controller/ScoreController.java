@@ -54,6 +54,21 @@ public class ScoreController {
 
     }
 
+    // gitManagementUserId of 0 return project total for date range
+    @GetMapping(path ="/merge_request/{merge_request_id}/user/{gitManagementUserId}/diff/score/{scoreProfileId}")
+    public MergeReturnObject getUserSingleMergeScore (@PathVariable("gitManagementUserId") Long gitManagementUserId,
+                                                               @PathVariable("scoreProfileId") Long scoreProfileId,
+                                                               @PathVariable("merge_request_id") Long mergeId){
+        if(gitManagementUserId != 0L){
+            double [] mergeValues = scoreService.getUserSingleMergeScore(gitManagementUserId, mergeId, scoreProfileId);
+            return new MergeReturnObject(mergeValues[0], mergeValues[1]);
+        }else {
+            double mergeScore = scoreService.getMergeDiffScore(mergeId, scoreProfileId);
+            return new MergeReturnObject(mergeScore, 0);
+        }
+
+    }
+
     @GetMapping(path ="/commit/{commitId}/diff/score/{scoreProfileId}")
     public double getCommitDiffScore (@PathVariable("commitId") Long commitId,
                                       @PathVariable("scoreProfileId") Long scoreProfileId){

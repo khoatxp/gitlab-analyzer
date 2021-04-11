@@ -14,6 +14,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -40,7 +41,26 @@ public class ScoreService {
     public double getMergeDiffScore( Long mergeRequestId, Long scoreProfileId){
         return diffScoreCalculator.calculateScoreMerge(mergeRequestId, scoreProfileId);
     }
-
+    public double[] getUserSingleMergeScore(Long gitManagementUserId, Long mergeId, Long scoreProfileId){
+        Optional<MergeRequest> mr = mergeRequestRepository.findById(mergeId);
+        double sharedMergeScoreTotal = 0;
+        double mergeScoreTotal = 0;
+        if(mr.isEmpty()){
+            return null;
+        }
+        boolean isShared = !mr.get().getSharedWith().isEmpty();
+        // if shared sums users commit score on MR else finds mergeScore
+        if(isShared){
+            List<Commit> commitsOnSharedMr =
+                    commitRepository.findByMergeIdAndGitManagementUserId(mergeId, gitManagementUserId);
+            for(Commit commit : commitsOnSharedMr){
+                sharedMergeScoreTotal += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
+            }
+        } else {
+            mergeScoreTotal += diffScoreCalculator.calculateScoreMerge(mergeId, scoreProfileId);
+        }
+        return new double[]{mergeScoreTotal, sharedMergeScoreTotal};
+    }
     public double[] getUserMergeScore(Long gitManagementUserId, Long projectId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime){
         List<MergeRequest> mergeRequests = mergeRequestRepository.findAllNotSharedByGitManagementUserIdAndDateRange(projectId, gitManagementUserId, startDateTime, endDateTime);
         // Find shared MR for user that they both own or participated on
