@@ -20,6 +20,7 @@ const index = () => {
     const [mergeRequests, setMergeRequests] = React.useState<MergeRequest[]>([]);
     const [commits, setCommits] = React.useState<Commit[]>([]);
     const [orphanCommits, setOrphanCommits] = React.useState<Commit[]>([]);
+    const [score, setScore] = React.useState<number>(0);
     const [isOrphanCommitsSelected, setIsOrphanCommitsSelected] = React.useState<boolean>(false);
     const [fileChanges, setFileChanges] = React.useState<FileChange[]>([]);
     const [linkToFileChanges, setLinkToFileChanges] = React.useState<string>('');
@@ -75,7 +76,19 @@ const index = () => {
         });
     };
 
+    const fetchCommitScore = (commitId: number) => {
+        // TODO Pass correct Score Profile Id
+        let scoreProfileId = 0;
+        axios
+            .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/commit/${commitId}/diff/score/${scoreProfileId}`, getAxiosAuthConfig())
+            .then((resp: AxiosResponse) => {
+                setScore(resp.data);
+            }).catch(() => {enqueueSnackbar('Failed to get commit score.', {variant: 'error',});
+        });
+    };
+
     const handleSelectMergeRequest = (mergeRequest: MergeRequest) => {
+        setScore(0);
         if (mergeRequest.id == OrphanCommitMergeRequest.id) {
             handleSelectOrphanCommits();
         } else {
@@ -94,6 +107,7 @@ const index = () => {
 
     const handleSelectCommit = (commit: Commit) => {
         setLinkToFileChanges(commit.webUrl);
+        fetchCommitScore(commit.id);
         fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/commit/${commit.sha}/diff`);
     };
 
@@ -114,6 +128,7 @@ const index = () => {
                             fileChanges={fileChanges}
                             linkToFileChanges={linkToFileChanges}
                             isOrphanCommitsSelected={isOrphanCommitsSelected}
+                            score={score}
                         />
                     </Grid>
                 </Grid>
