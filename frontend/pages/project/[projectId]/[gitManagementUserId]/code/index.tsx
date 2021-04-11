@@ -118,6 +118,16 @@ const index = () => {
         }
     };
 
+    const handleToggleIgnoreMerge = (id: string) => {
+        console.log("THE ID", id);
+        axios
+            .post(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/merge_request/${id}/ignore`,{}, getAxiosAuthConfig())
+            .then((resp: AxiosResponse) => {
+                console.log(resp.data);
+            }).catch(() => {enqueueSnackbar('Failed to toggle merge request ignore.', {variant: 'error',});
+        });
+    }
+
     const handleSelectOrphanCommits = () => {
         setIsOrphanCommitsSelected(true);
         setCommits(orphanCommits);
@@ -140,6 +150,7 @@ const index = () => {
                         <MergeRequestList
                             mergeRequests={mergeRequests}
                             handleSelectMergeRequest={handleSelectMergeRequest}
+                            handleToggle={handleToggleIgnoreMerge}
                         />
                         <CommitList commits={commits} handleSelectCommit={handleSelectCommit}/>
                     </Grid>

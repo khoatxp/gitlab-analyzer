@@ -97,7 +97,7 @@ public class MergeRequest {
     )
     private List<Commit> commits = new ArrayList<>();
 
-    @Column(columnDefinition = "boolean default false")
+    @Column()
     private Boolean isIgnored;
 
     public MergeRequest(Long iid, String authorUsername, String title, OffsetDateTime createdAt, OffsetDateTime mergedAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
@@ -109,6 +109,7 @@ public class MergeRequest {
         this.webUrl = webUrl;
         this.project = project;
         this.gitManagementUser = gitManagementUser;
+        this.isIgnored = false;
     }
 
     public void addCommit(Commit commit) {

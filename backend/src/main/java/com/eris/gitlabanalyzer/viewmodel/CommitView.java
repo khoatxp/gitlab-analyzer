@@ -18,7 +18,7 @@ public class CommitView {
     private final String authorEmail;
     private final String authorName;
     private final String authorUsername;
-    private final boolean isIgnored;
+    private final boolean ignored;
 
     public static CommitView fromCommit(Commit commit){
         return new CommitView(

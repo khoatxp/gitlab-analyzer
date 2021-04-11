@@ -7,6 +7,7 @@ export interface MergeRequest {
     createdAt: string;
     mergedAt: string;
     webUrl: string;
+    ignored: boolean;
 }
 
 export interface MergeReturnObject {

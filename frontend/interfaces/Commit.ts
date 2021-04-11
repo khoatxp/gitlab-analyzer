@@ -8,4 +8,5 @@ export interface Commit {
     sha: string;
     title: string;
     webUrl: string;
+    ignored: boolean;
 }

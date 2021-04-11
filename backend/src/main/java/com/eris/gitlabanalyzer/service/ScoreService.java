@@ -65,10 +65,10 @@ public class ScoreService {
     }
 
     public double[] getUserMergeScore(Long gitManagementUserId, Long projectId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        List<MergeRequest> mergeRequests = mergeRequestRepository.findAllNotSharedByGitManagementUserIdAndDateRange(projectId, gitManagementUserId, startDateTime, endDateTime);
+        List<MergeRequest> mergeRequests = mergeRequestRepository.findAllActiveNotSharedByGitManagementUserIdAndDateRange(projectId, gitManagementUserId, startDateTime, endDateTime);
         // Find shared MR for user that they both own or participated on
-        List<MergeRequest> sharedMergeRequests = mergeRequestRepository.findOwnerSharedMergeRequests(projectId, gitManagementUserId, startDateTime, endDateTime);
-        sharedMergeRequests.addAll(mergeRequestRepository.findParticipantSharedMergeRequests(projectId, gitManagementUserId, startDateTime, endDateTime));
+        List<MergeRequest> sharedMergeRequests = mergeRequestRepository.findActiveOwnerSharedMergeRequests(projectId, gitManagementUserId, startDateTime, endDateTime);
+        sharedMergeRequests.addAll(mergeRequestRepository.findActiveParticipantSharedMergeRequests(projectId, gitManagementUserId, startDateTime, endDateTime));
 
         double mergeScoreTotal = 0;
 
@@ -78,7 +78,7 @@ public class ScoreService {
 
         List<Commit> commitsOnSharedMr = new ArrayList<>();
         for (MergeRequest mr : sharedMergeRequests) {
-            commitsOnSharedMr.addAll(commitRepository.findByMergeIdAndGitManagementUserId(mr.getId(), gitManagementUserId));
+            commitsOnSharedMr.addAll(commitRepository.findActiveByMergeIdAndGitManagementUserId(mr.getId(), gitManagementUserId));
         }
         double sharedMergeScoreTotal = 0;
         for (Commit commit : commitsOnSharedMr) {
@@ -93,7 +93,7 @@ public class ScoreService {
     }
 
     public double getTotalMergeDiffScore(Long projectId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        List<MergeRequest> mergeRequests = mergeRequestRepository.findAllByProjectIdAndDateRange(projectId,
+        List<MergeRequest> mergeRequests = mergeRequestRepository.findAllActiveByProjectIdAndDateRange(projectId,
                 startDateTime.withOffsetSameInstant(ZoneOffset.UTC), endDateTime.withOffsetSameInstant(ZoneOffset.UTC));
         double totalScore = 0;
         for (MergeRequest mr : mergeRequests) {
@@ -120,7 +120,7 @@ public class ScoreService {
 
     public double getUserCommitScore(Long projectId, Long gitManagementUserId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
 
-        List<Commit> commits = commitRepository.findAllByProjectIdAndDateRangeAndGitManagementUserId(projectId, gitManagementUserId,
+        List<Commit> commits = commitRepository.findAllActiveByProjectIdAndDateRangeAndGitManagementUserId(projectId, gitManagementUserId,
                 startDateTime.withOffsetSameInstant(ZoneOffset.UTC), endDateTime.withOffsetSameInstant(ZoneOffset.UTC));
         double totalScore = 0;
         for (Commit commit : commits) {
@@ -136,7 +136,7 @@ public class ScoreService {
 
     // This will most likely change as we update how we retrieve diff's
     public double getTotalCommitDiffScore(Long projectId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        List<Commit> commits = commitRepository.findAllByProjectIdAndDateRange(projectId,
+        List<Commit> commits = commitRepository.findAllActiveByProjectIdAndDateRange(projectId,
                 startDateTime.withOffsetSameInstant(ZoneOffset.UTC), endDateTime.withOffsetSameInstant(ZoneOffset.UTC));
         double totalScore = 0;
         for (Commit commit : commits) {
@@ -159,11 +159,11 @@ public class ScoreService {
 
         var startDateTimeUTC = startDateTime.withOffsetSameInstant(ZoneOffset.UTC);
         var endDateTimeUTC = endDateTime.withOffsetSameInstant(ZoneOffset.UTC);
-        List<Commit> commits = gitManagementUserId != 0L ? commitRepository.findAllByProjectIdAndDateRangeAndGitManagementUserId(projectId, gitManagementUserId, startDateTime, endDateTime)
-                : commitRepository.findAllByProjectIdAndDateRange(projectId, startDateTimeUTC, endDateTimeUTC);
+        List<Commit> commits = gitManagementUserId != 0L ? commitRepository.findAllActiveByProjectIdAndDateRangeAndGitManagementUserId(projectId, gitManagementUserId, startDateTime, endDateTime)
+                : commitRepository.findAllActiveByProjectIdAndDateRange(projectId, startDateTimeUTC, endDateTimeUTC);
 
-        List<MergeRequest> mergeRequests = gitManagementUserId != 0L ? mergeRequestRepository.findAllByGitManagementUserIdAndDateRange(projectId, gitManagementUserId, startDateTime, endDateTime)
-                : mergeRequestRepository.findAllByProjectIdAndDateRange(projectId, startDateTimeUTC, endDateTimeUTC);
+        List<MergeRequest> mergeRequests = gitManagementUserId != 0L ? mergeRequestRepository.findAllActiveByGitManagementUserIdAndDateRange(projectId, gitManagementUserId, startDateTime, endDateTime)
+                : mergeRequestRepository.findAllActiveByProjectIdAndDateRange(projectId, startDateTimeUTC, endDateTimeUTC);
 
         var groupedCommits = commits.stream()
                 .collect(groupingBy((commit) ->

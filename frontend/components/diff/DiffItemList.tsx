@@ -6,11 +6,11 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import formatDate from "../../utils/DateFormatter";
 import {MergeRequest, OrphanCommitMergeRequest} from "../../interfaces/MergeRequest";
 import {Commit} from "../../interfaces/Commit";
+import AppButton from "../app/AppButton";
 
 type DiffItemListProps = {
     diffItems: DiffItem[]
@@ -18,6 +18,7 @@ type DiffItemListProps = {
     handleSelectDiffItem: (diffItem: DiffItem) => void;
     selectedIndex: number;
     setSelectedIndex: (index: number) => any;
+    handleToggle: (id: string) => void;
 }
 
 export type DiffItem = MergeRequest | Commit;
@@ -31,7 +32,7 @@ const useStyles = makeStyles({
   },
 });
 
-const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIndex, setSelectedIndex}: DiffItemListProps) => {
+const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIndex, setSelectedIndex, handleToggle}: DiffItemListProps) => {
     const classes = useStyles();
 
     return (
@@ -53,6 +54,13 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                               style={{ minWidth: 100 }}
                             >
                                 {diffItems.length.toString()} {diffItemType}(s)
+                            </TableCell>
+                            <TableCell
+                                key="ignored"
+                                align='left'
+                                style={{ minWidth: 100 }}
+                            >
+                                Used in scoring
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -80,6 +88,15 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                                             (diffItemType=='Merge Request' ? 'Merged ' : 'Committed ') +
                                             `by ${diffItem.authorUsername=='undefined' ? 'Unmapped User' : diffItem.authorUsername}`
                                         }
+                                    </TableCell>
+                                    <TableCell
+                                        key="ignored"
+                                        align='left'
+                                        style={{ minWidth: 100 }}
+                                    >
+                                        <AppButton size="small" onClick={() => handleToggle(diffItem.id)}>
+                                            {diffItem.ignored ? 'No' : 'Yes'}
+                                        </AppButton>
                                     </TableCell>
                                 </TableRow>
                             ))

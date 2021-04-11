@@ -70,7 +70,7 @@ public class ScoreController {
         }
     }
 
-    @GetMapping(path = "/merge_request/{merge_request_id}/ignore")
+    @PostMapping(path = "/merge_request/{merge_request_id}/ignore")
     public MergeRequestView toggleIgnoreMergeFromScore(@PathVariable("merge_request_id") Long mergeId) {
         return MergeRequestView.fromMergeRequest(scoreService.toggleIgnoreMergeFromScore(mergeId));
     }
@@ -98,7 +98,7 @@ public class ScoreController {
         }
     }
 
-    @GetMapping(path = "/commit/{commitId}/ignore")
+    @PostMapping(path = "/commit/{commitId}/ignore")
     public CommitView toggleIgnoreCommitFromScore(@PathVariable("commitId") Long commitId) {
         return CommitView.fromCommit(scoreService.toggleIgnoreCommitFromScore(commitId));
     }

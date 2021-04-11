@@ -108,7 +108,7 @@ public class Commit {
             referencedColumnName = "merge_request_id")
     private MergeRequest mergeRequest;
 
-    @Column(columnDefinition = "boolean default false")
+    @Column()
     private Boolean isIgnored;
 
     public Commit(String sha, String title, String authorName, String authorEmail, OffsetDateTime createdAt, String webUrl, Project project) {
@@ -119,6 +119,7 @@ public class Commit {
         this.createdAt = createdAt;
         this.webUrl = webUrl;
         this.project = project;
+        this.isIgnored = false;
     }
 
     public void setAuthorUsername(String authorUsername) {
