@@ -88,7 +88,7 @@ const index = () => {
             .then((resp: AxiosResponse) => {
                 const mrScores: MergeReturnObject = resp.data;
                 // Merge request scores are either all shared or all individual. Label as shared if we only have shared score
-                const scoreText= `Merge Request score: ${mrScores.sharedMergeScore > 0 ? mrScores.sharedMergeScoredtwo + '(shared)' : mrScores.mergeScore}`;
+                const scoreText= `Merge Request score: ${mrScores.sharedMergeScore > 0 ? mrScores.sharedMergeScore + '(shared)' : mrScores.mergeScore}`;
                 setScoreText(scoreText);
             }).catch(() => {
             enqueueSnackbar('Failed to get merge request score.', {variant: 'error',});
