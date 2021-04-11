@@ -7,7 +7,6 @@ import StarIcon from '@material-ui/icons/Star';
 import RestaurantIcon from '@material-ui/icons/Restaurant';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import {useSnackbar} from "notistack";
-import MemberText from "../utils/memberName";
 import Divider from '@material-ui/core/Divider';
 
 const useStyles = makeStyles(theme => ({
@@ -25,10 +24,12 @@ export interface ProjectSummary {
     mergeRequestScore: number;
     sharedMergeRequestScore: number;
     gitManagementUserId: string | undefined,
+    memberUserName: string,
+    dateRange: string,
 }
 
 const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) => {
-    const {project, commitCount, mergeRequestCount, commitScore, mergeRequestScore, sharedMergeRequestScore, gitManagementUserId} = projectSummary;
+    const {project, commitCount, mergeRequestCount, commitScore, mergeRequestScore, sharedMergeRequestScore, gitManagementUserId, memberUserName,dateRange} = projectSummary;
     const {enqueueSnackbar} = useSnackbar();
     const styles = useStyles();
 
@@ -55,7 +56,8 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
 
             <Box ml={3} flexGrow={1}>
                 <Typography variant="h5">{project?.name_with_namespace ?? "Loading..."}</Typography>
-                <Typography variant="subtitle1">{MemberText({id:gitManagementUserId}) ?? "Loading..."}</Typography>
+                <Typography variant="subtitle1">{memberUserName ?? "Loading..."}</Typography>
+                <Typography variant="subtitle1">{dateRange}</Typography>
                 <Typography variant="subtitle2">
                     {commitCount} Commit(s) -{' '}
                     {mergeRequestCount} Merge Request(s)
