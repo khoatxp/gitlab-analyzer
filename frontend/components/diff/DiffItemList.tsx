@@ -43,7 +43,6 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                         <TableCell
                           key="date"
                           align='left'
-                          whiteSpace="nowrap"
                           style={{ minWidth: 100 }}
                         >
                             Date
@@ -51,7 +50,6 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                         <TableCell
                           key="DiffItem"
                           align='left'
-                          whiteSpace="nowrap"
                           style={{ minWidth: 100 }}
                         >
                             {diffItems.length.toString()} {diffItemType}(s)
@@ -74,8 +72,9 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                                     {formatDate(diffItem.mergedAt || diffItem.createdAt)}
                                 </TableCell>
                                 <TableCell key="DiffItem" align='left' style={{ minWidth: 100 }}>
+                                    {diffItem.title}
                                     {
-                                        `${diffItem.title}` + diffItem.id == OrphanCommitMergeRequest.id.toString() ?
+                                        diffItem.id == OrphanCommitMergeRequest.id.toString() ?
                                         OrphanCommitMergeRequest.secondaryText : ` · ` +
                                         (diffItem.mergedAt ? 'Merged ' : 'Created ') +
                                         `by ${diffItem.authorUsername}`
