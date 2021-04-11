@@ -20,7 +20,7 @@ const index = () => {
     const [mergeRequests, setMergeRequests] = React.useState<MergeRequest[]>([]);
     const [commits, setCommits] = React.useState<Commit[]>([]);
     const [orphanCommits, setOrphanCommits] = React.useState<Commit[]>([]);
-    const [score, setScore] = React.useState<number>(0);
+    const [scoreText, setScoreText] = React.useState<string>('');
     const [isOrphanCommitsSelected, setIsOrphanCommitsSelected] = React.useState<boolean>(false);
     const [fileChanges, setFileChanges] = React.useState<FileChange[]>([]);
     const [linkToFileChanges, setLinkToFileChanges] = React.useState<string>('');
@@ -76,25 +76,29 @@ const index = () => {
         });
     };
 
+    const fetchMergeRequestScore = (id: number) => {
+        setScoreText(`Merge Request score: ${"TBD"}`);
+    }
+
     const fetchCommitScore = (commitId: number) => {
         // TODO Pass correct Score Profile Id
         let scoreProfileId = 0;
         axios
             .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/commit/${commitId}/diff/score/${scoreProfileId}`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
-                setScore(resp.data);
+                setScoreText(`Commit score: ${resp.data.toString()}`);
             }).catch(() => {enqueueSnackbar('Failed to get commit score.', {variant: 'error',});
         });
     };
 
     const handleSelectMergeRequest = (mergeRequest: MergeRequest) => {
-        setScore(0);
         if (mergeRequest.id == OrphanCommitMergeRequest.id) {
             handleSelectOrphanCommits();
         } else {
             fetchCommitData(mergeRequest);
             setLinkToFileChanges(mergeRequest.webUrl);
             fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${mergeRequest.iid}/diff`);
+            fetchMergeRequestScore(mergeRequest.id);
         }
     };
 
@@ -103,6 +107,7 @@ const index = () => {
         setCommits(orphanCommits);
         setLinkToFileChanges('');
         setFileChanges([]);
+        setScoreText('');
     }
 
     const handleSelectCommit = (commit: Commit) => {
@@ -128,7 +133,7 @@ const index = () => {
                             fileChanges={fileChanges}
                             linkToFileChanges={linkToFileChanges}
                             isOrphanCommitsSelected={isOrphanCommitsSelected}
-                            score={score}
+                            scoreText={scoreText}
                         />
                     </Grid>
                 </Grid>
