@@ -8,7 +8,9 @@ import com.eris.gitlabanalyzer.repository.CommitRepository;
 import com.eris.gitlabanalyzer.repository.MergeRequestRepository;
 import com.eris.gitlabanalyzer.viewmodel.ScoreDigest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -101,9 +103,18 @@ public class ScoreService {
         return totalScore;
     }
 
+    public MergeRequest toggleIgnoreMergeFromScore(Long mergeId) {
+        MergeRequest mergeRequest = this.mergeRequestRepository
+                .findById(mergeId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Merge request of not found with id: " + mergeId));
+
+        mergeRequest.setIsIgnored(!mergeRequest.getIsIgnored());
+        this.mergeRequestRepository.save(mergeRequest);
+        return mergeRequest;
+    }
+
     // This will most likely change as we update how we retrieve diff's
     public double getCommitDiffScore(Long commitId, Long scoreProfileId) {
-
         return diffScoreCalculator.calculateScoreCommit(commitId, scoreProfileId);
     }
 
@@ -132,6 +143,16 @@ public class ScoreService {
             totalScore += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
         }
         return totalScore;
+    }
+
+    public Commit toggleIgnoreCommitFromScore(Long commitId) {
+        Commit commit = this.commitRepository
+                .findById(commitId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Commit not found with id: " + commitId));
+
+        commit.setIsIgnored(!commit.getIsIgnored());
+        this.commitRepository.save(commit);
+        return commit;
     }
 
     public List<ScoreDigest> getDailyScoreDigest(Long projectId, Long gitManagementUserId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {

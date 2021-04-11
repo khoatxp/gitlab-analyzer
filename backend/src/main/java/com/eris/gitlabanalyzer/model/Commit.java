@@ -2,6 +2,7 @@ package com.eris.gitlabanalyzer.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Entity(name = "Commit")
 @Table(name = "commit")
 @Getter
+@Setter
 @NoArgsConstructor
 @ToString
 public class Commit {

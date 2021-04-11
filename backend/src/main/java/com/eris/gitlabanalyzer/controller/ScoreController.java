@@ -1,6 +1,8 @@
 package com.eris.gitlabanalyzer.controller;
 
 import com.eris.gitlabanalyzer.service.ScoreService;
+import com.eris.gitlabanalyzer.viewmodel.CommitView;
+import com.eris.gitlabanalyzer.viewmodel.MergeRequestView;
 import com.eris.gitlabanalyzer.viewmodel.ScoreDigest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -66,8 +68,13 @@ public class ScoreController {
             double mergeScore = scoreService.getMergeDiffScore(mergeId, scoreProfileId);
             return new MergeReturnObject(mergeScore, 0);
         }
-
     }
+
+    @GetMapping(path = "/merge_request/{merge_request_id}/ignore")
+    public MergeRequestView toggleIgnoreMergeFromScore(@PathVariable("merge_request_id") Long mergeId) {
+        return MergeRequestView.fromMergeRequest(scoreService.toggleIgnoreMergeFromScore(mergeId));
+    }
+
 
     @GetMapping(path = "/commit/{commitId}/diff/score/{scoreProfileId}")
     public double getCommitDiffScore(@PathVariable("commitId") Long commitId,
@@ -89,6 +96,11 @@ public class ScoreController {
         } else {
             return scoreService.getTotalCommitDiffScore(projectId, scoreProfileId, startDateTime, endDateTime);
         }
+    }
+
+    @GetMapping(path = "/commit/{commitId}/ignore")
+    public CommitView toggleIgnoreCommitFromScore(@PathVariable("commitId") Long commitId) {
+        return CommitView.fromCommit(scoreService.toggleIgnoreCommitFromScore(commitId));
     }
 
     @GetMapping(path = "/{projectId}/score_digest/user/{gitManagementUserId}/{scoreProfileId}")
