@@ -1,10 +1,13 @@
 package com.eris.gitlabanalyzer.model;
 
 import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 // TODO: Map score profile to their users
@@ -45,6 +48,10 @@ public class ScoreProfile {
     @Column(name="weight")
     private Map<String, Double> extensionWeights = new HashMap<String, Double>();
 
+    @ElementCollection
+    @Column(name="blackList")
+    private List<String> blackList = new ArrayList<>();
+
     public ScoreProfile(String name, double lineWeight, double deleteWeight, double syntaxWeight, double commentsWeight){
         this.name = name;
         this.lineWeight = lineWeight;
@@ -62,5 +69,29 @@ public class ScoreProfile {
             extensionWeights.remove(file);
         }
     }
+
+    public boolean ExtensionContains(String extension){
+        return extensionWeights.containsKey(extension);
+    }
+
+    public double getExtensionWeight(String extension){
+        return extensionWeights.get(extension);
+    }
+
+    public void addBlackList(List<String> newBlackList){
+        blackList.addAll(newBlackList);
+    }
+
+
+    public void deleteFromBlackList(String extension){
+        if (blackList.contains(extension)){
+            blackList.remove(extension);
+        }
+    }
+
+    public boolean blackListContains(String extension){
+        return blackList.contains(extension);
+    }
+
 
 }

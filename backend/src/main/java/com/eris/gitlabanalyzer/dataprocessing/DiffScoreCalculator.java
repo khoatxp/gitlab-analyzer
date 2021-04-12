@@ -41,15 +41,18 @@ public class DiffScoreCalculator {
     private double calculateFileScore(List<FileScore> fileScores, ScoreProfile scoreProfile){
         double totalScore = 0;
         for(FileScore fileScore : fileScores){
-            double fileWeightModifier = scoreProfile.getExtensionWeights().getOrDefault(fileScore.getFileType(), 1.0);
-            double codeWeight = fileWeightModifier * scoreProfile.getLineWeight();
-            totalScore += fileScore.getCodeLineAdded() * codeWeight;
-            totalScore += fileScore.getSyntaxLineAdded() * scoreProfile.getSyntaxWeight();
-            totalScore += fileScore.getCommentLineAdded() *  scoreProfile.getCommentsWeight();
+            if(!scoreProfile.blackListContains(fileScore.getFileType())) {
+                double fileWeightModifier = scoreProfile.getExtensionWeights().getOrDefault(fileScore.getFileType(), 1.0);
+                double codeWeight = fileWeightModifier * scoreProfile.getLineWeight();
+                totalScore += fileScore.getCodeLineAdded() * codeWeight;
+                totalScore += fileScore.getSyntaxLineAdded() * scoreProfile.getSyntaxWeight();
+                totalScore += fileScore.getCommentLineAdded() *  scoreProfile.getCommentsWeight();
 
-            totalScore += fileScore.getCodeLineRemoved() * Math.min(codeWeight, scoreProfile.getDeleteWeight());
-            totalScore += fileScore.getSyntaxLineRemoved() * Math.min(scoreProfile.getSyntaxWeight(), scoreProfile.getDeleteWeight());
-            totalScore += fileScore.getCommentLineRemoved() * Math.min(scoreProfile.getCommentsWeight(), scoreProfile.getDeleteWeight());
+                totalScore += fileScore.getCodeLineRemoved() * Math.min(codeWeight, scoreProfile.getDeleteWeight());
+                totalScore += fileScore.getSyntaxLineRemoved() * Math.min(scoreProfile.getSyntaxWeight(), scoreProfile.getDeleteWeight());
+                totalScore += fileScore.getCommentLineRemoved() * Math.min(scoreProfile.getCommentsWeight(), scoreProfile.getDeleteWeight());
+            }
+
         }
 
         return  totalScore;
