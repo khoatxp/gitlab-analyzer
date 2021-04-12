@@ -54,19 +54,12 @@ const MenuSideBar = () => {
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/${projectId}/managementusers/members`;
 
     const handleClick = (id: number) => {
-        setActive(id);
         const route = router.route;
         router.push({
             pathname: route,
             query: {projectId: projectId, gitManagementUserId: id, startDateTime: startDateTime, endDateTime: endDateTime}
         })
     };
-
-    const setActive = (id: number | string) => {
-        let prevSelected = document.getElementsByClassName('selectedMemberButton');
-        prevSelected[0]?.classList.remove('selectedMemberButton');
-        document.getElementById(`memberButton${id}`)?.classList.add('selectedMemberButton');
-    }
 
     useEffect(() => {
         if (router.isReady) {
@@ -77,9 +70,8 @@ const MenuSideBar = () => {
                  }).catch((err:AxiosError)=>{
                     enqueueSnackbar(`Failed to get members: ${err}`, {variant: 'error',});
             })
-            setActive(Array.isArray(gitManagementUserId) || gitManagementUserId == undefined? "0" : gitManagementUserId)
         }
-    }, [projectId]);
+    }, [projectId, gitManagementUserId]);
 
     const toggleSidebar = () => setIsSideBarOpen(!isSideBarOpen);
 
@@ -99,13 +91,16 @@ const MenuSideBar = () => {
                 </Tabs>
             </AppBar>
             <Box className={`${classes.sidebar} ${isSideBarOpen && classes.displaySidebar}`} >
-                <MenuButton variant="contained" id={'memberButton0'} disableRipple onClick={() => handleClick(0)}>
+                <MenuButton variant="contained" id={'memberButton0'} disableRipple
+                            onClick={() => handleClick(0)}
+                            className={"0" === gitManagementUserId? 'selectedMemberButton' : ''}>
                     Everyone
                 </MenuButton>
                 {gitManagementUsers.map(gitManagementUser =>
                     <MenuButton key={gitManagementUser.id}
                                 value={[gitManagementUser.id.toString(),gitManagementUser.username]}
                                 id={`memberButton${gitManagementUser.id}`}
+                                className={gitManagementUser.id.toString() === gitManagementUserId? 'selectedMemberButton' : ''}
                                 variant="contained" disableRipple
                                 onClick={() => handleClick(gitManagementUser.id)}
                     >
