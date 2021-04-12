@@ -182,10 +182,10 @@ public class CalculateDiffMetrics {
 
     private lineAction getAction(String line){
         if(line.length() >= 2){
-            String startChar = line.substring(0,2);
-            if(startChar.equals("+ ")){
+            String startChar = line.substring(0,1);
+            if(startChar.equals("+")){
                 return lineAction.added;
-            } else if(startChar.equals("- ")){
+            } else if(startChar.equals("-")){
                 return  lineAction.removed;
             } else{
                 return lineAction.unchanged;
