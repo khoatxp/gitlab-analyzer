@@ -1544,11 +1544,25 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                       className="MuiPaper-root MuiAppBar-root MuiAppBar-positionStatic MuiAppBar-colorPrimary MuiPaper-elevation4"
                     >
                       <WithStyles(ForwardRef(Tabs))
+                        TabIndicatorProps={
+                          Object {
+                            "style": Object {
+                              "width": "100%",
+                            },
+                          }
+                        }
                         aria-label="nav tabs"
                         value={0}
                         variant="fullWidth"
                       >
                         <ForwardRef(Tabs)
+                          TabIndicatorProps={
+                            Object {
+                              "style": Object {
+                                "width": "100%",
+                              },
+                            }
+                          }
                           aria-label="nav tabs"
                           classes={
                             Object {
@@ -1744,7 +1758,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                                 style={
                                   Object {
                                     "left": 0,
-                                    "width": 0,
+                                    "width": "100%",
                                   }
                                 }
                               >
@@ -1763,7 +1777,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                                   style={
                                     Object {
                                       "left": 0,
-                                      "width": 0,
+                                      "width": "100%",
                                     }
                                   }
                                 >
@@ -1772,7 +1786,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                                     style={
                                       Object {
                                         "left": 0,
-                                        "width": 0,
+                                        "width": "100%",
                                       }
                                     }
                                   />
