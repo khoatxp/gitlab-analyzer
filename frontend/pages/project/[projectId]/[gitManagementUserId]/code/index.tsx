@@ -86,8 +86,6 @@ const index = () => {
             )
             .then((resp: AxiosResponse) => {
                 const mrScores: MergeReturnObject = resp.data;
-                console.log('shared'+mrScores.sharedMergeScore);
-                console.log('own'+mrScores.mergeScore);
                 // Merge request scores are either all shared or all individual. Label as shared if we only have shared score
                 const scoreText= `Merge Request score: ${mrScores.sharedMergeScore > 0 ? mrScores.sharedMergeScore + '(shared)' : mrScores.mergeScore}`;
                 setScoreText(scoreText);
