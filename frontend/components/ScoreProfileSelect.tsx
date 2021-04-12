@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface Props {
-    onScoreProfileSelect: (id: number) => void
+    onScoreProfileSelect: (id: number, name: string) => void
 }
 
 const ScoreProfileSelector = ({onScoreProfileSelect}:Props) => {
@@ -109,6 +109,14 @@ const ScoreProfileSelector = ({onScoreProfileSelect}:Props) => {
         setOpen(false);
     };
 
+    const scoreProfileName= (id:number) : string => {
+        const profile = profiles.find(profile=> profile.id==id);
+        if (profile != undefined){
+            return profile.name;
+        }
+        return("default");
+    }
+
     return (
         <Box display="flex" flexDirection="row" justifyContent="center" marginLeft={4}>
             <FormControl className={classes.formControl}>
@@ -119,13 +127,15 @@ const ScoreProfileSelector = ({onScoreProfileSelect}:Props) => {
                         onOpen={() => {setIconVisible(true); setSelectOpen(true)}}
                         onClose={() => {setIconVisible(false); setSelectOpen(false)}}
                         value={scoreProfile || ""}
-                        onChange={(e) => {setScoreProfile(Number(e.target.value)); onScoreProfileSelect(Number(e.target.value))}}
+                        onChange={(e) => {setScoreProfile(Number(e.target.value)); onScoreProfileSelect(Math.round(Number(e.target.value)), scoreProfileName(Math.round(Number(e.target.value))))}}
                         MenuProps={{
                             anchorOrigin: {vertical: "top", horizontal: "left"},
                             transformOrigin: {vertical: "top", horizontal: "left"},
                             getContentAnchorEl: null,
                             classes: {paper: classes.menuPaper }}}
                     >
+                        <MenuItem value={0.1}> {"default"}</MenuItem>
+
                         {profiles.length > 0 ? (
                             profiles.map((profile, index :number) => (
                                 <MenuItem value={profile.id} key={index}>
@@ -142,7 +152,7 @@ const ScoreProfileSelector = ({onScoreProfileSelect}:Props) => {
                                         </ListItemSecondaryAction>
                                     ) : null}
                                 </MenuItem>
-                        ))): <div> No profiles have been created </div> }
+                        ))): null}
                     </Select>
             </FormControl>
 

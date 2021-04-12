@@ -58,7 +58,7 @@ const MemberMapping = () => {
     const classes = useStyles();
     const {enqueueSnackbar} = useSnackbar();
     const router = useRouter();
-    const {projectId, startDateTime, endDateTime} = router.query;
+    const {projectId, startDateTime, endDateTime, scoreProfileId} = router.query;
     const dateQuery = `?startDateTime=${startDateTime}&endDateTime=${endDateTime}`;
     const [commitAuthors, setCommitAuthors] = React.useState<CommitAuthor[]>([]);
     const [gitManagementUsers, setGitManagementUsers] = React.useState<GitManagementUser[]>([]);
@@ -105,7 +105,7 @@ const MemberMapping = () => {
     }
 
     const returnToAnalysis = async () => {
-        await router.push(`/project/${projectId}/0/overview${dateQuery}`);
+        await router.push(`/project/${projectId}/0/overview${dateQuery}&scoreProfileId=${scoreProfileId}`);
     }
 
     return (

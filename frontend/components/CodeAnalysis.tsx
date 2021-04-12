@@ -17,7 +17,7 @@ const CodeAnalysis = () => {
     const {enqueueSnackbar} = useSnackbar();
     // TODO startDateTime, endDateTime could be possibly undefined (missing from url) or an array(multiple)
     // Need to handle these cases. This might be a non issue or handled differently with analysis run
-    const {projectId, gitManagementUserId, startDateTime, endDateTime} = router.query;
+    const {projectId, gitManagementUserId, startDateTime, endDateTime, scoreProfileId} = router.query;
 
     const [project, setProject] = React.useState<GitLabProject>();
     const [mergeRequestCount, setMergeRequestCount] = React.useState<number>(0);
@@ -44,8 +44,7 @@ const CodeAnalysis = () => {
 
     useEffect(() => {
         if (router.isReady) {
-            // TODO Pass correct Score Profile Id
-            let scoreProfileId = 0;
+
             setIsRetrieving(true);
             const dateQuery = `startDateTime=${startDateTime}&endDateTime=${endDateTime}`;
 

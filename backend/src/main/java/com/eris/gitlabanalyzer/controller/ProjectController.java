@@ -62,8 +62,10 @@ public class ProjectController {
             @RequestParam("startDateTime")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDateTime,
             @RequestParam("endDateTime")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime){
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDateTime,
+            @RequestParam("scoreProfileId") Long scoreProfileId,
+            @RequestParam("scoreProfileName") String scoreProfileName){
         var user = authService.getLoggedInUser(principal);
-        return analyticsService.saveProjectsAndAnalysisRuns(user, serverId, gitLabProjectIdList, startDateTime, endDateTime);
+        return analyticsService.saveProjectsAndAnalysisRuns(user, serverId, gitLabProjectIdList, startDateTime, endDateTime, scoreProfileId, scoreProfileName);
     }
 }

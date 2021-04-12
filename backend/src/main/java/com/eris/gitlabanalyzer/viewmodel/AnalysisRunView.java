@@ -19,6 +19,8 @@ public class AnalysisRunView {
     private OffsetDateTime startDateTime;
     private OffsetDateTime endDateTime;
     private OffsetDateTime createdDateTime;
+    private Long scoreProfileId;
+    private String scoreProfileName;
     private String message;
     private Double progress;
 
@@ -44,6 +46,8 @@ public class AnalysisRunView {
                 analysisRun.getStartDateTime(),
                 analysisRun.getEndDateTime(),
                 analysisRun.getCreatedDateTime(),
+                analysisRun.getScoreProfileId(),
+                analysisRun.getScoreProfileName(),
                 analysisRun.getMessage(),
                 analysisRun.getProgress()
         );

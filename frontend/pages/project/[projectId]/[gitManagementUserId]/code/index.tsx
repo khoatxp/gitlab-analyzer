@@ -24,7 +24,7 @@ const index = () => {
     const [isOrphanCommitsSelected, setIsOrphanCommitsSelected] = React.useState<boolean>(false);
     const [fileChanges, setFileChanges] = React.useState<FileChange[]>([]);
     const [linkToFileChanges, setLinkToFileChanges] = React.useState<string>('');
-    const {projectId, gitManagementUserId, startDateTime, endDateTime} = router.query;
+    const {projectId, gitManagementUserId, startDateTime, endDateTime, scoreProfileId} = router.query;
 
     useEffect(() => {
         if (router.isReady) {
@@ -97,8 +97,6 @@ const index = () => {
     }
 
     const fetchCommitScore = (commitId: number) => {
-        // TODO Pass correct Score Profile Id
-        let scoreProfileId = 0;
         axios
             .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/commit/${commitId}/diff/score/${scoreProfileId}`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {

@@ -46,16 +46,17 @@ const index = () => {
         });
     }
 
-    const handleAnalyze = (projectIds: number[], startDateTime: Date, endDateTime: Date) => {
+    const handleAnalyze = (projectIds: number[], startDateTime: Date, endDateTime: Date, scoreProfileId: number, scoreProfileName: string) => {
         setItemBeingLoaded("");
         setIsLoading(true);
 
         const start = formatISO(startDateTime);
         const end = formatISO(endDateTime);
         const dateQuery = `startDateTime=${start}&endDateTime=${end}`;
+        const scoreProfileQuery= `scoreProfileId=${scoreProfileId}&scoreProfileName=${scoreProfileName}`
 
         axios
-            .post(`${process.env.NEXT_PUBLIC_API_URL}/${serverId}/projects/analytics/generate_analysis_runs/?${dateQuery}`, projectIds, getAxiosAuthConfig())
+            .post(`${process.env.NEXT_PUBLIC_API_URL}/${serverId}/projects/analytics/generate_analysis_runs/?${dateQuery}&${scoreProfileQuery}`, projectIds, getAxiosAuthConfig())
             .then((res) => {
                 axios
                     .post(`${process.env.NEXT_PUBLIC_API_URL}/${serverId}/projects/analytics/save_all`, res.data, getAxiosAuthConfig())
@@ -94,14 +95,16 @@ const index = () => {
         const projectId = generatedAnalysisRun?.projectId;
         const start = generatedAnalysisRun?.startDateTime;
         const end = generatedAnalysisRun?.endDateTime;
+        const scoreProfileId = generatedAnalysisRun?.scoreProfileId;
         const dateQuery = `startDateTime=${start}&endDateTime=${end}`;
+        const scoreProfileQuery = `scoreProfileId=${scoreProfileId}`
 
         //Sometimes it is delayed for a few seconds until the page is redirected so we inform the user
         setOpen(false);
         setIsLoading(true);
         setItemBeingLoaded(`Overview page for ${projectNameWithNamespace}`);
 
-        router.push(`/project/${projectId}/0/overview?${dateQuery}`);
+        router.push(`/project/${projectId}/0/overview?${dateQuery}&${scoreProfileQuery}`);
     };
 
     return (

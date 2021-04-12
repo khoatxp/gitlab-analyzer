@@ -2,6 +2,7 @@ package com.eris.gitlabanalyzer.controller;
 
 import com.eris.gitlabanalyzer.model.AnalysisRun;
 import com.eris.gitlabanalyzer.model.User;
+import com.eris.gitlabanalyzer.model.ScoreProfile;
 import com.eris.gitlabanalyzer.repository.AnalysisRunRepository;
 import com.eris.gitlabanalyzer.service.AnalysisRunService;
 import com.eris.gitlabanalyzer.service.AuthService;
@@ -11,22 +12,27 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.eris.gitlabanalyzer.service.ScoreProfileService;
 import java.security.Principal;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 @RestController
 @RequestMapping(path = "/api/v1/analysis_run")
 public class AnalysisRunController {
+
+    private final ScoreProfileService scoreProfileService;
     private final AnalysisRunRepository analysisRunRepository;
     private final AuthService authService;
     private final AnalysisRunService analysisRunService;
 
     @Autowired
-    public AnalysisRunController(AnalysisRunRepository analysisRunRepository, AuthService authService, AnalysisRunService analysisRunService) {
+    public AnalysisRunController(AnalysisRunRepository analysisRunRepository, AuthService authService, AnalysisRunService analysisRunService, ScoreProfileService scoreProfileService) {
         this.analysisRunRepository = analysisRunRepository;
         this.authService = authService;
         this.analysisRunService = analysisRunService;
+        this.scoreProfileService = scoreProfileService;
     }
 
     @GetMapping("{serverId}")
@@ -35,6 +41,15 @@ public class AnalysisRunController {
             @PathVariable("serverId") Long serverId) {
         User user = this.authService.getLoggedInUser(currentUser);
         List<AnalysisRun> analysisRuns = analysisRunRepository.findByOwnerUserIdAndServerIdOrderByCreatedDateTimeDesc(user.getId(), serverId);
+        for(AnalysisRun analysis: analysisRuns){
+            try {
+                ScoreProfile scoreProfile = scoreProfileService.getScoreProfile(user, analysis.getScoreProfileId());
+                if(scoreProfile.getName() != analysis.getScoreProfileName()){analysis.setScoreProfileName(scoreProfile.getName());}
+            }catch(NoSuchElementException e){
+                analysis.setScoreProfileId(0L);
+                analysis.setScoreProfileName("default");
+            }
+        }
         return analysisRuns.stream().map(AnalysisRunView::fromAnalysisRun);
     }
 

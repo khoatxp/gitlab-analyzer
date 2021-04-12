@@ -38,15 +38,18 @@ public class AnalysisRunService {
             Project project,
             AnalysisRun.Status status,
             OffsetDateTime startDateTime,
-            OffsetDateTime endDateTime) {
+            OffsetDateTime endDateTime,
+            Long scoreProfileId,
+            String scoreProfileName) {
         AnalysisRun analysisRun = new AnalysisRun(
                 owner,
                 project,
                 project.getServer(),
                 status,
-//                scoreProfile, TODO: hookup once implemented
                 startDateTime,
-                endDateTime
+                endDateTime,
+                scoreProfileId,
+                scoreProfileName
         );
         return analysisRunRepository.save(analysisRun);
     }

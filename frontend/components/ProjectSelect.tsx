@@ -9,7 +9,7 @@ import ScoreProfile from "../interfaces/ScoreProfile";
 
 type ProjectSelectProps = {
     projects: GitLabProject[]
-    onAnalyzeClick: (projectIds: number[], startDateTime: Date, endDateTime: Date) => void
+    onAnalyzeClick: (projectIds: number[], startDateTime: Date, endDateTime: Date, scoreProfileId: number, scoreProfileName: string) => void
 }
 
 const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
@@ -18,6 +18,7 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
     const [startDateTime, setStartDateTime] = useState<Date>(new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()));
     const [endDateTime, setEndDateTime] = useState<Date>(now);
     const [scoreProfileId, setScoreProfileId] = useState<number>(0);
+    const [scoreProfileName, setScoreProfileName] = useState<string>("default");
 
     const onProjectSelect = (_event: any, value: GitLabProject) => {
         if (!value) { return; } // Value will be null when the clear button is pressed. Ensure we have a number
@@ -37,8 +38,9 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
         setSelectedProjects(newProjects);
     }
 
-    const onScoreProfileSelect = (id: number) => {
+    const onScoreProfileSelect = (id: number, name: string) => {
         setScoreProfileId(id);
+        setScoreProfileName(name);
     }
 
     return (
@@ -93,7 +95,7 @@ const ProjectSelect = ({projects, onAnalyzeClick}: ProjectSelectProps) => {
                 <AppButton
                     color="primary"
                     disabled={selectedProjects.length === 0}
-                    onClick={() => onAnalyzeClick(selectedProjects.map(project => project.id), startDateTime, endDateTime)}
+                    onClick={() => onAnalyzeClick(selectedProjects.map(project => project.id), startDateTime, endDateTime, scoreProfileId, scoreProfileName)}
                 >
                     Analyze
                 </AppButton>

@@ -36,10 +36,11 @@ public class AnalysisRun {
     @JoinColumn(name = "server_id")
     private Server server;
 
-    // TODO: Hookup once score profile implemented
-//    @ManyToOne
-//    @JoinColumn(name="id")
-//    private ScoreProfile scoreProfile;
+    @Column(name="score_profile_id")
+    private Long scoreProfileId;
+
+    @Column(name="score_profile_name")
+    private String scoreProfileName;
 
     @Column(name = "start_date_time")
     private OffsetDateTime startDateTime;
@@ -64,14 +65,17 @@ public class AnalysisRun {
             Server server,
             Status status,
             OffsetDateTime startDateTime,
-            OffsetDateTime endDateTime) {
+            OffsetDateTime endDateTime,
+            Long scoreProfileId,
+            String scoreProfileName) {
         this.ownerUser = ownerUser;
         this.project = project;
         this.server = server;
         this.status = status;
-//        this.scoreProfile = scoreProfile; TODO: hookup once implemented
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
+        this.scoreProfileId = scoreProfileId;
+        this.scoreProfileName = scoreProfileName;
         this.status = Status.InProgress;
         this.progress = 0.0;
         this.message = "Waiting for other projects";
