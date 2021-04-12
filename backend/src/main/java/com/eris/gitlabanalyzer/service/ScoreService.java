@@ -56,10 +56,10 @@ public class ScoreService {
         if (isShared) {
             List<Commit> commitsOnSharedMr = commitRepository.findByMergeIdAndGitManagementUserId(mergeId, gitManagementUserId);
             for (Commit commit : commitsOnSharedMr) {
-                sharedMergeScoreTotal += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
+                sharedMergeScoreTotal = diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
             }
         } else {
-            mergeScoreTotal += diffScoreCalculator.calculateScoreMerge(mergeId, scoreProfileId);
+            mergeScoreTotal = diffScoreCalculator.calculateScoreMerge(mergeId, scoreProfileId);
         }
         return new double[]{mergeScoreTotal, sharedMergeScoreTotal};
     }

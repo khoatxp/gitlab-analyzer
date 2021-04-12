@@ -86,9 +86,9 @@ const MemberMapping = () => {
     const handleMemberChange = (event: any, i: number) => {
         let items = [...commitAuthors];
         let item = {...items[i]}
-        item.mappedGitManagementUserId = event.target.value?event.target.value[0]:item.mappedGitManagementUserId;
-        item.mappedGitManagementUserName =  event.target.value?event.target.value[1]:item.mappedGitManagementUserName;
-        item.mappedGitManagementUserUsername =  event.target.value?event.target.value[2]:item.mappedGitManagementUserUsername;
+        item.mappedGitManagementUserId = event.target.value ? event.target.value[0] : item.mappedGitManagementUserId;
+        item.mappedGitManagementUserName =  event.target.value ? event.target.value[1] : item.mappedGitManagementUserName;
+        item.mappedGitManagementUserUsername =  event.target.value ? event.target.value[2] : item.mappedGitManagementUserUsername;
         items[i] = item;
         setCommitAuthors(items);
     };
@@ -118,7 +118,7 @@ const MemberMapping = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {commitAuthors.map((commitAuthor,i) => (
+                    {commitAuthors.map((commitAuthor, i) => (
                         <TableRow key={i}>
                             <TableCell>
                                 <h2 className={classes.authorNameText}>{`${commitAuthor.authorName}`}</h2>
@@ -126,22 +126,24 @@ const MemberMapping = () => {
                             </TableCell>
                             <TableCell>
                                 <FormControl className={classes.formControl}>
-                                    <InputLabel htmlFor="member">{commitAuthor.mappedGitManagementUserUsername?"Member":""}</InputLabel>
+                                    <InputLabel
+                                        htmlFor="member">{commitAuthor.mappedGitManagementUserUsername ? "Member" : ""}</InputLabel>
                                     <Select
                                         labelId="member-select-label"
                                         id="member-select"
                                         displayEmpty
                                         value={commitAuthor.mappedGitManagementUserUsername}
-                                        MenuProps={{ classes: { paper: classes.dropdownStyle } }}
+                                        MenuProps={{classes: {paper: classes.dropdownStyle}}}
                                         onChange={event => handleMemberChange(event, i)}
                                     >
                                         <MenuItem disabled value={commitAuthor.mappedGitManagementUserUsername}>
-                                            <em className={commitAuthor.mappedGitManagementUserUsername?'':classes.unmappedAuthorText}>
-                                                {commitAuthor.mappedGitManagementUserUsername?commitAuthor.mappedGitManagementUserUsername:"Unmapped"}
+                                            <em className={commitAuthor.mappedGitManagementUserUsername ? '' : classes.unmappedAuthorText}>
+                                                {commitAuthor.mappedGitManagementUserUsername ? commitAuthor.mappedGitManagementUserUsername : "Unmapped"}
                                             </em>
                                         </MenuItem>
-                                        {gitManagementUsers.map(gitManagementUser =>(
-                                            <MenuItem key={gitManagementUser.id} value={[gitManagementUser.id.toString(),gitManagementUser.name, gitManagementUser.username]}>
+                                        {gitManagementUsers.map(gitManagementUser => (
+                                            <MenuItem key={gitManagementUser.id}
+                                                      value={[gitManagementUser.id.toString(), gitManagementUser.name, gitManagementUser.username]}>
                                                 {gitManagementUser.username}
                                             </MenuItem>
                                         ))}
