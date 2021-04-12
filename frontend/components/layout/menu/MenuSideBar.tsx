@@ -36,9 +36,9 @@ const useStyles = makeStyles((theme) => ({
         display: 'none',
     },
     sidebarTitle: {
-        '& .MuiTab-wrapper': {
-          alignItems: 'flex-start',
-        },
+        '&.MuiTab-root': {
+            minWidth: '100%',
+        }
     },
 }));
 
@@ -79,6 +79,7 @@ const MenuSideBar = () => {
         <Box width={isSideBarOpen ? '16%' : '3.5%'} >
             <AppBar position="static">
                 <Tabs
+                    TabIndicatorProps={{style: {width: "100%"}}}
                     variant="fullWidth"
                     aria-label="nav tabs"
                     value={0}
