@@ -1,6 +1,9 @@
 package com.eris.gitlabanalyzer.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
@@ -12,6 +15,9 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Entity(name = "Commit")
 @Table(name = "commit")
 @Getter
+@Setter
+@NoArgsConstructor
+@ToString
 public class Commit {
     @Id
     @SequenceGenerator(
@@ -102,8 +108,8 @@ public class Commit {
             referencedColumnName = "merge_request_id")
     private MergeRequest mergeRequest;
 
-    public Commit() {
-    }
+    @Column()
+    private Boolean isIgnored;
 
     public Commit(String sha, String title, String authorName, String authorEmail, OffsetDateTime createdAt, String webUrl, Project project) {
         this.sha = sha;
@@ -113,6 +119,7 @@ public class Commit {
         this.createdAt = createdAt;
         this.webUrl = webUrl;
         this.project = project;
+        this.isIgnored = false;
     }
 
     public void setAuthorUsername(String authorUsername) {
@@ -133,16 +140,5 @@ public class Commit {
             this.commitComments.add(commitComment);
             commitComment.setCommit(this);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Commit{" +
-                "id=" + id +
-                ", sha='" + sha + '\'' +
-                ", title='" + title + '\'' +
-                ", createdAt='" + createdAt + '\'' +
-                ", webUrl='" + webUrl + '\'' +
-                '}';
     }
 }

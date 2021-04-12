@@ -18,6 +18,7 @@ public class CommitView {
     private final String authorEmail;
     private final String authorName;
     private final String authorUsername;
+    private final boolean ignored;
 
     public static CommitView fromCommit(Commit commit){
         return new CommitView(
@@ -29,7 +30,8 @@ public class CommitView {
                 commit.getMergedAt(),
                 commit.getAuthorEmail(),
                 commit.getAuthorName(),
-                commit.getAuthorUsername()
+                commit.getAuthorUsername(),
+                commit.getIsIgnored()
         );
     }
 }

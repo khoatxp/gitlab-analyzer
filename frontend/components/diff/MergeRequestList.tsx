@@ -5,9 +5,10 @@ import DiffItemList, {DiffItem} from "./DiffItemList";
 type MergeRequestListProps = {
     mergeRequests: MergeRequest[]
     handleSelectMergeRequest: (mergeRequest: MergeRequest) => void;
+    handleToggle: (mergeRequest: MergeRequest) => void;
 }
 
-const MergeRequestList = ({mergeRequests, handleSelectMergeRequest}: MergeRequestListProps) => {
+const MergeRequestList = ({mergeRequests, handleSelectMergeRequest, handleToggle}: MergeRequestListProps) => {
     const [selectedIndex, setSelectedIndex] = useState<number>(-1); // Start with invalid index so nothing is selected
 
     const handleSelectDiffItem = (diffItem: DiffItem) => {
@@ -27,6 +28,7 @@ const MergeRequestList = ({mergeRequests, handleSelectMergeRequest}: MergeReques
             handleSelectDiffItem={handleSelectDiffItem}
             selectedIndex={selectedIndex}
             setSelectedIndex={setSelectedIndex}
+            handleToggle={handleToggle}
         />
     );
 }

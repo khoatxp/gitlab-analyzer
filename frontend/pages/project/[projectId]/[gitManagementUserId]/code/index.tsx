@@ -28,18 +28,19 @@ const index = () => {
 
     useEffect(() => {
         if (router.isReady) {
-            fetchMergeData();
+            resetValues().then(() => fetchMergeData());
         }
     }, [projectId, gitManagementUserId]);
 
+    const resetValues = async () => {
+        await setCommits([]);
+        await setFileChanges([]);
+        await setLinkToFileChanges('');
+        await setScoreText('');
+    }
+
     const fetchMergeData = async () => {
         try {
-            // Reset values
-            await setCommits([]);
-            await setFileChanges([]);
-            await setLinkToFileChanges('');
-            await setScoreText('');
-
             // Orphan commits
             const orphanCommitResp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/${projectId}/commits/${gitManagementUserId}/orphan?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
             const hasOrphanCommits = orphanCommitResp.data.length > 0;
@@ -117,6 +118,37 @@ const index = () => {
         }
     };
 
+    const handleToggleIgnoreMerge = async (mergeRequest: MergeRequest) => {
+        try {
+            const resp = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/merge_request/${mergeRequest.id}/ignore`,{}, getAxiosAuthConfig())
+            await fetchCommitData(mergeRequest);
+            const updatedMergeRequests = [...mergeRequests]
+            // Find the updated merge request and set its ignored attribute
+            updatedMergeRequests.map((mr) => {
+                if (mr.id == mergeRequest.id) { mr.ignored = resp.data.ignored}
+                return mr;
+            })
+            await setMergeRequests(updatedMergeRequests);
+        } catch(e) {
+            enqueueSnackbar('Failed to toggle merge request ignore.', {variant: 'error',});
+        }
+    }
+
+    const handleToggleIgnoreCommit = async (commitToToggle: Commit) => {
+        try {
+            const resp = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/commit/${commitToToggle.id}/ignore`,{}, getAxiosAuthConfig())
+            const updatedCommits = [...commits]
+            // Find the updated merge request and set its ignored attribute
+            updatedCommits.map((commit) => {
+                if (commit.id == commitToToggle.id) { commit.ignored = resp.data.ignored}
+                return commit;
+            })
+            await setCommits(updatedCommits);
+        } catch(e) {
+            enqueueSnackbar('Failed to toggle merge request ignore.', {variant: 'error',});
+        }
+    }
+
     const handleSelectOrphanCommits = () => {
         setIsOrphanCommitsSelected(true);
         setCommits(orphanCommits);
@@ -139,8 +171,13 @@ const index = () => {
                         <MergeRequestList
                             mergeRequests={mergeRequests}
                             handleSelectMergeRequest={handleSelectMergeRequest}
+                            handleToggle={handleToggleIgnoreMerge}
                         />
-                        <CommitList commits={commits} handleSelectCommit={handleSelectCommit}/>
+                        <CommitList
+                            commits={commits}
+                            handleSelectCommit={handleSelectCommit}
+                            handleToggle={handleToggleIgnoreCommit}
+                        />
                     </Grid>
 
                     <Grid item xs={9}>

@@ -1,5 +1,10 @@
 package com.eris.gitlabanalyzer.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -8,6 +13,10 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "MergeRequest")
 @Table(name = "merge_request")
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
 public class MergeRequest {
 
     @Id
@@ -88,58 +97,8 @@ public class MergeRequest {
     )
     private List<Commit> commits = new ArrayList<>();
 
-    public Long getId() {
-        return id;
-    }
-
-    public Long getIid() {
-        return iid;
-    }
-
-    public String getAuthorUsername() {
-        return authorUsername;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public OffsetDateTime getMergedAt(){
-        return mergedAt;
-    }
-
-    public String getWebUrl() {
-        return webUrl;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public GitManagementUser getGitManagementUser() {
-        return gitManagementUser;
-    }
-
-    public Set<Long> getSharedWith(){return sharedWith;}
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    public void setSharedWith(Set<Long> sharedWith) {
-        this.sharedWith = sharedWith;
-    }
-
-    public void setGitManagementUser(GitManagementUser gitManagementUser) {
-        this.gitManagementUser = gitManagementUser;
-    }
-
-    public MergeRequest() {
-    }
+    @Column()
+    private Boolean isIgnored;
 
     public MergeRequest(Long iid, String authorUsername, String title, OffsetDateTime createdAt, OffsetDateTime mergedAt, String webUrl, Project project, GitManagementUser gitManagementUser) {
         this.iid = iid;
@@ -150,6 +109,7 @@ public class MergeRequest {
         this.webUrl = webUrl;
         this.project = project;
         this.gitManagementUser = gitManagementUser;
+        this.isIgnored = false;
     }
 
     public void addCommit(Commit commit) {
@@ -157,17 +117,5 @@ public class MergeRequest {
             this.commits.add(commit);
             commit.setMergeRequest(this);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "MergeRequest{" +
-                "id=" + id +
-                ", iid=" + iid +
-                ", authorUsername='" + authorUsername + '\'' +
-                ", title='" + title + '\'' +
-                ", createdAt='" + createdAt + '\'' +
-                ", webUrl='" + webUrl + '\'' +
-                '}';
     }
 }

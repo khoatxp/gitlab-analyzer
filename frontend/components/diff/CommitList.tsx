@@ -5,9 +5,10 @@ import DiffItemList, {DiffItem} from "./DiffItemList";
 type CommitListProps = {
     commits: Commit[]
     handleSelectCommit: (commit: Commit) => void;
+    handleToggle: (commit: Commit) => void;
 }
 
-const CommitList = ({commits, handleSelectCommit}: CommitListProps) => {
+const CommitList = ({commits, handleSelectCommit, handleToggle}: CommitListProps) => {
     const [selectedIndex, setSelectedIndex] = useState(-1);
     useEffect(() => {
         // Reset selection when commits change
@@ -31,6 +32,7 @@ const CommitList = ({commits, handleSelectCommit}: CommitListProps) => {
             handleSelectDiffItem={handleSelectDiffItem}
             selectedIndex={selectedIndex}
             setSelectedIndex={setSelectedIndex}
+            handleToggle={handleToggle}
         />
     );
 }
