@@ -169,14 +169,13 @@ const NotesList = ({mergeRequestNotes, issueNotes}: {
                         <ListItemText
                             primary={
                                 <>
-                                    {`${note.author.name} `}
+                                    {`@${note.author.username} `}
                                     <Typography
                                         component="span"
                                         variant="body2"
                                         color="textSecondary"
                                     >
-                                        {`@${note.author.username}
-                                         · ${formatDate(note.createdAt)}
+                                        {`${formatDate(note.createdAt)}
                                          · ${getWordCount(note.body)} words · `
                                         }
                                     </Typography>

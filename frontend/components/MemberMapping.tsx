@@ -1,15 +1,11 @@
 import React, {useEffect} from "react";
 import {useRouter} from "next/router";
-import {AuthContext } from "./AuthContext";
+import {AuthContext} from "./AuthContext";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {CommitAuthor} from "../interfaces/CommitAuthor";
 import {GitManagementUser} from "../interfaces/GitManagementUser";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
-import {
-    FormControl, Icon,
-    InputLabel, Link,
-    Select, Typography
-} from "@material-ui/core";
+import {FormControl, InputLabel, Select} from "@material-ui/core";
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import Table from '@material-ui/core/Table';
@@ -21,20 +17,20 @@ import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
 import AppButton from "./app/AppButton";
 import {useSnackbar} from "notistack";
-import NextLink from "next/link";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        tableContainer:{
-            margin:'50px 150px',
+        tableContainer: {
+            margin: '50px 150px',
             borderRadius: "2%",
         },
         dropdownStyle: {
             border: "1px white",
             borderRadius: "5%",
-            backgroundColor:'#E5E4E2',
+            backgroundColor: '#E5E4E2',
         },
-        tableHead:{
+        tableHead: {
             backgroundColor: '#E5E4E2',
         },
         authorNameText: {
@@ -52,14 +48,9 @@ const useStyles = makeStyles((theme: Theme) =>
         selectEmpty: {
             marginTop: theme.spacing(2),
         },
-        unmappedAuthorText:{
+        unmappedAuthorText: {
             color: 'red'
         },
-        linkBack: {
-            display: 'flex',
-            alignItems: 'center',
-            flexWrap: 'wrap'
-        }
     }),
 );
 
@@ -67,7 +58,7 @@ const MemberMapping = () => {
     const classes = useStyles();
     const {enqueueSnackbar} = useSnackbar();
     const router = useRouter();
-    const { projectId, startDateTime, endDateTime, scoreProfileId } =  router.query;
+    const {projectId, startDateTime, endDateTime} = router.query;
     const dateQuery = `?startDateTime=${startDateTime}&endDateTime=${endDateTime}`;
     const [commitAuthors, setCommitAuthors] = React.useState<CommitAuthor[]>([]);
     const [gitManagementUsers, setGitManagementUsers] = React.useState<GitManagementUser[]>([]);
@@ -79,39 +70,45 @@ const MemberMapping = () => {
                 .get(`${process.env.NEXT_PUBLIC_API_URL}/${projectId}/commits/authors`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setCommitAuthors(resp.data);
-                }).catch((err: AxiosError)=>{
+                }).catch((err: AxiosError) => {
                 enqueueSnackbar(`Failed to get commit authors: ${err.message}`, {variant: 'error',});
             })
             axios
                 .get(`${process.env.NEXT_PUBLIC_API_URL}/${projectId}/managementusers/members`, getAxiosAuthConfig())
                 .then((resp: AxiosResponse) => {
                     setGitManagementUsers(resp.data);
-                }).catch((err: AxiosError)=>{
+                }).catch((err: AxiosError) => {
                 enqueueSnackbar(`Failed to get members: ${err.message}`, {variant: 'error',});
             })
         }
     }, [projectId]);
 
-    const handleMemberChange = (event: any, i:number) => {
+    const handleMemberChange = (event: any, i: number) => {
         let items = [...commitAuthors];
         let item = {...items[i]}
-        item.mappedGitManagementUserId = event.target.value?event.target.value[0]:item.mappedGitManagementUserId;
-        item.mappedGitManagementUserName =  event.target.value?event.target.value[1]:item.mappedGitManagementUserName;
+        item.mappedGitManagementUserId = event.target.value ? event.target.value[0] : item.mappedGitManagementUserId;
+        item.mappedGitManagementUserName =  event.target.value ? event.target.value[1] : item.mappedGitManagementUserName;
+        item.mappedGitManagementUserUsername =  event.target.value ? event.target.value[2] : item.mappedGitManagementUserUsername;
         items[i] = item;
         setCommitAuthors(items);
     };
 
     const handleSave = () => {
         axios
-            .post(`${process.env.NEXT_PUBLIC_API_URL}/${projectId}/commits/mapping`,commitAuthors,getAxiosAuthConfig())
-            .then((resp: AxiosResponse) => {
+            .post(`${process.env.NEXT_PUBLIC_API_URL}/${projectId}/commits/mapping`, commitAuthors, getAxiosAuthConfig())
+            .then(() => {
                 enqueueSnackbar("Saved changes successfully!", {variant: 'success',});
+                returnToAnalysis();
             }).catch((err: AxiosError) => {
             enqueueSnackbar(`Failed to save changes: ${err.message}`, {variant: 'error',});
         })
     }
 
-    return(
+    const returnToAnalysis = async () => {
+        await router.push(`/project/${projectId}/0/overview${dateQuery}`);
+    }
+
+    return (
         <TableContainer className={classes.tableContainer} component={Paper}>
             <Table>
                 <TableHead className={classes.tableHead}>
@@ -121,7 +118,7 @@ const MemberMapping = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {commitAuthors.map((commitAuthor,i) => (
+                    {commitAuthors.map((commitAuthor, i) => (
                         <TableRow key={i}>
                             <TableCell>
                                 <h2 className={classes.authorNameText}>{`${commitAuthor.authorName}`}</h2>
@@ -129,23 +126,25 @@ const MemberMapping = () => {
                             </TableCell>
                             <TableCell>
                                 <FormControl className={classes.formControl}>
-                                    <InputLabel htmlFor="member">{commitAuthor.mappedGitManagementUserName?"Member":""}</InputLabel>
+                                    <InputLabel
+                                        htmlFor="member">{commitAuthor.mappedGitManagementUserUsername ? "Member" : ""}</InputLabel>
                                     <Select
                                         labelId="member-select-label"
                                         id="member-select"
                                         displayEmpty
-                                        value={commitAuthor.mappedGitManagementUserName}
-                                        MenuProps={{ classes: { paper: classes.dropdownStyle } }}
+                                        value={commitAuthor.mappedGitManagementUserUsername}
+                                        MenuProps={{classes: {paper: classes.dropdownStyle}}}
                                         onChange={event => handleMemberChange(event, i)}
                                     >
-                                        <MenuItem disabled value={commitAuthor.mappedGitManagementUserName}>
-                                            <em className={commitAuthor.mappedGitManagementUserName?'':classes.unmappedAuthorText}>
-                                                {commitAuthor.mappedGitManagementUserName?commitAuthor.mappedGitManagementUserName:"Unmapped"}
+                                        <MenuItem disabled value={commitAuthor.mappedGitManagementUserUsername}>
+                                            <em className={commitAuthor.mappedGitManagementUserUsername ? '' : classes.unmappedAuthorText}>
+                                                {commitAuthor.mappedGitManagementUserUsername ? commitAuthor.mappedGitManagementUserUsername : "Unmapped"}
                                             </em>
                                         </MenuItem>
-                                        {gitManagementUsers.map(gitManagementUser =>(
-                                            <MenuItem key={gitManagementUser.id} value={[gitManagementUser.id.toString(),gitManagementUser.name]}>
-                                                {gitManagementUser.name}
+                                        {gitManagementUsers.map(gitManagementUser => (
+                                            <MenuItem key={gitManagementUser.id}
+                                                      value={[gitManagementUser.id.toString(), gitManagementUser.name, gitManagementUser.username]}>
+                                                {gitManagementUser.username}
                                             </MenuItem>
                                         ))}
                                     </Select>
@@ -163,6 +162,9 @@ const MemberMapping = () => {
                                     <Typography variant="button"> BACK</Typography>
                                 </Link>
                             </NextLink>
+                            <AppButton onClick={returnToAnalysis} startIcon={<ArrowBackIcon/>}>
+                                Back
+                            </AppButton>
                         </TableCell>
                         <TableCell>
                             <AppButton color="primary" onClick={handleSave}>Save changes</AppButton>

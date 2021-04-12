@@ -856,7 +856,7 @@ exports[`Member Mapping Snapshot projectId 1`] = `
                                     className="MuiTableCell-root MuiTableCell-footer"
                                   >
                                     <Link
-                                      href="/project/TestId/0/overview?startDateTime=undefined&endDateTime=undefined&scoreProfileId=undefined"
+                                      href="/project/TestId/0/overview?startDateTime=undefined&endDateTime=undefined"
                                       passHref={true}
                                     >
                                       <WithStyles(ForwardRef(Link))
@@ -865,7 +865,7 @@ exports[`Member Mapping Snapshot projectId 1`] = `
                                             "root": "makeStyles-linkBack-9",
                                           }
                                         }
-                                        href="/project/TestId/0/overview?startDateTime=undefined&endDateTime=undefined&scoreProfileId=undefined"
+                                        href="/project/TestId/0/overview?startDateTime=undefined&endDateTime=undefined"
                                         onClick={[Function]}
                                         onMouseEnter={[Function]}
                                       >
@@ -882,7 +882,9 @@ exports[`Member Mapping Snapshot projectId 1`] = `
                                           }
                                           href="/project/TestId/0/overview?startDateTime=undefined&endDateTime=undefined&scoreProfileId=undefined"
                                           onClick={[Function]}
-                                          onMouseEnter={[Function]}
+                                          size="large"
+                                          startIcon={<Memo />}
+                                          variant="contained"
                                         >
                                           <WithStyles(ForwardRef(Typography))
                                             className="MuiLink-root makeStyles-linkBack-9 MuiLink-underlineHover"
@@ -890,50 +892,27 @@ exports[`Member Mapping Snapshot projectId 1`] = `
                                             component="a"
                                             href="/project/TestId/0/overview?startDateTime=undefined&endDateTime=undefined&scoreProfileId=undefined"
                                             onBlur={[Function]}
+                                          <WithStyles(ForwardRef(ButtonBase))
+                                            className="MuiButton-root MuiButton-contained makeStyles-button-9 MuiButton-containedSizeLarge MuiButton-sizeLarge MuiButton-disableElevation"
+                                            component="button"
+                                            disabled={false}
+                                            focusRipple={true}
+                                            focusVisibleClassName="Mui-focusVisible"
                                             onClick={[Function]}
-                                            onFocus={[Function]}
-                                            onMouseEnter={[Function]}
-                                            variant="inherit"
+                                            type="button"
                                           >
-                                            <ForwardRef(Typography)
-                                              className="MuiLink-root makeStyles-linkBack-9 MuiLink-underlineHover"
+                                            <ForwardRef(ButtonBase)
+                                              className="MuiButton-root MuiButton-contained makeStyles-button-9 MuiButton-containedSizeLarge MuiButton-sizeLarge MuiButton-disableElevation"
                                               classes={
                                                 Object {
-                                                  "alignCenter": "MuiTypography-alignCenter",
-                                                  "alignJustify": "MuiTypography-alignJustify",
-                                                  "alignLeft": "MuiTypography-alignLeft",
-                                                  "alignRight": "MuiTypography-alignRight",
-                                                  "body1": "MuiTypography-body1",
-                                                  "body2": "MuiTypography-body2",
-                                                  "button": "MuiTypography-button",
-                                                  "caption": "MuiTypography-caption",
-                                                  "colorError": "MuiTypography-colorError",
-                                                  "colorInherit": "MuiTypography-colorInherit",
-                                                  "colorPrimary": "MuiTypography-colorPrimary",
-                                                  "colorSecondary": "MuiTypography-colorSecondary",
-                                                  "colorTextPrimary": "MuiTypography-colorTextPrimary",
-                                                  "colorTextSecondary": "MuiTypography-colorTextSecondary",
-                                                  "displayBlock": "MuiTypography-displayBlock",
-                                                  "displayInline": "MuiTypography-displayInline",
-                                                  "gutterBottom": "MuiTypography-gutterBottom",
-                                                  "h1": "MuiTypography-h1",
-                                                  "h2": "MuiTypography-h2",
-                                                  "h3": "MuiTypography-h3",
-                                                  "h4": "MuiTypography-h4",
-                                                  "h5": "MuiTypography-h5",
-                                                  "h6": "MuiTypography-h6",
-                                                  "noWrap": "MuiTypography-noWrap",
-                                                  "overline": "MuiTypography-overline",
-                                                  "paragraph": "MuiTypography-paragraph",
-                                                  "root": "MuiTypography-root",
-                                                  "srOnly": "MuiTypography-srOnly",
-                                                  "subtitle1": "MuiTypography-subtitle1",
-                                                  "subtitle2": "MuiTypography-subtitle2",
+                                                  "disabled": "Mui-disabled",
+                                                  "focusVisible": "Mui-focusVisible",
+                                                  "root": "MuiButtonBase-root",
                                                 }
                                               }
                                               color="primary"
                                               component="a"
-                                              href="/project/TestId/0/overview?startDateTime=undefined&endDateTime=undefined&scoreProfileId=undefined"
+                                              href="/project/TestId/0/overview?startDateTime=undefined&endDateTime=undefined"
                                               onBlur={[Function]}
                                               onClick={[Function]}
                                               onFocus={[Function]}
@@ -942,7 +921,7 @@ exports[`Member Mapping Snapshot projectId 1`] = `
                                             >
                                               <a
                                                 className="MuiTypography-root MuiLink-root makeStyles-linkBack-9 MuiLink-underlineHover MuiTypography-colorPrimary"
-                                                href="/project/TestId/0/overview?startDateTime=undefined&endDateTime=undefined&scoreProfileId=undefined"
+                                                href="/project/TestId/0/overview?startDateTime=undefined&endDateTime=undefined"
                                                 onBlur={[Function]}
                                                 onClick={[Function]}
                                                 onFocus={[Function]}

@@ -7,8 +7,13 @@ export interface MergeRequest {
     createdAt: string;
     mergedAt: string;
     webUrl: string;
+    ignored: boolean;
 }
 
+export interface MergeReturnObject {
+    mergeScore: number;
+    sharedMergeScore: number;
+}
 /*
  * The merge request list item in the code page that
  * displays orphan commits on click.

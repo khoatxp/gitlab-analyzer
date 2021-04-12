@@ -17,6 +17,7 @@ public class MergeRequestView {
     private final OffsetDateTime createdAt;
     private final OffsetDateTime mergedAt;
     private final String webUrl;
+    private final boolean ignored;
 
     public static MergeRequestView fromMergeRequest(MergeRequest mergeRequest){
         return new MergeRequestView(
@@ -27,6 +28,8 @@ public class MergeRequestView {
                 mergeRequest.getTitle(),
                 mergeRequest.getCreatedAt(),
                 mergeRequest.getMergedAt(),
-                mergeRequest.getWebUrl());
+                mergeRequest.getWebUrl(),
+                mergeRequest.getIsIgnored()
+        );
     }
 }

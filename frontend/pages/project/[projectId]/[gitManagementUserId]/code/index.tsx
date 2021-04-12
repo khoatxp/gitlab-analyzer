@@ -4,7 +4,7 @@ import MenuLayout from "../../../../../components/layout/menu/MenuLayout";
 import {AuthContext} from "../../../../../components/AuthContext";
 import axios, {AxiosResponse} from "axios";
 import {useRouter} from "next/router";
-import {MergeRequest, OrphanCommitMergeRequest} from "../../../../../interfaces/MergeRequest";
+import {MergeRequest, MergeReturnObject, OrphanCommitMergeRequest} from "../../../../../interfaces/MergeRequest";
 import {useSnackbar} from "notistack";
 import DiffViewer from "../../../../../components/diff/DiffViewer";
 import {FileChange} from "../../../../../interfaces/GitLabFileChange";
@@ -20,7 +20,7 @@ const index = () => {
     const [mergeRequests, setMergeRequests] = React.useState<MergeRequest[]>([]);
     const [commits, setCommits] = React.useState<Commit[]>([]);
     const [orphanCommits, setOrphanCommits] = React.useState<Commit[]>([]);
-    const [score, setScore] = React.useState<number>(0);
+    const [scoreText, setScoreText] = React.useState<string>('');
     const [isOrphanCommitsSelected, setIsOrphanCommitsSelected] = React.useState<boolean>(false);
     const [fileChanges, setFileChanges] = React.useState<FileChange[]>([]);
     const [linkToFileChanges, setLinkToFileChanges] = React.useState<string>('');
@@ -28,17 +28,19 @@ const index = () => {
 
     useEffect(() => {
         if (router.isReady) {
-            fetchMergeData();
+            resetValues().then(() => fetchMergeData());
         }
     }, [projectId, gitManagementUserId]);
 
+    const resetValues = async () => {
+        await setCommits([]);
+        await setFileChanges([]);
+        await setLinkToFileChanges('');
+        await setScoreText('');
+    }
+
     const fetchMergeData = async () => {
         try {
-            // Reset values
-            await setCommits([]);
-            await setFileChanges([]);
-            await setLinkToFileChanges('');
-
             // Orphan commits
             const orphanCommitResp = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/${projectId}/commits/${gitManagementUserId}/orphan?startDateTime=${startDateTime}&endDateTime=${endDateTime}`, getAxiosAuthConfig())
             const hasOrphanCommits = orphanCommitResp.data.length > 0;
@@ -76,31 +78,81 @@ const index = () => {
         });
     };
 
+    const fetchMergeRequestScore = (id: number) => {
+        // TODO Pass correct Score Profile Id
+        let scoreProfileId = 0;
+        axios
+            .get(
+                `${process.env.NEXT_PUBLIC_API_URL}/data/projects/merge_request/${id}/user/${gitManagementUserId}/diff/score/${scoreProfileId}`,
+                getAxiosAuthConfig()
+            )
+            .then((resp: AxiosResponse) => {
+                const mrScores: MergeReturnObject = resp.data;
+                // Merge request scores are either all shared or all individual. Label as shared if we only have shared score
+                const scoreText= `Merge Request score: ${mrScores.sharedMergeScore > 0 ? mrScores.sharedMergeScore + '(shared)' : mrScores.mergeScore}`;
+                setScoreText(scoreText);
+            }).catch(() => {
+            enqueueSnackbar('Failed to get merge request score.', {variant: 'error',});
+        });
+    }
+
     const fetchCommitScore = (commitId: number) => {
         axios
             .get(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/commit/${commitId}/diff/score/${scoreProfileId}`, getAxiosAuthConfig())
             .then((resp: AxiosResponse) => {
-                setScore(resp.data);
+                setScoreText(`Commit score: ${resp.data.toString()}`);
             }).catch(() => {enqueueSnackbar('Failed to get commit score.', {variant: 'error',});
         });
     };
 
     const handleSelectMergeRequest = (mergeRequest: MergeRequest) => {
-        setScore(0);
         if (mergeRequest.id == OrphanCommitMergeRequest.id) {
             handleSelectOrphanCommits();
         } else {
             fetchCommitData(mergeRequest);
             setLinkToFileChanges(mergeRequest.webUrl);
             fetchDiffDataFromUrl(`${process.env.NEXT_PUBLIC_API_URL}/gitlab/projects/${projectId}/merge_request/${mergeRequest.iid}/diff`);
+            fetchMergeRequestScore(mergeRequest.id);
         }
     };
+
+    const handleToggleIgnoreMerge = async (mergeRequest: MergeRequest) => {
+        try {
+            const resp = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/merge_request/${mergeRequest.id}/ignore`,{}, getAxiosAuthConfig())
+            await fetchCommitData(mergeRequest);
+            const updatedMergeRequests = [...mergeRequests]
+            // Find the updated merge request and set its ignored attribute
+            updatedMergeRequests.map((mr) => {
+                if (mr.id == mergeRequest.id) { mr.ignored = resp.data.ignored}
+                return mr;
+            })
+            await setMergeRequests(updatedMergeRequests);
+        } catch(e) {
+            enqueueSnackbar('Failed to toggle merge request ignore.', {variant: 'error',});
+        }
+    }
+
+    const handleToggleIgnoreCommit = async (commitToToggle: Commit) => {
+        try {
+            const resp = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/data/projects/commit/${commitToToggle.id}/ignore`,{}, getAxiosAuthConfig())
+            const updatedCommits = [...commits]
+            // Find the updated merge request and set its ignored attribute
+            updatedCommits.map((commit) => {
+                if (commit.id == commitToToggle.id) { commit.ignored = resp.data.ignored}
+                return commit;
+            })
+            await setCommits(updatedCommits);
+        } catch(e) {
+            enqueueSnackbar('Failed to toggle merge request ignore.', {variant: 'error',});
+        }
+    }
 
     const handleSelectOrphanCommits = () => {
         setIsOrphanCommitsSelected(true);
         setCommits(orphanCommits);
         setLinkToFileChanges('');
         setFileChanges([]);
+        setScoreText('');
     }
 
     const handleSelectCommit = (commit: Commit) => {
@@ -117,8 +169,13 @@ const index = () => {
                         <MergeRequestList
                             mergeRequests={mergeRequests}
                             handleSelectMergeRequest={handleSelectMergeRequest}
+                            handleToggle={handleToggleIgnoreMerge}
                         />
-                        <CommitList commits={commits} handleSelectCommit={handleSelectCommit}/>
+                        <CommitList
+                            commits={commits}
+                            handleSelectCommit={handleSelectCommit}
+                            handleToggle={handleToggleIgnoreCommit}
+                        />
                     </Grid>
 
                     <Grid item xs={9}>
@@ -126,7 +183,7 @@ const index = () => {
                             fileChanges={fileChanges}
                             linkToFileChanges={linkToFileChanges}
                             isOrphanCommitsSelected={isOrphanCommitsSelected}
-                            score={score}
+                            scoreText={scoreText}
                         />
                     </Grid>
                 </Grid>

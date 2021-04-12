@@ -1,5 +1,6 @@
 export interface Commit {
     authorEmail: string;
+    authorUsername: string;
     authorName: string;
     createdAt: string;
     mergedAt: string;
@@ -7,4 +8,5 @@ export interface Commit {
     sha: string;
     title: string;
     webUrl: string;
+    ignored: boolean;
 }

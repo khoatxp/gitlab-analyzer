@@ -1794,12 +1794,14 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                 className="MuiBox-root MuiBox-root-18 makeStyles-sidebar-9 makeStyles-displaySidebar-10"
               >
                 <WithStyles(WithStyles(ForwardRef(Button)))
+                  className=""
                   disableRipple={true}
                   id="memberButton0"
                   onClick={[Function]}
                   variant="contained"
                 >
                   <WithStyles(ForwardRef(Button))
+                    className=""
                     classes={
                       Object {
                         "root": "WithStyles(ForwardRef(Button))-root-19",
@@ -1811,6 +1813,7 @@ exports[`MenuLayout Snapshot MenuLayout 1`] = `
                     variant="contained"
                   >
                     <ForwardRef(Button)
+                      className=""
                       classes={
                         Object {
                           "colorInherit": "MuiButton-colorInherit",

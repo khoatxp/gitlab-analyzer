@@ -12,6 +12,7 @@ import {GitManagementUser} from "../../../interfaces/GitManagementUser";
 import {useSnackbar} from "notistack";
 import MenuIcon from '@material-ui/icons/Menu';
 import MenuOpenIcon from '@material-ui/icons/MenuOpen';
+import {SideBarContext} from "../../SideBarContext";
 
 const useStyles = makeStyles((theme) => ({
     sidebar: {
@@ -47,25 +48,18 @@ const MenuSideBar = () => {
     const {enqueueSnackbar} = useSnackbar();
     const {getAxiosAuthConfig} = React.useContext(AuthContext);
     const [gitManagementUsers, setGitManagementUsers] = React.useState<GitManagementUser[]>([]);
-    const [sidebarState, setSidebarState] = React.useState(true);
+    const {isSideBarOpen, setIsSideBarOpen} = React.useContext(SideBarContext);
 
     const {projectId, gitManagementUserId, startDateTime, endDateTime, scoreProfileId} = router.query;
     const PROJECT_ID_URL = `${process.env.NEXT_PUBLIC_API_URL}/${projectId}/managementusers/members`;
 
     const handleClick = (id: number) => {
-        setActive(id);
         const route = router.route;
         router.push({
             pathname: route,
             query: {projectId: projectId, gitManagementUserId: id, startDateTime: startDateTime, endDateTime: endDateTime, scoreProfileId: scoreProfileId}
         })
     };
-
-    const setActive = (id: number | string) => {
-        let prevSelected = document.getElementsByClassName('selected');
-        prevSelected[0]?.classList.remove('selected');
-        document.getElementById(`memberButton${id}`)?.classList.add('selected');
-    }
 
     useEffect(() => {
         if (router.isReady) {
@@ -76,14 +70,13 @@ const MenuSideBar = () => {
                  }).catch((err:AxiosError)=>{
                     enqueueSnackbar(`Failed to get members: ${err}`, {variant: 'error',});
             })
-            setActive(Array.isArray(gitManagementUserId) || gitManagementUserId == undefined? "0" : gitManagementUserId)
         }
-    }, [projectId]);
+    }, [projectId, gitManagementUserId]);
 
-    const toggleSidebar = () => setSidebarState(!sidebarState);
+    const toggleSidebar = () => setIsSideBarOpen(!isSideBarOpen);
 
     return (
-        <Box width={sidebarState ? '16%' : '3.5%'} >
+        <Box width={isSideBarOpen ? '16%' : '3.5%'} >
             <AppBar position="static">
                 <Tabs
                     variant="fullWidth"
@@ -93,18 +86,21 @@ const MenuSideBar = () => {
                     <Tab
                         className={classes.sidebarTitle}
                         onClick={toggleSidebar}
-                        label={sidebarState ? <MenuOpenIcon /> : <MenuIcon /> }
+                        label={isSideBarOpen ? <MenuOpenIcon /> : <MenuIcon /> }
                     />
                 </Tabs>
             </AppBar>
-            <Box className={`${classes.sidebar} ${sidebarState && classes.displaySidebar}`} >
-                <MenuButton variant="contained" id={'memberButton0'} disableRipple onClick={() => handleClick(0)}>
+            <Box className={`${classes.sidebar} ${isSideBarOpen && classes.displaySidebar}`} >
+                <MenuButton variant="contained" id={'memberButton0'} disableRipple
+                            onClick={() => handleClick(0)}
+                            className={"0" === gitManagementUserId? 'selectedMemberButton' : ''}>
                     Everyone
                 </MenuButton>
                 {gitManagementUsers.map(gitManagementUser =>
                     <MenuButton key={gitManagementUser.id}
                                 value={[gitManagementUser.id.toString(),gitManagementUser.username]}
                                 id={`memberButton${gitManagementUser.id}`}
+                                className={gitManagementUser.id.toString() === gitManagementUserId? 'selectedMemberButton' : ''}
                                 variant="contained" disableRipple
                                 onClick={() => handleClick(gitManagementUser.id)}
                     >
