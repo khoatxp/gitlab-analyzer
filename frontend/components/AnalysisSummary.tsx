@@ -81,8 +81,8 @@ const AnalysisSummary = ({projectSummary}: { projectSummary: ProjectSummary }) =
                     <Typography variant="subtitle1"><b>Commit Score:</b> {commitScore}</Typography>
                     <Divider/>
                     <IconButton color="primary" size="medium" onClick={handleCopyScore} disabled={!project}>
-                        <Typography variant="body2">Copy Score: </Typography>
                         <FileCopyIcon fontSize="small"/>
+                        <Typography variant="body2">Copy Score </Typography>
                     </IconButton>
                 </Box>
             </Box>

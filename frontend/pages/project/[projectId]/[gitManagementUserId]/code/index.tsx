@@ -79,8 +79,6 @@ const index = () => {
     };
 
     const fetchMergeRequestScore = (id: number) => {
-        // TODO Pass correct Score Profile Id
-        let scoreProfileId = 0;
         axios
             .get(
                 `${process.env.NEXT_PUBLIC_API_URL}/data/projects/merge_request/${id}/user/${gitManagementUserId}/diff/score/${scoreProfileId}`,
