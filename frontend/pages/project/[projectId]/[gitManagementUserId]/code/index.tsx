@@ -79,8 +79,6 @@ const index = () => {
     };
 
     const fetchMergeRequestScore = (id: number) => {
-        // TODO Pass correct Score Profile Id
-        let scoreProfileId = 0;
         axios
             .get(
                 `${process.env.NEXT_PUBLIC_API_URL}/data/projects/merge_request/${id}/user/${gitManagementUserId}/diff/score/${scoreProfileId}`,
@@ -88,6 +86,8 @@ const index = () => {
             )
             .then((resp: AxiosResponse) => {
                 const mrScores: MergeReturnObject = resp.data;
+                console.log('shared'+mrScores.sharedMergeScore);
+                console.log('own'+mrScores.mergeScore);
                 // Merge request scores are either all shared or all individual. Label as shared if we only have shared score
                 const scoreText= `Merge Request score: ${mrScores.sharedMergeScore > 0 ? mrScores.sharedMergeScore + '(shared)' : mrScores.mergeScore}`;
                 setScoreText(scoreText);

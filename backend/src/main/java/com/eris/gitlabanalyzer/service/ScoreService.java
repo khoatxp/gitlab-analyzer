@@ -41,7 +41,7 @@ public class ScoreService {
 
     // This will most likely change as we update how we retrieve diff's
     public double getMergeDiffScore(Long mergeRequestId, Long scoreProfileId) {
-        return diffScoreCalculator.calculateScoreMerge(mergeRequestId, scoreProfileId);
+        return round(diffScoreCalculator.calculateScoreMerge(mergeRequestId, scoreProfileId));
     }
 
     public double[] getUserSingleMergeScore(Long gitManagementUserId, Long mergeId, Long scoreProfileId) {
@@ -61,7 +61,7 @@ public class ScoreService {
         } else {
             mergeScoreTotal = diffScoreCalculator.calculateScoreMerge(mergeId, scoreProfileId);
         }
-        return new double[]{mergeScoreTotal, sharedMergeScoreTotal};
+        return new double[]{round(mergeScoreTotal), round(sharedMergeScoreTotal)};
     }
 
     public double[] getUserMergeScore(Long gitManagementUserId, Long projectId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
@@ -85,7 +85,7 @@ public class ScoreService {
             sharedMergeScoreTotal += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
         }
 
-        return new double[]{mergeScoreTotal, sharedMergeScoreTotal};
+        return new double[]{round(mergeScoreTotal), round(sharedMergeScoreTotal)};
     }
 
     public void saveMergeDiffMetrics(MergeRequest mergeRequest) {
@@ -100,7 +100,7 @@ public class ScoreService {
             totalScore += diffScoreCalculator.calculateScoreMerge(mr.getId(), scoreProfileId);
         }
 
-        return totalScore;
+        return round(totalScore);
     }
 
     public MergeRequest toggleIgnoreMergeFromScore(Long mergeId) {
@@ -117,7 +117,7 @@ public class ScoreService {
 
     // This will most likely change as we update how we retrieve diff's
     public double getCommitDiffScore(Long commitId, Long scoreProfileId) {
-        return diffScoreCalculator.calculateScoreCommit(commitId, scoreProfileId);
+        return round(diffScoreCalculator.calculateScoreCommit(commitId, scoreProfileId));
     }
 
     public double getUserCommitScore(Long projectId, Long gitManagementUserId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
@@ -128,7 +128,7 @@ public class ScoreService {
         for (Commit commit : commits) {
             totalScore += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
         }
-        return totalScore;
+        return round(totalScore);
     }
 
     public void saveCommitDiffMetrics(Commit commit) {
@@ -136,7 +136,6 @@ public class ScoreService {
     }
 
 
-    // This will most likely change as we update how we retrieve diff's
     public double getTotalCommitDiffScore(Long projectId, Long scoreProfileId, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         List<Commit> commits = commitRepository.findAllActiveByProjectIdAndDateRange(projectId,
                 startDateTime.withOffsetSameInstant(ZoneOffset.UTC), endDateTime.withOffsetSameInstant(ZoneOffset.UTC));
@@ -144,7 +143,7 @@ public class ScoreService {
         for (Commit commit : commits) {
             totalScore += diffScoreCalculator.calculateScoreCommit(commit.getId(), scoreProfileId);
         }
-        return totalScore;
+        return round(totalScore);
     }
 
     public Commit toggleIgnoreCommitFromScore(Long commitId) {
@@ -209,9 +208,13 @@ public class ScoreService {
                     totalDayMergeScore += diffScoreCalculator.calculateScoreMerge(mergeRequest.getId(), scoreProfileId);
                 }
             }
-            return new ScoreDigest(totalDayCommitScore, totalDayMergeScore, commitCount, mergeCount, commitDate);
+            return new ScoreDigest(round(totalDayCommitScore), round(totalDayMergeScore), commitCount, mergeCount, commitDate);
         }).collect(Collectors.toList());
 
         return digests;
+    }
+
+    private double round(double value){
+        return Math.round(value*100)/100;
     }
 }
