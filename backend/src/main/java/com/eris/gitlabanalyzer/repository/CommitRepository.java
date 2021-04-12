@@ -66,6 +66,11 @@ public interface CommitRepository extends JpaRepository<Commit,Long> {
 
     @Transactional
     @Modifying
+    @Query("update Commit c set c.isIgnored=?1 where c.mergeRequest.id=?2")
+    void updateCommitIsIgnoredByMergeRequestId(boolean isIgnored, long mergeRequestId);
+
+    @Transactional
+    @Modifying
     @Query("update Commit c set c.authorUsername = ?3 where c.authorName = ?1 and c.authorEmail = ?2 and c.project.id = ?4")
     void updateCommitAuthorUsernames(String authorName, String authorEmail, String authorUsername, Long projectId);
 }
