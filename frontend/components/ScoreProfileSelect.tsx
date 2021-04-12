@@ -127,13 +127,15 @@ const ScoreProfileSelector = ({onScoreProfileSelect}:Props) => {
                         onOpen={() => {setIconVisible(true); setSelectOpen(true)}}
                         onClose={() => {setIconVisible(false); setSelectOpen(false)}}
                         value={scoreProfile || ""}
-                        onChange={(e) => {setScoreProfile(Number(e.target.value)); onScoreProfileSelect(Number(e.target.value), scoreProfileName(Number(e.target.value)))}}
+                        onChange={(e) => {setScoreProfile(Number(e.target.value)); onScoreProfileSelect(Number(e.target.value).toFixed(), scoreProfileName(Number(e.target.value).toFixed()))}}
                         MenuProps={{
                             anchorOrigin: {vertical: "top", horizontal: "left"},
                             transformOrigin: {vertical: "top", horizontal: "left"},
                             getContentAnchorEl: null,
                             classes: {paper: classes.menuPaper }}}
                     >
+                        <MenuItem value={0.1}> {"default"}</MenuItem>
+
                         {profiles.length > 0 ? (
                             profiles.map((profile, index :number) => (
                                 <MenuItem value={profile.id} key={index}>
@@ -150,7 +152,7 @@ const ScoreProfileSelector = ({onScoreProfileSelect}:Props) => {
                                         </ListItemSecondaryAction>
                                     ) : null}
                                 </MenuItem>
-                        ))): <div> No profiles have been created </div> }
+                        ))): null}
                     </Select>
             </FormControl>
 
