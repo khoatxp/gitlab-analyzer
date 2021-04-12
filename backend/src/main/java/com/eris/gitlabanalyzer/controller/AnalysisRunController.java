@@ -2,6 +2,7 @@ package com.eris.gitlabanalyzer.controller;
 
 import com.eris.gitlabanalyzer.model.AnalysisRun;
 import com.eris.gitlabanalyzer.model.User;
+import com.eris.gitlabanalyzer.model.ScoreProfile;
 import com.eris.gitlabanalyzer.repository.AnalysisRunRepository;
 import com.eris.gitlabanalyzer.service.AnalysisRunService;
 import com.eris.gitlabanalyzer.service.AuthService;
@@ -42,7 +43,8 @@ public class AnalysisRunController {
         List<AnalysisRun> analysisRuns = analysisRunRepository.findByOwnerUserIdAndServerIdOrderByCreatedDateTimeDesc(user.getId(), serverId);
         for(AnalysisRun analysis: analysisRuns){
             try {
-                scoreProfileService.getScoreProfile(user, analysis.getScoreProfileId());
+                ScoreProfile scoreProfile = scoreProfileService.getScoreProfile(user, analysis.getScoreProfileId());
+                if(scoreProfile.getName() != analysis.getScoreProfileName()){analysis.setScoreProfileName(scoreProfile.getName());}
             }catch(NoSuchElementException e){
                 analysis.setScoreProfileId(0L);
                 analysis.setScoreProfileName("default");

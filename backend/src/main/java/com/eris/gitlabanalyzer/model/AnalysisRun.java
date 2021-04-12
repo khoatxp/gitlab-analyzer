@@ -36,7 +36,6 @@ public class AnalysisRun {
     @JoinColumn(name = "server_id")
     private Server server;
 
-
     @Column(name="score_profile_id")
     private Long scoreProfileId;
 

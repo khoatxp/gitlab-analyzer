@@ -127,7 +127,7 @@ const ScoreProfileSelector = ({onScoreProfileSelect}:Props) => {
                         onOpen={() => {setIconVisible(true); setSelectOpen(true)}}
                         onClose={() => {setIconVisible(false); setSelectOpen(false)}}
                         value={scoreProfile || ""}
-                        onChange={(e) => {setScoreProfile(Number(e.target.value)); onScoreProfileSelect(Number(e.target.value).toFixed(), scoreProfileName(Number(e.target.value).toFixed()))}}
+                        onChange={(e) => {setScoreProfile(Number(e.target.value)); onScoreProfileSelect(Math.round(Number(e.target.value)), scoreProfileName(Math.round(Number(e.target.value))))}}
                         MenuProps={{
                             anchorOrigin: {vertical: "top", horizontal: "left"},
                             transformOrigin: {vertical: "top", horizontal: "left"},
