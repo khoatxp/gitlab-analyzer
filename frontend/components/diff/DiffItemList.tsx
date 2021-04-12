@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -11,6 +11,7 @@ import formatDate from "../../utils/DateFormatter";
 import {MergeRequest, OrphanCommitMergeRequest} from "../../interfaces/MergeRequest";
 import {Commit} from "../../interfaces/Commit";
 import AppButton from "../app/AppButton";
+import {Box, Typography} from "@material-ui/core";
 
 type DiffItemListProps = {
     diffItems: DiffItem[]
@@ -24,41 +25,48 @@ type DiffItemListProps = {
 export type DiffItem = MergeRequest | Commit;
 
 const useStyles = makeStyles({
-  root: {
-    width: '100%',
-  },
-  container: {
-    height: 400,
-  },
+    root: {
+        width: '100%',
+    },
+    container: {
+        height: 400,
+    },
 });
 
-const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIndex, setSelectedIndex, handleToggle}: DiffItemListProps) => {
+const DiffItemList = ({
+                          diffItems,
+                          diffItemType,
+                          handleSelectDiffItem,
+                          selectedIndex,
+                          setSelectedIndex,
+                          handleToggle
+                      }: DiffItemListProps) => {
     const classes = useStyles();
 
     return (
         <Paper className={classes.root}>
             <TableContainer className={classes.container} style={{marginBottom: '1em'}}>
-                <Table stickyHeader aria-label="sticky table" >
+                <Table stickyHeader aria-label="sticky table">
                     <TableHead>
                         <TableRow>
                             <TableCell
-                              key="date"
-                              align='left'
-                              style={{ minWidth: 100 }}
+                                key="date"
+                                align='left'
+                                style={{minWidth: 100}}
                             >
                                 Date
                             </TableCell>
                             <TableCell
-                              key="DiffItem"
-                              align='left'
-                              style={{ minWidth: 100 }}
+                                key="DiffItem"
+                                align='left'
+                                style={{minWidth: 100}}
                             >
                                 {diffItems.length.toString()} {diffItemType}(s)
                             </TableCell>
                             <TableCell
                                 key="ignored"
                                 align='left'
-                                style={{ minWidth: 100 }}
+                                style={{minWidth: 100}}
                             >
                                 Used in scoring
                             </TableCell>
@@ -76,27 +84,33 @@ const DiffItemList = ({diffItems, diffItemType, handleSelectDiffItem, selectedIn
                                     }}
                                     selected={selectedIndex == i}
                                 >
-                                    <TableCell key="date" align='left' style={{ minWidth: 100 }}>
-                                        {diffItemType=="Merge Request" ? formatDate(diffItem.mergedAt) : formatDate(diffItem.createdAt)}
+                                    <TableCell key="date" align='left' style={{minWidth: 100}}>
+                                        {diffItemType == "Merge Request" ? formatDate(diffItem.mergedAt) : formatDate(diffItem.createdAt)}
                                     </TableCell>
-                                    <TableCell key="DiffItem" align='left' style={{ minWidth: 100 }}>
+                                    <TableCell key="DiffItem" align='left' style={{minWidth: 100}}>
                                         {diffItem.title}
                                         <br/>
                                         {
                                             diffItem.id == OrphanCommitMergeRequest.id ?
-                                            OrphanCommitMergeRequest.secondaryText : ` · ` +
-                                            (diffItemType=='Merge Request' ? 'Merged ' : 'Committed ') +
-                                            `by ${diffItem.authorUsername=='undefined' ? 'Unmapped User' : diffItem.authorUsername}`
+                                                OrphanCommitMergeRequest.secondaryText : ` · ` +
+                                                (diffItemType == 'Merge Request' ? 'Merged ' : 'Committed ') +
+                                                `by ${diffItem.authorUsername == 'undefined' ? 'Unmapped User' : diffItem.authorUsername}`
                                         }
                                     </TableCell>
                                     <TableCell
                                         key="ignored"
                                         align='left'
-                                        style={{ minWidth: 100 }}
+                                        style={{minWidth: 100}}
                                     >
-                                        <AppButton size="small" onClick={() => handleToggle(diffItem)} disabled={diffItem.id == OrphanCommitMergeRequest.id}>
-                                            {diffItem.ignored ? 'No' : 'Yes'}
-                                        </AppButton>
+                                        <Box display="flex" alignItems="center" justifyContent="center">
+                                            <Typography>
+                                                {diffItem.ignored ? 'NO' : 'Yes'}
+                                            </Typography>
+                                            <AppButton size="small" onClick={() => handleToggle(diffItem)}
+                                                       disabled={diffItem.id == OrphanCommitMergeRequest.id}>
+                                                {diffItem.ignored ? 'Include' : 'Exclude'}
+                                            </AppButton>
+                                        </Box>
                                     </TableCell>
                                 </TableRow>
                             ))
